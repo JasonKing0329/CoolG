@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="redC93437">#FFC93437</color>
+    <color name="blue375BF1">#FF375BF1</color>
+    <color name="yellowF7D23E">#FFF7D23E</color>
+    <color name="green34A350">#FF34A350</color>
+
+    <color name="drag_bg">#a0a0a0</color>
+    <color name="grayef">#efefef</color>
+    <color name="actionbar_bg">#ffffff</color>
+    <color name="status_bar_bg">#ffffff</color>
+    <color name="action_icon_color">#656566</color>
+    <color name="action_title_color">#333333</color>
+
+    <color name="text_main">#333333</color>
+    <color name="text_second">#666666</color>
+    <color name="text_sub">#999999</color>
+
+    <color name="white">#ffffff</color>
+    <color name="white_bg">#efefef</color>
+    <color name="divider">#efefef</color>
+
+    <color name="blue_00a5c4">#00a5c4</color>
+    <color name="red_f1303d">#f1303d</color>
+
+    <color name="def_chart_color1">#f1303d</color>
+    <color name="def_chart_color2">#375BF1</color>
+    <color name="def_chart_color3">#34A350</color>
+
+    <color name="orangeE78B39">#e78b39</color>
+</resources>
