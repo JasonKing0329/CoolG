@@ -206,4 +206,5 @@
     <dimen name="home_star_name">12dp</dimen>
 
     <dimen name="starlist_pad_circle_size">130dp</dimen>
+    <dimen name="app_bar_height">210dp</dimen>
 </resources>

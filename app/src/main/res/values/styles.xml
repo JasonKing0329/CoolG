@@ -45,4 +45,15 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="CustomActionBarTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorPrimary">@color/white_bg</item>
+        <item name="colorPrimaryDark">@color/white_bg</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">#eeeeee</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+    </style>
+
+    <style name="CustomActionBarTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+    </style>
+
 </resources>

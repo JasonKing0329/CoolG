@@ -12,7 +12,7 @@ import com.king.app.coolg.base.CoolApplication;
  */
 public class SettingProperty {
 
-    private static final String getString(String key) {
+    public static final String getString(String key) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(CoolApplication.getInstance());
         return sp.getString(key, "");
     }
@@ -86,6 +86,18 @@ public class SettingProperty {
      */
     public static void setPrefVersion(String version) {
         setString(PreferenceKey.PREF_VERSION, version);
+    }
+
+    public static boolean isNoImageMode() {
+        return getBoolean(PreferenceKey.PREF_GDB_NO_IMAGE);
+    }
+
+    public static String getNavHeadImage() {
+        return getString(PreferenceKey.PREF_GDB_NAV_HEADER_BG);
+    }
+
+    public static void saveNavHeadImage(String path) {
+        setString(PreferenceKey.PREF_GDB_NAV_HEADER_BG, path);
     }
 
 }

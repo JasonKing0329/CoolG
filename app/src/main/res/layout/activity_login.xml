@@ -2,11 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".page.LoginActivity">
+    tools:context=".phone.login.LoginActivity">
     <data>
         <variable
             name="model"
-            type="com.king.app.coolg.viewmodel.LoginViewModel"/>
+            type="com.king.app.coolg.phone.login.LoginViewModel"/>
     </data>
 
     <RelativeLayout

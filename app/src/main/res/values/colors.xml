@@ -31,4 +31,45 @@
     <color name="def_chart_color3">#34A350</color>
 
     <color name="orangeE78B39">#e78b39</color>
+
+    <color name="transparent">#00ffffff</color>
+    <color name="lightgrey">#dddddd</color>
+    <color name="darkgrey">#A9A9A9</color><!--暗灰色 -->
+    <color name="gray">#808080</color>
+    <color name="black">#000000</color>
+
+    <color name="actionbar_text_light">#3f37a1</color>
+    <color name="dialog_background">#eeeeeeee</color>
+    <color name="actionbar_bk_blue">#00a5c4</color>
+    <color name="actionbar_bk_light">#dfdfdf</color>
+    <color name="actionbar_bk_green">#419814</color>
+    <color name="actionbar_bk_lightgreen">#19a993</color>
+    <color name="actionbar_bk_orange">#ef9801</color>
+    <color name="actionbar_bk_deepblue">#197ba9</color>
+    <color name="actionbar_bk_purple">#a91980</color>
+    <color name="actionbar_bk_floating">#99ffffff</color>
+    <color name="actionbar_bk_dark">#25242c</color>
+    <color name="custom_dialog_icon_bk_frame">#ffffff</color>
+    <color name="custom_dialog_icon_bk_normal">#00a5e4</color>
+    <color name="custom_dialog_icon_bk_pressed">#cc6600</color>
+    <color name="gdb_record_text_normal_light">#3c3c3c</color>
+    <color name="gdb_record_text_normal_light_dim">#909090</color>
+    <color name="record_deprecated_bg">#c3c3c3</color>
+    <color name="gdb_record_text_bareback_light">#00a5c4</color>
+
+    <color name="gdb_float_infor_bg">#66000000</color>
+
+    <color name="loading_bg">#efefef</color>
+
+    <color name="rating_nr">#a0a0a0</color>
+    <color name="rating_e">#909090</color>
+    <color name="rating_ep">#777777</color>
+    <color name="rating_d">#99375BF1</color>
+    <color name="rating_dp">#375BF1</color>
+    <color name="rating_c">#9900a5c4</color>
+    <color name="rating_cp">#00a5c4</color>
+    <color name="rating_b">#99cc6600</color>
+    <color name="rating_bp">#cc6600</color>
+    <color name="rating_a">#A03437</color>
+    <color name="rating_ap">#C93437</color>
 </resources>

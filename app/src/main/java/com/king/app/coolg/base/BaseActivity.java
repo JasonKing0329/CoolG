@@ -25,7 +25,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // full screen
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //prevent from task manager take screenshot
         //also prevent from system screenshot

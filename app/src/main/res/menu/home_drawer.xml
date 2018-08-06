@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_main"
+            android:icon="@drawable/ic_folder_yellow_700_36dp"
+            android:title="@string/menu_filemanager" />
+        <item
+            android:id="@+id/nav_swipe_star"
+            android:icon="@drawable/ic_timeline_yellow_700_36dp"
+            android:title="@string/menu_swipe_star" />
+        <item
+            android:id="@+id/nav_random"
+            android:icon="@drawable/ic_blur_on_yellow_700_36dp"
+            android:title="@string/menu_random" />
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_settings_yellow_700_36dp"
+            android:title="@string/action_settings" />
+        <item
+            android:id="@+id/nav_update"
+            android:icon="@drawable/ic_update_yellow_700_36dp"
+            android:title="@string/menu_gdb_check_server" />
+        <item
+            android:id="@+id/nav_exit"
+            android:icon="@drawable/ic_exit_to_app_yellow_700_36dp"
+            android:title="@string/menu_exit" />
+    </group>
+
+</menu>
