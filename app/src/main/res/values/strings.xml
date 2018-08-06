@@ -22,4 +22,7 @@
     <string name="warning">warning</string>
     <string name="title_activity_settings">Settings</string>
 
+    <string name="login_extend_pref_exist">Extend preference file existed, replace it with application preference?</string>
+    <string name="login_start_service_insert">Open manage page?</string>
+
 </resources>

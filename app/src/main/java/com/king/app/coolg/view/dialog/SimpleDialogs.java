@@ -71,4 +71,17 @@ public class SimpleDialogs {
         builder.show();
     }
 
+    public void showWarningActionDialog(Context context, String msg, String positiveText, String neutralText, String negativeText,
+                                        final DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.warning);
+        builder.setMessage(msg);
+        builder.setPositiveButton(positiveText, listener);
+        if (neutralText != null) {
+            builder.setNeutralButton(neutralText, listener);
+        }
+        builder.setNegativeButton(negativeText, listener);
+        builder.show();
+    }
+
 }

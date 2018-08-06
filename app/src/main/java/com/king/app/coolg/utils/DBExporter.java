@@ -11,46 +11,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
 
-public class DBExportor {
+public class DBExporter {
 	
 	public static void execute() {
 
 		String dbPath = CoolApplication.getInstance().getFilesDir().getParent() + "/databases";
 	//	String dbPath = Environment.getExternalStorageDirectory() + "/tcslSystem";
-		String targetPath = AppConfig.EXPORT_BASE;
+		String targetPath = AppConfig.APP_DIR_EXPORT;
 		try {
-			DBExportor.copyDirectiory(dbPath, targetPath);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void exportAsHistory() {
-
-		Calendar calendar = Calendar.getInstance();
-		StringBuffer target = new StringBuffer();
-		target.append(AppConfig.HISTORY_BASE).append("/");
-		target.append(calendar.get(Calendar.YEAR)).append("_");
-		target.append(calendar.get(Calendar.MONTH) + 1).append("_");
-		target.append(calendar.get(Calendar.DAY_OF_MONTH)).append("_");
-		target.append(calendar.get(Calendar.HOUR_OF_DAY)).append("_");
-		target.append(calendar.get(Calendar.MINUTE)).append("_");
-		target.append(calendar.get(Calendar.SECOND));
-		File folder = new File(target.toString());
-		if (!folder.exists()) {
-			folder.mkdir();
-		}
-
-		String raceTarget = folder.getPath() + "/" + AppConfig.DB_NAME;
-		String raceCbsTarget = folder.getPath() + "/" + AppConfig.DB_CBS_NAME;
-		String dbPath = CoolApplication.getInstance().getFilesDir().getParent() + "/databases/" + AppConfig.DB_NAME;
-		String dbCbsPath = CoolApplication.getInstance().getFilesDir().getParent() + "/databases/" + AppConfig.DB_CBS_NAME;
-
-		try {
-			copyFile(new File(dbPath), new File(raceTarget));
-			copyFile(new File(dbCbsPath), new File(raceCbsTarget));
+			DBExporter.copyDirectiory(dbPath, targetPath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -87,7 +57,7 @@ public class DBExportor {
 
 	public static void copyDirectiory(String sourceDir, String targetDir)
 			throws IOException {
-		Log.e("DBExportor", "copy from [" + sourceDir + "] to [" + targetDir + "]");
+		Log.e("DBExporter", "copy from [" + sourceDir + "] to [" + targetDir + "]");
 		// 新建目标目录
 		File target = new File(targetDir);
 		if (!target.exists()) {

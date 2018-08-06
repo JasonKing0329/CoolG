@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.king.app.coolg.conf.AppConfig;
+import com.king.app.coolg.context.GDataContext;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.gdb.data.entity.DaoMaster;
 import com.king.app.gdb.data.entity.DaoSession;
@@ -41,7 +42,7 @@ public class CoolApplication extends Application {
      * 需要由外部调用，如果在onCreate里直接初始化会创建新的数据库
      */
     public void createGreenDao() {
-        helper = new RHelper(getApplicationContext(), AppConfig.DB_NAME);
+        helper = new RHelper(new GDataContext(this), AppConfig.DB_NAME);
         database = helper.getWritableDb();
         daoSession = new DaoMaster(database).newSession();
 

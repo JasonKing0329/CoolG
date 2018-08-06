@@ -36,7 +36,7 @@
             android:name="com.sec.android.support.multiwindow"
             android:value="true" />
 
-        <activity android:name=".LoginActivity">
+        <activity android:name=".page.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
