@@ -47,8 +47,6 @@ public class PreferenceKey {
     // server url
     public static final String PREF_HTTP_SERVER = "pref_http_server";
     public static final String PREF_CHECK_UPDATE = "pref_http_update";
-    // 检查gdb数据库更新
-    public static final String PREF_CHECK_UPDATE_GDB = "pref_http_update_gdb";
     // 备份数据
     public static final String PREF_CHECK_BACKUP = "pref_http_backup";
 

@@ -208,9 +208,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         Preference updatePref = findPreference(PreferenceKey.PREF_CHECK_UPDATE);
         updatePref.setSummary("v" + AppUtil.getAppVersionName());
         updatePref.setOnPreferenceClickListener(listener);
-        updatePref = findPreference(PreferenceKey.PREF_CHECK_UPDATE_GDB);
-        updatePref.setSummary("v" + new PropertyRepository().getVersion());
-        updatePref.setOnPreferenceClickListener(listener);
+
         updatePref = findPreference(PreferenceKey.PREF_CHECK_BACKUP);
         updatePref.setOnPreferenceClickListener(listener);
 
@@ -236,10 +234,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 //                manager.setFragmentManager(fragmentManager);
 //                manager.showMessageWarning();
 //                manager.startCheck();
-            }
-            else if (preference.getKey().equals(PreferenceKey.PREF_CHECK_UPDATE_GDB)) {
-//                ActivityManager.startManageActivity((Activity) mContext);
-//                ((Activity) mContext).finish();
             }
             else if (preference.getKey().equals(PreferenceKey.PREF_CHECK_BACKUP)) {
 //                new UploadPresenter(new IUploadView() {
@@ -377,9 +371,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             PrefClickListener listener = new PrefClickListener(getActivity(), getFragmentManager());
             Preference preference = findPreference(PreferenceKey.PREF_CHECK_UPDATE);
             preference.setSummary("v" + AppUtil.getAppVersionName());
-            preference.setOnPreferenceClickListener(listener);
-            preference = findPreference(PreferenceKey.PREF_CHECK_UPDATE_GDB);
-            preference.setSummary("v" +  new PropertyRepository().getVersion());
             preference.setOnPreferenceClickListener(listener);
             preference = findPreference(PreferenceKey.PREF_CHECK_BACKUP);
             preference.setOnPreferenceClickListener(listener);

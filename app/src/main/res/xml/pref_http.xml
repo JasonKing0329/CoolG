@@ -12,10 +12,6 @@
         android:title="@string/setting_http_update"/>
 
     <Preference
-        android:key="pref_http_update_gdb"
-        android:title="@string/setting_http_update_gdb"/>
-
-    <Preference
         android:key="pref_http_backup"
         android:title="@string/setting_http_backup"
         android:summary="@string/setting_http_backup_summary"/>
