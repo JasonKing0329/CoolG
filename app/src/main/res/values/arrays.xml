@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="pref_general_list_home">
+        <item>@string/pref_general_home_title</item>
+    </string-array>
+    <string-array name="pref_general_list_home_value" translatable="false">
+        <item>0</item>
+    </string-array>
+
+    <string-array name="menu_surf_item">
+        <item>Delete</item>
+    </string-array>
+</resources>

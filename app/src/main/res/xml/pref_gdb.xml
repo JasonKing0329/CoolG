@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="30"
+        android:key="pref_gdb_latest_num"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:title="@string/setting_gdb_latest_num" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="pref_gdb_no_image"
+        android:title="@string/setting_gdb_no_image" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="pref_gdb_surf_relate"
+        android:title="@string/pref_gdb_surf_relate" />
+</PreferenceScreen>

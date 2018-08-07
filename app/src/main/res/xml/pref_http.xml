@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="pref_http_server"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:title="@string/setting_http_server" />
+
+    <EditTextPreference
+        android:defaultValue="3"
+        android:inputType="number"
+        android:key="pref_http_download_max"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:title="@string/setting_http_download_max" />
+
+    <Preference
+        android:key="pref_http_update"
+        android:title="@string/setting_http_update"/>
+
+    <Preference
+        android:key="pref_http_update_gdb"
+        android:title="@string/setting_http_update_gdb"/>
+
+    <Preference
+        android:key="pref_http_backup"
+        android:title="@string/setting_http_backup"
+        android:summary="@string/setting_http_backup_summary"/>
+</PreferenceScreen>

@@ -136,18 +136,18 @@ public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewM
                         goToHome();
                     }
                 });
-//        Intent intent = new Intent(this, SeasonListActivity.class);
-//        startActivity(intent);
-//        finish();
     }
 
     private void goToManage() {
     }
 
     private void goToSetting() {
+        Router.build("Setting").go(this);
+        finish();
     }
 
     private void goToHome() {
         Router.build("Home").go(this);
+        finish();
     }
 }
