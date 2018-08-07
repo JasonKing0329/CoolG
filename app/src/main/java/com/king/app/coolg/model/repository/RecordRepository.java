@@ -2,8 +2,11 @@ package com.king.app.coolg.model.repository;
 
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordDao;
+import com.king.app.gdb.data.param.DataConstants;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import io.reactivex.Observable;
 
@@ -25,4 +28,9 @@ public class RecordRepository extends BaseRepository {
             e.onNext(list);
         });
     }
+
+    public Observable<List<Record>> getAll() {
+        return Observable.create(e -> e.onNext(getDaoSession().getRecordDao().loadAll()));
+    }
+
 }

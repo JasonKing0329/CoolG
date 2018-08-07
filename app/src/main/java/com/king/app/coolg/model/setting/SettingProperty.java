@@ -104,4 +104,36 @@ public class SettingProperty {
         return getString(PreferenceKey.PREF_HTTP_SERVER);
     }
 
+    public static boolean isRandomRecommend() {
+        return getBoolean(PreferenceKey.PREF_GDB_REC_ANIM_RANDOM);
+    }
+
+    public static void setRandomRecommend(boolean random) {
+        setBoolean(PreferenceKey.PREF_GDB_REC_ANIM_RANDOM, random);
+    }
+
+    public static int getRecommendAnimType() {
+        return getInt(PreferenceKey.PREF_GDB_REC_ANIM_TYPE);
+    }
+
+    public static void setRecommendAnimType(int random) {
+        setInt(PreferenceKey.PREF_GDB_REC_ANIM_TYPE, random);
+    }
+
+    public static int getRecommendAnimTime() {
+        return getInt(PreferenceKey.PREF_GDB_REC_ANIM_TIME);
+    }
+
+    public static void setRecommendAnimTime(int random) {
+        setInt(PreferenceKey.PREF_GDB_REC_ANIM_TIME, random);
+    }
+
+    public static String getRecordFilterModel() {
+        return getString(PreferenceKey.PREF_GDB_FILTER_MODEL);
+    }
+
+    public static void setRecordFilterModel(String random) {
+        setString(PreferenceKey.PREF_GDB_FILTER_MODEL, random);
+    }
+
 }

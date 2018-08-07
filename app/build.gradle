@@ -8,8 +8,8 @@ android {
         applicationId "com.king.app.coolg"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 6
-        versionName "1.4.1"
+        versionCode 7
+        versionName "1.4.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -82,6 +82,9 @@ dependencies {
 
     /*compressor*/
     implementation 'id.zelory:compressor:2.1.0'
+    /*LMBanners*/
+    implementation "com.allure0:LMBanners:${LMBANNER_VERSION}"
+
 
     implementation project(':data')
     implementation project(':libresmanager')
