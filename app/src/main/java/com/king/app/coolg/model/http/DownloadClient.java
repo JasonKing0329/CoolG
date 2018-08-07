@@ -18,7 +18,7 @@ public class DownloadClient {
 
     // DownloadClient每次都是new，直接获取最新的baseUrl即可
     public DownloadClient(ProgressListener progressListener) {
-        baseUrl = BaseUrl.getInstance().getBaseUrl();
+        baseUrl = BaseHttpClient.getBaseUrl();
         // 由于下载大文件容易引起OOM，所以在@Streaming的基础上得把log去掉，但是不加logging这个interceptor的话
         // 如果onNext调用了接受inputStream并保存到磁盘的方法，那么一直会进入onError，异常是networkOnMainThread
         // 原因是因为与服务端保持着一边接收一边保存的操作，而保存的操作在onNext里，属于主线程了

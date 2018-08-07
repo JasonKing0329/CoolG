@@ -2,6 +2,7 @@ package com.king.app.coolg.model.http;
 
 import android.text.TextUtils;
 
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.utils.DebugLog;
 import com.orhanobut.logger.Logger;
 
@@ -29,49 +30,14 @@ public abstract class BaseHttpClient {
 
     private OkHttpClient client;
 
-    /**
-     * @param url
-     * @param port
-     * @param secondUrl
-     * @throws EmptyUrlException
-     */
-    public static String parseUrl(String url, String port, String secondUrl) throws EmptyUrlException {
-        String baseUrl = url;
-        if (TextUtils.isEmpty(url)) {
-            throw new EmptyUrlException();
-        }
-        if (!url.startsWith("http://") && !url.startsWith("https://")) {
-            baseUrl = "http://".concat(url);
-        }
-        if (!TextUtils.isEmpty(port)) {
-            baseUrl = baseUrl.concat(":").concat(port);
-        }
-        if (!TextUtils.isEmpty(secondUrl)) {
-            if (!secondUrl.startsWith("/")) {
-                baseUrl = baseUrl.concat("/");
-            }
-            baseUrl = baseUrl.concat(secondUrl);
-        }
-
-        if (!baseUrl.endsWith("/")) {
-            baseUrl = baseUrl.concat("/");
-        }
-        DebugLog.e(baseUrl);
-        return baseUrl;
-    }
-    public abstract String getBaseUrl();
-
     public BaseHttpClient() {
         logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 // 打印url
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request();
-//                        CrmLogger.crmlog(BuffetApplication.getInstance().getApplicationContext(), "Request", request.url().toString());
-                        return chain.proceed(request);
-                    }
+                .addInterceptor(chain -> {
+                    Request request = chain.request();
+                    DebugLog.e(request.url().toString());
+                    return chain.proceed(request);
                 })
                 // 打印log
                 .addInterceptor(logInterceptor);
@@ -99,47 +65,42 @@ public abstract class BaseHttpClient {
         createService(retrofit);
     }
 
+    public static String getBaseUrl() {
+        String ip = SettingProperty.getServerUrl();
+        if (TextUtils.isEmpty(ip)) {
+            return "http://www.baidu.com/";
+        }
+        else {
+            if (!ip.startsWith("http://")) {
+                ip = "http://" + ip;
+            }
+            if (!ip.endsWith("/")) {
+                ip = ip + "/";
+            }
+        }
+        return ip;
+    }
+
     protected abstract Converter.Factory getConverterFactory();
 
     protected abstract Interceptor getHeaderInterceptors();
 
     protected abstract void createService(Retrofit retrofit);
 
-    /**
-     * 已经初始化过baseUrl，改变baseUrl需要重新实例化baseUrl
-     *
-     * @param url
-     * @throws EmptyUrlException
-     */
-    public abstract void onBaseUrlChanged(String url) throws EmptyUrlException;
-
-    /**
-     * 已经初始化过baseUrl，改变baseUrl需要重新实例化baseUrl
-     *
-     * @param url
-     * @param port
-     * @param secondUrl
-     * @throws EmptyUrlException
-     */
-    public abstract void onBaseUrlChanged(String url, String port, String secondUrl) throws EmptyUrlException;
-
-    HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-        @Override
-        public void log(String message) {
-            if (isDebug) {
-                if (message != null && message.startsWith("{")) {
-                    try {
-                        Logger.json(message);
-                    } catch (Exception e) {
-                        Logger.d(message);
-                    }
-                } else {
-                    // 不打印其他类信息
+    HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(message -> {
+        if (isDebug) {
+            if (message != null && message.startsWith("{")) {
+                try {
+                    Logger.json(message);
+                } catch (Exception e) {
                     Logger.d(message);
                 }
             } else {
-//                ReleaseLogger.log(context, "AppHttpClient", message);
+                // 不打印其他类信息
+                Logger.d(message);
             }
+        } else {
+//                ReleaseLogger.log(context, "AppHttpClient", message);
         }
     });
 }

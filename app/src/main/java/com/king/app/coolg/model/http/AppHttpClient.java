@@ -15,24 +15,9 @@ public class AppHttpClient extends BaseHttpClient {
 
     private AppService appService;
     private volatile static AppHttpClient instance;
-    private static String baseUrl;
 
     private AppHttpClient() {
         super();
-    }
-
-    /**
-     * @param url
-     * @throws EmptyUrlException
-     */
-    public static void setBaseUrl(String url) throws EmptyUrlException {
-        baseUrl = parseUrl(url, null, null);
-    }
-
-    @Override
-    public String getBaseUrl() {
-        baseUrl = BaseUrl.getInstance().getBaseUrl();
-        return baseUrl;
     }
 
     @Override
@@ -48,18 +33,6 @@ public class AppHttpClient extends BaseHttpClient {
     @Override
     protected void createService(Retrofit retrofit) {
         appService = retrofit.create(AppService.class);
-    }
-
-    @Override
-    public void onBaseUrlChanged(String url) throws EmptyUrlException {
-        setBaseUrl(url);
-        createRetrofit();
-    }
-
-    @Override
-    public void onBaseUrlChanged(String url, String port, String secondUrl) throws EmptyUrlException {
-        baseUrl = parseUrl(url, port, secondUrl);
-        createRetrofit();
     }
 
     public AppService getAppService() {

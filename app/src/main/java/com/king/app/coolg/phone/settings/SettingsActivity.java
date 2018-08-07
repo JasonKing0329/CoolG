@@ -146,7 +146,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         if (actionBar != null) {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(R.string.back);
+            actionBar.setTitle(R.string.pref_general_home_title);
         }
     }
 
@@ -203,10 +203,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         //http
         bindPreferenceSummaryToValue(findPreference(PreferenceKey.PREF_HTTP_SERVER));
-        EditTextPreference edt = (EditTextPreference) findPreference(PreferenceKey.PREF_MAX_DOWNLOAD);
-        bindPreferenceSummaryToValue(edt);
-        limitEditRange(edt.getEditText(), 1, PreferenceValue.HTTP_MAX_DOWNLOAD_UPLIMIT);
-
 
         PrefClickListener listener = new PrefClickListener(this, getFragmentManager());
         Preference updatePref = findPreference(PreferenceKey.PREF_CHECK_UPDATE);
@@ -377,7 +373,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
 
             bindPreferenceSummaryToValue(findPreference(PreferenceKey.PREF_HTTP_SERVER));
-            bindPreferenceSummaryToValue(findPreference(PreferenceKey.PREF_MAX_DOWNLOAD));
 
             PrefClickListener listener = new PrefClickListener(getActivity(), getFragmentManager());
             Preference preference = findPreference(PreferenceKey.PREF_CHECK_UPDATE);

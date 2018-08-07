@@ -100,4 +100,8 @@ public class SettingProperty {
         setString(PreferenceKey.PREF_GDB_NAV_HEADER_BG, path);
     }
 
+    public static String getServerUrl() {
+        return getString(PreferenceKey.PREF_HTTP_SERVER);
+    }
+
 }

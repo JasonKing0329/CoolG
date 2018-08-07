@@ -7,14 +7,6 @@
         android:singleLine="true"
         android:title="@string/setting_http_server" />
 
-    <EditTextPreference
-        android:defaultValue="3"
-        android:inputType="number"
-        android:key="pref_http_download_max"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:title="@string/setting_http_download_max" />
-
     <Preference
         android:key="pref_http_update"
         android:title="@string/setting_http_update"/>

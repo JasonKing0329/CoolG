@@ -139,11 +139,11 @@ public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewM
     }
 
     private void goToManage() {
+        Router.build("Manage").go(this);
     }
 
     private void goToSetting() {
         Router.build("Setting").go(this);
-        finish();
     }
 
     private void goToHome() {

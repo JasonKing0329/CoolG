@@ -9,6 +9,8 @@ import com.king.app.coolg.context.GDataContext;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.gdb.data.entity.DaoMaster;
 import com.king.app.gdb.data.entity.DaoSession;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -35,6 +37,9 @@ public class CoolApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        // logger
+        Logger.addLogAdapter(new AndroidLogAdapter());
+
     }
 
     /**

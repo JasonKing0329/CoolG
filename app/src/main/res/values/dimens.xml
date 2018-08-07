@@ -53,7 +53,7 @@
     <!-- download -->
     <dimen name="download_dlg_height">400dp</dimen>
     <dimen name="download_exist_image_width">135dp</dimen>
-    <dimen name="download_exist_image_height">76dp</dimen><!-- 16:9 -->
+    <dimen name="download_exist_image_height">90dp</dimen><!-- 16:9 -->
 
     <!-- starmap -->
     <dimen name="starmap_max_item_size">60dp</dimen>

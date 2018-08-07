@@ -46,9 +46,6 @@ public class PreferenceKey {
      */
     // server url
     public static final String PREF_HTTP_SERVER = "pref_http_server";
-    // 最大并发下载数量
-    public static final String PREF_MAX_DOWNLOAD = "pref_http_download_max";
-    // 检查更新
     public static final String PREF_CHECK_UPDATE = "pref_http_update";
     // 检查gdb数据库更新
     public static final String PREF_CHECK_UPDATE_GDB = "pref_http_update_gdb";
