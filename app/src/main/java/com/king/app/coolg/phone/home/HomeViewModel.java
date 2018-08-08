@@ -125,6 +125,10 @@ public class HomeViewModel extends BaseViewModel {
         }
     }
 
+    public void updateRecordFilter(RecordFilterModel mRecordFilter) {
+        this.mRecordFilter = mRecordFilter;
+    }
+
     /**
      * 获得新记录
      * @return

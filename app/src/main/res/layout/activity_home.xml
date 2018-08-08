@@ -50,19 +50,6 @@
                             android:layout_height="match_parent"
                             android:src="@drawable/def_large"
                             android:scaleType="centerCrop"/>
-                        <TextView
-                            android:id="@+id/tv_all"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:gravity="center"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginBottom="5dp"
-                            android:background="@drawable/shape_oval_transgrey"
-                            android:textColor="@color/white"
-                            android:layout_alignParentBottom="true"
-                            android:layout_alignParentRight="true"
-                            android:text="All"
-                            android:textSize="14dp"/>
                     </RelativeLayout>
 
                     <android.support.v7.widget.Toolbar
@@ -80,7 +67,8 @@
                             android:layout_height="?android:attr/actionBarSize"
                             android:background="@color/actionbar_bg"
                             android:theme="@style/EtActionSearch"
-                            app:title="CoolG"
+                            app:title="Home"
+                            app:menu="@menu/home_phone"
                             app:maxShowIcon="5"
                             app:showIconBack="false"
                             app:iconColor="@color/action_icon_color"

@@ -1,5 +1,6 @@
 package com.king.app.coolg.phone.home;
 
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -13,6 +14,7 @@ import com.king.app.coolg.databinding.AdapterHomeRecordListBinding;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.ListUtil;
+import com.king.app.coolg.utils.RippleUtil;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
 
@@ -32,6 +34,7 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
     private SimpleDateFormat dateFormat;
 
     private OnListListener onListListener;
+    private OnHeadActionListener onHeadActionListener;
     
     public HomeAdapter() {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -40,6 +43,10 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
 
     public void setOnListListener(OnListListener onListListener) {
         this.onListListener = onListListener;
+    }
+
+    public void setOnHeadActionListener(OnHeadActionListener onHeadActionListener) {
+        this.onHeadActionListener = onHeadActionListener;
     }
 
     @Override
@@ -59,7 +66,30 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
 
     @Override
     protected void onBindHead(AdapterHomeHeadBinding binding) {
-
+        Drawable drawable = RippleUtil.getRippleBackground(binding.llStar.getResources().getColor(R.color.home_section_phone_star)
+                , binding.llStar.getResources().getColor(R.color.ripple_color));
+        binding.llStar.setBackground(drawable);
+        binding.llStar.setOnClickListener(v -> {
+            if (onHeadActionListener != null) {
+                onHeadActionListener.onClickStars();
+            }
+        });
+        drawable = RippleUtil.getRippleBackground(binding.llStar.getResources().getColor(R.color.home_section_phone_record)
+                , binding.llStar.getResources().getColor(R.color.ripple_color));
+        binding.llRecords.setBackground(drawable);
+        binding.llRecords.setOnClickListener(v -> {
+            if (onHeadActionListener != null) {
+                onHeadActionListener.onClickRecords();
+            }
+        });
+        drawable = RippleUtil.getRippleBackground(binding.llStar.getResources().getColor(R.color.home_section_phone_order)
+                , binding.llStar.getResources().getColor(R.color.ripple_color));
+        binding.llOrder.setBackground(drawable);
+        binding.llOrder.setOnClickListener(v -> {
+            if (onHeadActionListener != null) {
+                onHeadActionListener.onClickOrders();
+            }
+        });
     }
 
     @Override
@@ -124,6 +154,12 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
     public interface OnListListener {
         void onLoadMore();
         void onClickItem(View view, Record record);
+    }
+
+    public interface OnHeadActionListener {
+        void onClickStars();
+        void onClickRecords();
+        void onClickOrders();
     }
 
     private View.OnClickListener itemListener = new View.OnClickListener() {

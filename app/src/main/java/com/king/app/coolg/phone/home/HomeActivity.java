@@ -14,6 +14,8 @@ import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityHomeBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.utils.LMBannerViewUtil;
+import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.gdb.data.entity.Record;
 
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     private ImageView ivFace;
 
     private HomeAdapter adapter;
-    private RecordRecommendAdapter recommendAdapter;
+    private RecommendAdapter recommendAdapter;
 
     @Override
     protected int getContentView() {
@@ -54,10 +56,18 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
         mBinding.rvItems.setEnableLoadMore(true);
         mBinding.rvItems.setOnLoadMoreListener(() -> mModel.loadMore());
 
-        initBanner();
+        mBinding.actionbar.setOnMenuItemListener(menuId -> {
+            switch (menuId) {
+                case R.id.menu_recommend_setting:
+                    showRecommendSetting();
+                    break;
+            }
+        });
+
+        setBannerParams();
     }
 
-    private void initBanner() {
+    private void setBannerParams() {
         // 禁用btnStart(只在onPageScroll触发后有效)
         mBinding.banner.isGuide(false);
         // 不显示引导圆点
@@ -101,6 +111,33 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
         mModel.homeObserver.observe(this, bean -> {
             adapter = new HomeAdapter();
             adapter.setList(bean.getRecordList());
+            adapter.setOnListListener(new HomeAdapter.OnListListener() {
+                @Override
+                public void onLoadMore() {
+                    mModel.loadMore();
+                }
+
+                @Override
+                public void onClickItem(View view, Record record) {
+                    goToRecord(record);
+                }
+            });
+            adapter.setOnHeadActionListener(new HomeAdapter.OnHeadActionListener() {
+                @Override
+                public void onClickStars() {
+                    goToStarPage();
+                }
+
+                @Override
+                public void onClickRecords() {
+                    goToRecordPage();
+                }
+
+                @Override
+                public void onClickOrders() {
+                    goToOrderPage();
+                }
+            });
             mBinding.rvItems.setAdapter(adapter);
         });
         mModel.newRecordsObserver.observe(this, number -> {
@@ -108,8 +145,8 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
             adapter.notifyItemRangeInserted(start, number);
         });
         mModel.recommendObserver.observe(this, record -> {
-            recommendAdapter = new RecordRecommendAdapter();
-            recommendAdapter.setOnItemListener(new RecordRecommendAdapter.OnItemListener() {
+            recommendAdapter = new RecommendAdapter();
+            recommendAdapter.setOnItemListener(new RecommendAdapter.OnItemListener() {
                 @Override
                 public Record getNewItem() {
                     return mModel.newRecommend();
@@ -117,7 +154,7 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
 
                 @Override
                 public void onClickItem(Record record) {
-
+                    goToRecord(record);
                 }
             });
             List<Record> list = new ArrayList<>();
@@ -130,6 +167,31 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
         });
 
         mModel.loadData();
+    }
+
+    private void showRecommendSetting() {
+        RecommendFilterFragment content = new RecommendFilterFragment();
+        content.setOnRecordFilterListener(model -> {
+            mModel.updateRecordFilter(model);
+            setBannerParams();
+        });
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setContentFragment(content);
+        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight());
+        dialogFragment.setTitle("Recommend Setting");
+        dialogFragment.show(getSupportFragmentManager(), "RecommendFilterFragment");
+    }
+
+    private void goToRecord(Record record) {
+    }
+
+    private void goToStarPage() {
+    }
+
+    private void goToRecordPage() {
+    }
+
+    private void goToOrderPage() {
     }
 
     @Override

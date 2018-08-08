@@ -20,7 +20,7 @@ import com.king.app.gdb.data.entity.Record;
  * LMBanner并没有完全像BaseAdapter那样设计结构
  * 也无法采用ViewHolder缓存机制，本处只用了3个item，直接这样也就行了
  */
-public class RecordRecommendAdapter implements LBaseAdapter<Record> {
+public class RecommendAdapter implements LBaseAdapter<Record> {
 
     private ImageView imageView;
     private TextView starView;
@@ -29,7 +29,7 @@ public class RecordRecommendAdapter implements LBaseAdapter<Record> {
 
     public OnItemListener onItemListener;
 
-    public RecordRecommendAdapter() {
+    public RecommendAdapter() {
         recordOptions = GlideUtil.getRecordOptions();
     }
 

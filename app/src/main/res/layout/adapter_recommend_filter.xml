@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/ll_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:gravity="center_vertical">
+            <CheckBox
+                android:id="@+id/cb_check"
+                android:clickable="false"
+                style="@style/GdbRecommendFilterCheck" />
+            <LinearLayout
+                android:id="@+id/ll_input_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/gdb_filter_margin_check"
+                android:visibility="invisible"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/et_input_min"
+                    android:hint="@string/gdb_rec_filter_min"
+                    style="@style/GdbRecommendFilterEdit" />
+                <EditText
+                    android:id="@+id/et_input_max"
+                    style="@style/GdbRecommendFilterEdit"
+                    android:layout_marginLeft="@dimen/gdb_filter_margin_edit"
+                    android:hint="@string/gdb_rec_filter_max"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

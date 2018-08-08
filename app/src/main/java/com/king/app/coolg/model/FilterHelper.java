@@ -23,11 +23,11 @@ public class FilterHelper {
         DebugLog.e(json);
         Gson gson = new Gson();
         try {
-            RecordFilterModel modle = gson.fromJson(json, RecordFilterModel.class);
-            if (modle == null) {
+            RecordFilterModel model = gson.fromJson(json, RecordFilterModel.class);
+            if (model == null) {
                 return createFilters();
             }
-            return modle;
+            return model;
         } catch (Exception e) {
             e.printStackTrace();
             return createFilters();

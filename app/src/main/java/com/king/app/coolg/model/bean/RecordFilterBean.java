@@ -1,7 +1,5 @@
 package com.king.app.coolg.model.bean;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by Administrator on 2016/12/3 0003.
  */
@@ -11,22 +9,17 @@ public class RecordFilterBean {
     /**
      * 关键词名称
      */
-    @SerializedName("keyword")
     private String keyword;
 
     /**
      * 关键词在数据库中对应的字段
      */
-    @SerializedName("keywordFiled")
     private String keywordFiled;
 
-    @SerializedName("isEnable")
     private boolean isEnable;
 
-    @SerializedName("min")
     private int min;
 
-    @SerializedName("max")
     private int max;
 
     public boolean isEnable() {
