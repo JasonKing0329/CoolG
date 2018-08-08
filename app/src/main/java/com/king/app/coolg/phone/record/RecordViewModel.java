@@ -9,7 +9,11 @@ import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
+import com.king.app.gdb.data.entity.RecordType1v1;
+import com.king.app.gdb.data.entity.RecordType3w;
+import com.king.app.gdb.data.param.DataConstants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.ObservableSource;
@@ -33,6 +37,8 @@ public class RecordViewModel extends BaseViewModel {
     public MutableLiveData<List<String>> imagesObserver = new MutableLiveData<>();
 
     public MutableLiveData<List<RecordStar>> starsObserver = new MutableLiveData<>();
+
+    public MutableLiveData<List<PassionPoint>> passionsObserver = new MutableLiveData<>();
 
     private RecordRepository repository;
 
@@ -93,7 +99,108 @@ public class RecordViewModel extends BaseViewModel {
             // stars
             starsObserver.postValue(record.getRelationList());
 
+            // passion point
+            List<PassionPoint> pointList = new ArrayList<>();
+            if (record.getType() == DataConstants.VALUE_RECORD_TYPE_1V1) {
+                getPassionList(pointList, record.getRecordType1v1());
+            }
+            else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_3W) {
+                getPassionList(pointList, record.getRecordType3w());
+            }
+            passionsObserver.postValue(pointList);
+
             observer.onNext(record);
         };
+    }
+
+    private void getPassionList(List<PassionPoint> pointList, RecordType3w record) {
+
+        if (record.getScoreFkType1() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("For Sit");
+            point.setContent(record.getScoreFkType1() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType2() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("Back Sit");
+            point.setContent(record.getScoreFkType2() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType3() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("For");
+            point.setContent(record.getScoreFkType3() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType4() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("Back");
+            point.setContent(record.getScoreFkType4() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType5() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("Side");
+            point.setContent(record.getScoreFkType5() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType6() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("Double");
+            point.setContent(record.getScoreFkType6() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType7() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("Sequence");
+            point.setContent(record.getScoreFkType7() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType8() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("Special");
+            point.setContent(record.getScoreFkType8() + "");
+            pointList.add(point);
+        }
+    }
+
+    private void getPassionList(List<PassionPoint> pointList, RecordType1v1 record) {
+        if (record.getScoreFkType1() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("For Sit");
+            point.setContent(record.getScoreFkType1() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType2() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("Back Sit");
+            point.setContent(record.getScoreFkType2() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType3() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("For Stand");
+            point.setContent(record.getScoreFkType3() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType4() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("Back Stand");
+            point.setContent(record.getScoreFkType4() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType5() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("Side");
+            point.setContent(record.getScoreFkType5() + "");
+            pointList.add(point);
+        }
+        if (record.getScoreFkType6() > 0) {
+            PassionPoint point = new PassionPoint();
+            point.setKey("Special");
+            point.setContent(record.getScoreFkType6() + "");
+            pointList.add(point);
+        }
     }
 }

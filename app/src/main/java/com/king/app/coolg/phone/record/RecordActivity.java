@@ -100,8 +100,15 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         });
         mModel.starsObserver.observe(this, list -> showStars(list));
         mModel.recordObserver.observe(this, record -> showRecord(record));
+        mModel.passionsObserver.observe(this, list -> showPassionPoints(list));
 
         mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
+    }
+
+    private void showPassionPoints(List<PassionPoint> list) {
+        PassionPointAdapter adapter = new PassionPointAdapter();
+        adapter.setList(list);
+        mBinding.groupFk.setAdapter(adapter);
     }
 
     private void showBanner(List<String> list) {
@@ -200,8 +207,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mBinding.tvForeplay.setText("" + record.getScoreForePlay());
         mBinding.tvRim.setText("" + record.getScoreRim());
         mBinding.tvCshow.setText("" + record.getScoreCshow());
-
-        initFkDetails(record);
     }
 
     private void initRecordThree(RecordType3w record) {
@@ -214,76 +219,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mBinding.tvForeplay.setText("" + record.getScoreForePlay());
         mBinding.tvRim.setText("" + record.getScoreRim());
         mBinding.tvCshow.setText("" + record.getScoreCshow());
-
-        initFkDetails(record);
-    }
-
-    private void initFkDetails(RecordType1v1 record) {
-        List<String> keyList = new ArrayList<>();
-        List<String> contentList = new ArrayList<>();
-        if (record.getScoreFkType1() > 0) {
-            keyList.add("For Sit");
-            contentList.add(record.getScoreFkType1() + "");
-        }
-        if (record.getScoreFkType2() > 0) {
-            keyList.add("Back Sit");
-            contentList.add(record.getScoreFkType2() + " ");
-        }
-        if (record.getScoreFkType3() > 0) {
-            keyList.add("For Stand");
-            contentList.add(record.getScoreFkType3() + " ");
-        }
-        if (record.getScoreFkType4() > 0) {
-            keyList.add("Back Stand");
-            contentList.add(record.getScoreFkType4() + " ");
-        }
-        if (record.getScoreFkType5() > 0) {
-            keyList.add("Side");
-            contentList.add(record.getScoreFkType5() + " ");
-        }
-        if (record.getScoreFkType6() > 0) {
-            keyList.add("Special");
-            contentList.add(record.getScoreFkType6() + " ");
-        }
-        mBinding.groupFk.addPoints(keyList, contentList);
-    }
-
-    private void initFkDetails(RecordType3w record) {
-        List<String> keyList = new ArrayList<>();
-        List<String> contentList = new ArrayList<>();
-        if (record.getScoreFkType1() > 0) {
-            keyList.add("For Sit");
-            contentList.add(record.getScoreFkType1() + "");
-        }
-        if (record.getScoreFkType2() > 0) {
-            keyList.add("Back Sit");
-            contentList.add(record.getScoreFkType2() + " ");
-        }
-        if (record.getScoreFkType3() > 0) {
-            keyList.add("For");
-            contentList.add(record.getScoreFkType3() + " ");
-        }
-        if (record.getScoreFkType4() > 0) {
-            keyList.add("Back");
-            contentList.add(record.getScoreFkType4() + " ");
-        }
-        if (record.getScoreFkType5() > 0) {
-            keyList.add("Side");
-            contentList.add(record.getScoreFkType5() + " ");
-        }
-        if (record.getScoreFkType6() > 0) {
-            keyList.add("Double");
-            contentList.add(record.getScoreFkType6() + " ");
-        }
-        if (record.getScoreFkType7() > 0) {
-            keyList.add("Sequence");
-            contentList.add(record.getScoreFkType6() + " ");
-        }
-        if (record.getScoreFkType8() > 0) {
-            keyList.add("Special");
-            contentList.add(record.getScoreFkType6() + " ");
-        }
-        mBinding.groupFk.addPoints(keyList, contentList);
     }
 
     private void showSettingDialog() {

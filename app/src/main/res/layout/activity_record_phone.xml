@@ -339,7 +339,7 @@
                     android:text="Passion(98)"
                     android:textSize="26dp" />
 
-                <com.king.app.coolg.view.widget.PointDescLayout
+                <com.king.app.coolg.view.widget.PointListView
                     android:id="@+id/group_fk"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
