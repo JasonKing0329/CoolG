@@ -8,11 +8,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityHomeBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -183,6 +185,9 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     }
 
     private void goToRecord(Record record) {
+        Router.build("RecordPhone")
+                .with(RecordActivity.EXTRA_RECORD_ID, record.getId())
+                .go(this);
     }
 
     private void goToStarPage() {
@@ -197,6 +202,30 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mBinding != null && mBinding.banner != null) {
+            mBinding.banner.stopImageTimerTask();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mBinding != null && mBinding.banner != null) {
+            mBinding.banner.startImageTimerTask();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mBinding != null && mBinding.banner != null) {
+            mBinding.banner.clearImageTimerTask();
+        }
     }
 
 }

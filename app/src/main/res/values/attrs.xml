@@ -34,4 +34,11 @@
         <attr name="maxWidth" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="PointDescLayout">
+        <attr name="pointSize" format="dimension" />
+        <attr name="pointMargin" format="dimension" />
+        <attr name="descTextSize" format="dimension" />
+        <attr name="resizeWhenOver" format="boolean" />
+    </declare-styleable>
+
 </resources>

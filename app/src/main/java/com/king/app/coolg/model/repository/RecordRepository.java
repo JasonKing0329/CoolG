@@ -33,4 +33,8 @@ public class RecordRepository extends BaseRepository {
         return Observable.create(e -> e.onNext(getDaoSession().getRecordDao().loadAll()));
     }
 
+    public Observable<Record> getRecord(long recordId) {
+        return Observable.create(e -> e.onNext(getDaoSession().getRecordDao().load(recordId)));
+    }
+
 }

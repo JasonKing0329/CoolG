@@ -49,6 +49,8 @@
             android:theme="@style/AppTheme"/>
         <activity android:name=".phone.settings.ManageActivity"
             android:theme="@style/AppTheme"/>
+        <activity android:name=".phone.record.RecordActivity"
+            android:launchMode="singleTask"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

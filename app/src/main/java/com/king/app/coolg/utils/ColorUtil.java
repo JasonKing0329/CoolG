@@ -2,6 +2,8 @@ package com.king.app.coolg.utils;
 
 import android.graphics.Color;
 
+import java.util.Random;
+
 /**
  * @author JingYang
  * @version create time：2016-1-15 下午1:31:42
@@ -49,6 +51,31 @@ public class ColorUtil {
 //		double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
 //		return darkness >= 0.5;
 		return Color.red(color) * 0.299 + Color.green(color) * 0.578 + Color.blue(color) * 0.114 < 192;
+	}
+
+	/**
+	 * 随机暗色，作为背景色，配合白色文字
+	 * 利用hsv模型，s大于0.7, v大于0.5
+	 * H是色彩,S是深浅,V是明暗
+	 * 关于HSV模型可以参考http://blog.csdn.net/viewcode/article/details/8203728
+	 *
+	 * @return
+	 */
+	public static int randomWhiteTextBgColor() {
+		Random random = new Random();
+		float[] hsv = new float[3];
+		hsv[0] = random.nextFloat() * 360;
+		hsv[1] = random.nextFloat();
+		if (hsv[1] < 0.7f) {
+			hsv[1] = 0.7f + hsv[1] / 0.7f * 0.3f;
+		}
+		hsv[2] = random.nextFloat();
+		if (hsv[2] < 0.5f) {
+			hsv[2] += 0.5f;
+		}
+
+//        Log.d(TAG, "hsv[" + hsv[0] + "," + hsv[1] + "," + hsv[2] + "]");
+		return Color.HSVToColor(hsv);
 	}
 
 }
