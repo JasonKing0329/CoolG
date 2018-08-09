@@ -64,6 +64,9 @@ public class PointListView extends View {
 
     public void setAdapter(PointAdapter adapter) {
         this.adapter = adapter;
+        createPointRealSize();
+        requestLayout();
+        invalidate();
     }
 
     @Override
@@ -141,8 +144,8 @@ public class PointListView extends View {
         switch (specMode) {
             case MeasureSpec.AT_MOST:
                 DebugLog.e("---speMode = AT_MOST");
-                if (adapter != null) {
-                    defaultHeight = getPaddingTop() + getPaddingBottom() + mPointSize;
+                if (adapter != null && adapter.getItemCount() > 0) {
+                    defaultHeight = getPaddingTop() + getPaddingBottom() + mPointRealSize;
                 }
                 break;
             case MeasureSpec.EXACTLY:
@@ -152,8 +155,8 @@ public class PointListView extends View {
             case MeasureSpec.UNSPECIFIED:
 //                defaultHeight = Math.max(defaultHeight, specSize);
                 DebugLog.e("---speSize = UNSPECIFIED");
-                if (adapter != null) {
-                    defaultHeight = getPaddingTop() + getPaddingBottom() + mPointSize;
+                if (adapter != null && adapter.getItemCount() > 0) {
+                    defaultHeight = getPaddingTop() + getPaddingBottom() + mPointRealSize;
                 }
                 break;
         }
@@ -184,10 +187,10 @@ public class PointListView extends View {
 
     private void drawItem(Canvas canvas, int i) {
         RectF rectF = new RectF();
-        rectF.left = i * mPointRealSize + mPointMargin * i;
-        rectF.top = 0;
+        rectF.left = getPaddingLeft() + i * mPointRealSize + mPointMargin * i;
+        rectF.top = getPaddingTop();
         rectF.right = rectF.left + mPointRealSize;
-        rectF.bottom = mPointRealSize;
+        rectF.bottom = rectF.top + mPointRealSize;
         mPaint.setColor(adapter.getPointColor(i));
         canvas.drawOval(rectF, mPaint);
 
