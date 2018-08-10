@@ -10,6 +10,7 @@ public class DataConstants {
     public static final int VALUE_RECORD_TYPE_1V1 = 1;
     public static final int VALUE_RECORD_TYPE_3W = 2;
     public static final int VALUE_RECORD_TYPE_MULTI = 3;
+    public static final int VALUE_RECORD_TYPE_LONG = 4;
 
     public static final int VALUE_RELATION_TOP = 1;
     public static final int VALUE_RELATION_BOTTOM = 2;

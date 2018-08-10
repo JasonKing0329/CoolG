@@ -48,4 +48,8 @@ public class AppConstants {
             "All", "1", "0", "0.5"
     };
 
+    public static final String[] RECORD_LIST_TITLES = new String[]{
+            "All", "1V1", "3W", "Multi", "Long"
+    };
+
 }

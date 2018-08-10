@@ -149,11 +149,15 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
     private void showRecord(Record record) {
         // RecordOneVOne和RecordThree都是继承于RecordSingleScene
-        if (record.getType() == DataConstants.VALUE_RECORD_TYPE_1V1) {
-            initRecordOneVOne(record.getRecordType1v1());
-        }
-        else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_3W) {
-            initRecordThree(record.getRecordType3w());
+        switch (record.getType()) {
+            case DataConstants.VALUE_RECORD_TYPE_1V1:
+                initRecordOneVOne(record.getRecordType1v1());
+                break;
+            case DataConstants.VALUE_RECORD_TYPE_3W:
+            case DataConstants.VALUE_RECORD_TYPE_MULTI:
+            case DataConstants.VALUE_RECORD_TYPE_LONG:
+                initRecordThree(record.getRecordType3w());
+                break;
         }
 
         // Record公共部分

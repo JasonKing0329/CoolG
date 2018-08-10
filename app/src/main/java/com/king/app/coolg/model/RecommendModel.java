@@ -1,8 +1,8 @@
 package com.king.app.coolg.model;
 
 import com.king.app.coolg.conf.AppConstants;
-import com.king.app.coolg.model.bean.RecordFilterBean;
-import com.king.app.coolg.model.bean.RecordFilterModel;
+import com.king.app.coolg.model.bean.RecordRecommendFilterBean;
+import com.king.app.coolg.model.bean.RecordRecommendFilterModel;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.param.DataConstants;
@@ -21,7 +21,7 @@ public class RecommendModel {
      * @param filterModel
      * @return
      */
-    public boolean checkItem(Record record, RecordFilterModel filterModel) {
+    public boolean checkItem(Record record, RecordRecommendFilterModel filterModel) {
         boolean result = true;
         for (int i = 0; i < filterModel.getList().size(); i ++) {
             result = checkPassFilterItem(record, filterModel.getList().get(i));
@@ -39,7 +39,7 @@ public class RecommendModel {
      * @param filterBean
      * @return
      */
-    private boolean checkPassFilterItem(Record record, RecordFilterBean filterBean) {
+    private boolean checkPassFilterItem(Record record, RecordRecommendFilterBean filterBean) {
         int min = filterBean.getMin();
         int max = filterBean.getMax();
         // 只设置了min，没有设置max
@@ -79,6 +79,12 @@ public class RecommendModel {
             else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_3W) {
                 return record.getRecordType3w().getScoreStory();
             }
+            else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_MULTI) {
+                return record.getRecordType3w().getScoreStory();
+            }
+            else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_LONG) {
+                return record.getRecordType3w().getScoreStory();
+            }
         }
         else if (keyword.equals(AppConstants.FILTER_KEY_SCORE_DEPRECATED)) {
             return record.getDeprecated();
@@ -105,6 +111,9 @@ public class RecommendModel {
             else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_MULTI) {
                 return record.getRecordType3w().getScoreBjob();
             }
+            else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_LONG) {
+                return record.getRecordType3w().getScoreBjob();
+            }
         }
         else if (keyword.equals(AppConstants.FILTER_KEY_SCORE_RHYTHM)) {
             if (record.getType() == DataConstants.VALUE_RECORD_TYPE_1V1) {
@@ -114,6 +123,9 @@ public class RecommendModel {
                 return record.getRecordType3w().getScoreRhythm();
             }
             else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_MULTI) {
+                return record.getRecordType3w().getScoreRhythm();
+            }
+            else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_LONG) {
                 return record.getRecordType3w().getScoreRhythm();
             }
         }
@@ -127,6 +139,9 @@ public class RecommendModel {
             else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_MULTI) {
                 return record.getRecordType3w().getScoreRim();
             }
+            else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_LONG) {
+                return record.getRecordType3w().getScoreRim();
+            }
         }
         else if (keyword.equals(AppConstants.FILTER_KEY_SCORE_SCECE)) {
             if (record.getType() == DataConstants.VALUE_RECORD_TYPE_1V1) {
@@ -138,6 +153,9 @@ public class RecommendModel {
             else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_MULTI) {
                 return record.getRecordType3w().getScoreScene();
             }
+            else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_LONG) {
+                return record.getRecordType3w().getScoreScene();
+            }
         }
         else if (keyword.equals(AppConstants.FILTER_KEY_SCORE_CSHOW)) {
             if (record.getType() == DataConstants.VALUE_RECORD_TYPE_1V1) {
@@ -147,6 +165,9 @@ public class RecommendModel {
                 return record.getRecordType3w().getScoreCshow();
             }
             else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_MULTI) {
+                return record.getRecordType3w().getScoreCshow();
+            }
+            else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_LONG) {
                 return record.getRecordType3w().getScoreCshow();
             }
         }
@@ -161,6 +182,9 @@ public class RecommendModel {
                 return record.getRecordType3w().getScoreForePlay();
             }
             else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_MULTI) {
+                return record.getRecordType3w().getScoreForePlay();
+            }
+            else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_LONG) {
                 return record.getRecordType3w().getScoreForePlay();
             }
         }
