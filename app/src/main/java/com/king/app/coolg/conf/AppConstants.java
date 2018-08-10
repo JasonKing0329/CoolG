@@ -43,4 +43,9 @@ public class AppConstants {
     public static final String FILTER_KEY_SCORE_SPECIAL = "special";
     public static final String FILTER_KEY_SCORE_FOREPLAY = "foreplay";
     public static final String FILTER_KEY_SCORE_DEPRECATED = "deprecated";
+
+    public static final String[] STAR_LIST_TITLES = new String[]{
+            "All", "1", "0", "0.5"
+    };
+
 }

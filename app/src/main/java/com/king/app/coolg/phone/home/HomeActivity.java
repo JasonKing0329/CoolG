@@ -191,6 +191,8 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     }
 
     private void goToStarPage() {
+        Router.build("StarListPhone")
+                .go(this);
     }
 
     private void goToRecordPage() {

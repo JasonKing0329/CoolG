@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:id="@+id/group_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.github.siyamed.shapeimageview.CircularImageView
+            android:id="@+id/iv_head"
+            android:layout_width="@dimen/starlist_pad_circle_size"
+            android:layout_height="@dimen/starlist_pad_circle_size"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="15dp"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_below="@id/iv_head"
+            android:textSize="15dp"
+            android:textColor="@color/gdb_record_text_normal_light_dim"
+            android:layout_marginTop="10dp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/tv_rating"
+            style="@style/TvStarRating"
+            android:layout_centerVertical="true"
+            android:layout_alignBottom="@id/iv_head"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_above="@id/tv_name" />
+    </RelativeLayout>
+</layout>

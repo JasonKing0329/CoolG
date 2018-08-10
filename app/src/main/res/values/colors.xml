@@ -11,6 +11,7 @@
     <color name="drag_bg">#a0a0a0</color>
     <color name="grayef">#efefef</color>
     <color name="actionbar_bg">#ffffff</color>
+    <color name="actionbar_element">@color/text_main</color>
     <color name="status_bar_bg">#ffffff</color>
     <color name="action_icon_color">#656566</color>
     <color name="action_title_color">#333333</color>

@@ -15,8 +15,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:title="Record"
             app:showIconBack="true"
-            app:titleColor="@color/text_main"
-            app:iconColor="@color/text_main"/>
+            app:titleColor="@color/actionbar_element"
+            app:iconColor="@color/actionbar_element"/>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"

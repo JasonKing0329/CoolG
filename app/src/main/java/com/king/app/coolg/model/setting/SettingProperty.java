@@ -121,11 +121,47 @@ public class SettingProperty {
     }
 
     public static int getRecommendAnimTime() {
-        return getInt(PreferenceKey.PREF_GDB_REC_ANIM_TIME);
+        int time = getInt(PreferenceKey.PREF_GDB_REC_ANIM_TIME);
+        if (time < 3000) {
+            return 3000;
+        }
+        else {
+            return time;
+        }
     }
 
     public static void setRecommendAnimTime(int random) {
         setInt(PreferenceKey.PREF_GDB_REC_ANIM_TIME, random);
+    }
+
+    public static boolean isStarRandomRecommend() {
+        return getBoolean(PreferenceKey.PREF_GDB_STAR_NAV_ANIM_RANDOM);
+    }
+
+    public static void setStarRandomRecommend(boolean random) {
+        setBoolean(PreferenceKey.PREF_GDB_STAR_NAV_ANIM_RANDOM, random);
+    }
+
+    public static int getStarRecommendAnimType() {
+        return getInt(PreferenceKey.PREF_GDB_STAR_NAV_ANIM_TYPE);
+    }
+
+    public static void setStarRecommendAnimType(int random) {
+        setInt(PreferenceKey.PREF_GDB_STAR_NAV_ANIM_TYPE, random);
+    }
+
+    public static int getStarRecommendAnimTime() {
+        int time = getInt(PreferenceKey.PREF_GDB_STAR_NAV_ANIM_TIME);
+        if (time < 3000) {
+            return 3000;
+        }
+        else {
+            return time;
+        }
+    }
+
+    public static void setStarRecommendAnimTime(int random) {
+        setInt(PreferenceKey.PREF_GDB_STAR_NAV_ANIM_TIME, random);
     }
 
     public static String getRecordFilterModel() {
@@ -134,6 +170,14 @@ public class SettingProperty {
 
     public static void setRecordFilterModel(String random) {
         setString(PreferenceKey.PREF_GDB_FILTER_MODEL, random);
+    }
+
+    public static int getStarListViewMode() {
+        return getInt(PreferenceKey.PREF_STAR_LIST_VIEW_MODE);
+    }
+
+    public static void setStarListViewMode(int random) {
+        setInt(PreferenceKey.PREF_STAR_LIST_VIEW_MODE, random);
     }
 
 }
