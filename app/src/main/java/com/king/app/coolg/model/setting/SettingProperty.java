@@ -180,4 +180,20 @@ public class SettingProperty {
         setInt(PreferenceKey.PREF_STAR_LIST_VIEW_MODE, random);
     }
 
+    public static int getRecordOrderMode() {
+        return getInt(PreferenceKey.PREF_GDB_RECORD_ORDER);
+    }
+
+    public static void setRecordOrderMode(int random) {
+        setInt(PreferenceKey.PREF_GDB_RECORD_ORDER, random);
+    }
+
+    public static boolean isRecordOrderModeDesc() {
+        return getBoolean(PreferenceKey.PREF_GDB_RECORD_ORDER_DESC);
+    }
+
+    public static void setRecordOrderModeDesc(boolean random) {
+        setBoolean(PreferenceKey.PREF_GDB_RECORD_ORDER_DESC, random);
+    }
+
 }

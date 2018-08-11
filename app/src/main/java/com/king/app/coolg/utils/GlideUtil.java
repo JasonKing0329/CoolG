@@ -41,6 +41,18 @@ public class GlideUtil {
      * record item
      * @return
      */
+    public static RequestOptions getRecordSmallOptions() {
+        RequestOptions options = new RequestOptions();
+        options.error(R.drawable.def_small);
+        options.placeholder(R.drawable.def_small);
+        options.dontAnimate();
+        return options;
+    }
+
+    /**
+     * record item
+     * @return
+     */
     public static RequestOptions getRecordAnimOptions() {
         RequestOptions options = new RequestOptions();
         options.error(R.drawable.def_large);

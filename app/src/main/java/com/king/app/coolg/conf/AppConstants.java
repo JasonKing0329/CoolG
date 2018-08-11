@@ -48,6 +48,9 @@ public class AppConstants {
             "All", "1", "0", "0.5"
     };
 
+    /**
+     * 与VALUE_RECORD_TYPE_XX严格对应
+     */
     public static final String[] RECORD_LIST_TITLES = new String[]{
             "All", "1V1", "3W", "Multi", "Long"
     };

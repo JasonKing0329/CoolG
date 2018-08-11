@@ -167,7 +167,7 @@ public class PointListView extends View {
     private void createPointRealSize() {
         mPointRealSize = mPointSize;
         // 超出边界重新计算point大小
-        if (mResizeWhenOver && adapter != null) {
+        if (mResizeWhenOver && adapter != null && adapter.getItemCount() > 0) {
             int extraWidth = getPaddingLeft() + getPaddingRight() + mPointMargin * (adapter.getItemCount() - 1);
             if (mPointSize * adapter.getItemCount() + extraWidth > getWidth()) {
                 mPointRealSize = (getWidth() - extraWidth) / adapter.getItemCount();

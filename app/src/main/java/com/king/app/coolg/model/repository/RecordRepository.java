@@ -2,9 +2,8 @@ package com.king.app.coolg.model.repository;
 
 import android.text.TextUtils;
 
-import com.king.app.coolg.model.bean.RecordListFilterBean;
+import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.setting.PreferenceValue;
-import com.king.app.gdb.data.RecordCursor;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordDao;
 
@@ -41,35 +40,47 @@ public class RecordRepository extends BaseRepository {
         return Observable.create(e -> e.onNext(getDaoSession().getRecordDao().load(recordId)));
     }
 
-    public Observable<List<Record>> getRecords(int sortMode, boolean desc, RecordCursor cursor, String like, String scene, RecordListFilterBean filter, int mRecordType) {
+    public Observable<Long> getRecordCount(RecordComplexFilter filter) {
         return Observable.create(e -> {
-            RecordDao dao = getDaoSession().getRecordDao();
-            QueryBuilder<Record> builder = dao.queryBuilder();
-            if (!TextUtils.isEmpty(like)) {
-                builder.where(RecordDao.Properties.Name.like("%" + like + "%"));
-            }
-            if (!TextUtils.isEmpty(scene)) {
-                builder.where(RecordDao.Properties.Scene.eq(scene));
-            }
-            if (filter != null) {
-                if (filter.isNotDeprecated()) {
-                    builder.where(RecordDao.Properties.Deprecated.eq(0));
-                }
-                if (filter.isBareback()) {
-                    builder.where(RecordDao.Properties.ScoreBareback.gt(0));
-                }
-                if (filter.isInnerCum()) {
-                    builder.where(RecordDao.Properties.SpecialDesc.like("%inner cum%"));
-                }
-            }
-            if (mRecordType != 0) {
-                builder.where(RecordDao.Properties.Type.eq(mRecordType));
-            }
-            sortByColumn(builder, sortMode, desc);
-            builder.offset(cursor.offset);
-            builder.limit(cursor.number);
+            QueryBuilder<Record> builder = getComplexFilterBuilder(filter);
+            e.onNext(builder.buildCount().count());
+        });
+    }
+
+    public Observable<List<Record>> getRecords(RecordComplexFilter filter) {
+        return Observable.create(e -> {
+            QueryBuilder<Record> builder = getComplexFilterBuilder(filter);
+            builder.offset(filter.getCursor().offset);
+            builder.limit(filter.getCursor().number);
             e.onNext(builder.build().list());
         });
+    }
+
+    private QueryBuilder<Record> getComplexFilterBuilder(RecordComplexFilter filter) {
+        RecordDao dao = getDaoSession().getRecordDao();
+        QueryBuilder<Record> builder = dao.queryBuilder();
+        if (!TextUtils.isEmpty(filter.getNameLike())) {
+            builder.where(RecordDao.Properties.Name.like("%" + filter.getNameLike() + "%"));
+        }
+        if (!TextUtils.isEmpty(filter.getScene())) {
+            builder.where(RecordDao.Properties.Scene.eq(filter.getScene()));
+        }
+        if (filter.getFilter() != null) {
+            if (filter.getFilter().isNotDeprecated()) {
+                builder.where(RecordDao.Properties.Deprecated.eq(0));
+            }
+            if (filter.getFilter().isBareback()) {
+                builder.where(RecordDao.Properties.ScoreBareback.gt(0));
+            }
+            if (filter.getFilter().isInnerCum()) {
+                builder.where(RecordDao.Properties.SpecialDesc.like("%inner cum%"));
+            }
+        }
+        if (filter.getRecordType() != 0) {
+            builder.where(RecordDao.Properties.Type.eq(filter.getRecordType()));
+        }
+        sortByColumn(builder, filter.getSortType(), filter.getDesc());
+        return builder;
     }
 
     private void sortByColumn(QueryBuilder<Record> builder, int sortValue, boolean desc) {
@@ -100,4 +111,12 @@ public class RecordRepository extends BaseRepository {
         }
     }
 
+    public long getRecordCount(int type) {
+        if (type == 0) {
+            return getDaoSession().getRecordDao().count();
+        }
+        return getDaoSession().getRecordDao().queryBuilder()
+                .where(RecordDao.Properties.Type.eq(type))
+                .buildCount().count();
+    }
 }

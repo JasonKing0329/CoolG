@@ -1,8 +1,8 @@
 package com.king.app.coolg.model;
 
 import com.king.app.coolg.conf.AppConstants;
-import com.king.app.coolg.model.bean.RecordRecommendFilterBean;
-import com.king.app.coolg.model.bean.RecordRecommendFilterModel;
+import com.king.app.coolg.model.bean.RecordFilterBean;
+import com.king.app.coolg.model.bean.RecordFilterModel;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.param.DataConstants;
@@ -21,7 +21,7 @@ public class RecommendModel {
      * @param filterModel
      * @return
      */
-    public boolean checkItem(Record record, RecordRecommendFilterModel filterModel) {
+    public boolean checkItem(Record record, RecordFilterModel filterModel) {
         boolean result = true;
         for (int i = 0; i < filterModel.getList().size(); i ++) {
             result = checkPassFilterItem(record, filterModel.getList().get(i));
@@ -39,7 +39,7 @@ public class RecommendModel {
      * @param filterBean
      * @return
      */
-    private boolean checkPassFilterItem(Record record, RecordRecommendFilterBean filterBean) {
+    private boolean checkPassFilterItem(Record record, RecordFilterBean filterBean) {
         int min = filterBean.getMin();
         int max = filterBean.getMax();
         // 只设置了min，没有设置max

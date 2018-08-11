@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_sort"
+        android:title="Sort"
+        android:icon="@drawable/ic_sort_purple_3f3a71_36dp"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_filter"
+        android:title="Filter"
+        android:icon="@drawable/ic_filter_list_3f51b5"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_scene"
+        android:title="Scene"
+        android:icon="@drawable/ic_visibility_purple_36dp"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_play"
+        android:title="Play list"
+        android:icon="@drawable/ic_play_circle_outline_3f51b5_36dp"
+        app:showAsAction="never"/>
+</menu>
