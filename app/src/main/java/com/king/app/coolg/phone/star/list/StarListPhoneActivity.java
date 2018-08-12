@@ -20,7 +20,6 @@ import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityStarListPhoneBinding;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.setting.SettingProperty;
-import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -103,22 +102,22 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
 
             @Override
             public int getAnimType() {
-                return SettingProperty.getRecommendAnimType();
+                return SettingProperty.getStarRecommendAnimType();
             }
 
             @Override
             public void onSaveAnimType(int type) {
-                SettingProperty.setRecommendAnimType(type);
+                SettingProperty.setStarRecommendAnimType(type);
             }
 
             @Override
             public int getAnimTime() {
-                return SettingProperty.getRecommendAnimTime();
+                return SettingProperty.getStarRecommendAnimTime();
             }
 
             @Override
             public void onSaveAnimTime(int time) {
-                SettingProperty.setRecommendAnimTime(time);
+                SettingProperty.setStarRecommendAnimTime(time);
             }
 
             @Override
@@ -218,7 +217,7 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
         else {
             LMBannerViewUtil.setScrollAnim(mBinding.lmbanner, SettingProperty.getStarRecommendAnimType());
         }
-    }
+}
 
     private void initRecommend() {
 

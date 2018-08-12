@@ -28,6 +28,10 @@ public class PreferenceKey {
     public static final String PREF_GDB_RECORD_ORDER = "pref_gdb_record_order";
     // gdb record list排序方式
     public static final String PREF_GDB_RECORD_ORDER_DESC = "pref_gdb_record_order_desc";
+    // gdb record list排序方式
+    public static final String PREF_GDB_STAR_ORDER = "pref_gdb_star_order";
+    // gdb record list排序方式
+    public static final String PREF_GDB_STAR_ORDER_DESC = "pref_gdb_star_order_desc";
     // gdb star record排序方式
     public static final String PREF_GDB_STAR_RECORD_ORDER = "pref_gdb_star_record_order";
     // gdb filter model(json string)

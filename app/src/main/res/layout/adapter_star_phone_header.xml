@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.allure.lbanners.LMBanners
+            android:id="@+id/banner"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/gdb_star_header_height"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:isGuide="false"
+            app:auto_play="true"
+            app:canLoop="true"
+            app:durtion="5000"
+            app:horizontal_transitionEffect="accordion"
+            app:indicatorBottomPadding="10"
+            app:indicator_position="bottom_mid"
+            app:isVertical="false"
+            app:scroll_duration="1000"/>
+
+        <ImageView
+            android:id="@+id/iv_record"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/gdb_star_header_height"
+            android:scaleType="centerCrop"
+            android:src="@drawable/def_large"
+            android:transitionName="@string/anim_record_page_img"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout style="@style/GroupWhiteSecBg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/banner">
+
+            <TextView
+                android:id="@+id/tv_videos"
+                style="@style/GroupStarSecItem"
+                android:text="31个视频文件"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/vertical_divider"
+                android:background="@color/divider" />
+            <RelativeLayout
+                android:id="@+id/group_rating"
+                style="@style/GroupStarSecItem"
+                android:background="?android:attr/selectableItemBackground">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Rating"/>
+                <ImageView
+                    android:id="@+id/iv_rating_arrow"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_keyboard_arrow_down_grey_700_24dp"/>
+                <TextView
+                    android:id="@+id/tv_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/iv_rating_arrow"
+                    android:layout_centerVertical="true"
+                    android:text="A+(4.66)"/>
+            </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/group_rating_sub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="vertical">
+                <LinearLayout style="@style/GroupStarSecSubItem">
+                    <TextView
+                        android:text="Face"
+                        style="@style/TvPlayerStarValueStarPage" />
+                    <com.king.app.coolg.view.widget.StarRatingView
+                        android:id="@+id/star_face"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:starNumber="5"
+                        app:checkNumber="0"
+                        app:starSize="@dimen/rating_star_size"
+                        app:starSpace="@dimen/rating_star_space"
+                        app:starColor="@color/colorAccent"
+                        app:supportHalf="true"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_face"
+                        android:text="NR"
+                        style="@style/TvPlayerValueStarPage" />
+                </LinearLayout>
+                <LinearLayout style="@style/GroupStarSecSubItem">
+                    <TextView
+                        android:text="Body"
+                        style="@style/TvPlayerStarValueStarPage" />
+                    <com.king.app.coolg.view.widget.StarRatingView
+                        android:id="@+id/star_body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:starNumber="5"
+                        app:starSize="@dimen/rating_star_size"
+                        app:starSpace="@dimen/rating_star_space"
+                        app:checkNumber="0"
+                        app:starColor="@color/colorAccent"
+                        app:supportHalf="true"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_body"
+                        android:text="NR"
+                        style="@style/TvPlayerValueStarPage" />
+                </LinearLayout>
+                <LinearLayout style="@style/GroupStarSecSubItem">
+                    <TextView
+                        android:text="Dk"
+                        style="@style/TvPlayerStarValueStarPage" />
+                    <com.king.app.coolg.view.widget.StarRatingView
+                        android:id="@+id/star_dk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:starNumber="5"
+                        app:starSize="@dimen/rating_star_size"
+                        app:starSpace="@dimen/rating_star_space"
+                        app:checkNumber="0"
+                        app:starColor="@color/colorAccent"
+                        app:supportHalf="true"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_dk"
+                        android:text="NR"
+                        style="@style/TvPlayerValueStarPage" />
+                </LinearLayout>
+                <LinearLayout style="@style/GroupStarSecSubItem">
+                    <TextView
+                        android:text="Sexy"
+                        style="@style/TvPlayerStarValueStarPage" />
+                    <com.king.app.coolg.view.widget.StarRatingView
+                        android:id="@+id/star_sex"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:starNumber="5"
+                        app:starSize="@dimen/rating_star_size"
+                        app:starSpace="@dimen/rating_star_space"
+                        app:checkNumber="0"
+                        app:starColor="@color/colorAccent"
+                        app:supportHalf="true"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_sex"
+                        android:text="NR"
+                        style="@style/TvPlayerValueStarPage" />
+                </LinearLayout>
+                <LinearLayout style="@style/GroupStarSecSubItem">
+                    <TextView
+                        android:text="Passion"
+                        style="@style/TvPlayerStarValueStarPage" />
+                    <com.king.app.coolg.view.widget.StarRatingView
+                        android:id="@+id/star_passion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:starNumber="5"
+                        app:starSize="@dimen/rating_star_size"
+                        app:starSpace="@dimen/rating_star_space"
+                        app:checkNumber="0"
+                        app:starColor="@color/colorAccent"
+                        app:supportHalf="true"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_passion"
+                        android:text="NR"
+                        style="@style/TvPlayerValueStarPage" />
+                </LinearLayout>
+                <LinearLayout style="@style/GroupStarSecSubItem">
+                    <TextView
+                        android:text="Video"
+                        style="@style/TvPlayerStarValueStarPage" />
+                    <com.king.app.coolg.view.widget.StarRatingView
+                        android:id="@+id/star_video"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:starNumber="5"
+                        app:starSize="@dimen/rating_star_size"
+                        app:starSpace="@dimen/rating_star_space"
+                        app:checkNumber="0"
+                        app:starColor="@color/colorAccent"
+                        app:supportHalf="true"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_video"
+                        android:text="NR"
+                        style="@style/TvPlayerValueStarPage" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

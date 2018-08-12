@@ -90,6 +90,9 @@ public class StarRatingDialog extends BindingDialogFragment<FragmentDialogStarRa
     }
 
     public void showRatings(StarRating rating) {
+
+        mBinding.tvRating.setText(mModel.getComplex());
+
         mBinding.starFace.setCheckNumber(rating.getFace());
         mBinding.tvFace.setText(StarRatingUtil.getRatingValue(rating.getFace()));
         mBinding.starBody.setCheckNumber(rating.getBody());
@@ -142,7 +145,7 @@ public class StarRatingDialog extends BindingDialogFragment<FragmentDialogStarRa
                 mBinding.tvSex.setText(rateValue);
                 break;
         }
-        mModel.updateComplex();
+        mBinding.tvRating.setText(mModel.getComplex());
     }
 
 }

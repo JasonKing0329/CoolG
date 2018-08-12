@@ -18,9 +18,9 @@
     <application
         android:name=".base.CoolApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_icon"
         android:supportsRtl="true"
         android:theme="@style/CustomActionBarTheme">
         <meta-data
@@ -55,6 +55,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".phone.record.list.RecordPhoneListActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".phone.star.StarActivity"
+            android:launchMode="singleTask"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

@@ -9,11 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.chenenyu.router.Router;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.FragmentStarRichBinding;
+import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.star.StarRatingDialog;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ScreenUtils;
@@ -223,6 +225,9 @@ public class StarListFragment extends MvvmFragment<FragmentStarRichBinding, Star
         if (holder != null && holder.dispatchClickStar(star.getStar())) {
             return;
         }
+        Router.build("StarPhone")
+                .with(StarActivity.EXTRA_STAR_ID, star.getStar().getId())
+                .go(this);
     }
 
     public void onStarLongClick(StarProxy star) {

@@ -2,11 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <data>
-        <variable
-            name="model"
-            type="com.king.app.coolg.phone.star.StarRatingViewModel"/>
-    </data>
     <android.support.v7.widget.CardView
         android:layout_width="@dimen/dlg_rating_width"
         android:layout_height="wrap_content"
@@ -57,7 +52,6 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
-                    android:text="@{model.complexRatingText}"
                     android:textStyle="bold"
                     android:textSize="@dimen/rating_name"/>
             </RelativeLayout>

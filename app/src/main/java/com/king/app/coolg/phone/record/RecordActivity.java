@@ -13,6 +13,7 @@ import com.allure.lbanners.LMBanners;
 import com.allure.lbanners.adapter.LBaseAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
@@ -20,6 +21,7 @@ import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityRecordPhoneBinding;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -30,7 +32,6 @@ import com.king.app.gdb.data.entity.RecordType1v1;
 import com.king.app.gdb.data.entity.RecordType3w;
 import com.king.app.gdb.data.param.DataConstants;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -145,6 +146,9 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     }
 
     private void goToStarPage(RecordStar data) {
+        Router.build("StarPhone")
+                .with(StarActivity.EXTRA_STAR_ID, data.getStarId())
+                .go(this);
     }
 
     private void showRecord(Record record) {
@@ -300,7 +304,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             View view = LayoutInflater.from(context).inflate(R.layout.adapter_banner_image, null);
             ImageView imageView = view.findViewById(R.id.iv_image);
 
-            Glide.with(RecordActivity.this)
+            Glide.with(context)
                     .load(path)
                     .apply(recordOptions)
                     .into(imageView);

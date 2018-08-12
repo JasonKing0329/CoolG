@@ -3,9 +3,7 @@ package com.king.app.coolg.phone.star;
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.res.Resources;
-import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
-import android.support.v4.graphics.ColorUtils;
 import android.support.v7.graphics.Palette;
 
 import com.king.app.coolg.R;
@@ -38,8 +36,6 @@ public class StarRatingViewModel extends BaseViewModel {
 
     private StarRepository repository;
 
-    public ObservableField<String> complexRatingText = new ObservableField<>();
-
     public MutableLiveData<Star> starObserver = new MutableLiveData<>();
     public MutableLiveData<StarRating> ratingObserver = new MutableLiveData<>();
 
@@ -65,7 +61,6 @@ public class StarRatingViewModel extends BaseViewModel {
                         if (star.getRatings().size() > 0) {
                             mRating = star.getRatings().get(0);
                             ratingObserver.setValue(mRating);
-                            updateComplex();
                         }
                         else {
                             mRating = new StarRating();
@@ -84,9 +79,9 @@ public class StarRatingViewModel extends BaseViewModel {
                 });
     }
 
-    public void updateComplex() {
+    public String getComplex() {
         float complex = calculateComplex(mRating);
-        complexRatingText.set(StarRatingUtil.getRatingValue(complex) + "(" + FormatUtil.formatScore(complex, 2) + ")");
+        return StarRatingUtil.getRatingValue(complex) + "(" + FormatUtil.formatScore(complex, 2) + ")";
     }
 
     public String getStarImage() {

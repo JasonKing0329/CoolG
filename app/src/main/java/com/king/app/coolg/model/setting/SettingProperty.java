@@ -196,4 +196,19 @@ public class SettingProperty {
         setBoolean(PreferenceKey.PREF_GDB_RECORD_ORDER_DESC, random);
     }
 
+    public static int getStarOrderMode() {
+        return getInt(PreferenceKey.PREF_GDB_STAR_ORDER);
+    }
+
+    public static void setStarOrderMode(int random) {
+        setInt(PreferenceKey.PREF_GDB_STAR_ORDER, random);
+    }
+
+    public static boolean isStarOrderModeDesc() {
+        return getBoolean(PreferenceKey.PREF_GDB_STAR_ORDER_DESC);
+    }
+
+    public static void setStarOrderModeDesc(boolean random) {
+        setBoolean(PreferenceKey.PREF_GDB_STAR_ORDER_DESC, random);
+    }
 }
