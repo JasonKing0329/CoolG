@@ -13,6 +13,7 @@ import com.allure.lbanners.LMBanners;
 import com.allure.lbanners.adapter.LBaseAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
@@ -20,6 +21,7 @@ import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityStarListPhoneBinding;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -407,7 +409,9 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
     }
     
     private void onClickBannerItem(Star bean) {
-//        ActivityManager.startStarActivity(this, bean.getId());
+        Router.build("StarPhone")
+                .with(StarActivity.EXTRA_STAR_ID, bean.getId())
+                .go(this);
     }
 
 }

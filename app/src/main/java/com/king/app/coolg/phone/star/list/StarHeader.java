@@ -3,7 +3,10 @@ package com.king.app.coolg.phone.star.list;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,9 +19,11 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.databinding.AdapterStarPhoneHeaderBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.star.StarRatingViewModel;
+import com.king.app.coolg.phone.star.StarRelationship;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.utils.ListUtil;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.utils.StarRatingUtil;
 import com.king.app.coolg.view.widget.StarRatingView;
 import com.king.app.gdb.data.entity.Star;
@@ -39,33 +44,88 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
 
     private AdapterStarPhoneHeaderBinding mBinding;
 
+    private StarRelationshipAdapter relationshipAdapter;
+
+    private OnHeadActionListener onHeadActionListener;
+
     public StarHeader() {
         starOptions = GlideUtil.getStarWideOptions();
     }
 
-    public void bind(AdapterStarPhoneHeaderBinding binding, Star star, List<String> starImageList, int recordNumber) {
+    public void setOnHeadActionListener(OnHeadActionListener onHeadActionListener) {
+        this.onHeadActionListener = onHeadActionListener;
+    }
+
+    public void bind(AdapterStarPhoneHeaderBinding binding, Star star, List<String> starImageList, int recordNumber, List<StarRelationship> relationships) {
 
         mBinding = binding;
         mModel = ViewModelProviders.of((FragmentActivity) binding.banner.getContext()).get(StarRatingViewModel.class);
 
-        binding.tvVideos.setText(recordNumber + "个视频文件");
+        StringBuffer buffer = new StringBuffer(recordNumber + "个视频文件");
+        if (star.getBetop() > 0) {
+            buffer.append("  ").append(star.getBetop()).append(" Top");
+        }
+        if (star.getBebottom() > 0) {
+            buffer.append("  ").append(star.getBebottom()).append(" Bottom");
+        }
+        binding.tvVideos.setText(buffer.toString());
 
         if (ListUtil.isEmpty(starImageList) || starImageList.size() == 1) {
             binding.banner.setVisibility(View.INVISIBLE);
-            binding.ivRecord.setVisibility(View.VISIBLE);
+            binding.ivStar.setVisibility(View.VISIBLE);
             if (starImageList.size() == 1) {
-                Glide.with(binding.ivRecord.getContext())
+                Glide.with(binding.ivStar.getContext())
                         .load(starImageList.get(0))
                         .apply(starOptions)
-                        .into(binding.ivRecord);
+                        .into(binding.ivStar);
             }
         }
         else {
-            binding.ivRecord.setVisibility(View.INVISIBLE);
+            binding.ivStar.setVisibility(View.INVISIBLE);
             binding.banner.setVisibility(View.VISIBLE);
             showBanner(binding.banner, starImageList);
         }
-        
+
+        binding.tvRelation.setText(relationships.size() + "人");
+        binding.rvRelation.setLayoutManager(new LinearLayoutManager(binding.rvRelation.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        if (relationshipAdapter == null) {
+            binding.rvRelation.addItemDecoration(new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    int position = parent.getChildAdapterPosition(view);
+                    if (position > 0) {
+                        outRect.left = ScreenUtils.dp2px(10);
+                    }
+                }
+            });
+            relationshipAdapter = new StarRelationshipAdapter();
+            relationshipAdapter.setList(relationships);
+            relationshipAdapter.setOnItemClickListener((view, position, data) -> {
+                if (onHeadActionListener != null) {
+                    onHeadActionListener.onClickRelationStar(data);
+                }
+            });
+            binding.rvRelation.setAdapter(relationshipAdapter);
+        }
+        else {
+            relationshipAdapter.setList(relationships);
+            relationshipAdapter.notifyDataSetChanged();
+        }
+        binding.groupRelation.setOnClickListener(view -> {
+            // collapse
+            if (binding.ivRelationArrow.isSelected()) {
+                binding.ivRelationArrow.setSelected(false);
+                binding.ivRelationArrow.setImageResource(R.drawable.ic_keyboard_arrow_down_grey_700_24dp);
+                binding.rvRelation.setVisibility(View.GONE);
+            }
+            // expand
+            else {
+                binding.ivRelationArrow.setSelected(true);
+                binding.ivRelationArrow.setImageResource(R.drawable.ic_keyboard_arrow_up_grey_700_24dp);
+                binding.rvRelation.setVisibility(View.VISIBLE);
+            }
+        });
+
         binding.groupRating.setOnClickListener(view -> {
             // collapse
             if (binding.ivRatingArrow.isSelected()) {
@@ -88,6 +148,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         binding.starVideo.setOnStarChangeListener(this);
         binding.starSex.setOnStarChangeListener(this);
 
+        binding.tvRating.setText("");
         mModel.ratingObserver.observe((LifecycleOwner) binding.banner.getContext(), rating -> showRatings(binding, rating));
         mModel.loadStarRating(star.getId());
     }
@@ -181,6 +242,10 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
                     .into(imageView);
             return view;
         }
+    }
+
+    public interface OnHeadActionListener {
+        void onClickRelationStar(StarRelationship relationship);
     }
 
 }

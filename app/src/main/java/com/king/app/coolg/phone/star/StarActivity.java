@@ -1,6 +1,7 @@
 package com.king.app.coolg.phone.star;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -79,13 +80,28 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        mModel.loadStar(getIntent().getLongExtra(EXTRA_STAR_ID, -1));
+    }
+
+    @Override
     protected void initData() {
         mModel.starObserver.observe(this, star -> showStar(star));
         mModel.recordsObserver.observe(this, list -> showRecords(list));
         mModel.onlyRecordsObserver.observe(this, list -> {
             if (adapter != null) {
-                adapter.setList(list);
-                adapter.notifyItemRangeChanged(1, adapter.getItemCount() - 1);
+                int oldCount = adapter.getItemCount() - 2;
+                // size发生变化（变少）用notifyItemRangeChanged会抛出error导致崩溃，必须全部刷新
+                if (oldCount != list.size()) {
+                    adapter.setList(list);
+                    adapter.notifyDataSetChanged();
+                }
+                // size无变化才能用notifyItemRangeChanged
+                else {
+                    adapter.setList(list);
+                    adapter.notifyItemRangeChanged(1, adapter.getItemCount() - 2);
+                }
             }
         });
 
@@ -101,14 +117,17 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
             adapter = new StarAdapter();
             adapter.setStar(mModel.getStar());
             adapter.setStarImageList(mModel.getStarImageList());
+            adapter.setRelationships(mModel.getRelationList());
             adapter.setList(list);
             adapter.setSortMode(SettingProperty.getStarOrderMode());
             adapter.setOnListListener((view, record) -> goToRecordPage(record.getRecord().getId()));
+            adapter.setOnHeadActionListener(relationship -> goToStarPage(relationship.getStar().getId()));
             mBinding.rvList.setAdapter(adapter);
         }
         else {
             adapter.setStar(mModel.getStar());
             adapter.setStarImageList(mModel.getStarImageList());
+            adapter.setRelationships(mModel.getRelationList());
             adapter.setList(list);
             adapter.notifyDataSetChanged();
         }
@@ -196,4 +215,11 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
                 .with(RecordActivity.EXTRA_RECORD_ID, recordId)
                 .go(this);
     }
+
+    private void goToStarPage(long starId) {
+        Router.build("StarPhone")
+                .with(StarActivity.EXTRA_STAR_ID, starId)
+                .go(this);
+    }
+
 }

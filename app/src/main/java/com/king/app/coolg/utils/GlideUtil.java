@@ -77,8 +77,8 @@ public class GlideUtil {
      */
     public static RequestOptions getStarWideOptions() {
         RequestOptions options = new RequestOptions();
-        options.error(R.drawable.ic_def_person_wide);
-        options.placeholder(R.drawable.ic_def_person_wide);
+        options.error(R.drawable.def_person);
+        options.placeholder(R.drawable.def_person);
         options.dontAnimate();
         return options;
     }

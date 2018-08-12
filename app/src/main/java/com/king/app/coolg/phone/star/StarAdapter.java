@@ -27,7 +27,7 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
     private RequestOptions recordOptions;
 
     private OnListListener onListListener;
-    private OnHeadActionListener onHeadActionListener;
+    private StarHeader.OnHeadActionListener onHeadActionListener;
 
     private List<String> starImageList;
 
@@ -38,6 +38,7 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
     private int mSortMode;
 
     private Star star;
+    private List<StarRelationship> mRelationships;
 
     public StarAdapter() {
         recordOptions = GlideUtil.getRecordSmallOptions();
@@ -53,7 +54,7 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
         this.onListListener = onListListener;
     }
 
-    public void setOnHeadActionListener(OnHeadActionListener onHeadActionListener) {
+    public void setOnHeadActionListener(StarHeader.OnHeadActionListener onHeadActionListener) {
         this.onHeadActionListener = onHeadActionListener;
     }
 
@@ -82,7 +83,8 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
 
     @Override
     protected void onBindHead(AdapterStarPhoneHeaderBinding binding) {
-        header.bind(binding, star, starImageList, list == null ? 0:list.size());
+        header.setOnHeadActionListener(onHeadActionListener);
+        header.bind(binding, star, starImageList, list == null ? 0:list.size(), mRelationships);
     }
 
     @Override
@@ -101,14 +103,12 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
         });
     }
 
-    public interface OnListListener {
-        void onClickItem(View view, RecordProxy record);
+    public void setRelationships(List<StarRelationship> relationships) {
+        this.mRelationships = relationships;
     }
 
-    public interface OnHeadActionListener {
-        void onClickStars();
-        void onClickRecords();
-        void onClickOrders();
+    public interface OnListListener {
+        void onClickItem(View view, RecordProxy record);
     }
 
     private View.OnClickListener itemListener = new View.OnClickListener() {

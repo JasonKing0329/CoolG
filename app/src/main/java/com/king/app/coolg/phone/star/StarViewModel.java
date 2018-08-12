@@ -19,7 +19,9 @@ import com.king.app.gdb.data.entity.Star;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -40,6 +42,7 @@ public class StarViewModel extends BaseViewModel {
 
     private Star mStar;
     private List<String> starImageList;
+    private List<StarRelationship> relationList;
 
     private StarRepository starRepository;
 
@@ -68,6 +71,10 @@ public class StarViewModel extends BaseViewModel {
                 })
                 .flatMap(list -> {
                     starImageList = list;
+                    return getRelationships(mStar);
+                })
+                .flatMap(list -> {
+                    relationList = list;
                     return getComplexFilter();
                 })
                 .flatMap(filter -> getStarRecords(mStar, filter))
@@ -106,8 +113,37 @@ public class StarViewModel extends BaseViewModel {
         return starImageList;
     }
 
+    public List<StarRelationship> getRelationList() {
+        return relationList;
+    }
+
     private ObservableSource<List<String>> getStarImages(Star star) {
         return observer -> observer.onNext(ImageProvider.getStarPathList(star.getName()));
+    }
+
+    private ObservableSource<List<StarRelationship>> getRelationships(Star star) {
+        return observer -> {
+            List<StarRelationship> list = new ArrayList<>();
+            Map<String, StarRelationship> map = new HashMap<>();
+            for (Record record:star.getRecordList()) {
+                for (Star st:record.getStarList()) {
+                    if (st.getId() == mStar.getId()) {
+                        continue;
+                    }
+                    StarRelationship relationship = map.get(st.getName());
+                    if (relationship == null) {
+                        relationship = new StarRelationship();
+                        relationship.setStar(st);
+                        relationship.setImagePath(ImageProvider.getStarRandomPath(st.getName(), null));
+                        map.put(st.getName(), relationship);
+                        list.add(relationship);
+                    }
+                    relationship.setCount(relationship.getCount() + 1);
+                }
+            }
+            Collections.sort(list, new RelationComparator());
+            observer.onNext(list);
+        };
     }
 
     private ObservableSource<List<RecordProxy>> getStarRecords(Star star, RecordComplexFilter filter) {
@@ -141,7 +177,7 @@ public class StarViewModel extends BaseViewModel {
                 }
             }
             if (filter.getFilter().isInnerCum()) {
-                if (!record.getSpecialDesc().contains("inner cum")) {
+                if (TextUtils.isEmpty(record.getSpecialDesc()) || !record.getSpecialDesc().contains("inner cum")) {
                     return false;
                 }
             }
@@ -203,6 +239,14 @@ public class StarViewModel extends BaseViewModel {
             filter.setSortType(SettingProperty.getStarOrderMode());
             e.onNext(filter);
         });
+    }
+
+    private class RelationComparator implements Comparator<StarRelationship> {
+
+        @Override
+        public int compare(StarRelationship left, StarRelationship right) {
+            return right.getCount() - left.getCount();
+        }
     }
 
     private class RecordsComparator implements Comparator<RecordProxy> {

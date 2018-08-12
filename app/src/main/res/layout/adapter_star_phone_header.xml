@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -23,11 +24,11 @@
             app:scroll_duration="1000"/>
 
         <ImageView
-            android:id="@+id/iv_record"
+            android:id="@+id/iv_star"
             android:layout_width="match_parent"
             android:layout_height="@dimen/gdb_star_header_height"
             android:scaleType="centerCrop"
-            android:src="@drawable/def_large"
+            android:src="@drawable/def_person"
             android:transitionName="@string/anim_record_page_img"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -219,6 +220,42 @@
                         style="@style/TvPlayerValueStarPage" />
                 </LinearLayout>
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/vertical_divider"
+                android:background="@color/divider" />
+            <RelativeLayout
+                android:id="@+id/group_relation"
+                style="@style/GroupStarSecItem"
+                android:background="?android:attr/selectableItemBackground">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Relationships"/>
+                <ImageView
+                    android:id="@+id/iv_relation_arrow"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_keyboard_arrow_down_grey_700_24dp"/>
+                <TextView
+                    android:id="@+id/tv_relation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/iv_relation_arrow"
+                    android:layout_centerVertical="true"
+                    android:text="1人"/>
+            </RelativeLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_relation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"
+                tools:listitem="@layout/adapter_star_relationships"/>
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
