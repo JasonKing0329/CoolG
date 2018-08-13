@@ -1,8 +1,10 @@
 package com.king.app.coolg.phone.record.list;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.support.v4.view.ViewPager;
 
+import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
@@ -10,6 +12,7 @@ import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordListPhoneBinding;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.phone.record.scene.SceneActivity;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 
 import java.util.List;
@@ -19,6 +22,8 @@ import java.util.List;
  */
 @Route("RecordListPhone")
 public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhoneBinding, RecordPhoneViewModel> implements IRecordListHolder {
+
+    public static final int REQUEST_SCENE = 501;
 
     private RecordListFilterBean mFilter;
 
@@ -68,7 +73,7 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
                     pagerAdapter.showCanPlayList(true);
                     break;
                 case R.id.menu_scene:
-
+                    selectScene();
                     break;
             }
         });
@@ -146,5 +151,22 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
     public void updateCount(int recordType, int count) {
         String[] titles = AppConstants.RECORD_LIST_TITLES;
         mBinding.tabLayout.getTabAt(recordType).setText(titles[recordType] + "\n(" + count + ")");
+    }
+
+    private void selectScene() {
+        Router.build("ScenePhone")
+                .with(SceneActivity.EXTRA_SCENE, mModel.getScene())
+                .requestCode(REQUEST_SCENE)
+                .go(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_SCENE) {
+            if (resultCode == RESULT_OK) {
+                mModel.setScene(data.getStringExtra(SceneActivity.RESP_SCENE));
+                pagerAdapter.onSceneChanged(mModel.getScene());
+            }
+        }
     }
 }

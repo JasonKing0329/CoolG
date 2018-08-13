@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
@@ -47,10 +48,12 @@ public class StarViewModel extends BaseViewModel {
     private StarRepository starRepository;
 
     private RecordListFilterBean mRecordFilter;
+    private String mScene;
 
     public StarViewModel(@NonNull Application application) {
         super(application);
         starRepository = new StarRepository();
+        mScene = AppConstants.KEY_SCENE_ALL;
     }
 
     public void setRecordFilter(RecordListFilterBean mRecordFilter) {
@@ -237,8 +240,19 @@ public class StarViewModel extends BaseViewModel {
             filter.setRecordType(0);
             filter.setDesc(SettingProperty.isStarOrderModeDesc());
             filter.setSortType(SettingProperty.getStarOrderMode());
+            if (!AppConstants.KEY_SCENE_ALL.equals(mScene)) {
+                filter.setScene(mScene);
+            }
             e.onNext(filter);
         });
+    }
+
+    public String getScene() {
+        return mScene;
+    }
+
+    public void setScene(String mScene) {
+        this.mScene = mScene;
     }
 
     private class RelationComparator implements Comparator<StarRelationship> {

@@ -41,6 +41,10 @@ public class RecordPhoneViewModel extends BaseViewModel {
         return mScene;
     }
 
+    public void setScene(String mScene) {
+        this.mScene = mScene;
+    }
+
     public void loadTitles() {
         Observable.create((ObservableOnSubscribe<List<Integer>>) e -> {
             List<Integer> countList = new ArrayList<>();

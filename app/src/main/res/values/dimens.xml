@@ -143,7 +143,7 @@
     <dimen name="gdb_home_game_height">120dp</dimen>
     <dimen name="gdb_record_line_height">48dp</dimen>
     <dimen name="gdb_record_fk_size_max">100dp</dimen>
-    <dimen name="dlg_hsv_image_size">150dp</dimen>
+    <dimen name="dlg_hsv_image_size">140dp</dimen>
     <dimen name="home_scrim_visible_height">100dp</dimen>
     <dimen name="gdb_star_header_icon_size">30dp</dimen>
     <dimen name="gdb_home_nav_icon_size">30dp</dimen>

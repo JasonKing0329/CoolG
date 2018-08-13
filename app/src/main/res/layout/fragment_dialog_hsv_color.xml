@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_model1"
+            android:layout_width="@dimen/dlg_hsv_image_size"
+            android:layout_height="144dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/hsv_colors"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iv_model2"/>
+
+        <ImageView
+            android:id="@+id/iv_model2"
+            android:layout_width="@dimen/dlg_hsv_image_size"
+            android:layout_height="@dimen/dlg_hsv_image_size"
+            android:layout_marginTop="16dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/hsv_model"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_model1"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_title_h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="H(色彩，0~360)"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_model1" />
+
+        <LinearLayout
+            android:id="@+id/ll_h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title_h">
+
+            <EditText
+                android:id="@+id/et_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="起始角度"
+                android:inputType="number" />
+
+            <EditText
+                android:id="@+id/et_angle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:hint="扫过的角度"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/cb_stable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="固定S(深浅，0~1)与V(明暗，0~1)"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_h"/>
+
+        <LinearLayout
+            android:id="@+id/ll_sv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cb_stable">
+
+            <EditText
+                android:id="@+id/et_s"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:hint="S"
+                android:inputType="number" />
+
+            <EditText
+                android:id="@+id/et_v"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:hint="V"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_preview"
+            android:layout_width="0dp"
+            style="@style/TvDialogConfirmBase"
+            android:layout_marginTop="10dp"
+            android:text="Preview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_sv"
+            app:layout_constraintEnd_toStartOf="@+id/tv_ok"/>
+
+        <TextView
+            android:id="@+id/tv_ok"
+            android:layout_width="0dp"
+            style="@style/TvDialogConfirmBase"
+            android:layout_marginTop="10dp"
+            android:text="Save"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_sv"
+            app:layout_constraintStart_toEndOf="@id/tv_preview"/>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

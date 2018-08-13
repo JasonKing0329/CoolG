@@ -50,13 +50,17 @@
         <activity android:name=".phone.settings.ManageActivity"
             android:theme="@style/AppTheme"/>
         <activity android:name=".phone.record.RecordActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"/>
         <activity android:name=".phone.star.list.StarListPhoneActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".phone.record.list.RecordPhoneListActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".phone.star.StarActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"/>
+        <activity android:name=".phone.record.scene.SceneActivity"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

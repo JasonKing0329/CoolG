@@ -2,6 +2,8 @@ package com.king.app.coolg.utils;
 
 import android.graphics.Color;
 
+import com.king.app.coolg.model.bean.HsvColorBean;
+
 import java.util.Random;
 
 /**
@@ -75,6 +77,51 @@ public class ColorUtil {
 		}
 
 //        Log.d(TAG, "hsv[" + hsv[0] + "," + hsv[1] + "," + hsv[2] + "]");
+		return Color.HSVToColor(hsv);
+	}
+
+	/**
+	 * 如果s v随机，则随机暗色，作为背景色，配合白色文字
+	 *
+	 * @param bean
+	 * @return
+	 */
+	public static int randomColorBy(HsvColorBean bean) {
+		Random random = new Random();
+		float[] hsv = new float[3];
+		if (bean.gethStart() >= 0 && bean.gethArg() >= 0) {
+			hsv[0] = bean.gethStart() + random.nextFloat() * bean.gethArg();
+		} else {
+			hsv[0] = random.nextFloat() * 360;
+		}
+		if (bean.getS() >= 0) {
+			hsv[1] = bean.getS();
+		} else {
+			hsv[1] = random.nextFloat();
+			if (bean.getType() == 1) {
+				if (hsv[1] < 0.7f) {
+					hsv[1] = 0.7f + hsv[1] * 0.3f;
+				}
+			} else if (bean.getType() == 2) {
+				if (hsv[1] > 0.3f) {
+					hsv[1] = 0.3f - hsv[1] * 0.3f;
+				}
+			}
+		}
+		if (bean.getV() >= 0) {
+			hsv[2] = bean.getV();
+		} else {
+			hsv[2] = random.nextFloat();
+			if (bean.getType() == 1) {
+				if (hsv[2] < 0.5f) {
+					hsv[2] += 0.5f;
+				}
+			} else if (bean.getType() == 2) {
+				if (hsv[2] > 0.5f) {
+					hsv[2] -= 0.5f;
+				}
+			}
+		}
 		return Color.HSVToColor(hsv);
 	}
 

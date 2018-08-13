@@ -3,7 +3,9 @@ package com.king.app.coolg.model.setting;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.gson.Gson;
 import com.king.app.coolg.base.CoolApplication;
+import com.king.app.coolg.model.bean.HsvColorBean;
 
 /**
  * 描述:
@@ -211,4 +213,20 @@ public class SettingProperty {
     public static void setStarOrderModeDesc(boolean random) {
         setBoolean(PreferenceKey.PREF_GDB_STAR_ORDER_DESC, random);
     }
+
+    public static HsvColorBean getSceneHsvColor() {
+        String json = getString(PreferenceKey.PREF_GDB_SCENE_HSV_COLOR);
+        Gson gson = new Gson();
+        try {
+            HsvColorBean bean = gson.fromJson(json, HsvColorBean.class);
+            return bean;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static void setSceneHsvColor(HsvColorBean bean) {
+        setString(PreferenceKey.PREF_GDB_SCENE_HSV_COLOR, new Gson().toJson(bean));
+    }
+
 }

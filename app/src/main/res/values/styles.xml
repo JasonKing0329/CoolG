@@ -69,13 +69,16 @@
         <item name="android:inputType">number</item>
     </style>
 
-    <style name="TvDialogConfirm">
-        <item name="android:layout_width">match_parent</item>
+    <style name="TvDialogConfirmBase">
         <item name="android:layout_height">48dp</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">20dp</item>
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="TvDialogConfirm" parent="TvDialogConfirmBase">
+        <item name="android:layout_width">match_parent</item>
     </style>
 
     <style name="GroupWhiteSecBg">

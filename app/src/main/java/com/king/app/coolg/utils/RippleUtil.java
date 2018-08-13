@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -101,5 +102,25 @@ public class RippleUtil {
                 new int[] { android.R.attr.state_pressed }, new int[0] },
                 new int[] { color, color });
         return new RippleDrawable(rippleStateList, null, new ShapeDrawable(new OvalShape()));
+    }
+
+    /**
+     * 获取带正常颜色、按压时颜色，可设置conner radius的drawable
+     * @param normalColor
+     * @param selectedColor
+     * @param radius
+     * @return
+     */
+    public static Drawable getPressableRoundDrawable(int normalColor, int selectedColor, int radius) {
+        GradientDrawable normal = new GradientDrawable();
+        normal.setColor(normalColor);
+        normal.setCornerRadius(radius);
+        GradientDrawable press = new GradientDrawable();
+        press.setColor(selectedColor);
+        press.setCornerRadius(radius);
+        StateListDrawable drawable = new StateListDrawable();
+        drawable.addState(new int[] { android.R.attr.state_pressed }, press);
+        drawable.addState(new int[] {}, normal);
+        return drawable;
     }
 }

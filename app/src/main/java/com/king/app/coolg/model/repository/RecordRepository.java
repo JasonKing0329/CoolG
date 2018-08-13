@@ -1,14 +1,17 @@
 package com.king.app.coolg.model.repository;
 
+import android.database.Cursor;
 import android.text.TextUtils;
 
 import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.setting.PreferenceValue;
+import com.king.app.coolg.phone.record.scene.SceneBean;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -118,5 +121,29 @@ public class RecordRepository extends BaseRepository {
         return getDaoSession().getRecordDao().queryBuilder()
                 .where(RecordDao.Properties.Type.eq(type))
                 .buildCount().count();
+    }
+
+    public Observable<List<SceneBean>> getScenes() {
+        return Observable.create(e -> {
+            List<SceneBean> list = new ArrayList<>();
+            String sql = "SELECT scene, COUNT(scene) AS count, AVG(score) AS average, MAX(score) AS max FROM "
+                    + RecordDao.TABLENAME;
+            sql = sql + " GROUP BY scene ORDER BY scene";
+            Cursor cursor = getDaoSession().getDatabase()
+                    .rawQuery(sql, new String[]{});
+            while (cursor.moveToNext()) {
+                list.add(parseSceneBean(cursor));
+            }
+            e.onNext(list);
+        });
+    }
+
+    private SceneBean parseSceneBean(Cursor cursor) {
+        SceneBean bean = new SceneBean();
+        bean.setScene(cursor.getString(0));
+        bean.setNumber(cursor.getInt(1));
+        bean.setAverage(cursor.getDouble(2));
+        bean.setMax(cursor.getInt(3));
+        return bean;
     }
 }

@@ -67,9 +67,6 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
                 case R.id.menu_filter:
                     changeFilter();
                     break;
-                case R.id.menu_scene:
-
-                    break;
             }
         });
     }
