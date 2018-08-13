@@ -183,7 +183,7 @@ public class SettingProperty {
     }
 
     public static int getRecordOrderMode() {
-        return getInt(PreferenceKey.PREF_GDB_RECORD_ORDER);
+        return getInt(PreferenceKey.PREF_GDB_RECORD_ORDER, 0);
     }
 
     public static void setRecordOrderMode(int random) {

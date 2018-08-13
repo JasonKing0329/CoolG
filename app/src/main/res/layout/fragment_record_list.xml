@@ -7,15 +7,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/tv_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_sub"
+            android:textSize="12dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
         <com.king.app.coolg.view.widget.AutoLoadMoreRecyclerView
             android:id="@+id/rv_items"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_filter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/adapter_record_item_list"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_top"
+            android:layout_width="@dimen/gdb_home_icon_size"
+            android:layout_height="@dimen/gdb_home_icon_size"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/ic_arrow_upward_white_36dp"
+            android:tint="@color/white"
+            app:borderWidth="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:rippleColor="@color/actionbar_bk_blue"
+            app:useCompatPadding="true" />
 
     </android.support.constraint.ConstraintLayout>
 

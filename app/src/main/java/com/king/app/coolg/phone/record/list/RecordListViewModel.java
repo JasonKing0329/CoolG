@@ -3,6 +3,7 @@ package com.king.app.coolg.phone.record.list;
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
@@ -11,6 +12,8 @@ import com.king.app.coolg.model.VideoModel;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.repository.RecordRepository;
+import com.king.app.coolg.model.setting.PreferenceKey;
+import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.gdb.data.RecordCursor;
 import com.king.app.gdb.data.entity.Record;
@@ -270,4 +273,66 @@ public class RecordListViewModel extends BaseViewModel {
             observer.onNext(results);
         };
     }
+
+    public String getBottomText() {
+        String filters = getFilterText();
+        String sorts = getSortText();
+        if (!TextUtils.isEmpty(filters)) {
+            return filters + "\n" + sorts;
+        }
+        else {
+            return sorts;
+        }
+    }
+
+    private String getFilterText() {
+        StringBuffer buffer = new StringBuffer();
+        if (!TextUtils.isEmpty(mKeyScene) && !AppConstants.KEY_SCENE_ALL.equals(mKeyScene)) {
+            buffer.append(", ").append(mKeyScene);
+        }
+        if (!TextUtils.isEmpty(mKeyword)) {
+            buffer.append(", ").append("Keyword[").append(mKeyword).append("]");
+        }
+        if (mShowCanBePlayed) {
+            buffer.append(", ").append("Playable");
+        }
+        if (mFilter != null) {
+            if (mFilter.isBareback()) {
+                buffer.append(", ").append("Bareback");
+            }
+            if (mFilter.isInnerCum()) {
+                buffer.append(", ").append("Inner cum");
+            }
+            if (mFilter.isNotDeprecated()) {
+                buffer.append(", ").append("Not Deprecated");
+            }
+        }
+        String text = buffer.toString();
+        if (text.length() == 0) {
+            return "";
+        }
+        else {
+            if (text.length() > 1) {
+                text = text.substring(1);
+            }
+            return "Filters: " + text;
+        }
+    }
+
+    private String getSortText() {
+        try {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("Sort by ").append(PreferenceValue.RECORD_SORT_ARRAY[mSortMode]);
+            if (mSortDesc) {
+                buffer.append(" DESC");
+            }
+            else {
+                buffer.append(" ASC");
+            }
+            return buffer.toString();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
 }

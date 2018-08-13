@@ -66,6 +66,8 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
             }
         });
 
+        mBinding.fabTop.setOnClickListener(v -> mBinding.rvItems.scrollToPosition(0));
+
         setBannerParams();
     }
 

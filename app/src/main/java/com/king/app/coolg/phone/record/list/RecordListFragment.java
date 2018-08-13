@@ -69,6 +69,8 @@ public class RecordListFragment extends MvvmFragment<FragmentRecordListBinding, 
                 loadMoreRecords();
             }
         });
+
+        mBinding.fabTop.setOnClickListener(v -> mBinding.rvItems.scrollToPosition(0));
     }
 
     @Override
@@ -100,6 +102,8 @@ public class RecordListFragment extends MvvmFragment<FragmentRecordListBinding, 
             listAdapter.notifyDataSetChanged();
         }
         mBinding.rvItems.scrollToPosition(0);
+
+        mBinding.tvFilter.setText(mModel.getBottomText());
     }
 
     private void showMoreList(List<RecordProxy> list) {
