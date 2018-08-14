@@ -61,6 +61,8 @@
             android:launchMode="singleTask"/>
         <activity android:name=".phone.record.scene.SceneActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".phone.order.OrderPhoneActivity"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

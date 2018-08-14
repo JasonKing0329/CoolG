@@ -1,1 +1,1 @@
-include ':app', ':data', ':libresmanager'
+include ':app', ':data', ':libresmanager', ':jindicator'

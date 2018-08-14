@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.ToOne;
+import org.greenrobot.greendao.annotation.NotNull;
 
 /**
  * 描述:
@@ -33,6 +35,14 @@ public class FavorRecordOrder {
 
     private Date updateTime;
 
+    private long parentId;
+
+    @ToMany(referencedJoinProperty = "parentId")
+    private List<FavorRecordOrder> childList;
+
+    @ToOne(joinProperty = "parentId")
+    private FavorRecordOrder parent;
+
     @ToMany
     @JoinEntity(
             entity = FavorRecord.class,
@@ -49,9 +59,12 @@ public class FavorRecordOrder {
     @Generated(hash = 702593782)
     private transient FavorRecordOrderDao myDao;
 
-    @Generated(hash = 1987688473)
+    @Generated(hash = 1293412156)
+    private transient Long parent__resolvedKey;
+
+    @Generated(hash = 368198959)
     public FavorRecordOrder(Long id, String name, String coverUrl, int number, int sortSeq,
-            Date createTime, Date updateTime) {
+            Date createTime, Date updateTime, long parentId) {
         this.id = id;
         this.name = name;
         this.coverUrl = coverUrl;
@@ -59,6 +72,7 @@ public class FavorRecordOrder {
         this.sortSeq = sortSeq;
         this.createTime = createTime;
         this.updateTime = updateTime;
+        this.parentId = parentId;
     }
 
     @Generated(hash = 368892490)
@@ -184,6 +198,75 @@ public class FavorRecordOrder {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public long getParentId() {
+        return this.parentId;
+    }
+
+    public void setParentId(long parentId) {
+        this.parentId = parentId;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 876689229)
+    public FavorRecordOrder getParent() {
+        long __key = this.parentId;
+        if (parent__resolvedKey == null || !parent__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            FavorRecordOrderDao targetDao = daoSession.getFavorRecordOrderDao();
+            FavorRecordOrder parentNew = targetDao.load(__key);
+            synchronized (this) {
+                parent = parentNew;
+                parent__resolvedKey = __key;
+            }
+        }
+        return parent;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 791349808)
+    public void setParent(@NotNull FavorRecordOrder parent) {
+        if (parent == null) {
+            throw new DaoException(
+                    "To-one property 'parentId' has not-null constraint; cannot set to-one to null");
+        }
+        synchronized (this) {
+            this.parent = parent;
+            parentId = parent.getId();
+            parent__resolvedKey = parentId;
+        }
+    }
+
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 1096147098)
+    public List<FavorRecordOrder> getChildList() {
+        if (childList == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            FavorRecordOrderDao targetDao = daoSession.getFavorRecordOrderDao();
+            List<FavorRecordOrder> childListNew = targetDao._queryFavorRecordOrder_ChildList(id);
+            synchronized (this) {
+                if (childList == null) {
+                    childList = childListNew;
+                }
+            }
+        }
+        return childList;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 20549044)
+    public synchronized void resetChildList() {
+        childList = null;
     }
 
     /** called by internal mechanisms, do not call yourself. */

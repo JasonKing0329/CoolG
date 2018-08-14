@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/CoolG.iml" filepath="$PROJECT_DIR$/CoolG.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jindicator/jindicator.iml" filepath="$PROJECT_DIR$/jindicator/jindicator.iml" />
       <module fileurl="file://$PROJECT_DIR$/libresmanager/libresmanager.iml" filepath="$PROJECT_DIR$/libresmanager/libresmanager.iml" />
     </modules>
   </component>

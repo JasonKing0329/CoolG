@@ -5,9 +5,12 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinEntity;
 import org.greenrobot.greendao.annotation.ToMany;
 
+import java.util.Date;
 import java.util.List;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.ToOne;
+import org.greenrobot.greendao.annotation.NotNull;
 
 /**
  * 描述:
@@ -28,6 +31,12 @@ public class FavorStarOrder {
 
     private int sortSeq;
 
+    private long parentId;
+
+    private Date createTime;
+
+    private Date updateTime;
+
     @ToMany
     @JoinEntity(
             entity = FavorStar.class,
@@ -35,6 +44,12 @@ public class FavorStarOrder {
             targetProperty = "starId"
     )
     private List<Star> starList;
+
+    @ToMany(referencedJoinProperty = "parentId")
+    private List<FavorStarOrder> childList;
+
+    @ToOne(joinProperty = "parentId")
+    private FavorStarOrder parent;
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
@@ -44,14 +59,20 @@ public class FavorStarOrder {
     @Generated(hash = 1378136452)
     private transient FavorStarOrderDao myDao;
 
-    @Generated(hash = 1920745159)
-    public FavorStarOrder(Long id, String name, String coverUrl, int number,
-            int sortSeq) {
+    @Generated(hash = 1293412156)
+    private transient Long parent__resolvedKey;
+
+    @Generated(hash = 2050039290)
+    public FavorStarOrder(Long id, String name, String coverUrl, int number, int sortSeq, long parentId,
+            Date createTime, Date updateTime) {
         this.id = id;
         this.name = name;
         this.coverUrl = coverUrl;
         this.number = number;
         this.sortSeq = sortSeq;
+        this.parentId = parentId;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
     }
 
     @Generated(hash = 2127781905)
@@ -160,6 +181,91 @@ public class FavorStarOrder {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    public long getParentId() {
+        return this.parentId;
+    }
+
+    public void setParentId(long parentId) {
+        this.parentId = parentId;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 2053502768)
+    public FavorStarOrder getParent() {
+        long __key = this.parentId;
+        if (parent__resolvedKey == null || !parent__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            FavorStarOrderDao targetDao = daoSession.getFavorStarOrderDao();
+            FavorStarOrder parentNew = targetDao.load(__key);
+            synchronized (this) {
+                parent = parentNew;
+                parent__resolvedKey = __key;
+            }
+        }
+        return parent;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 1392144901)
+    public void setParent(@NotNull FavorStarOrder parent) {
+        if (parent == null) {
+            throw new DaoException(
+                    "To-one property 'parentId' has not-null constraint; cannot set to-one to null");
+        }
+        synchronized (this) {
+            this.parent = parent;
+            parentId = parent.getId();
+            parent__resolvedKey = parentId;
+        }
+    }
+
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 718701511)
+    public List<FavorStarOrder> getChildList() {
+        if (childList == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            FavorStarOrderDao targetDao = daoSession.getFavorStarOrderDao();
+            List<FavorStarOrder> childListNew = targetDao._queryFavorStarOrder_ChildList(id);
+            synchronized (this) {
+                if (childList == null) {
+                    childList = childListNew;
+                }
+            }
+        }
+        return childList;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 20549044)
+    public synchronized void resetChildList() {
+        childList = null;
+    }
+
+    public Date getCreateTime() {
+        return this.createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return this.updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     /** called by internal mechanisms, do not call yourself. */

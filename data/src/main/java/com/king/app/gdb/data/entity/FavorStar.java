@@ -3,8 +3,11 @@ package com.king.app.gdb.data.entity;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.ToOne;
 
 import java.util.Date;
+import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.NotNull;
 
 /**
  * 描述:
@@ -24,6 +27,26 @@ public class FavorStar {
     private Date createTime;
 
     private Date updateTime;
+
+    @ToOne(joinProperty = "orderId")
+    private FavorRecordOrder order;
+
+    @ToOne(joinProperty = "id")
+    private Star star;
+
+    /** Used to resolve relations */
+    @Generated(hash = 2040040024)
+    private transient DaoSession daoSession;
+
+    /** Used for active entity operations. */
+    @Generated(hash = 737124733)
+    private transient FavorStarDao myDao;
+
+    @Generated(hash = 219913283)
+    private transient Long order__resolvedKey;
+
+    @Generated(hash = 758316439)
+    private transient Long star__resolvedKey;
 
     @Generated(hash = 1804404017)
     public FavorStar(Long id, long orderId, long starId, Date createTime,
@@ -77,5 +100,110 @@ public class FavorStar {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 1259933469)
+    public FavorRecordOrder getOrder() {
+        long __key = this.orderId;
+        if (order__resolvedKey == null || !order__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            FavorRecordOrderDao targetDao = daoSession.getFavorRecordOrderDao();
+            FavorRecordOrder orderNew = targetDao.load(__key);
+            synchronized (this) {
+                order = orderNew;
+                order__resolvedKey = __key;
+            }
+        }
+        return order;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 858520115)
+    public void setOrder(@NotNull FavorRecordOrder order) {
+        if (order == null) {
+            throw new DaoException(
+                    "To-one property 'orderId' has not-null constraint; cannot set to-one to null");
+        }
+        synchronized (this) {
+            this.order = order;
+            orderId = order.getId();
+            order__resolvedKey = orderId;
+        }
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 1604510767)
+    public Star getStar() {
+        Long __key = this.id;
+        if (star__resolvedKey == null || !star__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            StarDao targetDao = daoSession.getStarDao();
+            Star starNew = targetDao.load(__key);
+            synchronized (this) {
+                star = starNew;
+                star__resolvedKey = __key;
+            }
+        }
+        return star;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 323183962)
+    public void setStar(Star star) {
+        synchronized (this) {
+            this.star = star;
+            id = star == null ? null : star.getId();
+            star__resolvedKey = id;
+        }
+    }
+
+    /**
+     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
+     * Entity must attached to an entity context.
+     */
+    @Generated(hash = 128553479)
+    public void delete() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }
+        myDao.delete(this);
+    }
+
+    /**
+     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
+     * Entity must attached to an entity context.
+     */
+    @Generated(hash = 1942392019)
+    public void refresh() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }
+        myDao.refresh(this);
+    }
+
+    /**
+     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#update(Object)}.
+     * Entity must attached to an entity context.
+     */
+    @Generated(hash = 713229351)
+    public void update() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }
+        myDao.update(this);
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 1946651135)
+    public void __setDaoSession(DaoSession daoSession) {
+        this.daoSession = daoSession;
+        myDao = daoSession != null ? daoSession.getFavorStarDao() : null;
     }
 }

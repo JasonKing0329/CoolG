@@ -203,6 +203,8 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     }
 
     private void goToOrderPage() {
+        Router.build("OrderPhone")
+                .go(this);
     }
 
     @Override

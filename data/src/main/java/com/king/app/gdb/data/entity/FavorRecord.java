@@ -25,7 +25,7 @@ public class FavorRecord {
     @ToOne(joinProperty = "orderId")
     private FavorRecordOrder order;
 
-    @ToOne(joinProperty = "recordId")
+    @ToOne(joinProperty = "id")
     private Record record;
 
     /** Used to resolve relations */
@@ -35,12 +35,6 @@ public class FavorRecord {
     /** Used for active entity operations. */
     @Generated(hash = 135813522)
     private transient FavorRecordDao myDao;
-
-    @Generated(hash = 219913283)
-    private transient Long order__resolvedKey;
-
-    @Generated(hash = 818274295)
-    private transient Long record__resolvedKey;
 
     @Generated(hash = 1642135258)
     public FavorRecord(Long id, long orderId, long recordId) {
@@ -77,6 +71,9 @@ public class FavorRecord {
         this.recordId = recordId;
     }
 
+    @Generated(hash = 219913283)
+    private transient Long order__resolvedKey;
+
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 1259933469)
     public FavorRecordOrder getOrder() {
@@ -110,10 +107,13 @@ public class FavorRecord {
         }
     }
 
+    @Generated(hash = 818274295)
+    private transient Long record__resolvedKey;
+
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 987546320)
+    @Generated(hash = 439787660)
     public Record getRecord() {
-        long __key = this.recordId;
+        Long __key = this.id;
         if (record__resolvedKey == null || !record__resolvedKey.equals(__key)) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
@@ -130,16 +130,12 @@ public class FavorRecord {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1328184148)
-    public void setRecord(@NotNull Record record) {
-        if (record == null) {
-            throw new DaoException(
-                    "To-one property 'recordId' has not-null constraint; cannot set to-one to null");
-        }
+    @Generated(hash = 1980507812)
+    public void setRecord(Record record) {
         synchronized (this) {
             this.record = record;
-            recordId = record.getId();
-            record__resolvedKey = recordId;
+            id = record == null ? null : record.getId();
+            record__resolvedKey = id;
         }
     }
 
@@ -185,4 +181,5 @@ public class FavorRecord {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getFavorRecordDao() : null;
     }
+
 }

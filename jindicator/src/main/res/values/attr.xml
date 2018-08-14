@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="IndicatorView">
+        <attr name="indicatorTextColor" format="color|reference"/>
+        <attr name="indicatorTextSize" format="dimension|reference"/>
+        <attr name="indicatorColor" format="color|reference"/>
+        <attr name="indicatorColorPressed" format="color|reference"/>
+        <attr name="indicatorHeight" format="reference"/>
+        <attr name="indicatorEnterAnim" format="reference"/>
+        <attr name="indicatorExitAnim" format="reference"/>
+    </declare-styleable>
+
+</resources>
