@@ -11,4 +11,8 @@ import com.king.app.coolg.base.IFragmentHolder;
 public interface IOrderHolder extends IFragmentHolder {
 
     void cancelConfirmStatus();
+
+    boolean isSelectMode();
+
+    void onSelectOrder(long id);
 }

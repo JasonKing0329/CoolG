@@ -29,7 +29,7 @@ public class FavorStar {
     private Date updateTime;
 
     @ToOne(joinProperty = "orderId")
-    private FavorRecordOrder order;
+    private FavorStarOrder order;
 
     @ToOne(joinProperty = "id")
     private Star star;
@@ -41,12 +41,6 @@ public class FavorStar {
     /** Used for active entity operations. */
     @Generated(hash = 737124733)
     private transient FavorStarDao myDao;
-
-    @Generated(hash = 219913283)
-    private transient Long order__resolvedKey;
-
-    @Generated(hash = 758316439)
-    private transient Long star__resolvedKey;
 
     @Generated(hash = 1804404017)
     public FavorStar(Long id, long orderId, long starId, Date createTime,
@@ -102,17 +96,20 @@ public class FavorStar {
         this.updateTime = updateTime;
     }
 
+    @Generated(hash = 219913283)
+    private transient Long order__resolvedKey;
+
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1259933469)
-    public FavorRecordOrder getOrder() {
+    @Generated(hash = 549443455)
+    public FavorStarOrder getOrder() {
         long __key = this.orderId;
         if (order__resolvedKey == null || !order__resolvedKey.equals(__key)) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            FavorRecordOrderDao targetDao = daoSession.getFavorRecordOrderDao();
-            FavorRecordOrder orderNew = targetDao.load(__key);
+            FavorStarOrderDao targetDao = daoSession.getFavorStarOrderDao();
+            FavorStarOrder orderNew = targetDao.load(__key);
             synchronized (this) {
                 order = orderNew;
                 order__resolvedKey = __key;
@@ -122,8 +119,8 @@ public class FavorStar {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 858520115)
-    public void setOrder(@NotNull FavorRecordOrder order) {
+    @Generated(hash = 1852166757)
+    public void setOrder(@NotNull FavorStarOrder order) {
         if (order == null) {
             throw new DaoException(
                     "To-one property 'orderId' has not-null constraint; cannot set to-one to null");
@@ -134,6 +131,9 @@ public class FavorStar {
             order__resolvedKey = orderId;
         }
     }
+
+    @Generated(hash = 758316439)
+    private transient Long star__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 1604510767)
@@ -206,4 +206,5 @@ public class FavorStar {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getFavorStarDao() : null;
     }
+
 }

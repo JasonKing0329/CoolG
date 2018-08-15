@@ -21,6 +21,7 @@ import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityRecordPhoneBinding;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
@@ -46,9 +47,14 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
     public static final String EXTRA_RECORD_ID = "key_record_id";
 
+    private final int REQUEST_SET_COVER = 1601;
+    private final int REQUEST_ADD_ORDER = 1602;
+
     private RequestOptions recordOptions;
 
     private RecordStarAdapter starAdapter;
+
+    private RecordOrdersAdapter orderAdapter;
 
     @Override
     protected int getContentView() {
@@ -68,6 +74,23 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mBinding.ivSetting.setOnClickListener(view -> {
             showSettingDialog();
         });
+
+        mBinding.ivOrderAdd.setOnClickListener(v -> selectOrderToAddStar());
+        mBinding.groupOrder.setOnClickListener(view -> {
+            // collapse
+            if (mBinding.ivOrderArrow.isSelected()) {
+                mBinding.ivOrderArrow.setSelected(false);
+                mBinding.ivOrderArrow.setImageResource(R.drawable.ic_keyboard_arrow_down_grey_700_24dp);
+                mBinding.rvOrders.setVisibility(View.GONE);
+            }
+            // expand
+            else {
+                mBinding.ivOrderArrow.setSelected(true);
+                mBinding.ivOrderArrow.setImageResource(R.drawable.ic_keyboard_arrow_up_grey_700_24dp);
+                mBinding.rvOrders.setVisibility(View.VISIBLE);
+            }
+        });
+        mBinding.rvOrders.setLayoutManager(new LinearLayoutManager(mBinding.rvOrders.getContext(), LinearLayoutManager.HORIZONTAL, false));
     }
 
     @Override
@@ -100,7 +123,22 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             showBanner(list);
         });
         mModel.starsObserver.observe(this, list -> showStars(list));
-        mModel.recordObserver.observe(this, record -> showRecord(record));
+        mModel.recordObserver.observe(this, record -> {
+            showRecord(record);
+            mModel.loadRecordOrders();
+        });
+        mModel.ordersObserver.observe(this, list -> {
+            mBinding.tvOrder.setText(String.valueOf(list.size()));
+            if (orderAdapter == null) {
+                orderAdapter = new RecordOrdersAdapter();
+                orderAdapter.setList(list);
+                mBinding.rvOrders.setAdapter(orderAdapter);
+            }
+            else {
+                orderAdapter.setList(list);
+                orderAdapter.notifyDataSetChanged();
+            }
+        });
         mModel.passionsObserver.observe(this, list -> showPassionPoints(list));
 
         mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
@@ -289,6 +327,38 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         }
     }
 
+    private void onApplyImage(String path) {
+        mModel.saveTempImagePath(path);
+        Router.build("OrderPhone")
+                .with(OrderPhoneActivity.EXTRA_SELECT_MODE, true)
+                .requestCode(REQUEST_SET_COVER)
+                .go(this);
+    }
+
+    private void selectOrderToAddStar() {
+        Router.build("OrderPhone")
+                .with(OrderPhoneActivity.EXTRA_SELECT_MODE, true)
+                .with(OrderPhoneActivity.EXTRA_SELECT_RECORD, true)
+                .requestCode(REQUEST_ADD_ORDER)
+                .go(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_SET_COVER) {
+            if (resultCode == RESULT_OK) {
+                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                mModel.setAsCover(orderId);
+            }
+        }
+        else if (requestCode == REQUEST_ADD_ORDER) {
+            if (resultCode == RESULT_OK) {
+                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                mModel.addToOrder(orderId);
+            }
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -303,13 +373,18 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         public View getView(LMBanners lBanners, Context context, int position, String path) {
             View view = LayoutInflater.from(context).inflate(R.layout.adapter_banner_image, null);
             ImageView imageView = view.findViewById(R.id.iv_image);
+            ImageView ivCover = view.findViewById(R.id.iv_set_cover);
+            ivCover.setVisibility(View.VISIBLE);
 
             Glide.with(context)
                     .load(path)
                     .apply(recordOptions)
                     .into(imageView);
+
+            ivCover.setOnClickListener(v -> {
+                onApplyImage(path);
+            });
             return view;
         }
     }
-
 }

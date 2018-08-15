@@ -10,10 +10,13 @@ import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
+import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.StarRepository;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.list.RecordProxy;
+import com.king.app.gdb.data.entity.FavorStar;
+import com.king.app.gdb.data.entity.FavorStarOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
 
@@ -40,19 +43,23 @@ public class StarViewModel extends BaseViewModel {
     public MutableLiveData<Star> starObserver = new MutableLiveData<>();
     public MutableLiveData<List<RecordProxy>> recordsObserver = new MutableLiveData<>();
     public MutableLiveData<List<RecordProxy>> onlyRecordsObserver = new MutableLiveData<>();
+    public MutableLiveData<List<FavorStarOrder>> ordersObserver = new MutableLiveData<>();
 
     private Star mStar;
     private List<String> starImageList;
     private List<StarRelationship> relationList;
 
     private StarRepository starRepository;
+    private OrderRepository orderRepository;
 
     private RecordListFilterBean mRecordFilter;
     private String mScene;
+    private String mTempImagePath;
 
     public StarViewModel(@NonNull Application application) {
         super(application);
         starRepository = new StarRepository();
+        orderRepository = new OrderRepository();
         mScene = AppConstants.KEY_SCENE_ALL;
     }
 
@@ -253,6 +260,92 @@ public class StarViewModel extends BaseViewModel {
 
     public void setScene(String mScene) {
         this.mScene = mScene;
+    }
+
+    public void saveTempImagePath(String path) {
+        this.mTempImagePath = path;
+    }
+
+    public void setAsCover(long orderId) {
+        orderRepository.saveStarOrderCover(orderId, mTempImagePath)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<FavorStarOrder>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(FavorStarOrder favorStarOrder) {
+                        messageObserver.setValue("Set successfully");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void loadStarOrders(Star star) {
+        orderRepository.getStarOrders(star.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<FavorStarOrder>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<FavorStarOrder> list) {
+                        ordersObserver.setValue(list);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void addToOrder(long orderId) {
+        orderRepository.addFavorStar(orderId, mStar.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<FavorStar>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(FavorStar favorStar) {
+                        messageObserver.setValue("Add successfully");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private class RelationComparator implements Comparator<StarRelationship> {

@@ -13,6 +13,7 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityStarPhoneBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.record.list.FilterDialogContent;
 import com.king.app.coolg.phone.record.list.RecordProxy;
@@ -31,6 +32,10 @@ import java.util.List;
 public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarViewModel> {
 
     public static final String EXTRA_STAR_ID = "key_star_id";
+
+    private final int REQUEST_SET_COVER = 1601;
+
+    private final int REQUEST_ADD_ORDER = 1602;
 
     private StarAdapter adapter;
 
@@ -118,7 +123,22 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
             adapter.setList(list);
             adapter.setSortMode(SettingProperty.getStarOrderMode());
             adapter.setOnListListener((view, record) -> goToRecordPage(record.getRecord().getId()));
-            adapter.setOnHeadActionListener(relationship -> goToStarPage(relationship.getStar().getId()));
+            adapter.setOnHeadActionListener(new StarHeader.OnHeadActionListener() {
+                @Override
+                public void onClickRelationStar(StarRelationship relationship) {
+                    goToStarPage(relationship.getStar().getId());
+                }
+
+                @Override
+                public void onApplyImage(String path) {
+                    selectOrderToSetCover(path);
+                }
+
+                @Override
+                public void addStarToOrder(Star star) {
+                    selectOrderToAddStar(star);
+                }
+            });
             mBinding.rvList.setAdapter(adapter);
         }
         else {
@@ -219,4 +239,37 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
                 .go(this);
     }
 
+    private void selectOrderToSetCover(String path) {
+        mModel.saveTempImagePath(path);
+        Router.build("OrderPhone")
+                .with(OrderPhoneActivity.EXTRA_SELECT_MODE, true)
+                .requestCode(REQUEST_SET_COVER)
+                .go(this);
+    }
+
+    private void selectOrderToAddStar(Star star) {
+        Router.build("OrderPhone")
+                .with(OrderPhoneActivity.EXTRA_SELECT_MODE, true)
+                .with(OrderPhoneActivity.EXTRA_SELECT_STAR, true)
+                .requestCode(REQUEST_ADD_ORDER)
+                .go(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_SET_COVER) {
+            if (resultCode == RESULT_OK) {
+                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                mModel.setAsCover(orderId);
+            }
+        }
+        else if (requestCode == REQUEST_ADD_ORDER) {
+            if (resultCode == RESULT_OK) {
+                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                mModel.addToOrder(orderId);
+                // refresh header
+                adapter.notifyItemChanged(0);
+            }
+        }
+    }
 }

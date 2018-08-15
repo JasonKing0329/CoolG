@@ -6,7 +6,10 @@ import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
+import com.king.app.gdb.data.entity.FavorRecord;
+import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordType1v1;
@@ -40,13 +43,19 @@ public class RecordViewModel extends BaseViewModel {
 
     public MutableLiveData<List<PassionPoint>> passionsObserver = new MutableLiveData<>();
 
+    public MutableLiveData<List<FavorRecordOrder>> ordersObserver = new MutableLiveData<>();
+
     private RecordRepository repository;
+    private OrderRepository orderRepository;
 
     private Record mRecord;
+
+    private String mTempImagePath;
 
     public RecordViewModel(@NonNull Application application) {
         super(application);
         repository = new RecordRepository();
+        orderRepository = new OrderRepository();
     }
 
     public void loadRecord(long recordId) {
@@ -203,4 +212,92 @@ public class RecordViewModel extends BaseViewModel {
             pointList.add(point);
         }
     }
+
+    public void saveTempImagePath(String path) {
+        this.mTempImagePath = path;
+    }
+
+    public void setAsCover(long orderId) {
+        orderRepository.saveRecordOrderCover(orderId, mTempImagePath)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<FavorRecordOrder>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(FavorRecordOrder favorStarOrder) {
+                        messageObserver.setValue("Set successfully");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void loadRecordOrders() {
+        orderRepository.getRecordOrders(mRecord.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<FavorRecordOrder>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<FavorRecordOrder> list) {
+                        ordersObserver.setValue(list);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void addToOrder(long orderId) {
+        orderRepository.addFavorRecord(orderId, mRecord.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<FavorRecord>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(FavorRecord favorStar) {
+                        messageObserver.setValue("Add successfully");
+                        loadRecordOrders();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
 }

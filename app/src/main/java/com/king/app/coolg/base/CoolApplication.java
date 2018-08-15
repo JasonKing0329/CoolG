@@ -9,6 +9,7 @@ import com.king.app.coolg.context.GDataContext;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.gdb.data.entity.DaoMaster;
 import com.king.app.gdb.data.entity.DaoSession;
+import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.FavorRecordOrderDao;
 import com.king.app.gdb.data.entity.FavorStarOrderDao;
@@ -90,6 +91,10 @@ public class CoolApplication extends Application {
                 case 3:
                     db.execSQL("ALTER TABLE " + FavorRecordOrderDao.TABLENAME + " ADD COLUMN "
                         + FavorRecordOrderDao.Properties.ParentId.columnName + " INTEGER DEFAULT 0");
+                    db.execSQL("ALTER TABLE " + FavorRecordDao.TABLENAME + " ADD COLUMN "
+                            + FavorRecordOrderDao.Properties.CreateTime.columnName + " INTEGER DEFAULT 0");
+                    db.execSQL("ALTER TABLE " + FavorRecordDao.TABLENAME + " ADD COLUMN "
+                            + FavorRecordOrderDao.Properties.UpdateTime.columnName + " INTEGER DEFAULT 0");
                     db.execSQL("ALTER TABLE " + FavorStarOrderDao.TABLENAME + " ADD COLUMN "
                             + FavorStarOrderDao.Properties.ParentId.columnName + " INTEGER DEFAULT 0");
                     db.execSQL("ALTER TABLE " + FavorStarOrderDao.TABLENAME + " ADD COLUMN "

@@ -10,7 +10,6 @@ import com.king.app.coolg.databinding.AdapterStarPhoneFooterBinding;
 import com.king.app.coolg.databinding.AdapterStarPhoneHeaderBinding;
 import com.king.app.coolg.phone.record.list.RecordItemBinder;
 import com.king.app.coolg.phone.record.list.RecordProxy;
-import com.king.app.coolg.phone.star.list.StarHeader;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.gdb.data.entity.Star;
 

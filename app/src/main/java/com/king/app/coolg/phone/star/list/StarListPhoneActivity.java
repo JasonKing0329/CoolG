@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
@@ -393,7 +394,7 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
                         .apply(requestOptions)
                         .into(imageView);
 
-                RelativeLayout groupContainer = view.findViewById(R.id.group_container);
+                ViewGroup groupContainer = view.findViewById(R.id.group_container);
                 groupContainer.setTag(bean);
                 groupContainer.setOnClickListener(this);
             }

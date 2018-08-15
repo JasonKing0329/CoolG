@@ -82,6 +82,11 @@ public abstract class OrderFragment<VM extends BaseViewModel, T> extends MvvmFra
             mBinding.indicator.addPath(data.getName());
             loadFromOrder(data);
         }
+        else {
+            if (holder.isSelectMode()) {
+                holder.onSelectOrder(data.getId());
+            }
+        }
     }
 
     protected abstract void loadFromOrder(OrderItem<T> data);

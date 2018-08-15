@@ -1,7 +1,8 @@
 package com.king.app.coolg.phone.order;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
+import android.view.View;
 
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
@@ -21,6 +22,11 @@ import com.king.app.jactionbar.OnConfirmListener;
 @Route("OrderPhone")
 public class OrderPhoneActivity extends MvvmActivity<ActivityOrderPhoneBinding, BaseViewModel> implements IOrderHolder {
 
+    public static final String EXTRA_SELECT_MODE = "select_mode";
+    public static final String EXTRA_SELECT_STAR = "select_star";
+    public static final String EXTRA_SELECT_RECORD = "select_record";
+    public static final String RESP_ORDER_ID = "order_id";
+
     private OrderFragment ftCurrent;
     private StarOrderFragment ftStar;
     private RecordOrderFragment ftRecord;
@@ -31,31 +37,42 @@ public class OrderPhoneActivity extends MvvmActivity<ActivityOrderPhoneBinding, 
     }
 
     @Override
+    public boolean isSelectMode() {
+        return getIntent().getBooleanExtra(EXTRA_SELECT_MODE, false);
+    }
+
+    @Override
     protected void initView() {
         mBinding.actionbar.setOnBackListener(() -> finish());
-        mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText("Star"));
-        mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText("Record"));
-        mBinding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-                    showStarPage();
+        if (getIntent().getBooleanExtra(EXTRA_SELECT_STAR, false)
+                || getIntent().getBooleanExtra(EXTRA_SELECT_RECORD, false)) {
+            mBinding.tabLayout.setVisibility(View.GONE);
+        }
+        else {
+            mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText("Star"));
+            mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText("Record"));
+            mBinding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    if (tab.getPosition() == 0) {
+                        showStarPage();
+                    }
+                    else {
+                        showRecordPage();
+                    }
                 }
-                else {
-                    showRecordPage();
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
                 }
-            }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
 
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+                }
+            });
+        }
 
         mBinding.actionbar.setOnMenuItemListener(menuId -> {
             switch (menuId) {
@@ -110,11 +127,20 @@ public class OrderPhoneActivity extends MvvmActivity<ActivityOrderPhoneBinding, 
 
     @Override
     protected void initData() {
-        ftStar = new StarOrderFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fl_ft, ftStar, "StarOrderFragment")
-                .commit();
-        ftCurrent = ftStar;
+        if (getIntent().getBooleanExtra(EXTRA_SELECT_RECORD, false)){
+            ftRecord = new RecordOrderFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fl_ft, ftRecord, "RecordOrderFragment")
+                    .commit();
+            ftCurrent = ftRecord;
+        }
+        else {
+            ftStar = new StarOrderFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fl_ft, ftStar, "StarOrderFragment")
+                    .commit();
+            ftCurrent = ftStar;
+        }
     }
 
     private void showStarPage() {
@@ -154,5 +180,13 @@ public class OrderPhoneActivity extends MvvmActivity<ActivityOrderPhoneBinding, 
             }
         }
         super.onBackPressed();
+    }
+
+    @Override
+    public void onSelectOrder(long id) {
+        Intent intent = new Intent();
+        intent.putExtra(OrderPhoneActivity.RESP_ORDER_ID, id);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:id="@+id/group_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_head"
+            android:layout_width="105dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/def_person_square"/>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="105dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="10dp"
+            android:text="Topher Dimaggio"
+            android:layout_marginTop="5dp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+    </LinearLayout>
+</layout>

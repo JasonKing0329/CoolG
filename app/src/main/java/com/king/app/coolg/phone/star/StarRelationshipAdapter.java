@@ -1,4 +1,4 @@
-package com.king.app.coolg.phone.star.list;
+package com.king.app.coolg.phone.star;
 
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
