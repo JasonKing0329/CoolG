@@ -55,8 +55,17 @@ public abstract class OrderFragment<VM extends BaseViewModel, T> extends MvvmFra
         });
 
         mBinding.indicator.addPath("Root");
-        mBinding.indicator.setPathIndicatorListener((index, path) -> backToDepth(index));
+        mBinding.indicator.setPathIndicatorListener((index, path) -> {
+            if (mBinding.rvItems.getVisibility() == View.VISIBLE) {
+                mBinding.rvItems.setVisibility(View.GONE);
+                mBinding.rvOrders.setVisibility(View.VISIBLE);
+            }
+            backToDepth(index);
+        });
+        initItemsRecyclerView();
     }
+
+    protected abstract void initItemsRecyclerView();
 
     protected abstract void backToDepth(int index);
 
@@ -64,9 +73,20 @@ public abstract class OrderFragment<VM extends BaseViewModel, T> extends MvvmFra
         if (orderAdapter == null) {
             orderAdapter = new OrderAdapter<>();
             orderAdapter.setList(list);
+            orderAdapter.setSetCoverMode(holder.isSetCoverMode());
             orderAdapter.setCheckMap(getCheckMap());
-            orderAdapter.setOnEditListener((view, position, data) -> onLongClickOrder(view, position, data));
-            orderAdapter.setOnItemClickListener((view, position, data) -> onClickOrder(data));
+            orderAdapter.setOnEditListener(new OrderAdapter.OnEditListener<T>() {
+                @Override
+                public void onEdit(View view, int position, OrderItem<T> data) {
+                    editOrder(view, position, data);
+                }
+
+                @Override
+                public void onCheck(View v, int position, OrderItem<T> bean) {
+                    checkOrder(v, position, bean);
+                }
+            });
+            orderAdapter.setOnItemClickListener((view, position, data) -> onClickOrder(position, data));
             mBinding.rvOrders.setAdapter(orderAdapter);
         }
         else {
@@ -77,21 +97,40 @@ public abstract class OrderFragment<VM extends BaseViewModel, T> extends MvvmFra
 
     protected abstract Map<Long,Boolean> getCheckMap();
 
-    private void onClickOrder(OrderItem<T> data) {
+    private void onClickOrder(int position, OrderItem<T> data) {
         if (data.isHasChild()) {
             mBinding.indicator.addPath(data.getName());
             loadFromOrder(data);
         }
         else {
-            if (holder.isSelectMode()) {
+            if (holder.isSetCoverMode()) {
+                return;
+            }
+            else if (holder.isSelectMode()) {
                 holder.onSelectOrder(data.getId());
+            }
+            else {
+                mBinding.rvItems.setVisibility(View.VISIBLE);
+                mBinding.rvOrders.setVisibility(View.GONE);
+                mBinding.indicator.addPath(data.getName());
+                loadOrderItems(data);
             }
         }
     }
 
+    private void checkOrder(View v, int position, OrderItem<T> data) {
+        data.setImagePath(holder.getCoverPath());
+        orderAdapter.notifyItemChanged(position);
+        updateOrderCover(data, holder.getCoverPath());
+    }
+
+    protected abstract void updateOrderCover(OrderItem<T> data, String coverPath);
+
+    protected abstract void loadOrderItems(OrderItem<T> data);
+
     protected abstract void loadFromOrder(OrderItem<T> data);
 
-    private void onLongClickOrder(View view, int position, OrderItem<T> data) {
+    private void editOrder(View view, int position, OrderItem<T> data) {
         PopupMenu menu = new PopupMenu(getActivity(), view);
         menu.getMenuInflater().inflate(R.menu.order_context, menu.getMenu());
         menu.setOnMenuItemClickListener(item -> {
@@ -137,6 +176,10 @@ public abstract class OrderFragment<VM extends BaseViewModel, T> extends MvvmFra
     public boolean onBackPressed() {
         if (!mBinding.indicator.isRoot()) {
             mBinding.indicator.backToUpper();
+            if (mBinding.rvItems.getVisibility() == View.VISIBLE) {
+                mBinding.rvItems.setVisibility(View.GONE);
+                mBinding.rvOrders.setVisibility(View.VISIBLE);
+            }
             backToParent();
             return true;
         }
@@ -146,11 +189,18 @@ public abstract class OrderFragment<VM extends BaseViewModel, T> extends MvvmFra
     protected abstract void backToParent();
 
     public void setSelectionMode(boolean selectionMode) {
-        if (orderAdapter != null) {
-            orderAdapter.setSelectionMode(selectionMode);
-            orderAdapter.notifyDataSetChanged();
+        if (mBinding.rvItems.getVisibility() == View.VISIBLE) {
+            setItemSelectionMode(selectionMode);
+        }
+        else {
+            if (orderAdapter != null) {
+                orderAdapter.setSelectionMode(selectionMode);
+                orderAdapter.notifyDataSetChanged();
+            }
         }
     }
+
+    protected abstract void setItemSelectionMode(boolean selectionMode);
 
     public void delete() {
         showConfirmMessage("Delete order will delete all related orders and items, continue?"
@@ -163,4 +213,6 @@ public abstract class OrderFragment<VM extends BaseViewModel, T> extends MvvmFra
     }
 
     protected abstract void deleteSelectedItems();
+
+    public abstract void onSortTypeChanged();
 }

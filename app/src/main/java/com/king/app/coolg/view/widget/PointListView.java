@@ -200,8 +200,12 @@ public class PointListView extends View {
         textPaint.setStyle(Paint.Style.FILL);
         Point point = new Point((int) rectF.centerX(), (int) rectF.centerY());
 
-        textCenter(adapter.getText(i), textPaint, canvas, point, mPointRealSize
-            , Layout.Alignment.ALIGN_CENTER, 1.5f ,0f, false);
+        try {
+            textCenter(adapter.getText(i), textPaint, canvas, point, mPointRealSize
+                    , Layout.Alignment.ALIGN_CENTER, 1.5f ,0f, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void textCenter(String string, TextPaint textPaint, Canvas canvas, Point point, int width, Layout.Alignment align, float spacingmult, float spacingadd, boolean includepad) {

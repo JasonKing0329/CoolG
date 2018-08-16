@@ -31,7 +31,7 @@ public class FavorRecord {
     @ToOne(joinProperty = "orderId")
     private FavorRecordOrder order;
 
-    @ToOne(joinProperty = "id")
+    @ToOne(joinProperty = "recordId")
     private Record record;
 
     /** Used to resolve relations */
@@ -43,7 +43,8 @@ public class FavorRecord {
     private transient FavorRecordDao myDao;
 
     @Generated(hash = 1099620174)
-    public FavorRecord(Long id, long orderId, long recordId, Date createTime, Date updateTime) {
+    public FavorRecord(Long id, long orderId, long recordId, Date createTime,
+            Date updateTime) {
         this.id = id;
         this.orderId = orderId;
         this.recordId = recordId;
@@ -77,6 +78,22 @@ public class FavorRecord {
 
     public void setRecordId(long recordId) {
         this.recordId = recordId;
+    }
+
+    public Date getCreateTime() {
+        return this.createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return this.updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     @Generated(hash = 219913283)
@@ -119,9 +136,9 @@ public class FavorRecord {
     private transient Long record__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 439787660)
+    @Generated(hash = 987546320)
     public Record getRecord() {
-        Long __key = this.id;
+        long __key = this.recordId;
         if (record__resolvedKey == null || !record__resolvedKey.equals(__key)) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
@@ -138,12 +155,16 @@ public class FavorRecord {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1980507812)
-    public void setRecord(Record record) {
+    @Generated(hash = 1328184148)
+    public void setRecord(@NotNull Record record) {
+        if (record == null) {
+            throw new DaoException(
+                    "To-one property 'recordId' has not-null constraint; cannot set to-one to null");
+        }
         synchronized (this) {
             this.record = record;
-            id = record == null ? null : record.getId();
-            record__resolvedKey = id;
+            recordId = record.getId();
+            record__resolvedKey = recordId;
         }
     }
 
@@ -181,22 +202,6 @@ public class FavorRecord {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
-    }
-
-    public Date getCreateTime() {
-        return this.createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return this.updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
     }
 
     /** called by internal mechanisms, do not call yourself. */

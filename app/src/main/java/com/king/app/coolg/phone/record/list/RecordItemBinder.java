@@ -13,6 +13,8 @@ import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.param.DataConstants;
 
+import java.util.Map;
+
 /**
  * Created by Administrator on 2018/8/12 0012.
  */
@@ -23,12 +25,23 @@ public class RecordItemBinder {
 
     private int mSortMode;
 
+    private boolean selectionMode;
+    private Map<Long, Boolean> mCheckMap;
+
     public RecordItemBinder() {
         options = GlideUtil.getRecordSmallOptions();
     }
 
     public void setSortMode(int mSortMode) {
         this.mSortMode = mSortMode;
+    }
+
+    public void setSelectionMode(boolean selectionMode) {
+        this.selectionMode = selectionMode;
+    }
+
+    public void setCheckMap(Map<Long, Boolean> mCheckMap) {
+        this.mCheckMap = mCheckMap;
     }
 
     public void bind(AdapterRecordItemListBinding binding, int position, RecordProxy item) {
@@ -61,6 +74,14 @@ public class RecordItemBinder {
                 .load(item.getImagePath())
                 .apply(options)
                 .into(binding.ivImage);
+
+        if (selectionMode) {
+            binding.cbCheck.setVisibility(View.VISIBLE);
+            binding.cbCheck.setChecked(mCheckMap.get(item.getRecord().getId()) == null ? false:true);
+        }
+        else {
+            binding.cbCheck.setVisibility(View.GONE);
+        }
     }
 
     private void showSortScore(AdapterRecordItemListBinding binding, Record item, int mSortMode) {

@@ -47,7 +47,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
     public static final String EXTRA_RECORD_ID = "key_record_id";
 
-    private final int REQUEST_SET_COVER = 1601;
     private final int REQUEST_ADD_ORDER = 1602;
 
     private RequestOptions recordOptions;
@@ -330,8 +329,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     private void onApplyImage(String path) {
         mModel.saveTempImagePath(path);
         Router.build("OrderPhone")
-                .with(OrderPhoneActivity.EXTRA_SELECT_MODE, true)
-                .requestCode(REQUEST_SET_COVER)
+                .with(OrderPhoneActivity.EXTRA_SET_COVER, path)
                 .go(this);
     }
 
@@ -345,13 +343,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_SET_COVER) {
-            if (resultCode == RESULT_OK) {
-                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
-                mModel.setAsCover(orderId);
-            }
-        }
-        else if (requestCode == REQUEST_ADD_ORDER) {
+        if (requestCode == REQUEST_ADD_ORDER) {
             if (resultCode == RESULT_OK) {
                 long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
                 mModel.addToOrder(orderId);

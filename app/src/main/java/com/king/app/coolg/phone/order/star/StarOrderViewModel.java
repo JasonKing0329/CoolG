@@ -5,20 +5,27 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.comparator.StarNameComparator;
+import com.king.app.coolg.model.repository.OrderRepository;
+import com.king.app.coolg.model.setting.PreferenceValue;
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.order.OrderItem;
+import com.king.app.coolg.phone.star.list.StarProxy;
 import com.king.app.coolg.utils.ListUtil;
+import com.king.app.gdb.data.entity.FavorStar;
 import com.king.app.gdb.data.entity.FavorStarDao;
 import com.king.app.gdb.data.entity.FavorStarOrder;
 import com.king.app.gdb.data.entity.FavorStarOrderDao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -35,19 +42,30 @@ public class StarOrderViewModel extends BaseViewModel {
 
     private FavorStarOrder mParent;
     private int mPathDepth;
-    private Map<Long, Boolean> mCheckMap;
+    private Map<Long, Boolean> mOrderCheckMap;
+    private Map<Long, Boolean> mItemCheckMap;
+    private int mSortType;
+    private OrderRepository repository;
 
     public MutableLiveData<List<OrderItem<FavorStarOrder>>> orderObserver = new MutableLiveData<>();
+    public MutableLiveData<List<StarProxy>> starItemsObserver = new MutableLiveData<>();
 
     public StarOrderViewModel(@NonNull Application application) {
         super(application);
         mParent = null;
         mPathDepth = 0;
-        mCheckMap = new HashMap<>();
+        mOrderCheckMap = new HashMap<>();
+        mItemCheckMap = new HashMap<>();
+        mSortType = SettingProperty.getPhoneOrderSortType();
+        repository = new OrderRepository();
     }
 
-    public Map<Long, Boolean> getCheckMap() {
-        return mCheckMap;
+    public Map<Long, Boolean> getOrderCheckMap() {
+        return mOrderCheckMap;
+    }
+
+    public Map<Long, Boolean> getItemCheckMap() {
+        return mItemCheckMap;
     }
 
     public void loadOrders() {
@@ -57,9 +75,9 @@ public class StarOrderViewModel extends BaseViewModel {
     public void loadOrdersFrom(FavorStarOrder parent) {
         mParent = parent;
         if (parent != null) {
-            mPathDepth ++;
+            increaseDepth();
         }
-        getOrders(parent)
+        repository.getStarOrders(parent, mSortType)
                 .flatMap(list -> toViewItems(list))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -84,15 +102,6 @@ public class StarOrderViewModel extends BaseViewModel {
 
                     }
                 });
-    }
-
-    private Observable<List<FavorStarOrder>> getOrders(FavorStarOrder parent) {
-        return Observable.create(e -> {
-            List<FavorStarOrder> list = getDaoSession().getFavorStarOrderDao().queryBuilder()
-                    .where(FavorStarOrderDao.Properties.ParentId.eq(parent == null ? 0:parent.getId()))
-                    .build().list();
-            e.onNext(list);
-        });
     }
 
     private ObservableSource<List<OrderItem<FavorStarOrder>>> toViewItems(List<FavorStarOrder> list) {
@@ -167,18 +176,43 @@ public class StarOrderViewModel extends BaseViewModel {
         }
     }
 
-    public void deleteSelectedItems() {
-        Iterator<Long> it = mCheckMap.keySet().iterator();
-        while (it.hasNext()) {
-            deleteOrder(it.next());
+    private void deleteOrderItem(FavorStarOrder parent, long starId) {
+        // delete from favor_star
+        getDaoSession().getFavorStarDao().queryBuilder()
+                .where(FavorStarDao.Properties.OrderId.eq(parent.getId()))
+                .where(FavorStarDao.Properties.StarId.eq(starId))
+                .buildDelete().executeDeleteWithoutDetachingEntities();
+        getDaoSession().getFavorStarDao().detachAll();
+        // decrease number from favor_star_order
+        parent.setNumber(parent.getNumber() - 1);
+        getDaoSession().getFavorStarOrderDao().update(parent);
+        getDaoSession().getFavorStarOrderDao().detach(parent);
+    }
+
+    public void deleteSelectedItems(boolean isOrderItem) {
+        if (isOrderItem) {
+            Iterator<Long> it = mItemCheckMap.keySet().iterator();
+            while (it.hasNext()) {
+                deleteOrderItem(mParent, it.next());
+            }
+        }
+        else {
+            Iterator<Long> it = mOrderCheckMap.keySet().iterator();
+            while (it.hasNext()) {
+                deleteOrder(it.next());
+            }
         }
     }
 
     public void backToDepth(int depth) {
         while (mParent != null) {
             mParent = mParent.getParent();
-            mPathDepth --;
+            decreaseDepth();
             if (mPathDepth == depth) {
+                if (mPathDepth > 0) {
+                    // loadOrders会increaseDepth，所以这里要再一次decrease
+                    decreaseDepth();
+                }
                 break;
             }
         }
@@ -188,7 +222,80 @@ public class StarOrderViewModel extends BaseViewModel {
     public void backToParent() {
         if (mParent != null) {
             mParent = mParent.getParent();
+            decreaseDepth();
             loadOrders();
         }
+    }
+
+    private void increaseDepth() {
+        mPathDepth ++;
+    }
+
+    private void decreaseDepth() {
+        mPathDepth --;
+    }
+
+    public void onSortTypeChanged() {
+        mSortType = SettingProperty.getPhoneOrderSortType();
+        loadOrders();
+    }
+
+    public void loadStarItems() {
+        loadStarItems(mParent);
+    }
+
+    public void loadStarItems(FavorStarOrder parent) {
+        mParent = parent;
+        increaseDepth();
+        loadingObserver.setValue(true);
+        repository.getFavorStars(parent.getId(), mSortType)
+                .flatMap(list -> toStarItems(list))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<StarProxy>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<StarProxy> list) {
+                        loadingObserver.setValue(false);
+                        starItemsObserver.setValue(list);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        loadingObserver.setValue(false);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private ObservableSource<List<StarProxy>> toStarItems(List<FavorStar> list) {
+        return observer -> {
+            List<StarProxy> starList = new ArrayList<>();
+            for (FavorStar star:list) {
+                StarProxy proxy = new StarProxy();
+                proxy.setStar(star.getStar());
+                proxy.setImagePath(ImageProvider.getStarRandomPath(star.getStar().getName(), null));
+                starList.add(proxy);
+            }
+            if (mSortType == PreferenceValue.PHONE_ORDER_SORT_BY_NAME) {
+                Collections.sort(starList, new StarNameComparator());
+            }
+            observer.onNext(starList);
+        };
+    }
+
+    public void updateCover(FavorStarOrder bean, String coverPath) {
+        bean.setCoverUrl(coverPath);
+        getDaoSession().getFavorStarOrderDao().update(bean);
+        getDaoSession().getFavorStarOrderDao().detach(bean);
     }
 }

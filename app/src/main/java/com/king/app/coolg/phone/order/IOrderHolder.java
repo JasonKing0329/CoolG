@@ -12,6 +12,9 @@ public interface IOrderHolder extends IFragmentHolder {
 
     void cancelConfirmStatus();
 
+    boolean isSetCoverMode();
+    String getCoverPath();
+
     boolean isSelectMode();
 
     void onSelectOrder(long id);

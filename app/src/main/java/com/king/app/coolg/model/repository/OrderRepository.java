@@ -1,11 +1,16 @@
 package com.king.app.coolg.model.repository;
 
+import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.gdb.data.entity.FavorRecord;
 import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
+import com.king.app.gdb.data.entity.FavorRecordOrderDao;
 import com.king.app.gdb.data.entity.FavorStar;
 import com.king.app.gdb.data.entity.FavorStarDao;
 import com.king.app.gdb.data.entity.FavorStarOrder;
+import com.king.app.gdb.data.entity.FavorStarOrderDao;
+
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +25,52 @@ import io.reactivex.Observable;
  * @date: 2018/8/15 9:50
  */
 public class OrderRepository extends BaseRepository {
+
+    public Observable<List<FavorStarOrder>> getStarOrders(FavorStarOrder parent, int sortType) {
+        return Observable.create(e -> {
+            QueryBuilder<FavorStarOrder> builder = getDaoSession().getFavorStarOrderDao().queryBuilder();
+            builder.where(FavorStarOrderDao.Properties.ParentId.eq(parent == null ? 0:parent.getId()));
+            switch (sortType) {
+                case PreferenceValue.PHONE_ORDER_SORT_BY_ITEMS:
+                    builder.orderDesc(FavorStarOrderDao.Properties.Number);
+                    break;
+                case PreferenceValue.PHONE_ORDER_SORT_BY_CREATE_TIME:
+                    builder.orderDesc(FavorStarOrderDao.Properties.CreateTime);
+                    break;
+                case PreferenceValue.PHONE_ORDER_SORT_BY_UPDATE_TIME:
+                    builder.orderDesc(FavorStarOrderDao.Properties.UpdateTime);
+                    break;
+                default:
+                    builder.orderAsc(FavorStarOrderDao.Properties.Name);
+                    break;
+            }
+            List<FavorStarOrder> list = builder.build().list();
+            e.onNext(list);
+        });
+    }
+
+    public Observable<List<FavorRecordOrder>> getRecordOrders(FavorRecordOrder parent, int sortType) {
+        return Observable.create(e -> {
+            QueryBuilder<FavorRecordOrder> builder = getDaoSession().getFavorRecordOrderDao().queryBuilder();
+            builder.where(FavorRecordOrderDao.Properties.ParentId.eq(parent == null ? 0:parent.getId()));
+            switch (sortType) {
+                case PreferenceValue.PHONE_ORDER_SORT_BY_ITEMS:
+                    builder.orderDesc(FavorRecordOrderDao.Properties.Number);
+                    break;
+                case PreferenceValue.PHONE_ORDER_SORT_BY_CREATE_TIME:
+                    builder.orderDesc(FavorRecordOrderDao.Properties.CreateTime);
+                    break;
+                case PreferenceValue.PHONE_ORDER_SORT_BY_UPDATE_TIME:
+                    builder.orderDesc(FavorRecordOrderDao.Properties.UpdateTime);
+                    break;
+                default:
+                    builder.orderAsc(FavorRecordOrderDao.Properties.Name);
+                    break;
+            }
+            List<FavorRecordOrder> list = builder.build().list();
+            e.onNext(list);
+        });
+    }
 
     public Observable<List<FavorStarOrder>> getStarOrders(long starId) {
         return Observable.create(e -> {
@@ -75,6 +126,7 @@ public class OrderRepository extends BaseRepository {
                 e.onError(new Exception("Target is already in order"));
                 return;
             }
+            // insert to favor_star
             favorStar = new FavorStar();
             favorStar.setOrderId(orderId);
             favorStar.setStarId(starId);
@@ -82,6 +134,13 @@ public class OrderRepository extends BaseRepository {
             favorStar.setUpdateTime(new Date());
             getDaoSession().getFavorStarDao().insert(favorStar);
             getDaoSession().getFavorStarDao().detachAll();
+
+            // update number in favor_star_order
+            FavorStarOrder order = getDaoSession().getFavorStarOrderDao().load(orderId);
+            order.setNumber(order.getNumber() + 1);
+            getDaoSession().getFavorStarOrderDao().update(order);
+            getDaoSession().getFavorStarOrderDao().detachAll();
+
             e.onNext(favorStar);
         });
     }
@@ -96,6 +155,7 @@ public class OrderRepository extends BaseRepository {
                 e.onError(new Exception("Target is already in order"));
                 return;
             }
+            // insert to favor_record
             favorRecord = new FavorRecord();
             favorRecord.setOrderId(orderId);
             favorRecord.setRecordId(recordId);
@@ -103,7 +163,50 @@ public class OrderRepository extends BaseRepository {
             favorRecord.setUpdateTime(new Date());
             getDaoSession().getFavorRecordDao().insert(favorRecord);
             getDaoSession().getFavorRecordDao().detachAll();
+
+            // update number in favor_record_order
+            FavorRecordOrder order = getDaoSession().getFavorRecordOrderDao().load(orderId);
+            order.setNumber(order.getNumber() + 1);
+            getDaoSession().getFavorRecordOrderDao().update(order);
+            getDaoSession().getFavorRecordOrderDao().detachAll();
+
             e.onNext(favorRecord);
         });
     }
+
+    public Observable<List<FavorStar>> getFavorStars(long orderId, int sortType) {
+        return Observable.create(e -> {
+            QueryBuilder<FavorStar> builder = getDaoSession().getFavorStarDao().queryBuilder();
+            builder.where(FavorStarDao.Properties.OrderId.eq(orderId));
+            switch (sortType) {
+                case PreferenceValue.PHONE_ORDER_SORT_BY_CREATE_TIME:
+                    builder.orderDesc(FavorStarDao.Properties.CreateTime);
+                    break;
+                case PreferenceValue.PHONE_ORDER_SORT_BY_UPDATE_TIME:
+                    builder.orderDesc(FavorStarDao.Properties.UpdateTime);
+                    break;
+            }
+            List<FavorStar> list = builder.build().list();
+            e.onNext(list);
+        });
+    }
+
+
+    public Observable<List<FavorRecord>> getFavorRecords(long orderId, int sortType) {
+        return Observable.create(e -> {
+            QueryBuilder<FavorRecord> builder = getDaoSession().getFavorRecordDao().queryBuilder();
+            builder.where(FavorRecordDao.Properties.OrderId.eq(orderId));
+            switch (sortType) {
+                case PreferenceValue.PHONE_ORDER_SORT_BY_CREATE_TIME:
+                    builder.orderDesc(FavorRecordDao.Properties.CreateTime);
+                    break;
+                case PreferenceValue.PHONE_ORDER_SORT_BY_UPDATE_TIME:
+                    builder.orderDesc(FavorRecordDao.Properties.UpdateTime);
+                    break;
+            }
+            List<FavorRecord> list = builder.build().list();
+            e.onNext(list);
+        });
+    }
+
 }

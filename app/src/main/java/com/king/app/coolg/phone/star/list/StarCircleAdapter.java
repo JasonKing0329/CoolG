@@ -11,6 +11,8 @@ import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.StarRatingUtil;
 
+import java.util.Map;
+
 /**
  * Desc:
  *
@@ -23,12 +25,27 @@ public class StarCircleAdapter extends BaseBindingAdapter<AdapterStarCircleBindi
 
     private RequestOptions requestOptions;
 
+    private boolean selectionMode;
+
+    private Map<Long, Boolean> mCheckMap;
+
     public StarCircleAdapter() {
         requestOptions = GlideUtil.getStarWideOptions();
     }
 
     public void setOnStarRatingListener(OnStarRatingListener listener) {
         onStarRatingListener = listener;
+    }
+
+    public void setSelectionMode(boolean selectionMode) {
+        this.selectionMode = selectionMode;
+        if (selectionMode) {
+            mCheckMap.clear();
+        }
+    }
+
+    public void setCheckMap(Map<Long, Boolean> mCheckMap) {
+        this.mCheckMap = mCheckMap;
     }
 
     @Override
@@ -62,6 +79,14 @@ public class StarCircleAdapter extends BaseBindingAdapter<AdapterStarCircleBindi
                 onStarRatingListener.onUpdateRating(item.getStar().getId());
             }
         });
+
+        if (selectionMode) {
+            binding.cbCheck.setVisibility(View.VISIBLE);
+            binding.cbCheck.setChecked(mCheckMap.get(item.getStar().getId()) == null ? false:true);
+        }
+        else {
+            binding.cbCheck.setVisibility(View.GONE);
+        }
     }
 
     public void notifyStarChanged(Long starId) {
@@ -73,4 +98,20 @@ public class StarCircleAdapter extends BaseBindingAdapter<AdapterStarCircleBindi
         }
     }
 
+    @Override
+    protected void onClickItem(View v, int position) {
+        if (selectionMode) {
+            long key = list.get(position).getStar().getId();
+            if (mCheckMap.get(key) == null) {
+                mCheckMap.put(key, true);
+            }
+            else {
+                mCheckMap.remove(key);
+            }
+            notifyItemChanged(position);
+        }
+        else {
+            super.onClickItem(v, position);
+        }
+    }
 }

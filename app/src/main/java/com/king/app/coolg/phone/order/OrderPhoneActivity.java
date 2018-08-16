@@ -2,13 +2,17 @@ package com.king.app.coolg.phone.order;
 
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.PopupMenu;
 
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityOrderPhoneBinding;
+import com.king.app.coolg.model.setting.PreferenceValue;
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.order.record.RecordOrderFragment;
 import com.king.app.coolg.phone.order.star.StarOrderFragment;
 import com.king.app.jactionbar.OnConfirmListener;
@@ -22,6 +26,7 @@ import com.king.app.jactionbar.OnConfirmListener;
 @Route("OrderPhone")
 public class OrderPhoneActivity extends MvvmActivity<ActivityOrderPhoneBinding, BaseViewModel> implements IOrderHolder {
 
+    public static final String EXTRA_SET_COVER = "set_cover";
     public static final String EXTRA_SELECT_MODE = "select_mode";
     public static final String EXTRA_SELECT_STAR = "select_star";
     public static final String EXTRA_SELECT_RECORD = "select_record";
@@ -34,6 +39,16 @@ public class OrderPhoneActivity extends MvvmActivity<ActivityOrderPhoneBinding, 
     @Override
     protected int getContentView() {
         return R.layout.activity_order_phone;
+    }
+
+    @Override
+    public boolean isSetCoverMode() {
+        return !TextUtils.isEmpty(getIntent().getStringExtra(EXTRA_SET_COVER));
+    }
+
+    @Override
+    public String getCoverPath() {
+        return getIntent().getStringExtra(EXTRA_SET_COVER);
     }
 
     @Override
@@ -112,6 +127,41 @@ public class OrderPhoneActivity extends MvvmActivity<ActivityOrderPhoneBinding, 
                 return true;
             }
         });
+        mBinding.actionbar.registerPopupMenu(R.id.menu_sort);
+        mBinding.actionbar.setPopupMenuProvider((iconMenuId, anchorView) -> {
+            switch (iconMenuId) {
+                case R.id.menu_sort:
+                    return getSortPopup(anchorView);
+            }
+            return null;
+        });
+    }
+
+    private PopupMenu getSortPopup(View anchorView) {
+        PopupMenu menu = new PopupMenu(this, anchorView);
+        menu.getMenuInflater().inflate(R.menu.order_sort, menu.getMenu());
+        menu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_sort_name:
+                    SettingProperty.setPhoneOrderSortType(PreferenceValue.PHONE_ORDER_SORT_BY_NAME);
+                    ftCurrent.onSortTypeChanged();
+                    break;
+                case R.id.menu_sort_items:
+                    SettingProperty.setPhoneOrderSortType(PreferenceValue.PHONE_ORDER_SORT_BY_ITEMS);
+                    ftCurrent.onSortTypeChanged();
+                    break;
+                case R.id.menu_sort_create_time:
+                    SettingProperty.setPhoneOrderSortType(PreferenceValue.PHONE_ORDER_SORT_BY_CREATE_TIME);
+                    ftCurrent.onSortTypeChanged();
+                    break;
+                case R.id.menu_sort_update_time:
+                    SettingProperty.setPhoneOrderSortType(PreferenceValue.PHONE_ORDER_SORT_BY_UPDATE_TIME);
+                    ftCurrent.onSortTypeChanged();
+                    break;
+            }
+            return true;
+        });
+        return menu;
     }
 
     @Override
@@ -174,6 +224,9 @@ public class OrderPhoneActivity extends MvvmActivity<ActivityOrderPhoneBinding, 
 
     @Override
     public void onBackPressed() {
+        if (mBinding.actionbar.onBackPressed()) {
+            return;
+        }
         if (ftCurrent != null) {
             if (ftCurrent.onBackPressed()) {
                 return;

@@ -72,6 +72,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:srcCompat="@drawable/ic_edit_purple_3f3a71_36dp" />
 
+                <ImageView
+                    android:id="@+id/iv_check"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="5dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/ll_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:srcCompat="@drawable/ic_check_3f3a71_24dp" />
+
                 <CheckBox
                     android:id="@+id/cb_check"
                     android:layout_width="wrap_content"

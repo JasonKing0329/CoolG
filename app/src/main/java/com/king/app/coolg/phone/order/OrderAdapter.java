@@ -22,12 +22,18 @@ public class OrderAdapter<T> extends BaseBindingAdapter<AdapterOrderPhoneBinding
     private Map<Long, Boolean> mCheckMap;
 
     private OnEditListener<T> onEditListener;
+    
+    private boolean setCoverMode;
 
     public void setSelectionMode(boolean selectionMode) {
         this.selectionMode = selectionMode;
         if (!selectionMode) {
             mCheckMap.clear();
         }
+    }
+
+    public void setSetCoverMode(boolean setCoverMode) {
+        this.setCoverMode = setCoverMode;
     }
 
     public void setCheckMap(Map<Long, Boolean> mCheckMap) {
@@ -58,6 +64,19 @@ public class OrderAdapter<T> extends BaseBindingAdapter<AdapterOrderPhoneBinding
                 onEditListener.onEdit(v, position, bean);
             }
         });
+        if (setCoverMode) {
+            binding.ivEdit.setVisibility(View.GONE);
+            binding.ivCheck.setVisibility(View.VISIBLE);
+            binding.ivCheck.setOnClickListener(v -> {
+                if (onEditListener != null) {
+                    onEditListener.onCheck(v, position, bean);
+                }
+            });
+        }
+        else {
+            binding.ivEdit.setVisibility(View.VISIBLE);
+            binding.ivCheck.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -78,5 +97,7 @@ public class OrderAdapter<T> extends BaseBindingAdapter<AdapterOrderPhoneBinding
 
     public interface OnEditListener<T> {
         void onEdit(View view, int position, OrderItem<T> data);
+
+        void onCheck(View v, int position, OrderItem<T> bean);
     }
 }

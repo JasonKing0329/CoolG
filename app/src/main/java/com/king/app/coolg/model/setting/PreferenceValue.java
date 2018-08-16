@@ -70,4 +70,9 @@ public class PreferenceValue {
      */
     public static final int PAD_STAR_RECORDS_GRID1 = 0;
     public static final int PAD_STAR_RECORDS_GRID2 = 1;
+
+    public static final int PHONE_ORDER_SORT_BY_NAME = 0;
+    public static final int PHONE_ORDER_SORT_BY_ITEMS = 1;
+    public static final int PHONE_ORDER_SORT_BY_CREATE_TIME = 2;
+    public static final int PHONE_ORDER_SORT_BY_UPDATE_TIME =3;
 }

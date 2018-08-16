@@ -229,4 +229,12 @@ public class SettingProperty {
         setString(PreferenceKey.PREF_GDB_SCENE_HSV_COLOR, new Gson().toJson(bean));
     }
 
+    public static int getPhoneOrderSortType() {
+        return getInt("record_order_sort_type", 0);
+    }
+
+    public static void setPhoneOrderSortType(int random) {
+        setInt("record_order_sort_type", random);
+    }
+
 }

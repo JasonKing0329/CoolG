@@ -31,7 +31,7 @@ public class FavorStar {
     @ToOne(joinProperty = "orderId")
     private FavorStarOrder order;
 
-    @ToOne(joinProperty = "id")
+    @ToOne(joinProperty = "starId")
     private Star star;
 
     /** Used to resolve relations */
@@ -136,9 +136,9 @@ public class FavorStar {
     private transient Long star__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1604510767)
+    @Generated(hash = 1453149840)
     public Star getStar() {
-        Long __key = this.id;
+        long __key = this.starId;
         if (star__resolvedKey == null || !star__resolvedKey.equals(__key)) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
@@ -155,12 +155,16 @@ public class FavorStar {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 323183962)
-    public void setStar(Star star) {
+    @Generated(hash = 133780265)
+    public void setStar(@NotNull Star star) {
+        if (star == null) {
+            throw new DaoException(
+                    "To-one property 'starId' has not-null constraint; cannot set to-one to null");
+        }
         synchronized (this) {
             this.star = star;
-            id = star == null ? null : star.getId();
-            star__resolvedKey = id;
+            starId = star.getId();
+            star__resolvedKey = starId;
         }
     }
 

@@ -33,5 +33,12 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:layout_above="@id/tv_name" />
+
+        <CheckBox
+            android:id="@+id/cb_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:visibility="gone"/>
     </RelativeLayout>
 </layout>
