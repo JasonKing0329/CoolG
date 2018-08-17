@@ -12,7 +12,6 @@ import com.king.app.coolg.model.VideoModel;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.repository.RecordRepository;
-import com.king.app.coolg.model.setting.PreferenceKey;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.gdb.data.RecordCursor;
@@ -38,13 +37,15 @@ public class RecordListViewModel extends BaseViewModel {
 
     private RecordRepository repository;
 
-    private int DEFAULT_LOAD_MORE = 20;
+    protected int DEFAULT_LOAD_MORE = 20;
 
     private RecordCursor moreCursor;
 
     public MutableLiveData<List<RecordProxy>> recordsObserver = new MutableLiveData<>();
-    public MutableLiveData<List<RecordProxy>> moreObserver = new MutableLiveData<>();
+    public MutableLiveData<Integer> moreObserver = new MutableLiveData<>();
     public MutableLiveData<Integer> countObserver = new MutableLiveData<>();
+
+    private List<RecordProxy> mRecordList;
 
     private int mSortMode;
     private boolean mSortDesc;
@@ -68,6 +69,10 @@ public class RecordListViewModel extends BaseViewModel {
     public void onSortTypeChanged() {
         mSortMode = SettingProperty.getRecordOrderMode();
         mSortDesc = SettingProperty.isRecordOrderModeDesc();
+    }
+
+    public void setDefaultLoadNumber(int defaultLoadNumber) {
+        DEFAULT_LOAD_MORE = defaultLoadNumber;
     }
 
     public void setFilter(RecordListFilterBean mFilter) {
@@ -124,6 +129,7 @@ public class RecordListViewModel extends BaseViewModel {
 
                     @Override
                     public void onNext(List<RecordProxy> list) {
+                        mRecordList = list;
                         recordsObserver.setValue(list);
                     }
 
@@ -169,6 +175,7 @@ public class RecordListViewModel extends BaseViewModel {
     }
 
     public void loadMoreRecords() {
+        int originSize = mRecordList == null ? 0:mRecordList.size();
         queryRecords(mSortMode, mSortDesc, mShowCanBePlayed, mKeyword, mKeyScene, mFilter, mRecordType)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -180,7 +187,8 @@ public class RecordListViewModel extends BaseViewModel {
 
                     @Override
                     public void onNext(List<RecordProxy> list) {
-                        moreObserver.setValue(list);
+                        mRecordList.addAll(list);
+                        moreObserver.setValue(originSize + 1);
                     }
 
                     @Override
@@ -334,5 +342,4 @@ public class RecordListViewModel extends BaseViewModel {
             return "";
         }
     }
-
 }

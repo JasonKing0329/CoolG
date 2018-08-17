@@ -26,6 +26,7 @@ public class SceneFragment extends DraggableContentFragment<FragmentRecordSceneB
     private String mScene;
 
     public OnSceneSelectedListener onSceneSelectedListener;
+    private int mRecordType;
 
     @Override
     protected void bindFragmentHolder(IFragmentHolder holder) {
@@ -45,6 +46,7 @@ public class SceneFragment extends DraggableContentFragment<FragmentRecordSceneB
         mBinding.rvScenes.setLayoutManager(new GridLayoutManager(getActivity(), 3));
 
         mModel.sceneObserver.observe(this, list -> showScenes(list));
+        mModel.setRecordType(mRecordType);
         mModel.loadScenes();
     }
 
@@ -91,7 +93,24 @@ public class SceneFragment extends DraggableContentFragment<FragmentRecordSceneB
         mModel.updateTempColor(hsvColorBean);
     }
 
+    public void focusToScene(String scene) {
+        if (adapter != null) {
+            adapter.setFocusScene(scene);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    public void setRecordType(int recordType) {
+        this.mRecordType = recordType;
+    }
+
     public interface OnSceneSelectedListener {
         void onSelectScene(String scene);
+    }
+
+    public void reload() {
+        if (mModel != null) {
+            mModel.loadScenes();
+        }
     }
 }

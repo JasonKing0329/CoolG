@@ -123,11 +123,14 @@ public class RecordRepository extends BaseRepository {
                 .buildCount().count();
     }
 
-    public Observable<List<SceneBean>> getScenes() {
+    public Observable<List<SceneBean>> getScenes(int recordType) {
         return Observable.create(e -> {
             List<SceneBean> list = new ArrayList<>();
             String sql = "SELECT scene, COUNT(scene) AS count, AVG(score) AS average, MAX(score) AS max FROM "
                     + RecordDao.TABLENAME;
+            if (recordType != 0) {
+                sql = sql + " WHERE type=" + recordType;
+            }
             sql = sql + " GROUP BY scene ORDER BY scene";
             Cursor cursor = getDaoSession().getDatabase()
                     .rawQuery(sql, new String[]{});

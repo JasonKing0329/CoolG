@@ -36,6 +36,8 @@ public class SceneViewModel extends BaseViewModel {
 
     private int mSortType;
 
+    private int mRecordType;
+
     private List<SceneBean> mSceneList;
 
     public SceneViewModel(@NonNull Application application) {
@@ -44,8 +46,12 @@ public class SceneViewModel extends BaseViewModel {
         mSortType = AppConstants.SCENE_SORT_NAME;
     }
 
+    public void setRecordType(int mRecordType) {
+        this.mRecordType = mRecordType;
+    }
+
     public void loadScenes() {
-        repository.getScenes()
+        repository.getScenes(mRecordType)
                 .flatMap(list -> {
                     // add 'All'
                     SceneBean bean = new SceneBean();

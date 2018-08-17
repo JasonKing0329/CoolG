@@ -182,4 +182,31 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="IvPadActionIcon">
+        <item name="android:layout_width">@dimen/actionbar_height</item>
+        <item name="android:layout_height">@dimen/actionbar_height</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="TvStarTag">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@drawable/selector_star_tag_text</item>
+        <item name="android:background">@drawable/selector_star_tag_bg</item>
+    </style>
+
+    <style name="ActionbarCloseIcon">
+        <item name="android:clickable">true</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:paddingTop">@dimen/actionbar_padding</item>
+        <item name="android:paddingBottom">@dimen/actionbar_padding</item>
+    </style>
+
 </resources>
