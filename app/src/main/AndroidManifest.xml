@@ -64,6 +64,9 @@
         <activity android:name=".phone.order.OrderPhoneActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".pad.home.HomePadActivity"
+            android:screenOrientation="landscape"/>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.king.app.coolg.fileProvider"

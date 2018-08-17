@@ -40,6 +40,7 @@ public class GDataContext extends ContextWrapper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        DebugLog.e(file.getPath());
         return file;
 
 

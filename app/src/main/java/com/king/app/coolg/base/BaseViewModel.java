@@ -17,7 +17,7 @@ import io.reactivex.disposables.Disposable;
  */
 public class BaseViewModel extends AndroidViewModel {
 
-    private CompositeDisposable compositeDisposable;
+    protected CompositeDisposable compositeDisposable;
 
     public MutableLiveData<Boolean> loadingObserver = new MutableLiveData<>();
     public MutableLiveData<String> messageObserver = new MutableLiveData<>();

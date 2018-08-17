@@ -11,6 +11,7 @@ import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityLoginBinding;
 import com.king.app.coolg.model.FingerPrintController;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.SimpleDialogs;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -147,7 +148,13 @@ public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewM
     }
 
     private void goToHome() {
-        Router.build("Home").go(this);
-        finish();
+        if (ScreenUtils.isTablet()) {
+            Router.build("HomePad").go(this);
+            finish();
+        }
+        else {
+            Router.build("Home").go(this);
+            finish();
+        }
     }
 }
