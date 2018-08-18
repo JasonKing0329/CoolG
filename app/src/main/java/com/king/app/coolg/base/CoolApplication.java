@@ -10,9 +10,10 @@ import com.king.app.coolg.utils.DebugLog;
 import com.king.app.gdb.data.entity.DaoMaster;
 import com.king.app.gdb.data.entity.DaoSession;
 import com.king.app.gdb.data.entity.FavorRecordDao;
-import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.FavorRecordOrderDao;
+import com.king.app.gdb.data.entity.FavorStarDao;
 import com.king.app.gdb.data.entity.FavorStarOrderDao;
+import com.king.app.gdb.data.entity.StarRatingDao;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
@@ -88,6 +89,16 @@ public class CoolApplication extends Application {
         public void onUpgrade(Database db, int oldVersion, int newVersion) {
             DebugLog.e(" oldVersion=" + oldVersion + ", newVersion=" + newVersion);
             switch (oldVersion) {
+                case 1:
+                    // Dao已经是最新结构了，不能再执行case 3里的add column
+                    FavorRecordDao.createTable(db, true);
+                    FavorRecordOrderDao.createTable(db, true);
+                    FavorStarDao.createTable(db, true);
+                    FavorStarOrderDao.createTable(db, true);
+                    StarRatingDao.createTable(db, true);
+                    break;
+                case 2:
+                    StarRatingDao.createTable(db, true);
                 case 3:
                     db.execSQL("ALTER TABLE " + FavorRecordOrderDao.TABLENAME + " ADD COLUMN "
                         + FavorRecordOrderDao.Properties.ParentId.columnName + " INTEGER DEFAULT 0");

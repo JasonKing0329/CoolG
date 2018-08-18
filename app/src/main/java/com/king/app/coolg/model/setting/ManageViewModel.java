@@ -20,11 +20,10 @@ import com.king.app.coolg.model.http.bean.request.GetStarRatingsRequest;
 import com.king.app.coolg.model.http.bean.request.UploadStarRatingRequest;
 import com.king.app.coolg.model.http.bean.response.AppCheckBean;
 import com.king.app.coolg.model.http.bean.response.BaseFlatMap;
-import com.king.app.coolg.model.http.bean.response.BaseResponse;
 import com.king.app.coolg.model.http.bean.response.GdbMoveResponse;
 import com.king.app.coolg.model.http.bean.response.GdbRespBean;
-import com.king.app.coolg.model.http.bean.response.GetStarRatingResponse;
 import com.king.app.coolg.model.repository.PropertyRepository;
+import com.king.app.coolg.utils.FileUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.gdb.data.entity.FavorRecord;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
@@ -36,19 +35,17 @@ import com.king.app.gdb.data.entity.StarRating;
 import com.king.app.gdb.data.entity.StarRatingDao;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -527,6 +524,11 @@ public class ManageViewModel extends BaseViewModel {
      */
     private Observable<LocalData> saveLocalData() {
         return Observable.create(e -> {
+            // 将数据库备份至History文件夹
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+            FileUtil.copyFile(new File(AppConfig.APP_DIR_CONF + "/" + AppConfig.DB_NAME)
+                    , new File(AppConfig.APP_DIR_DB_HISTORY + "/" + sdf.format(new Date()) + ".db"));
+
             LocalData data = new LocalData();
             // 保存star的favor字段
             data.favorMap = new HashMap<>();
