@@ -16,6 +16,7 @@ import com.king.app.gdb.data.entity.RecordType1v1;
 import com.king.app.gdb.data.entity.RecordType3w;
 import com.king.app.gdb.data.param.DataConstants;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class RecordViewModel extends BaseViewModel {
 
     private Record mRecord;
 
-    private String mTempImagePath;
+    private String mSingleImagePath;
 
     public RecordViewModel(@NonNull Application application) {
         super(application);
@@ -87,23 +88,33 @@ public class RecordViewModel extends BaseViewModel {
                 });
     }
 
+    private void loadImages(Record record) {
+        if (ImageProvider.hasRecordFolder(record.getName())) {
+            List<String> list = ImageProvider.getRecordPathList(record.getName());
+            if (list.size() > 1) {
+                imagesObserver.postValue(list);
+            }
+            else if (list.size() == 1) {
+                mSingleImagePath = list.get(0);
+                singleImageObserver.postValue(list.get(0));
+            }
+        }
+        else {
+            String path = ImageProvider.getRecordRandomPath(record.getName(), null);
+            mSingleImagePath = path;
+            singleImageObserver.postValue(path);
+        }
+    }
+
+    public String getSingleImagePath() {
+        return mSingleImagePath;
+    }
+
     private ObservableSource<Record> handleRecord(Record record) {
         return observer -> {
 
             // record images
-            if (ImageProvider.hasRecordFolder(record.getName())) {
-                List<String> list = ImageProvider.getRecordPathList(record.getName());
-                if (list.size() > 1) {
-                    imagesObserver.postValue(list);
-                }
-                else if (list.size() == 1) {
-                    singleImageObserver.postValue(list.get(0));
-                }
-            }
-            else {
-                String path = ImageProvider.getRecordRandomPath(record.getName(), null);
-                singleImageObserver.postValue(path);
-            }
+            loadImages(record);
 
             // stars
             starsObserver.postValue(record.getRelationList());
@@ -213,37 +224,6 @@ public class RecordViewModel extends BaseViewModel {
         }
     }
 
-    public void saveTempImagePath(String path) {
-        this.mTempImagePath = path;
-    }
-
-    public void setAsCover(long orderId) {
-        orderRepository.saveRecordOrderCover(orderId, mTempImagePath)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<FavorRecordOrder>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(FavorRecordOrder favorStarOrder) {
-                        messageObserver.setValue("Set successfully");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
     public void loadRecordOrders() {
         orderRepository.getRecordOrders(mRecord.getId())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -300,4 +280,11 @@ public class RecordViewModel extends BaseViewModel {
                 });
     }
 
+    public void deleteImage(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+        loadImages(mRecord);
+    }
 }

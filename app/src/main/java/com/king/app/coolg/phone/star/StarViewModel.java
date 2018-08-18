@@ -20,6 +20,7 @@ import com.king.app.gdb.data.entity.FavorStarOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,7 +55,8 @@ public class StarViewModel extends BaseViewModel {
 
     private RecordListFilterBean mRecordFilter;
     private String mScene;
-    private String mTempImagePath;
+
+    private String mSingleImagePath;
 
     public StarViewModel(@NonNull Application application) {
         super(application);
@@ -128,7 +130,7 @@ public class StarViewModel extends BaseViewModel {
     }
 
     private ObservableSource<List<String>> getStarImages(Star star) {
-        return observer -> observer.onNext(ImageProvider.getStarPathList(star.getName()));
+        return observer -> observer.onNext(loadStarImages(star));
     }
 
     private ObservableSource<List<StarRelationship>> getRelationships(Star star) {
@@ -262,37 +264,6 @@ public class StarViewModel extends BaseViewModel {
         this.mScene = mScene;
     }
 
-    public void saveTempImagePath(String path) {
-        this.mTempImagePath = path;
-    }
-
-    public void setAsCover(long orderId) {
-        orderRepository.saveStarOrderCover(orderId, mTempImagePath)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<FavorStarOrder>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(FavorStarOrder favorStarOrder) {
-                        messageObserver.setValue("Set successfully");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
     public void loadStarOrders(Star star) {
         orderRepository.getStarOrders(star.getId())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -346,6 +317,30 @@ public class StarViewModel extends BaseViewModel {
 
                     }
                 });
+    }
+
+    private List<String> loadStarImages(Star star) {
+        List<String> list = new ArrayList<>();
+        if (ImageProvider.hasStarFolder(star.getName())) {
+            list = ImageProvider.getStarPathList(star.getName());
+            if (list.size() == 1) {
+                mSingleImagePath = list.get(0);
+            }
+        }
+        else {
+            String path = ImageProvider.getStarRandomPath(star.getName(), null);
+            mSingleImagePath = path;
+            list.add(path);
+        }
+        return list;
+    }
+
+    public void deleteImage(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+        starImageList = loadStarImages(mStar);
     }
 
     private class RelationComparator implements Comparator<StarRelationship> {

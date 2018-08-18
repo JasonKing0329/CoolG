@@ -1,11 +1,14 @@
 package com.king.app.coolg.phone.order;
 
+import android.animation.Animator;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.BaseViewModel;
@@ -111,11 +114,40 @@ public abstract class OrderFragment<VM extends BaseViewModel, T> extends MvvmFra
             }
             else {
                 mBinding.rvItems.setVisibility(View.VISIBLE);
+                startRevealView(1000);
                 mBinding.rvOrders.setVisibility(View.GONE);
                 mBinding.indicator.addPath(data.getName());
                 loadOrderItems(data);
             }
         }
+    }
+
+    private void startRevealView(int animTime) {
+        Animator anim = ViewAnimationUtils.createCircularReveal(mBinding.rvItems, (int) mBinding.rvItems.getX()
+                , (int) mBinding.rvItems.getY()
+                , 0, (float) Math.hypot(mBinding.rvItems.getWidth(), mBinding.rvItems.getHeight()));
+        anim.setDuration(animTime);
+        anim.setInterpolator(new AccelerateDecelerateInterpolator());
+        anim.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        anim.start();
     }
 
     private void checkOrder(View v, int position, OrderItem<T> data) {

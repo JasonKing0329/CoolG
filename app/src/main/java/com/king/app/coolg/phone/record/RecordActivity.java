@@ -67,11 +67,15 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mBinding.rvStars.setLayoutManager(manager);
 
         mBinding.actionbar.setOnBackListener(() -> onBackPressed());
+        mBinding.actionbar.setOnMenuItemListener(menuId -> {
+            switch (menuId) {
+                case R.id.menu_banner_setting:
+                    showSettingDialog();
+                    break;
+            }
+        });
         mBinding.groupScene.setOnClickListener(view -> {
 
-        });
-        mBinding.ivSetting.setOnClickListener(view -> {
-            showSettingDialog();
         });
 
         mBinding.ivOrderAdd.setOnClickListener(v -> selectOrderToAddStar());
@@ -90,6 +94,17 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             }
         });
         mBinding.rvOrders.setLayoutManager(new LinearLayoutManager(mBinding.rvOrders.getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        mBinding.ivDelete.setOnClickListener(view -> {
+            if (!TextUtils.isEmpty(mModel.getSingleImagePath())) {
+                onDeleteImage(mModel.getSingleImagePath());
+            }
+        });
+        mBinding.ivSetCover.setOnClickListener(view -> {
+            if (!TextUtils.isEmpty(mModel.getSingleImagePath())) {
+                onApplyImage(mModel.getSingleImagePath());
+            }
+        });
     }
 
     @Override
@@ -111,6 +126,8 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mModel.singleImageObserver.observe(this, path -> {
             mBinding.banner.setVisibility(View.GONE);
             mBinding.ivRecord.setVisibility(View.VISIBLE);
+            mBinding.ivSetCover.setVisibility(View.VISIBLE);
+            mBinding.ivDelete.setVisibility(View.VISIBLE);
             Glide.with(RecordActivity.this)
                     .load(path)
                     .apply(recordOptions)
@@ -118,6 +135,8 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         });
         mModel.imagesObserver.observe(this, list -> {
             mBinding.ivRecord.setVisibility(View.GONE);
+            mBinding.ivSetCover.setVisibility(View.GONE);
+            mBinding.ivDelete.setVisibility(View.GONE);
             mBinding.banner.setVisibility(View.VISIBLE);
             showBanner(list);
         });
@@ -327,10 +346,14 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     }
 
     private void onApplyImage(String path) {
-        mModel.saveTempImagePath(path);
         Router.build("OrderPhone")
                 .with(OrderPhoneActivity.EXTRA_SET_COVER, path)
                 .go(this);
+    }
+
+    private void onDeleteImage(String path) {
+        showConfirmCancelMessage("Are you sure to delete this image on file system?",
+                (dialogInterface, i) -> mModel.deleteImage(path), null);
     }
 
     private void selectOrderToAddStar() {
@@ -366,7 +389,9 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             View view = LayoutInflater.from(context).inflate(R.layout.adapter_banner_image, null);
             ImageView imageView = view.findViewById(R.id.iv_image);
             ImageView ivCover = view.findViewById(R.id.iv_set_cover);
+            ImageView ivDelete = view.findViewById(R.id.iv_delete);
             ivCover.setVisibility(View.VISIBLE);
+            ivDelete.setVisibility(View.VISIBLE);
 
             Glide.with(context)
                     .load(path)
@@ -375,6 +400,9 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
             ivCover.setOnClickListener(v -> {
                 onApplyImage(path);
+            });
+            ivDelete.setOnClickListener(v -> {
+                onDeleteImage(path);
             });
             return view;
         }

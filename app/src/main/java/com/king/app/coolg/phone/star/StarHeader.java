@@ -191,13 +191,21 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
                         onHeadActionListener.onApplyImage(starImageList.get(0));
                     }
                 });
+                binding.ivDelete.setVisibility(View.VISIBLE);
+                binding.ivDelete.setOnClickListener(v -> {
+                    if (onHeadActionListener != null) {
+                        onHeadActionListener.onDeleteImage(starImageList.get(0));
+                    }
+                });
             }
             else {
+                binding.ivDelete.setVisibility(View.INVISIBLE);
                 binding.ivSetCover.setVisibility(View.INVISIBLE);
             }
         }
         else {
             binding.ivStar.setVisibility(View.INVISIBLE);
+            binding.ivDelete.setVisibility(View.INVISIBLE);
             binding.ivSetCover.setVisibility(View.INVISIBLE);
             binding.banner.setVisibility(View.VISIBLE);
             showBanner(binding.banner, starImageList);
@@ -298,7 +306,9 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
             View view = LayoutInflater.from(context).inflate(R.layout.adapter_banner_image, null);
             ImageView imageView = view.findViewById(R.id.iv_image);
             ImageView ivCover = view.findViewById(R.id.iv_set_cover);
+            ImageView ivDelete = view.findViewById(R.id.iv_delete);
             ivCover.setVisibility(View.VISIBLE);
+            ivDelete.setVisibility(View.VISIBLE);
 
             Glide.with(context)
                     .load(path)
@@ -310,6 +320,11 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
                     onHeadActionListener.onApplyImage(path);
                 }
             });
+            ivDelete.setOnClickListener(v -> {
+                if (onHeadActionListener != null) {
+                    onHeadActionListener.onDeleteImage(path);
+                }
+            });
             return view;
         }
     }
@@ -317,7 +332,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
     public interface OnHeadActionListener {
         void onClickRelationStar(StarRelationship relationship);
         void onApplyImage(String path);
-
+        void onDeleteImage(String path);
         void addStarToOrder(Star star);
     }
 

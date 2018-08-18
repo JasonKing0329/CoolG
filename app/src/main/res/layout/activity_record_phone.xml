@@ -17,6 +17,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:title="Record"
             app:showIconBack="true"
+            app:menu="@menu/record_phone"
             app:titleColor="@color/actionbar_element"
             app:iconColor="@color/actionbar_element"/>
         <ScrollView
@@ -70,11 +71,20 @@
                         android:layout_marginRight="10dp"
                         android:orientation="horizontal">
                         <ImageView
+                            android:id="@+id/iv_delete"
+                            android:layout_width="@dimen/gdb_record_icon_size"
+                            android:layout_height="@dimen/gdb_record_icon_size"
+                            android:background="@drawable/shape_oval_transgrey"
+                            android:padding="@dimen/gdb_record_icon_padding"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_delete_white_36dp"/>
+                        <ImageView
                             android:id="@+id/iv_set_cover"
                             android:layout_width="@dimen/gdb_record_icon_size"
                             android:layout_height="@dimen/gdb_record_icon_size"
                             android:background="@drawable/shape_oval_transgrey"
                             android:padding="@dimen/gdb_record_icon_padding"
+                            android:layout_marginLeft="10dp"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_burst_mode_white_24dp"/>
                         <ImageView
@@ -86,15 +96,6 @@
                             android:src="@drawable/ic_play_arrow_white_36dp"
                             android:background="@drawable/shape_oval_transgrey"
                             android:scaleType="fitCenter"/>
-                        <ImageView
-                            android:id="@+id/iv_setting"
-                            android:layout_width="@dimen/gdb_record_icon_size"
-                            android:layout_height="@dimen/gdb_record_icon_size"
-                            android:padding="@dimen/gdb_record_icon_padding"
-                            android:src="@drawable/ic_settings_white_36dp"
-                            android:background="@drawable/shape_oval_transgrey"
-                            android:scaleType="fitCenter"
-                            android:layout_marginLeft="10dp"/>
                     </LinearLayout>
                 </RelativeLayout>
 
