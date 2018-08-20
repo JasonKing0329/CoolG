@@ -2,7 +2,6 @@ package com.king.app.coolg.phone.star;
 
 import android.view.View;
 
-import com.bumptech.glide.request.RequestOptions;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.HeaderFooterBindingAdapter;
 import com.king.app.coolg.databinding.AdapterRecordItemListBinding;
@@ -10,7 +9,6 @@ import com.king.app.coolg.databinding.AdapterStarPhoneFooterBinding;
 import com.king.app.coolg.databinding.AdapterStarPhoneHeaderBinding;
 import com.king.app.coolg.phone.record.list.RecordItemBinder;
 import com.king.app.coolg.phone.record.list.RecordProxy;
-import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.gdb.data.entity.Star;
 
 import java.util.List;
@@ -22,8 +20,6 @@ import java.util.List;
  * @date: 2018/8/6 16:34
  */
 public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHeaderBinding, AdapterStarPhoneFooterBinding, AdapterRecordItemListBinding, RecordProxy> {
-
-    private RequestOptions recordOptions;
 
     private OnListListener onListListener;
     private StarHeader.OnHeadActionListener onHeadActionListener;
@@ -40,7 +36,6 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
     private List<StarRelationship> mRelationships;
 
     public StarAdapter() {
-        recordOptions = GlideUtil.getRecordSmallOptions();
         header = new StarHeader();
         recordBinder = new RecordItemBinder();
     }
@@ -109,15 +104,5 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
     public interface OnListListener {
         void onClickItem(View view, RecordProxy record);
     }
-
-    private View.OnClickListener itemListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (onListListener != null) {
-                int position = (int) view.getTag();
-                onListListener.onClickItem(view, list.get(position));
-            }
-        }
-    };
 
 }

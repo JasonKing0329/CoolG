@@ -34,7 +34,7 @@ import io.reactivex.schedulers.Schedulers;
  * @author：Jing Yang
  * @date: 2018/8/9 17:04
  */
-public class StarPhoneViewModel extends BaseViewModel {
+public class StarListTitleViewModel extends BaseViewModel {
 
     private StarRepository repository;
 
@@ -47,7 +47,7 @@ public class StarPhoneViewModel extends BaseViewModel {
 
     public MutableLiveData<List<Integer>> titlesObserver = new MutableLiveData<>();
 
-    public StarPhoneViewModel(@NonNull Application application) {
+    public StarListTitleViewModel(@NonNull Application application) {
         super(application);
         repository = new StarRepository();
         mSortMode = AppConstants.STAR_SORT_NAME;

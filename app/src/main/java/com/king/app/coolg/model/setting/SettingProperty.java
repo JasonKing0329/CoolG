@@ -182,35 +182,35 @@ public class SettingProperty {
         setInt(PreferenceKey.PREF_STAR_LIST_VIEW_MODE, random);
     }
 
-    public static int getRecordOrderMode() {
+    public static int getRecordSortType() {
         return getInt(PreferenceKey.PREF_GDB_RECORD_ORDER, 0);
     }
 
-    public static void setRecordOrderMode(int random) {
+    public static void setRecordSortType(int random) {
         setInt(PreferenceKey.PREF_GDB_RECORD_ORDER, random);
     }
 
-    public static boolean isRecordOrderModeDesc() {
+    public static boolean isRecordSortDesc() {
         return getBoolean(PreferenceKey.PREF_GDB_RECORD_ORDER_DESC);
     }
 
-    public static void setRecordOrderModeDesc(boolean random) {
+    public static void setRecordSortDesc(boolean random) {
         setBoolean(PreferenceKey.PREF_GDB_RECORD_ORDER_DESC, random);
     }
 
-    public static int getStarOrderMode() {
+    public static int getStarRecordsSortType() {
         return getInt(PreferenceKey.PREF_GDB_STAR_ORDER);
     }
 
-    public static void setStarOrderMode(int random) {
+    public static void setStarRecordsSortType(int random) {
         setInt(PreferenceKey.PREF_GDB_STAR_ORDER, random);
     }
 
-    public static boolean isStarOrderModeDesc() {
+    public static boolean isStarRecordsSortDesc() {
         return getBoolean(PreferenceKey.PREF_GDB_STAR_ORDER_DESC);
     }
 
-    public static void setStarOrderModeDesc(boolean random) {
+    public static void setStarRecordsSortDesc(boolean random) {
         setBoolean(PreferenceKey.PREF_GDB_STAR_ORDER_DESC, random);
     }
 

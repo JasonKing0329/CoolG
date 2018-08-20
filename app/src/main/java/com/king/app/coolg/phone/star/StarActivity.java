@@ -119,7 +119,7 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
             adapter.setStarImageList(mModel.getStarImageList());
             adapter.setRelationships(mModel.getRelationList());
             adapter.setList(list);
-            adapter.setSortMode(SettingProperty.getStarOrderMode());
+            adapter.setSortMode(SettingProperty.getStarRecordsSortType());
             adapter.setOnListListener((view, record) -> goToRecordPage(record.getRecord().getId()));
             adapter.setOnHeadActionListener(new StarHeader.OnHeadActionListener() {
                 @Override
@@ -206,11 +206,11 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
 
     public void changeSortType() {
         SortDialogContent content = new SortDialogContent();
-        content.setDesc(SettingProperty.isStarOrderModeDesc());
-        content.setSortType(SettingProperty.getStarOrderMode());
+        content.setDesc(SettingProperty.isStarRecordsSortDesc());
+        content.setSortType(SettingProperty.getStarRecordsSortType());
         content.setOnSortListener((desc, sortMode) -> {
-            SettingProperty.setStarOrderMode(sortMode);
-            SettingProperty.setStarOrderModeDesc(desc);
+            SettingProperty.setStarRecordsSortType(sortMode);
+            SettingProperty.setStarRecordsSortDesc(desc);
             if (adapter != null) {
                 adapter.setSortMode(sortMode);
             }

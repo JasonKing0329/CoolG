@@ -85,6 +85,7 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
         mBinding.ivRec3.setOnClickListener(v -> goToRecordPage(mModel.getRecommendedRecord(2)));
 
         mBinding.groupRecord.setOnClickListener(v -> goToRecordListPage());
+        mBinding.groupStar.setOnClickListener(v -> goToStarListPage());
         mBinding.fabSetting.setOnClickListener(v -> showBannerSetting());
         mBinding.fabTop.setOnClickListener(v -> mBinding.rvRecords.scrollToPosition(0));
     }
@@ -215,6 +216,11 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
 
     private void goToRecordListPage() {
         Router.build("RecordListPad")
+                .go(this);
+    }
+
+    private void goToStarListPage() {
+        Router.build("StarListPad")
                 .go(this);
     }
 

@@ -21,6 +21,15 @@ public class RecordListPadFragment extends BaseRecordListFragment<RecordGridPadA
 
     private IRecordListHolder holder;
 
+    public static RecordListPadFragment newInstance(long starId) {
+
+        RecordListPadFragment fragment = new RecordListPadFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong(ARG_STAR_ID, starId);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
     public static RecordListPadFragment newInstance(int type, String scene) {
 
         RecordListPadFragment fragment = new RecordListPadFragment();

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.king.app.jactionbar.JActionbar
+            android:id="@+id/actionbar"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/actionbar_height"
+            android:background="@color/actionbar_bk_light"
+            android:theme="@style/EtActionSearch"
+            app:actionTextColor="@color/colorPrimary"
+            app:iconColor="@color/colorPrimary"
+            app:layout_constraintEnd_toStartOf="@+id/ll_right_bar"
+            app:layout_constraintHorizontal_weight="1.4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:maxShowIcon="5"
+            app:menu="@menu/player_list"
+            app:showIconBack="true"
+            app:supportSearch="true"
+            app:title="Stars"
+            app:titleColor="@color/actionbar_element" />
+
+        <LinearLayout
+            android:id="@+id/ll_right_bar"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/actionbar_height"
+            android:background="@color/actionbar_bk_light"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="3"
+            app:layout_constraintStart_toEndOf="@id/actionbar"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/iv_icon_sort"
+                style="@style/IvPadActionIcon"
+                android:src="@drawable/ic_sort_purple_3f3a71_36dp" />
+
+            <ImageView
+                android:id="@+id/iv_icon_mode"
+                style="@style/IvPadActionIcon"
+                android:src="@drawable/ic_dns_white_36dp" />
+        </LinearLayout>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/actionbar_height"
+            android:background="@color/actionbar_bk_light"
+            app:layout_constraintEnd_toEndOf="@id/actionbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/actionbar"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/colorAccent"
+            app:tabTextColor="@color/colorPrimary" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/actionbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+
+        <TextView
+            android:id="@+id/tv_index"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/shape_oval_index"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/viewpager"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/viewpager" />
+
+        <FrameLayout
+            android:id="@+id/group_ft_record"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/ll_right_bar"
+            app:layout_constraintTop_toBottomOf="@+id/ll_right_bar" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_top"
+            android:layout_width="@dimen/gdb_home_icon_size"
+            android:layout_height="@dimen/gdb_home_icon_size"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/ic_arrow_upward_white_36dp"
+            android:tint="@color/white"
+            app:borderWidth="0dp"
+            app:rippleColor="@color/actionbar_bk_blue"
+            app:useCompatPadding="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

@@ -244,11 +244,11 @@ public class RecordListPadActivity extends MvvmActivity<ActivityRecordListPadBin
 
     public void changeSortType() {
         SortDialogContent content = new SortDialogContent();
-        content.setDesc(SettingProperty.isRecordOrderModeDesc());
-        content.setSortType(SettingProperty.getRecordOrderMode());
+        content.setDesc(SettingProperty.isRecordSortDesc());
+        content.setSortType(SettingProperty.getRecordSortType());
         content.setOnSortListener((desc, sortMode) -> {
-            SettingProperty.setRecordOrderMode(sortMode);
-            SettingProperty.setRecordOrderModeDesc(desc);
+            SettingProperty.setRecordSortType(sortMode);
+            SettingProperty.setRecordSortDesc(desc);
             ftRecords.onSortChanged();
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();

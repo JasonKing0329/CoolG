@@ -216,8 +216,8 @@ public class StarListFragment extends MvvmFragment<FragmentStarRichBinding, Star
         mCircleAdapter = new StarCircleAdapter();
         mCircleAdapter.setList(list);
         mCircleAdapter.setOnStarRatingListener(this);
-        mRichAdapter.setOnItemClickListener((view, position, data) -> onStarClick(data));
-        mRichAdapter.setOnItemLongClickListener((view, position, data) -> onStarLongClick(data));
+        mCircleAdapter.setOnItemClickListener((view, position, data) -> onStarClick(data));
+        mCircleAdapter.setOnItemLongClickListener((view, position, data) -> onStarLongClick(data));
         mBinding.rvList.setAdapter(mCircleAdapter);
     }
 
@@ -310,4 +310,7 @@ public class StarListFragment extends MvvmFragment<FragmentStarRichBinding, Star
         return mBinding.rvList.getScrollState() == RecyclerView.SCROLL_STATE_IDLE;
     }
 
+    public void goTop() {
+        mBinding.rvList.scrollToPosition(0);
+    }
 }

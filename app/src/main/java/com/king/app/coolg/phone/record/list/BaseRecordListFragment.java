@@ -1,13 +1,11 @@
 package com.king.app.coolg.phone.record.list;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.chenenyu.router.Router;
 import com.king.app.coolg.R;
-import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentRecordListBinding;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
@@ -27,6 +25,7 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
 
     public static final String ARG_RECORD_TYPE = "record_type";
     public static final String ARG_RECORD_SCENE = "record_scene";
+    public static final String ARG_STAR_ID = "star_id";
 
     protected T adapter;
 
@@ -63,6 +62,7 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
         mModel.setDefaultLoadNumber(getDefaultLoadNumber());
         mModel.setRecordType(getArguments().getInt(ARG_RECORD_TYPE));
         mModel.setKeyScene(getArguments().getString(ARG_RECORD_SCENE));
+        mModel.setStarId(getArguments().getLong(ARG_STAR_ID));
 
         mModel.recordsObserver.observe(this, list -> showList(list));
         mModel.moreObserver.observe(this, offset -> showMoreList(offset));
@@ -124,6 +124,11 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
         loadNewRecords();
     }
 
+    public void onStarRecordsSortChanged() {
+        mModel.onStarRecordsSortTypeChanged();
+        loadNewRecords();
+    }
+
     public void onFilterChanged(RecordListFilterBean filter) {
         mModel.setFilter(filter);
         loadNewRecords();
@@ -131,6 +136,11 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
 
     public void onKeywordChanged(String keyword) {
         mModel.setKeyword(keyword);
+        loadNewRecords();
+    }
+
+    public void onStarChanged(long starId) {
+        mModel.setStarId(starId);
         loadNewRecords();
     }
 

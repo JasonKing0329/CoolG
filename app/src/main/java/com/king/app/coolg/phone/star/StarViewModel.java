@@ -247,8 +247,8 @@ public class StarViewModel extends BaseViewModel {
             RecordComplexFilter filter = new RecordComplexFilter();
             filter.setFilter(mRecordFilter);
             filter.setRecordType(0);
-            filter.setDesc(SettingProperty.isStarOrderModeDesc());
-            filter.setSortType(SettingProperty.getStarOrderMode());
+            filter.setDesc(SettingProperty.isStarRecordsSortDesc());
+            filter.setSortType(SettingProperty.getStarRecordsSortType());
             if (!AppConstants.KEY_SCENE_ALL.equals(mScene)) {
                 filter.setScene(mScene);
             }

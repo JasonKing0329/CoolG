@@ -68,6 +68,8 @@
             android:screenOrientation="landscape"/>
         <activity android:name=".pad.record.list.RecordListPadActivity"
             android:screenOrientation="landscape"/>
+        <activity android:name=".pad.star.list.StarListPadActivity"
+            android:screenOrientation="landscape"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

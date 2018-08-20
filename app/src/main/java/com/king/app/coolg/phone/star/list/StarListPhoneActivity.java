@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 
 import com.allure.lbanners.LMBanners;
 import com.allure.lbanners.adapter.LBaseAdapter;
@@ -46,7 +45,7 @@ import io.reactivex.disposables.Disposable;
  * @date: 2018/8/9 17:04
  */
 @Route("StarListPhone")
-public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBinding, StarPhoneViewModel>
+public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBinding, StarListTitleViewModel>
     implements IStarListHolder {
 
     private StarListPagerAdapter pagerAdapter;
@@ -201,7 +200,7 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
         return menu;
     }
 
-    public void changeSideBarVisible() {
+    private void changeSideBarVisible() {
         getCurrentPage().toggleSidebar();
     }
 
@@ -242,8 +241,8 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
     }
 
     @Override
-    protected StarPhoneViewModel createViewModel() {
-        return ViewModelProviders.of(this).get(StarPhoneViewModel.class);
+    protected StarListTitleViewModel createViewModel() {
+        return ViewModelProviders.of(this).get(StarListTitleViewModel.class);
     }
 
     @Override

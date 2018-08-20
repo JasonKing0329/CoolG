@@ -8,8 +8,8 @@ android {
         applicationId "com.king.app.coolg"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 25
-        versionName "2.7.2"
+        versionCode 26
+        versionName "2.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -23,7 +23,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.releaseConfig
-            buildConfigField("boolean", "checkUser", "true")
+            buildConfigField("boolean", "checkUser", "false")
         }
         release {
             minifyEnabled false
@@ -87,12 +87,13 @@ dependencies {
 
     /*compressor*/
     implementation 'id.zelory:compressor:2.1.0'
-
     /*LMBanners*/
     implementation "com.allure0:LMBanners:${LMBANNER_VERSION}"
-
+    /*boommenu*/
+    implementation 'com.nightonke:boommenu:2.1.1'
     /*shape-imageview*/
     implementation 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
+
     implementation project(':data')
     implementation project(':libresmanager')
     implementation project(':jindicator')

@@ -8,7 +8,10 @@ import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.phone.record.scene.SceneBean;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordDao;
+import com.king.app.gdb.data.entity.RecordStar;
+import com.king.app.gdb.data.entity.RecordStarDao;
 
+import org.greenrobot.greendao.query.Join;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
@@ -81,6 +84,10 @@ public class RecordRepository extends BaseRepository {
         }
         if (filter.getRecordType() != 0) {
             builder.where(RecordDao.Properties.Type.eq(filter.getRecordType()));
+        }
+        if (filter.getStarId() != 0) {
+            builder.join(RecordStar.class, RecordStarDao.Properties.RecordId)
+                    .where(RecordStarDao.Properties.StarId.eq(filter.getStarId()));
         }
         sortByColumn(builder, filter.getSortType(), filter.getDesc());
         return builder;
