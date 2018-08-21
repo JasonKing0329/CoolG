@@ -107,7 +107,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
                 mBinding.rvOrders.setAdapter(ordersAdapter);
             });
         }
-        mModel.loadStarOrders(star);
+        mModel.loadStarOrders(star.getId());
     }
 
     private void bindRatings(AdapterStarPhoneHeaderBinding binding, Star star) {

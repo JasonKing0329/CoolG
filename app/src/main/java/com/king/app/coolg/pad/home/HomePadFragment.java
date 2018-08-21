@@ -18,6 +18,7 @@ import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentHomePadBinding;
 import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.pad.star.StarPadActivity;
 import com.king.app.coolg.phone.home.RecommendFilterFragment;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.star.StarActivity;
@@ -203,8 +204,8 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
     }
 
     private void goToStarPage(StarProxy data) {
-        Router.build("StarPhone")
-                .with(StarActivity.EXTRA_STAR_ID, data.getStar().getId())
+        Router.build("StarPad")
+                .with(StarPadActivity.EXTRA_STAR_ID, data.getStar().getId())
                 .go(this);
     }
 

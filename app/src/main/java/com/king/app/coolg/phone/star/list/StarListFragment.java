@@ -231,7 +231,9 @@ public class StarListFragment extends MvvmFragment<FragmentStarRichBinding, Star
     }
 
     public void onStarLongClick(StarProxy star) {
-
+        if (holder != null && holder.dispatchOnLongClickStar(star.getStar())) {
+            return;
+        }
     }
 
     @Override

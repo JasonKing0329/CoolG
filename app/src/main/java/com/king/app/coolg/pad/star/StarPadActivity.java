@@ -1,0 +1,251 @@
+package com.king.app.coolg.pad.star;
+
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.graphics.Rect;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+
+import com.chenenyu.router.Router;
+import com.chenenyu.router.annotation.Route;
+import com.king.app.coolg.R;
+import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.databinding.ActivityStarPadBinding;
+import com.king.app.coolg.model.bean.RecordListFilterBean;
+import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.pad.record.list.RecordListPadFragment;
+import com.king.app.coolg.phone.record.list.FilterDialogContent;
+import com.king.app.coolg.phone.record.list.SortDialogContent;
+import com.king.app.coolg.phone.star.StarActivity;
+import com.king.app.coolg.phone.star.StarOrdersAdapter;
+import com.king.app.coolg.phone.star.StarRatingDialog;
+import com.king.app.coolg.phone.star.StarRelationship;
+import com.king.app.coolg.phone.star.StarRelationshipAdapter;
+import com.king.app.coolg.utils.ListUtil;
+import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.utils.StarRatingUtil;
+import com.king.app.coolg.view.dialog.DraggableDialogFragment;
+import com.king.app.gdb.data.entity.FavorStarOrder;
+import com.king.app.gdb.data.entity.Star;
+import com.king.app.gdb.data.entity.StarRating;
+import com.king.app.gdb.data.param.DataConstants;
+
+import java.util.List;
+
+/**
+ * Desc:
+ *
+ * @author：Jing Yang
+ * @date: 2018/8/20 16:41
+ */
+@Route("StarPad")
+public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPadViewModel> {
+
+    public static final String EXTRA_STAR_ID = "key_star_id";
+
+    private RecordListPadFragment ftRecord;
+    private RecordListFilterBean mFilter;
+
+    @Override
+    protected int getContentView() {
+        return R.layout.activity_star_pad;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        mBinding.tvTagTop.setSelected(false);
+        mBinding.tvTagBottom.setSelected(false);
+        mBinding.tvTagVideo.setSelected(true);
+        initData();
+    }
+
+    @Override
+    protected void initView() {
+
+        mBinding.rvStar.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mBinding.rvStar.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                outRect.top = ScreenUtils.dp2px(10);
+                outRect.bottom = ScreenUtils.dp2px(10);
+            }
+        });
+        mBinding.rvOrder.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mBinding.rvOrder.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                outRect.left = ScreenUtils.dp2px(10);
+            }
+        });
+        mBinding.rvRelation.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mBinding.rvRelation.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                outRect.left = ScreenUtils.dp2px(10);
+            }
+        });
+        mBinding.tvRating.setOnClickListener(v -> showRatingDialog());
+        mBinding.ivIconBack.setOnClickListener(v -> finish());
+        mBinding.ivIconSort.setOnClickListener(v -> changeSortType());
+        mBinding.ivIconFilter.setOnClickListener(v -> changeFilter());
+        mBinding.tvAddOrder.setOnClickListener(v -> addToOrder());
+        mBinding.tvTagVideo.setOnClickListener(v -> {
+            if (!mBinding.tvTagVideo.isSelected()) {
+                mBinding.tvTagVideo.setSelected(true);
+                mBinding.tvTagTop.setSelected(false);
+                mBinding.tvTagBottom.setSelected(false);
+                ftRecord.filterByStarType(0);
+            }
+        });
+        mBinding.tvTagTop.setOnClickListener(v -> {
+            if (!mBinding.tvTagTop.isSelected()) {
+                mBinding.tvTagVideo.setSelected(false);
+                mBinding.tvTagTop.setSelected(true);
+                mBinding.tvTagBottom.setSelected(false);
+                ftRecord.filterByStarType(DataConstants.VALUE_RELATION_TOP);
+            }
+        });
+        mBinding.tvTagBottom.setOnClickListener(v -> {
+            if (!mBinding.tvTagBottom.isSelected()) {
+                mBinding.tvTagVideo.setSelected(false);
+                mBinding.tvTagTop.setSelected(false);
+                mBinding.tvTagBottom.setSelected(true);
+                ftRecord.filterByStarType(DataConstants.VALUE_RELATION_BOTTOM);
+            }
+        });
+    }
+
+    private void showRatingDialog() {
+        StarRatingDialog dialog = new StarRatingDialog();
+        dialog.setStarId(mModel.getStar().getId());
+        dialog.setOnDismissListener(dialog1 -> mModel.loadRating());
+        dialog.show(getSupportFragmentManager(), "StarRatingDialog");
+    }
+
+    public void changeSortType() {
+        SortDialogContent content = new SortDialogContent();
+        content.setDesc(SettingProperty.isRecordSortDesc());
+        content.setSortType(SettingProperty.getRecordSortType());
+        content.setOnSortListener((desc, sortMode) -> {
+            SettingProperty.setStarRecordsSortType(sortMode);
+            SettingProperty.setStarRecordsSortDesc(desc);
+            ftRecord.onStarRecordsSortChanged();
+        });
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setContentFragment(content);
+        dialogFragment.setTitle("Sort");
+        dialogFragment.show(getSupportFragmentManager(), "SortDialogContent");
+    }
+
+    public void changeFilter() {
+        FilterDialogContent content = new FilterDialogContent();
+        content.setFilterBean(mFilter);
+        content.setOnFilterListener(bean -> {
+            mFilter = bean;
+            ftRecord.onFilterChanged(mFilter);
+        });
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setContentFragment(content);
+        dialogFragment.setTitle("Sort");
+        dialogFragment.show(getSupportFragmentManager(), "SortDialogContent");
+    }
+
+    @Override
+    protected StarPadViewModel createViewModel() {
+        return ViewModelProviders.of(this).get(StarPadViewModel.class);
+    }
+
+    @Override
+    protected void initData() {
+        long starId = getIntent().getLongExtra(EXTRA_STAR_ID, -1);
+        ftRecord = RecordListPadFragment.newInstance(starId);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.group_records, ftRecord, "RecordListPadFragment")
+                .commit();
+
+        mModel.starObserver.observe(this, star -> showStar(star));
+        mModel.ratingObserver.observe(this, rating -> showRating(rating));
+        mModel.imagesObserver.observe(this, list -> showImages(list));
+        mModel.relationshipsObserver.observe(this, list -> showRelationships(list));
+        mModel.ordersObserver.observe(this, list -> showOrders(list));
+
+        mModel.loadStar(starId);
+        mModel.loadStarOrders(starId);
+    }
+
+    private void showStar(Star star) {
+        mBinding.tvName.setText(star.getName());
+        mBinding.tvTagVideo.setText("Videos  " + star.getRecords());
+        if (star.getBetop() > 0) {
+            mBinding.tvTagTop.setText("Top  " + star.getBetop());
+            mBinding.tvTagTop.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.tvTagTop.setVisibility(View.GONE);
+        }
+        if (star.getBebottom() > 0) {
+            mBinding.tvTagBottom.setText("Bottom  " + star.getBebottom());
+            mBinding.tvTagBottom.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.tvTagBottom.setVisibility(View.GONE);
+        }
+        mBinding.tvTagVideo.setSelected(true);
+    }
+
+    private void showRating(StarRating rating) {
+        if (rating == null) {
+            mBinding.tvRating.setText(StarRatingUtil.NON_RATING);
+        }
+        else {
+            mBinding.tvRating.setText(StarRatingUtil.getRatingValue(rating.getComplex()));
+        }
+    }
+
+    private void showImages(List<String> list) {
+        StarImageAdapter adapter = new StarImageAdapter();
+        adapter.setList(list);
+        mBinding.rvStar.setAdapter(adapter);
+    }
+
+    private void showRelationships(List<StarRelationship> list) {
+        mBinding.tvRelation.setText("Relationships(" + list.size() + "人)");
+        StarRelationshipAdapter adapter = new StarRelationshipAdapter();
+        adapter.setList(list);
+        adapter.setOnItemClickListener((view, position, data) -> goToStarPage(data.getStar().getId()));
+        mBinding.rvRelation.setAdapter(adapter);
+    }
+
+    private void showOrders(List<FavorStarOrder> list) {
+        if (ListUtil.isEmpty(list)) {
+            mBinding.tvAddOrder.setText("Orders");
+            mBinding.rvOrder.setVisibility(View.GONE);
+        }
+        else {
+            mBinding.tvAddOrder.setText("Orders\n" + list.size());
+            mBinding.rvOrder.setVisibility(View.VISIBLE);
+            StarOrdersAdapter adapter = new StarOrdersAdapter();
+            adapter.setList(list);
+            adapter.setOnItemClickListener((view, position, data) -> goToOrderPage());
+            mBinding.rvOrder.setAdapter(adapter);
+        }
+    }
+
+    private void goToStarPage(long starId) {
+        Router.build("StarPad")
+                .with(StarPadActivity.EXTRA_STAR_ID, starId)
+                .go(this);
+    }
+
+    private void goToOrderPage() {
+//        Router.build("OrderPhone")
+//                .go(this);
+    }
+
+    private void addToOrder() {
+    }
+
+}

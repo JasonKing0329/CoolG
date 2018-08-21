@@ -70,6 +70,9 @@
             android:screenOrientation="landscape"/>
         <activity android:name=".pad.star.list.StarListPadActivity"
             android:screenOrientation="landscape"/>
+        <activity android:name=".pad.star.StarPadActivity"
+            android:screenOrientation="landscape"
+            android:launchMode="singleTask"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

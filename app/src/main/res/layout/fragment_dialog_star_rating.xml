@@ -45,7 +45,8 @@
                     android:layout_centerVertical="true"
                     android:text="Alexander Krunic"
                     android:textStyle="bold"
-                    android:textSize="@dimen/rating_name"/>
+                    android:textSize="@dimen/rating_name"
+                    android:textColor="@color/text_sub"/>
                 <TextView
                     android:id="@+id/tv_rating"
                     android:layout_width="wrap_content"
@@ -53,7 +54,8 @@
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:textStyle="bold"
-                    android:textSize="@dimen/rating_name"/>
+                    android:textSize="@dimen/rating_name"
+                    android:textColor="@color/text_sub"/>
             </RelativeLayout>
             <LinearLayout style="@style/GroupPlayerStar">
                 <TextView

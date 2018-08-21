@@ -102,6 +102,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">@dimen/rating_margin_hor</item>
         <item name="android:textSize">@dimen/rating_title_size</item>
+        <item name="android:textColor">@color/text_sub</item>
     </style>
 
     <style name="GroupPlayerStar">
@@ -118,6 +119,7 @@
         <item name="android:layout_marginLeft">15dp</item>
         <item name="android:gravity">right</item>
         <item name="android:textSize">@dimen/rating_title_size</item>
+        <item name="android:textColor">@color/text_sub</item>
     </style>
 
     <style name="TvStarRating">

@@ -52,7 +52,10 @@ public class StarRatingDialog extends BindingDialogFragment<FragmentDialogStarRa
         mModel.starObserver.observe(this, star -> showStar(star));
         mModel.ratingObserver.observe(this, rating -> showRatings(rating));
 
-        mBinding.tvSave.setOnClickListener(v -> mModel.saveRating());
+        mBinding.tvSave.setOnClickListener(v -> {
+            mModel.saveRating();
+            dismissAllowingStateLoss();
+        });
 
         mModel.loadStarRating(starId);
     }

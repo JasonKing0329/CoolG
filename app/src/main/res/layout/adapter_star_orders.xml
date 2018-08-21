@@ -11,7 +11,7 @@
             android:layout_width="105dp"
             android:layout_height="60dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/def_person_square"/>
+            android:src="@drawable/def_small"/>
 
         <TextView
             android:id="@+id/tv_name"

@@ -16,6 +16,8 @@ import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.gdb.data.RecordCursor;
 import com.king.app.gdb.data.entity.Record;
+import com.king.app.gdb.data.entity.RecordStar;
+import com.king.app.gdb.data.param.DataConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,10 @@ public class RecordListViewModel extends BaseViewModel {
     private String mKeyword;
     private boolean mShowCanBePlayed;
     private long mStarId;
+    /**
+     * only available when mStarId is not 0
+     */
+    private int mStarType;
 
     public RecordListViewModel(@NonNull Application application) {
         super(application);
@@ -112,6 +118,10 @@ public class RecordListViewModel extends BaseViewModel {
     public void setStarId(long starId) {
         this.mStarId = starId;
         onStarRecordsSortTypeChanged();
+    }
+
+    public void setStarType(int type) {
+        this.mStarType = type;
     }
 
     public void newRecordCursor() {
@@ -234,6 +244,7 @@ public class RecordListViewModel extends BaseViewModel {
                     moreCursor.offset += list.size();
                     return pickCanBePlayedRecord(showCanBePlayed, list);
                 })
+                .flatMap(list -> pickStarTypeRecord(list))
                 .flatMap(list -> toViewItems(list));
     }
     
@@ -271,6 +282,28 @@ public class RecordListViewModel extends BaseViewModel {
                 for (Record record:list) {
                     if (VideoModel.getVideoPath(record.getName()) != null) {
                         rList.add(record);
+                    }
+                }
+                observer.onNext(rList);
+            }
+            else {
+                observer.onNext(list);
+            }
+        };
+    }
+
+    private ObservableSource<List<Record>> pickStarTypeRecord(List<Record> list) {
+        return observer -> {
+            // mStarType is available only when mStarId is not 0
+            if (mStarId != 0 && mStarType != 0) {
+                List<Record> rList = new ArrayList<>();
+                for (Record record:list) {
+                    for (RecordStar rs:record.getRelationList()) {
+                        if ((rs.getType() == mStarType || rs.getType() == DataConstants.VALUE_RELATION_MIX)
+                                && mStarId == rs.getStarId()) {
+                            rList.add(record);
+                            break;
+                        }
                     }
                 }
                 observer.onNext(rList);

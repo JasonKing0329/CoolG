@@ -144,4 +144,8 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
         loadNewRecords();
     }
 
+    public void filterByStarType(int starType) {
+        mModel.setStarType(starType);
+        loadNewRecords();
+    }
 }

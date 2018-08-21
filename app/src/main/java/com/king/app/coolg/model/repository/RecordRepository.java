@@ -85,39 +85,42 @@ public class RecordRepository extends BaseRepository {
         if (filter.getRecordType() != 0) {
             builder.where(RecordDao.Properties.Type.eq(filter.getRecordType()));
         }
+        boolean hasJoin = false;
         if (filter.getStarId() != 0) {
+            hasJoin = true;
             builder.join(RecordStar.class, RecordStarDao.Properties.RecordId)
                     .where(RecordStarDao.Properties.StarId.eq(filter.getStarId()));
         }
-        sortByColumn(builder, filter.getSortType(), filter.getDesc());
+        sortByColumn(builder, filter.getSortType(), filter.getDesc(), hasJoin);
         return builder;
     }
 
-    private void sortByColumn(QueryBuilder<Record> builder, int sortValue, boolean desc) {
+    private void sortByColumn(QueryBuilder<Record> builder, int sortValue, boolean desc, boolean hasJoin) {
 
+        String headTable = hasJoin ? "T.":"";
         if (sortValue == PreferenceValue.GDB_SR_ORDERBY_DATE) {
-            builder.orderRaw(RecordDao.Properties.LastModifyTime.columnName + (desc ? " DESC":" ASC"));
+            builder.orderRaw(headTable + RecordDao.Properties.LastModifyTime.columnName + (desc ? " DESC":" ASC"));
         }
         else if (sortValue == PreferenceValue.GDB_SR_ORDERBY_SCORE) {
-            builder.orderRaw(RecordDao.Properties.Score.columnName + (desc ? " DESC":" ASC"));
+            builder.orderRaw(headTable + RecordDao.Properties.Score.columnName + (desc ? " DESC":" ASC"));
         }
         else if (sortValue == PreferenceValue.GDB_SR_ORDERBY_PASSION) {
-            builder.orderRaw(RecordDao.Properties.ScorePassion.columnName + (desc ? " DESC":" ASC"));
+            builder.orderRaw(headTable + RecordDao.Properties.ScorePassion.columnName + (desc ? " DESC":" ASC"));
         }
         else if (sortValue == PreferenceValue.GDB_SR_ORDERBY_CUM) {
-            builder.orderRaw(RecordDao.Properties.ScoreCum.columnName + (desc ? " DESC":" ASC"));
+            builder.orderRaw(headTable + RecordDao.Properties.ScoreCum.columnName + (desc ? " DESC":" ASC"));
         }
         else if (sortValue == PreferenceValue.GDB_SR_ORDERBY_STAR) {
-            builder.orderRaw(RecordDao.Properties.ScoreStar.columnName + (desc ? " DESC":" ASC"));
+            builder.orderRaw(headTable + RecordDao.Properties.ScoreStar.columnName + (desc ? " DESC":" ASC"));
         }
         else if (sortValue == PreferenceValue.GDB_SR_ORDERBY_SCOREFEEL) {
-            builder.orderRaw(RecordDao.Properties.ScoreFeel.columnName + (desc ? " DESC":" ASC"));
+            builder.orderRaw(headTable + RecordDao.Properties.ScoreFeel.columnName + (desc ? " DESC":" ASC"));
         }
         else if (sortValue == PreferenceValue.GDB_SR_ORDERBY_SPECIAL) {
-            builder.orderRaw(RecordDao.Properties.ScoreSpecial.columnName + (desc ? " DESC":" ASC"));
+            builder.orderRaw(headTable + RecordDao.Properties.ScoreSpecial.columnName + (desc ? " DESC":" ASC"));
         }
         else {// sort by name
-            builder.orderRaw(RecordDao.Properties.Name.columnName + (desc ? " DESC":" ASC"));
+            builder.orderRaw(headTable + RecordDao.Properties.Name.columnName + (desc ? " DESC":" ASC"));
         }
     }
 

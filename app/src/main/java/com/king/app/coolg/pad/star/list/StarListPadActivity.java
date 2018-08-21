@@ -5,6 +5,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.PopupMenu;
 
+import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
@@ -13,7 +14,9 @@ import com.king.app.coolg.databinding.ActivityStarListPadBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.pad.record.list.IRecordListHolder;
 import com.king.app.coolg.pad.record.list.RecordListPadFragment;
+import com.king.app.coolg.pad.star.StarPadActivity;
 import com.king.app.coolg.phone.record.list.SortDialogContent;
+import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.star.list.IStarListHolder;
 import com.king.app.coolg.phone.star.list.StarListFragment;
 import com.king.app.coolg.phone.star.list.StarListPagerAdapter;
@@ -198,6 +201,14 @@ public class StarListPadActivity extends MvvmActivity<ActivityStarListPadBinding
         else {
             ftRecord.onStarChanged(star.getId());
         }
+        return true;
+    }
+
+    @Override
+    public boolean dispatchOnLongClickStar(Star star) {
+        Router.build("StarPad")
+                .with(StarPadActivity.EXTRA_STAR_ID, star.getId())
+                .go(this);
         return true;
     }
 

@@ -46,11 +46,11 @@ public class StarViewModel extends BaseViewModel {
     public MutableLiveData<List<RecordProxy>> onlyRecordsObserver = new MutableLiveData<>();
     public MutableLiveData<List<FavorStarOrder>> ordersObserver = new MutableLiveData<>();
 
-    private Star mStar;
+    protected Star mStar;
     private List<String> starImageList;
     private List<StarRelationship> relationList;
 
-    private StarRepository starRepository;
+    protected StarRepository starRepository;
     private OrderRepository orderRepository;
 
     private RecordListFilterBean mRecordFilter;
@@ -129,11 +129,11 @@ public class StarViewModel extends BaseViewModel {
         return relationList;
     }
 
-    private ObservableSource<List<String>> getStarImages(Star star) {
+    protected ObservableSource<List<String>> getStarImages(Star star) {
         return observer -> observer.onNext(loadStarImages(star));
     }
 
-    private ObservableSource<List<StarRelationship>> getRelationships(Star star) {
+    protected ObservableSource<List<StarRelationship>> getRelationships(Star star) {
         return observer -> {
             List<StarRelationship> list = new ArrayList<>();
             Map<String, StarRelationship> map = new HashMap<>();
@@ -264,8 +264,8 @@ public class StarViewModel extends BaseViewModel {
         this.mScene = mScene;
     }
 
-    public void loadStarOrders(Star star) {
-        orderRepository.getStarOrders(star.getId())
+    public void loadStarOrders(long starId) {
+        orderRepository.getStarOrders(starId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<FavorStarOrder>>() {

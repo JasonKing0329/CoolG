@@ -291,6 +291,11 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
     }
 
     @Override
+    public boolean dispatchOnLongClickStar(Star star) {
+        return false;
+    }
+
+    @Override
     public void hideDetailIndex() {
         mBinding.tvIndex.setVisibility(View.GONE);
     }
