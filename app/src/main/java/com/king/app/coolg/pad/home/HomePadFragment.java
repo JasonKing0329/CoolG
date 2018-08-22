@@ -18,6 +18,7 @@ import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentHomePadBinding;
 import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.pad.record.RecordPadActivity;
 import com.king.app.coolg.pad.star.StarPadActivity;
 import com.king.app.coolg.phone.home.RecommendFilterFragment;
 import com.king.app.coolg.phone.record.RecordActivity;
@@ -210,8 +211,8 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
     }
 
     private void goToRecordPage(Record data) {
-        Router.build("RecordPhone")
-                .with(RecordActivity.EXTRA_RECORD_ID, data.getId())
+        Router.build("RecordPad")
+                .with(RecordPadActivity.EXTRA_RECORD_ID, data.getId())
                 .go(this);
     }
 

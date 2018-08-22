@@ -9,7 +9,7 @@ import android.support.v7.graphics.Palette;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.ImageProvider;
-import com.king.app.coolg.model.palette.CoolPaletteUtil;
+import com.king.app.coolg.model.palette.PaletteUtil;
 import com.king.app.coolg.model.repository.StarRepository;
 import com.king.app.coolg.utils.FormatUtil;
 import com.king.app.coolg.utils.StarRatingUtil;
@@ -112,7 +112,7 @@ public class StarRatingViewModel extends BaseViewModel {
     }
 
     public int generateStarColor(Resources resources, Palette palette) {
-        Palette.Swatch swatch = CoolPaletteUtil.getDefaultSwatch(palette);
+        Palette.Swatch swatch = PaletteUtil.getDefaultSwatch(palette);
         if (swatch == null) {
             return resources.getColor(R.color.colorAccent);
         }

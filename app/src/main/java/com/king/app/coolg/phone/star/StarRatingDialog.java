@@ -9,7 +9,7 @@ import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.BindingDialogFragment;
 import com.king.app.coolg.databinding.FragmentDialogStarRatingBinding;
-import com.king.app.coolg.model.palette.CoolPalette;
+import com.king.app.coolg.model.palette.BitmapPaletteListener;
 import com.king.app.coolg.utils.StarRatingUtil;
 import com.king.app.coolg.view.widget.StarRatingView;
 import com.king.app.gdb.data.entity.Star;
@@ -82,7 +82,7 @@ public class StarRatingDialog extends BindingDialogFragment<FragmentDialogStarRa
         GlideApp.with(getContext())
                 .asBitmap()
                 .load(mModel.getStarImage())
-                .listener(new CoolPalette(getLifecycle()) {
+                .listener(new BitmapPaletteListener(getLifecycle()) {
                     @Override
                     protected void onPaletteCreated(Palette palette) {
                         setStarColor(mModel.generateStarColor(getResources(), palette));

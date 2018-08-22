@@ -73,6 +73,9 @@
         <activity android:name=".pad.star.StarPadActivity"
             android:screenOrientation="landscape"
             android:launchMode="singleTask"/>
+        <activity android:name=".pad.record.RecordPadActivity"
+            android:screenOrientation="landscape"
+            android:launchMode="singleTask"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

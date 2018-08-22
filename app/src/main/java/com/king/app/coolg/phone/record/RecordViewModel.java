@@ -49,7 +49,7 @@ public class RecordViewModel extends BaseViewModel {
     private RecordRepository repository;
     private OrderRepository orderRepository;
 
-    private Record mRecord;
+    protected Record mRecord;
 
     private String mSingleImagePath;
 
@@ -120,17 +120,21 @@ public class RecordViewModel extends BaseViewModel {
             starsObserver.postValue(record.getRelationList());
 
             // passion point
-            List<PassionPoint> pointList = new ArrayList<>();
-            if (record.getType() == DataConstants.VALUE_RECORD_TYPE_1V1) {
-                getPassionList(pointList, record.getRecordType1v1());
-            }
-            else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_3W) {
-                getPassionList(pointList, record.getRecordType3w());
-            }
-            passionsObserver.postValue(pointList);
+            passionsObserver.postValue(getPassions(record));
 
             observer.onNext(record);
         };
+    }
+
+    protected List<PassionPoint> getPassions(Record record) {
+        List<PassionPoint> pointList = new ArrayList<>();
+        if (record.getType() == DataConstants.VALUE_RECORD_TYPE_1V1) {
+            getPassionList(pointList, record.getRecordType1v1());
+        }
+        else if (record.getType() == DataConstants.VALUE_RECORD_TYPE_3W) {
+            getPassionList(pointList, record.getRecordType3w());
+        }
+        return pointList;
     }
 
     private void getPassionList(List<PassionPoint> pointList, RecordType3w record) {

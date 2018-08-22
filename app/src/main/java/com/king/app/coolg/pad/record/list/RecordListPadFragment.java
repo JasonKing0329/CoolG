@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 
 import com.king.app.coolg.base.IFragmentHolder;
-import com.king.app.coolg.pad.record.RecordGridPadAdapter;
 import com.king.app.coolg.phone.record.list.BaseRecordListFragment;
 import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.coolg.view.widget.AutoLoadMoreRecyclerView;

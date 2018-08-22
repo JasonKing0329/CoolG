@@ -1,6 +1,10 @@
 package com.king.app.coolg.utils;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.ColorMatrixColorFilter;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.king.app.coolg.model.bean.HsvColorBean;
 
@@ -125,4 +129,55 @@ public class ColorUtil {
 		return Color.HSVToColor(hsv);
 	}
 
+	public static void updateIconColor(ImageView icon, int color) {
+		int red = (color & 0xff0000) >> 16;
+		int green = (color & 0x00ff00) >> 8;
+		int blue = (color & 0x0000ff);
+		icon.setColorFilter(Color.argb(255, red, green, blue));
+	}
+
+	public static void updateIconColorWithAlpha(ImageView icon, int color) {
+		int alpha = (color & 0xff000000) >> 24;
+		int red = (color & 0xff0000) >> 16;
+		int green = (color & 0x00ff00) >> 8;
+		int blue = (color & 0x0000ff);
+		setIconColor(icon, red, green, blue, alpha);
+	}
+
+	private static void setIconColor(ImageView icon, int r, int g, int b, int a) {
+		float[] colorMatrix = new float[]{
+				0, 0, 0, 0, r,
+				0, 0, 0, 0, g,
+				0, 0, 0, 0, b,
+				0, 0, 0, (float) a / 255, 0
+		};
+		icon.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+	}
+
+	/**
+	 * 获取targetView所在bitmap区域的平均色值
+	 * @param bitmap
+	 * @param targetView
+	 * @return
+	 */
+	public static int averageImageColor(Bitmap bitmap, View targetView) {
+		int[] pixels = new int[targetView.getWidth() * targetView.getHeight()];
+		int offsetX = targetView.getLeft();
+		int offsetY = targetView.getTop();
+		long red = 0;
+		long green = 0;
+		long blue = 0;
+		for (int i = 0; i < targetView.getWidth(); i ++) {
+			for (int j = 0; j < targetView.getHeight(); j ++) {
+				int color = bitmap.getPixel(offsetX + i , offsetY + j);
+				red += Color.red(color);
+				green += Color.red(color);
+				blue += Color.red(color);
+			}
+		}
+		red = red / pixels.length;
+		green = green / pixels.length;
+		blue = blue / pixels.length;
+		return (int) ((0xFF << 24) | (red << 16) | (green << 8) | blue);
+	}
 }

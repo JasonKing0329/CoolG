@@ -9,7 +9,9 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentRecordListBinding;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
+import com.king.app.coolg.pad.record.RecordPadActivity;
 import com.king.app.coolg.phone.record.RecordActivity;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.widget.AutoLoadMoreRecyclerView;
 import com.king.app.gdb.data.entity.Record;
 
@@ -83,9 +85,16 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
     }
 
     protected void goToRecordPage(Record data) {
-        Router.build("RecordPhone")
-                .with(RecordActivity.EXTRA_RECORD_ID, data.getId())
-                .go(this);
+        if (ScreenUtils.isTablet()) {
+            Router.build("RecordPad")
+                    .with(RecordPadActivity.EXTRA_RECORD_ID, data.getId())
+                    .go(this);
+        }
+        else {
+            Router.build("RecordPhone")
+                    .with(RecordActivity.EXTRA_RECORD_ID, data.getId())
+                    .go(this);
+        }
     }
 
     /**

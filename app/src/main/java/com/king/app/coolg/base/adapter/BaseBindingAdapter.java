@@ -86,10 +86,6 @@ public abstract class BaseBindingAdapter<V extends ViewDataBinding, T> extends R
         return list.get(position);
     }
 
-    public interface OnItemClickListener<T> {
-        void onClickItem(View view, int position, T data);
-    }
-
     public static class BindingHolder extends RecyclerView.ViewHolder {
 
         public BindingHolder(View itemView) {

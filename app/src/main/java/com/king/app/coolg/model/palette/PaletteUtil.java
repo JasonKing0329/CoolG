@@ -12,7 +12,7 @@ import java.util.List;
  * @author：Jing Yang
  * @date: 2018/8/2 16:24
  */
-public class CoolPaletteUtil {
+public class PaletteUtil {
 
     public static Palette.Swatch getDefaultSwatch(Palette palette) {
         if (palette == null) {

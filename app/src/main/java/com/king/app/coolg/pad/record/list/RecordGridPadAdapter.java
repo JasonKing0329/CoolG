@@ -1,4 +1,4 @@
-package com.king.app.coolg.pad.record;
+package com.king.app.coolg.pad.record.list;
 
 import android.view.View;
 
