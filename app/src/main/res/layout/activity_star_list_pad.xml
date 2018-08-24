@@ -17,12 +17,15 @@
             app:layout_constraintHorizontal_weight="1.4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:maxShowIcon="5"
+            app:maxShowIcon="2"
             app:menu="@menu/player_list"
             app:showIconBack="true"
             app:supportSearch="true"
+            app:iconSize="@dimen/actionbar_icon_width"
+            app:iconPadding="@dimen/actionbar_icon_padding"
+            app:titleSize="@dimen/actionbar_title_text_size"
             app:title="Stars"
-            app:titleColor="@color/actionbar_element" />
+            app:titleColor="@color/colorPrimary" />
 
         <LinearLayout
             android:id="@+id/ll_right_bar"

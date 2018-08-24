@@ -40,7 +40,6 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class RecordPadViewModel extends RecordViewModel {
 
-    private Record mRecord;
     private List<String> mImageList;
 
     private RecordRepository repository;

@@ -1,5 +1,6 @@
 package com.king.app.coolg.pad.record;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -26,11 +27,13 @@ import com.king.app.coolg.databinding.ActivityRecordPadBinding;
 import com.king.app.coolg.model.palette.PaletteUtil;
 import com.king.app.coolg.model.palette.ViewColorBound;
 import com.king.app.coolg.pad.star.StarPadActivity;
+import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.PassionPoint;
+import com.king.app.coolg.phone.record.RecordOrdersAdapter;
 import com.king.app.coolg.utils.ColorUtil;
-import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.param.DataConstants;
@@ -48,6 +51,7 @@ import java.util.List;
 public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, RecordPadViewModel> {
 
     public static final String EXTRA_RECORD_ID = "key_record_id";
+    protected final int REQUEST_ADD_ORDER = 1602;
 
     private RecordStarAdapter starAdapter;
     private RecordStarDetailAdapter starDetailAdapter;
@@ -56,6 +60,8 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
 
     private RecordGallery recordGallery;
     private boolean isFirstTimeLoadFirstPage = true;
+
+    private RecordOrdersAdapter ordersAdapter;
 
     @Override
     protected int getContentView() {
@@ -71,8 +77,9 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         initBanner();
 
         mBinding.ivBack.setOnClickListener(v -> finish());
+        mBinding.ivOrder.setOnClickListener(v -> toggleOrders());
+        mBinding.tvOrders.setOnClickListener(v -> selectOrderToAddRecord());
 //        mBinding.tvScene.setOnClickListener(v -> );
-//        mBinding.ivOrder.setOnClickListener(v -> );
 //        mBinding.ivPlay.setOnClickListener(v -> );
         mBinding.tvScore.setOnClickListener(v -> {
             if (mBinding.groupDetail.getVisibility() == View.VISIBLE) {
@@ -86,6 +93,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
             initPager();
             recordGallery.show(getSupportFragmentManager(), "GalleryDialog");
         });
+        mBinding.rvOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
 
     private void initPager() {
@@ -202,6 +210,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         mModel.passionsObserver.observe(this, list -> showPassions(list));
         mModel.scoreObserver.observe(this, list -> showScores(list));
         mModel.imagesObserver.observe(this, list -> showImages(list));
+        mModel.ordersObserver.observe(this, list -> showOrders(list));
         mModel.videoPathObserver.observe(this, path -> {
             if (path == null) {
                 mBinding.ivPlay.setVisibility(View.GONE);
@@ -376,6 +385,99 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         if (palette != null) {
             passionAdapter.setSwatches(palette.getSwatches());
             mBinding.groupFk.invalidate();
+        }
+    }
+
+    private void toggleOrders() {
+        if (mBinding.llOrders.getVisibility() == View.VISIBLE) {
+            mBinding.llOrders.startAnimation(getOrdersDisappear());
+        }
+        else {
+            mModel.loadRecordOrders();
+        }
+    }
+
+    private void showOrders(List<FavorRecordOrder> list) {
+        if (ordersAdapter == null) {
+            ordersAdapter = new RecordOrdersAdapter();
+            ordersAdapter.setList(list);
+            mBinding.rvOrders.setAdapter(ordersAdapter);
+        }
+        else {
+            ordersAdapter.setList(list);
+            ordersAdapter.notifyDataSetChanged();
+        }
+        mBinding.llOrders.setVisibility(View.VISIBLE);
+        mBinding.llOrders.startAnimation(getOrdersAppear());
+    }
+
+    /**
+     * appear animation of orders
+     * @return
+     */
+    private Animation getOrdersAppear() {
+        mBinding.llOrders.setVisibility(View.VISIBLE);
+        AnimationSet set = new AnimationSet(true);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.setDuration(500);
+        Animation translation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0
+                , Animation.RELATIVE_TO_SELF, -1.5f, Animation.RELATIVE_TO_SELF, 0);
+        set.addAnimation(translation);
+        Animation scale = new ScaleAnimation(0, 1, 0, 1
+                , Animation.RELATIVE_TO_SELF, 0.1f, Animation.RELATIVE_TO_SELF, 1);
+        set.addAnimation(scale);
+        return set;
+    }
+
+    /**
+     * disappear animation of orders
+     * @return
+     */
+    private Animation getOrdersDisappear() {
+        AnimationSet set = new AnimationSet(true);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.setDuration(500);
+        Animation translation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0
+                , Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, -1.5f);
+        set.addAnimation(translation);
+        Animation scale = new ScaleAnimation(1, 0, 1, 0
+                , Animation.RELATIVE_TO_SELF, 0.1f, Animation.RELATIVE_TO_SELF, 1);
+        set.addAnimation(scale);
+        set.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mBinding.llOrders.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return set;
+    }
+
+    protected void selectOrderToAddRecord() {
+        Router.build("OrderPhone")
+                .with(OrderPhoneActivity.EXTRA_SELECT_MODE, true)
+                .with(OrderPhoneActivity.EXTRA_SELECT_RECORD, true)
+                .requestCode(REQUEST_ADD_ORDER)
+                .go(this);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 如果收不到回调，检查所在Activity是否实现了onActivityResult并且没有执行super.onActivityResult
+        if (requestCode == REQUEST_ADD_ORDER) {
+            if (resultCode == Activity.RESULT_OK) {
+                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                mModel.addToOrder(orderId);
+            }
         }
     }
 

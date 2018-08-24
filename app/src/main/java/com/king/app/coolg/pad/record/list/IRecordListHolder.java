@@ -1,9 +1,6 @@
 package com.king.app.coolg.pad.record.list;
 
-import android.view.View;
-
 import com.king.app.coolg.base.IFragmentHolder;
-import com.king.app.gdb.data.entity.Record;
 
 /**
  * 描述:
@@ -12,5 +9,4 @@ import com.king.app.gdb.data.entity.Record;
  */
 public interface IRecordListHolder extends IFragmentHolder {
 
-    void showRecordPopup(View v, Record record);
 }

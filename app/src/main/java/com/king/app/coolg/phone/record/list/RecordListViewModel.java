@@ -11,10 +11,12 @@ import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.VideoModel;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
+import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.gdb.data.RecordCursor;
+import com.king.app.gdb.data.entity.FavorRecord;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.param.DataConstants;
@@ -61,6 +63,10 @@ public class RecordListViewModel extends BaseViewModel {
      * only available when mStarId is not 0
      */
     private int mStarType;
+    /**
+     * record to be added into order
+     */
+    private Record mRecordToAdd;
 
     public RecordListViewModel(@NonNull Application application) {
         super(application);
@@ -386,5 +392,36 @@ public class RecordListViewModel extends BaseViewModel {
         } catch (Exception e) {
             return "";
         }
+    }
+
+    public void markRecordToAdd(Record data) {
+        this.mRecordToAdd = data;
+    }
+
+    public void addToOrder(long orderId) {
+        new OrderRepository().addFavorRecord(orderId, mRecordToAdd.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<FavorRecord>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(FavorRecord favorRecord) {
+                        messageObserver.setValue("Add successfully");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

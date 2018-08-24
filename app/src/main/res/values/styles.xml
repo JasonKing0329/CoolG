@@ -187,7 +187,7 @@
     <style name="IvPadActionIcon">
         <item name="android:layout_width">@dimen/actionbar_height</item>
         <item name="android:layout_height">@dimen/actionbar_height</item>
-        <item name="android:padding">20dp</item>
+        <item name="android:padding">@dimen/actionbar_icon_padding</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
     </style>

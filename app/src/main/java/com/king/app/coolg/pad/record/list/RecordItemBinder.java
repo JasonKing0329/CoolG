@@ -60,8 +60,8 @@ public class RecordItemBinder {
             binding.cbCheck.setVisibility(View.GONE);
 
             binding.tvSeq.setText(String.valueOf(position + 1));
-            binding.tvSeq.setTag(item);
-            binding.tvSeq.setOnClickListener(v -> {
+
+            binding.ivEdit.setOnClickListener(v -> {
                 if (popupListener != null) {
                     popupListener.onPopupRecord(v, position, item.getRecord());
                 }

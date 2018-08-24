@@ -24,7 +24,6 @@ import com.king.app.coolg.phone.record.list.SortDialogContent;
 import com.king.app.coolg.phone.record.scene.HsvColorDialogContent;
 import com.king.app.coolg.phone.record.scene.SceneFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
-import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.param.DataConstants;
 
 /**
@@ -35,7 +34,7 @@ import com.king.app.gdb.data.param.DataConstants;
  */
 @Route("RecordListPad")
 public class RecordListPadActivity extends MvvmActivity<ActivityRecordListPadBinding, BaseViewModel>
-    implements View.OnClickListener, IRecordListHolder {
+    implements View.OnClickListener {
 
     public static final String KEY_SCENE_NAME = "key_scene_name";
 
@@ -322,9 +321,4 @@ public class RecordListPadActivity extends MvvmActivity<ActivityRecordListPadBin
             return true;
         }
     };
-
-    @Override
-    public void showRecordPopup(View v, Record record) {
-
-    }
 }

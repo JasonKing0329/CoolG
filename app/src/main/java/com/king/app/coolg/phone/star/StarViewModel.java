@@ -46,6 +46,7 @@ public class StarViewModel extends BaseViewModel {
     public MutableLiveData<List<RecordProxy>> recordsObserver = new MutableLiveData<>();
     public MutableLiveData<List<RecordProxy>> onlyRecordsObserver = new MutableLiveData<>();
     public MutableLiveData<List<FavorStarOrder>> ordersObserver = new MutableLiveData<>();
+    public MutableLiveData<FavorStar> addOrderObserver = new MutableLiveData<>();
 
     protected Star mStar;
     private List<String> starImageList;
@@ -305,6 +306,7 @@ public class StarViewModel extends BaseViewModel {
                     @Override
                     public void onNext(FavorStar favorStar) {
                         messageObserver.setValue("Add successfully");
+                        addOrderObserver.setValue(favorStar);
                     }
 
                     @Override

@@ -29,6 +29,8 @@ import java.util.Map;
  */
 public abstract class OrderFragment<VM extends BaseViewModel, T> extends MvvmFragment<FragmentOrderPhoneBinding, VM> {
 
+    private int mSpanCount;
+
     protected OrderAdapter<T> orderAdapter;
 
     protected IOrderHolder holder;
@@ -45,13 +47,17 @@ public abstract class OrderFragment<VM extends BaseViewModel, T> extends MvvmFra
 
     @Override
     protected void onCreate(View view) {
-        mBinding.rvOrders.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        mSpanCount = 2;
+        if (ScreenUtils.isTablet()) {
+            mSpanCount = 4;
+        }
+        mBinding.rvOrders.setLayoutManager(new GridLayoutManager(getActivity(), mSpanCount));
         mBinding.rvOrders.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 int position = parent.getChildAdapterPosition(view);
                 outRect.bottom = ScreenUtils.dp2px(8);
-                if (position / 2 == 0) {
+                if (position / mSpanCount == 0) {
                     outRect.top = ScreenUtils.dp2px(8);
                 }
             }

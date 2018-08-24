@@ -1,12 +1,17 @@
 package com.king.app.coolg.pad.record.list;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 
+import com.chenenyu.router.Router;
 import com.king.app.coolg.base.IFragmentHolder;
+import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.list.BaseRecordListFragment;
 import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.coolg.view.widget.AutoLoadMoreRecyclerView;
+import com.king.app.gdb.data.entity.Record;
 
 import java.util.List;
 
@@ -17,8 +22,6 @@ import java.util.List;
  * @date: 2018/8/17 15:32
  */
 public class RecordListPadFragment extends BaseRecordListFragment<RecordGridPadAdapter> {
-
-    private IRecordListHolder holder;
 
     public static RecordListPadFragment newInstance(long starId) {
 
@@ -41,7 +44,7 @@ public class RecordListPadFragment extends BaseRecordListFragment<RecordGridPadA
 
     @Override
     protected void bindFragmentHolder(IFragmentHolder holder) {
-        this.holder = (IRecordListHolder) holder;
+
     }
 
     @Override
@@ -66,7 +69,7 @@ public class RecordListPadFragment extends BaseRecordListFragment<RecordGridPadA
             adapter.setList(list);
             adapter.setSortMode(mModel.getSortMode());
             adapter.setOnItemClickListener((view, position, data) -> goToRecordPage(data.getRecord()));
-            adapter.setPopupListener((view, position, data) -> holder.showRecordPopup(view, data));
+            adapter.setPopupListener((view, position, data) -> showEditPopup(view, data));
             mBinding.rvItems.setAdapter(adapter);
         }
         else {
@@ -78,4 +81,26 @@ public class RecordListPadFragment extends BaseRecordListFragment<RecordGridPadA
 
         mBinding.tvFilter.setText(mModel.getBottomText());
     }
+
+    @Override
+    protected void selectOrderToAddRecord(Record data) {
+        mModel.markRecordToAdd(data);
+        Router.build("OrderPhone")
+                .with(OrderPhoneActivity.EXTRA_SELECT_MODE, true)
+                .with(OrderPhoneActivity.EXTRA_SELECT_RECORD, true)
+                .requestCode(REQUEST_ADD_ORDER)
+                .go(this);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 如果收不到回调，检查所在Activity是否实现了onActivityResult并且没有执行super.onActivityResult
+        if (requestCode == REQUEST_ADD_ORDER) {
+            if (resultCode == Activity.RESULT_OK) {
+                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                mModel.addToOrder(orderId);
+            }
+        }
+    }
+
 }

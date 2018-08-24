@@ -61,8 +61,7 @@
             android:launchMode="singleTask"/>
         <activity android:name=".phone.record.scene.SceneActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".phone.order.OrderPhoneActivity"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".phone.order.OrderPhoneActivity"/>
 
         <activity android:name=".pad.home.HomePadActivity"
             android:screenOrientation="landscape"/>

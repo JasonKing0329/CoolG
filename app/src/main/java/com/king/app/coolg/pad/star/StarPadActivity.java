@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -11,10 +12,12 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.base.adapter.BaseRecyclerAdapter;
 import com.king.app.coolg.databinding.ActivityStarPadBinding;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.pad.record.list.RecordListPadFragment;
+import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.list.FilterDialogContent;
 import com.king.app.coolg.phone.record.list.SortDialogContent;
 import com.king.app.coolg.phone.star.StarActivity;
@@ -27,6 +30,7 @@ import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.utils.StarRatingUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.gdb.data.entity.FavorStarOrder;
+import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarRating;
 import com.king.app.gdb.data.param.DataConstants;
@@ -43,6 +47,7 @@ import java.util.List;
 public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPadViewModel> {
 
     public static final String EXTRA_STAR_ID = "key_star_id";
+    private final int REQUEST_ADD_ORDER = 1602;
 
     private RecordListPadFragment ftRecord;
     private RecordListFilterBean mFilter;
@@ -91,7 +96,7 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
         mBinding.ivIconBack.setOnClickListener(v -> finish());
         mBinding.ivIconSort.setOnClickListener(v -> changeSortType());
         mBinding.ivIconFilter.setOnClickListener(v -> changeFilter());
-        mBinding.tvAddOrder.setOnClickListener(v -> addToOrder());
+        mBinding.tvAddOrder.setOnClickListener(v -> selectOrderToAddStar());
         mBinding.tvTagVideo.setOnClickListener(v -> {
             if (!mBinding.tvTagVideo.isSelected()) {
                 mBinding.tvTagVideo.setSelected(true);
@@ -171,6 +176,7 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
         mModel.imagesObserver.observe(this, list -> showImages(list));
         mModel.relationshipsObserver.observe(this, list -> showRelationships(list));
         mModel.ordersObserver.observe(this, list -> showOrders(list));
+        mModel.addOrderObserver.observe(this, star -> mModel.loadStarOrders(mModel.getStar().getId()));
 
         mModel.loadStar(starId);
         mModel.loadStarOrders(starId);
@@ -208,7 +214,23 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
     private void showImages(List<String> list) {
         StarImageAdapter adapter = new StarImageAdapter();
         adapter.setList(list);
+        adapter.setOnItemClickListener((view, position, data) -> showEditPopup(view, data));
         mBinding.rvStar.setAdapter(adapter);
+    }
+
+    private void showEditPopup(View view, String path) {
+        PopupMenu menu = new PopupMenu(this, view);
+        menu.getMenuInflater().inflate(R.menu.popup_record_edit, menu.getMenu());
+        menu.getMenu().findItem(R.id.menu_add_to_order).setVisible(false);
+        menu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_set_cover:
+                    selectOrderToSetCover(path);
+                    break;
+            }
+            return false;
+        });
+        menu.show();
     }
 
     private void showRelationships(List<StarRelationship> list) {
@@ -229,7 +251,10 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
             mBinding.rvOrder.setVisibility(View.VISIBLE);
             StarOrdersAdapter adapter = new StarOrdersAdapter();
             adapter.setList(list);
-            adapter.setOnItemClickListener((view, position, data) -> goToOrderPage());
+            adapter.setOnDeleteListener(order -> {
+                mModel.deleteOrderOfStar(order.getId(), mModel.getStar().getId());
+                mModel.loadStarOrders(mModel.getStar().getId());
+            });
             mBinding.rvOrder.setAdapter(adapter);
         }
     }
@@ -240,12 +265,28 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
                 .go(this);
     }
 
-    private void goToOrderPage() {
-//        Router.build("OrderPhone")
-//                .go(this);
+    private void selectOrderToAddStar() {
+        Router.build("OrderPhone")
+                .with(OrderPhoneActivity.EXTRA_SELECT_MODE, true)
+                .with(OrderPhoneActivity.EXTRA_SELECT_STAR, true)
+                .requestCode(REQUEST_ADD_ORDER)
+                .go(this);
     }
 
-    private void addToOrder() {
+    private void selectOrderToSetCover(String path) {
+        Router.build("OrderPhone")
+                .with(OrderPhoneActivity.EXTRA_SET_COVER, path)
+                .go(this);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_ADD_ORDER) {
+            if (resultCode == RESULT_OK) {
+                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                mModel.addToOrder(orderId);
+            }
+        }
+    }
 }

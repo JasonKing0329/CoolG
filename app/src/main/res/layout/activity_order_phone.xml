@@ -22,6 +22,9 @@
             app:menu="@menu/order_phone"
             app:showIconBack="true"
             app:supportSearch="false"
+            app:iconSize="@dimen/actionbar_icon_width"
+            app:iconPadding="@dimen/actionbar_icon_padding"
+            app:titleSize="@dimen/actionbar_title_text_size"
             app:title="Orders"
             app:titleColor="@color/actionbar_element" />
         <android.support.design.widget.TabLayout

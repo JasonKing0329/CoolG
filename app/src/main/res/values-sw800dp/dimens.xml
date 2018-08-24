@@ -180,4 +180,11 @@
     <dimen name="rating_title_width">75dp</dimen>
     <dimen name="rating_value_width">60dp</dimen>
     <dimen name="home_star_name">14dp</dimen>
+
+    <dimen name="order_cover_width">300dp</dimen>
+    <dimen name="order_cover_height">170dp</dimen>
+    <dimen name="order_name_text">20dp</dimen>
+    <dimen name="order_number_text">18dp</dimen>
+    <dimen name="order_edit_size">50dp</dimen>
+    <dimen name="order_edit_padding">10dp</dimen>
 </resources>

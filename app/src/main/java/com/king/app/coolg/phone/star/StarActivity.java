@@ -90,6 +90,7 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
     protected void initData() {
         mModel.starObserver.observe(this, star -> showStar(star));
         mModel.recordsObserver.observe(this, list -> showRecords(list));
+        mModel.addOrderObserver.observe(this, star -> mModel.loadStarOrders(mModel.getStar().getId()));
         mModel.onlyRecordsObserver.observe(this, list -> {
             if (adapter != null) {
                 int oldCount = adapter.getItemCount() - 2;
@@ -145,7 +146,7 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
 
                 @Override
                 public void addStarToOrder(Star star) {
-                    selectOrderToAddStar(star);
+                    selectOrderToAddStar();
                 }
             });
             mBinding.rvList.setAdapter(adapter);
@@ -254,7 +255,7 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
                 .go(this);
     }
 
-    private void selectOrderToAddStar(Star star) {
+    private void selectOrderToAddStar() {
         Router.build("OrderPhone")
                 .with(OrderPhoneActivity.EXTRA_SELECT_MODE, true)
                 .with(OrderPhoneActivity.EXTRA_SELECT_STAR, true)
@@ -268,8 +269,6 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
             if (resultCode == RESULT_OK) {
                 long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
                 mModel.addToOrder(orderId);
-                // refresh header
-                adapter.notifyItemChanged(0);
             }
         }
     }

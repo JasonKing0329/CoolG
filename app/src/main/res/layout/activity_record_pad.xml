@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".pad.record.RecordPadActivity">
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -125,35 +127,73 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/group_bottom"/>
 
+        <!-- 用于控制最大高度，嵌套一个指定高度的LinearLayout -->
         <LinearLayout
             android:id="@+id/group_detail"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/shape_record_detail_bg"
+            android:layout_height="400dp"
+            android:gravity="bottom"
             android:visibility="gone"
-            android:padding="16dp"
             android:layout_marginBottom="5dp"
             android:layout_marginStart="15dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/group_bottom">
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_stars_detail"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:overScrollMode="never"/>
-            <View
-                android:layout_width="1px"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"/>
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_score_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:overScrollMode="never"/>
+                android:orientation="horizontal"
+                android:background="@drawable/shape_record_detail_bg"
+                android:padding="16dp">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_stars_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never"/>
+                <View
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"/>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_score_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never"/>
+            </LinearLayout>
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/ll_orders"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_record_detail_bg"
+            android:padding="10dp"
+            android:visibility="gone"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_order">
+            <TextView
+                android:id="@+id/tv_orders"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Orders"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:padding="10dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:drawableBottom="@drawable/ic_add_white_36dp"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_orders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                tools:listitem="@layout/adapter_star_orders"/>
+        </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 </layout>

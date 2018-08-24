@@ -12,17 +12,14 @@ import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityStarListPadBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
-import com.king.app.coolg.pad.record.list.IRecordListHolder;
 import com.king.app.coolg.pad.record.list.RecordListPadFragment;
 import com.king.app.coolg.pad.star.StarPadActivity;
 import com.king.app.coolg.phone.record.list.SortDialogContent;
-import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.star.list.IStarListHolder;
 import com.king.app.coolg.phone.star.list.StarListFragment;
 import com.king.app.coolg.phone.star.list.StarListPagerAdapter;
 import com.king.app.coolg.phone.star.list.StarListTitleViewModel;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
-import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.param.DataConstants;
 
@@ -36,7 +33,7 @@ import java.util.List;
  */
 @Route("StarListPad")
 public class StarListPadActivity extends MvvmActivity<ActivityStarListPadBinding, StarListTitleViewModel>
-    implements IStarListHolder, IRecordListHolder {
+    implements IStarListHolder {
 
     private StarListPagerAdapter pagerAdapter;
 
@@ -261,10 +258,5 @@ public class StarListPadActivity extends MvvmActivity<ActivityStarListPadBinding
         dialogFragment.setContentFragment(content);
         dialogFragment.setTitle("Sort");
         dialogFragment.show(getSupportFragmentManager(), "SortDialogContent");
-    }
-
-    @Override
-    public void showRecordPopup(View v, Record record) {
-
     }
 }

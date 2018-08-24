@@ -1,6 +1,9 @@
 package com.king.app.coolg.phone.record.list;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -10,6 +13,7 @@ import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentRecordListBinding;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.pad.record.RecordPadActivity;
+import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.widget.AutoLoadMoreRecyclerView;
@@ -24,6 +28,8 @@ import java.util.List;
  * @date: 2018/8/17 15:47
  */
 public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> extends MvvmFragment<FragmentRecordListBinding, RecordListViewModel> {
+
+    protected final int REQUEST_ADD_ORDER = 1602;
 
     public static final String ARG_RECORD_TYPE = "record_type";
     public static final String ARG_RECORD_SCENE = "record_scene";
@@ -72,6 +78,26 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
 
         // 加载records
         loadNewRecords();
+    }
+
+
+    protected void showEditPopup(View view, Record data) {
+        PopupMenu menu = new PopupMenu(getActivity(), view);
+        menu.getMenuInflater().inflate(R.menu.popup_record_edit, menu.getMenu());
+        menu.getMenu().findItem(R.id.menu_set_cover).setVisible(false);
+        menu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_add_to_order:
+                    selectOrderToAddRecord(data);
+                    break;
+            }
+            return false;
+        });
+        menu.show();
+    }
+
+    protected void selectOrderToAddRecord(Record data) {
+
     }
 
     protected abstract int getDefaultLoadNumber();
