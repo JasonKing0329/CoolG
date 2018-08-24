@@ -82,6 +82,12 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
                 onHeadActionListener.addStarToOrder(star);
             }
         });
+        binding.ivOrderDelete.setOnClickListener(v -> {
+            if (ordersAdapter != null) {
+                ordersAdapter.toggleDeleteMode();
+                ordersAdapter.notifyDataSetChanged();
+            }
+        });
         binding.groupOrder.setOnClickListener(view -> {
             // collapse
             if (binding.ivOrderArrow.isSelected()) {
@@ -103,6 +109,10 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
                 mBinding.tvOrder.setText(String.valueOf(list.size()));
                 // 添加order后用notifyDataSetChanged不知为何不管用，还得重新setAdapter才管用
                 ordersAdapter = new StarOrdersAdapter();
+                ordersAdapter.setOnDeleteListener(order -> {
+                    mModel.deleteOrderOfStar(order.getId(), star.getId());
+                    mModel.loadStarOrders(star.getId());
+                });
                 ordersAdapter.setList(list);
                 mBinding.rvOrders.setAdapter(ordersAdapter);
             });

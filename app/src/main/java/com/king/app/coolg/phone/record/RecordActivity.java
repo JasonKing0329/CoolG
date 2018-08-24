@@ -27,6 +27,7 @@ import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordType1v1;
@@ -79,6 +80,12 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         });
 
         mBinding.ivOrderAdd.setOnClickListener(v -> selectOrderToAddStar());
+        mBinding.ivOrderDelete.setOnClickListener(v -> {
+            if (orderAdapter != null) {
+                orderAdapter.toggleDeleteMode();
+                orderAdapter.notifyDataSetChanged();
+            }
+        });
         mBinding.groupOrder.setOnClickListener(view -> {
             // collapse
             if (mBinding.ivOrderArrow.isSelected()) {
@@ -149,6 +156,10 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             mBinding.tvOrder.setText(String.valueOf(list.size()));
             if (orderAdapter == null) {
                 orderAdapter = new RecordOrdersAdapter();
+                orderAdapter.setOnDeleteListener(order -> {
+                    mModel.deleteOrderOfRecord(order.getId());
+                    mModel.loadRecordOrders();
+                });
                 orderAdapter.setList(list);
                 mBinding.rvOrders.setAdapter(orderAdapter);
             }

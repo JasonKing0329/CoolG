@@ -21,6 +21,7 @@ import com.king.app.coolg.phone.record.list.SortDialogContent;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.gdb.data.entity.FavorStarOrder;
 import com.king.app.gdb.data.entity.Star;
 
 import java.util.List;

@@ -104,7 +104,6 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
 
             @Override
             public void onPageSelected(final int position) {
-                DebugLog.e("[RecordPage]position " + position);
                 // 第一次触发时，holder里image还没有加载完成，presenter里还没有缓存
                 if (isFirstTimeLoadFirstPage && position == 0) {
                     isFirstTimeLoadFirstPage = false;

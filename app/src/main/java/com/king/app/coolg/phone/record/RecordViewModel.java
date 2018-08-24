@@ -9,6 +9,7 @@ import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.gdb.data.entity.FavorRecord;
+import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
@@ -290,5 +291,14 @@ public class RecordViewModel extends BaseViewModel {
             file.delete();
         }
         loadImages(mRecord);
+    }
+
+    public void deleteOrderOfRecord(long orderId) {
+        getDaoSession().getFavorRecordDao().queryBuilder()
+                .where(FavorRecordDao.Properties.OrderId.eq(orderId))
+                .where(FavorRecordDao.Properties.RecordId.eq(mRecord.getId()))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
+        getDaoSession().getFavorRecordDao().detachAll();
     }
 }

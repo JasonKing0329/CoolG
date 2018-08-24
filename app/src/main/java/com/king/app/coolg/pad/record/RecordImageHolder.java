@@ -45,7 +45,6 @@ public class RecordImageHolder implements Holder<String> {
 
     @Override
     public void UpdateUI(Context context, int position, String data) {
-        DebugLog.e("[RecordPage]position " + position);
         GlideApp.with(context)
                 .asBitmap()
                 .load(data)

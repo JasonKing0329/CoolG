@@ -16,6 +16,7 @@ import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.gdb.data.entity.FavorStar;
+import com.king.app.gdb.data.entity.FavorStarDao;
 import com.king.app.gdb.data.entity.FavorStarOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
@@ -341,6 +342,15 @@ public class StarViewModel extends BaseViewModel {
             file.delete();
         }
         starImageList = loadStarImages(mStar);
+    }
+
+    public void deleteOrderOfStar(long orderId, long starId) {
+        getDaoSession().getFavorStarDao().queryBuilder()
+                .where(FavorStarDao.Properties.OrderId.eq(orderId))
+                .where(FavorStarDao.Properties.StarId.eq(starId))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
+        getDaoSession().getFavorStarDao().detachAll();
     }
 
     private class RelationComparator implements Comparator<StarRelationship> {
