@@ -426,6 +426,10 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
             ordersAdapter = new RecordOrdersAdapter();
             ordersAdapter.setTextColor(getResources().getColor(R.color.white));
             ordersAdapter.setList(list);
+            ordersAdapter.setOnDeleteListener(order -> {
+                mModel.deleteOrderOfRecord(order.getId());
+                mModel.loadRecordOrders();
+            });
             mBinding.rvOrders.setAdapter(ordersAdapter);
         }
         else {
