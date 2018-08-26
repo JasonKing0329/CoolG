@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Handler;
-import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -113,37 +112,6 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
     }
 
     private void initBanner() {
-        mBinding.banner.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                // 第一次触发时，holder里image还没有加载完成，presenter里还没有缓存
-                if (pagerAdapter != null && isFirstTimeLoadFirstPage && pagerAdapter.getCurrentPage() == 0) {
-                    isFirstTimeLoadFirstPage = false;
-                    new Handler().postDelayed(() -> {
-                        if (recordGallery != null) {
-                            recordGallery.setCurrentPage(pagerAdapter.getCurrentPage());
-                        }
-                        mModel.refreshBackground(pagerAdapter.getCurrentPage());
-                    }, 900);
-                }
-                else {
-                    if (recordGallery != null) {
-                        recordGallery.setCurrentPage(pagerAdapter.getCurrentPage());
-                    }
-                    mModel.refreshBackground(pagerAdapter.getCurrentPage());
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
     }
 
     private void initRecyclerViews() {
@@ -373,19 +341,33 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         viewList.add(mBinding.ivDelete);
         pagerAdapter = new RecordPagerAdapter(mBinding.banner, getLifecycle(), viewList);
         pagerAdapter.setList(list);
+        pagerAdapter.setOnSetPageListener(position -> onPagePresented(position));
         pagerAdapter.setOnHolderListener(new RecordPagerAdapter.OnHolderListener() {
             @Override
             public void onPaletteCreated(int position, Palette palette) {
                 mModel.cachePalette(position, palette);
+                if (position == pagerAdapter.getCurrentPage()) {
+                    onPagePresented(position);
+                }
             }
 
             @Override
             public void onBoundsCreated(int position, List<ViewColorBound> bounds) {
                 mModel.cacheViewBounds(position, bounds);
+                if (position == pagerAdapter.getCurrentPage()) {
+                    onPagePresented(position);
+                }
             }
         });
         mBinding.banner.setBannerAdapter(pagerAdapter);
         mBinding.banner.startAutoPlay();
+    }
+
+    private void onPagePresented(int position) {
+        if (recordGallery != null) {
+            recordGallery.setCurrentPage(position);
+        }
+        mModel.refreshBackground(position);
     }
 
     private void updateViewBounds(List<ViewColorBound> bounds) {

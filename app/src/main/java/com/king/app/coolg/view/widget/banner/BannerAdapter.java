@@ -25,6 +25,8 @@ public abstract class BannerAdapter extends PagerAdapter
 
     private ItemClickListener itemClickListener;
 
+    private OnSetPageListener onSetPageListener;
+
     public BannerAdapter(ViewPager viewPager) {
         this.viewPager = viewPager;
         viewPager.addOnPageChangeListener(this);
@@ -44,6 +46,10 @@ public abstract class BannerAdapter extends PagerAdapter
 
     public void setItemClickListener(ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
+    }
+
+    public void setOnSetPageListener(OnSetPageListener onSetPageListener) {
+        this.onSetPageListener = onSetPageListener;
     }
 
     public void nextPage() {
@@ -172,6 +178,10 @@ public abstract class BannerAdapter extends PagerAdapter
             }
         }
         viewPager.setCurrentItem(1, false);
+        DebugLog.e("currentPage=" + currentPage);
+        if (onSetPageListener != null) {
+            onSetPageListener.onSetPage(currentPage);
+        }
     }
 
     @Override
@@ -194,5 +204,9 @@ public abstract class BannerAdapter extends PagerAdapter
 
     public interface ItemClickListener {
         void onItemClick(int index);
+    }
+
+    public interface OnSetPageListener {
+        void onSetPage(int position);
     }
 }
