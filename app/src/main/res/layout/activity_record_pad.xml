@@ -7,15 +7,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.bigkoo.convenientbanner.ConvenientBanner
+        <com.king.app.coolg.view.widget.banner.CoolBanner
             android:id="@+id/banner"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:canLoop="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toTopOf="@+id/group_bottom"
+            app:switchDuration="5000"/>
 
         <ImageView
             android:id="@+id/iv_back"
@@ -36,12 +36,21 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageView
+            android:id="@+id/iv_set_cover"
+            style="@style/IvPadActionIcon"
+            android:src="@drawable/ic_insert_photo_white_36dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toEndOf="@id/iv_order"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
             android:id="@+id/iv_play"
             style="@style/IvPadActionIcon"
             android:src="@drawable/ic_play_arrow_white_36dp"
             android:layout_marginStart="0dp"
             android:layout_marginTop="20dp"
-            app:layout_constraintStart_toEndOf="@id/iv_order"
+            app:layout_constraintStart_toEndOf="@id/iv_set_cover"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <android.support.v7.widget.RecyclerView

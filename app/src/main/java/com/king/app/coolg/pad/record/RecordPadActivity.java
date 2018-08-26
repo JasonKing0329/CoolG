@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
@@ -31,6 +32,7 @@ import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.PassionPoint;
 import com.king.app.coolg.phone.record.RecordOrdersAdapter;
 import com.king.app.coolg.utils.ColorUtil;
+import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
@@ -58,6 +60,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
     private RecordScoreAdapter scoreDetailAdapter;
     private PassionPointAdapter passionAdapter;
 
+    private RecordPagerAdapter pagerAdapter;
     private RecordGallery recordGallery;
     private boolean isFirstTimeLoadFirstPage = true;
 
@@ -72,14 +75,16 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
     protected void initView() {
         ColorUtil.updateIconColor(mBinding.ivBack, getResources().getColor(R.color.colorPrimary));
         ColorUtil.updateIconColor(mBinding.ivOrder, getResources().getColor(R.color.colorPrimary));
+        ColorUtil.updateIconColor(mBinding.ivSetCover, getResources().getColor(R.color.colorPrimary));
 
         initRecyclerViews();
         initBanner();
 
         mBinding.ivBack.setOnClickListener(v -> finish());
         mBinding.ivOrder.setOnClickListener(v -> toggleOrders());
+        mBinding.ivSetCover.setOnClickListener(v -> onApplyImage(mModel.getCurrentImage(pagerAdapter.getCurrentPage())));
         mBinding.tvOrders.setOnClickListener(v -> selectOrderToAddRecord());
-//        mBinding.tvScene.setOnClickListener(v -> );
+        mBinding.tvScene.setOnClickListener(v -> pagerAdapter.nextPage());
 //        mBinding.ivPlay.setOnClickListener(v -> );
         mBinding.tvScore.setOnClickListener(v -> {
             if (mBinding.groupDetail.getVisibility() == View.VISIBLE) {
@@ -90,43 +95,45 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
             }
         });
         mBinding.groupBottom.setOnClickListener(v -> {
-            initPager();
+            initGallery();
             recordGallery.show(getSupportFragmentManager(), "GalleryDialog");
         });
         mBinding.rvOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
 
-    private void initPager() {
+    private void initGallery() {
         recordGallery = new RecordGallery();
-        recordGallery.setCurrentPage(mBinding.banner.getCurrentItem());
+        if (pagerAdapter != null) {
+            recordGallery.setCurrentPage(pagerAdapter.getCurrentPage());
+        }
         recordGallery.setImageList(mModel.getImageList());
-        recordGallery.setOnItemClickListener((view, position, data) -> mBinding.banner.getViewPager().setCurrentItem(position));
+        recordGallery.setOnItemClickListener((view, position, data) -> pagerAdapter.showIndex(position));
     }
 
     private void initBanner() {
-        mBinding.banner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mBinding.banner.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
 
             @Override
-            public void onPageSelected(final int position) {
+            public void onPageSelected(int position) {
                 // 第一次触发时，holder里image还没有加载完成，presenter里还没有缓存
-                if (isFirstTimeLoadFirstPage && position == 0) {
+                if (pagerAdapter != null && isFirstTimeLoadFirstPage && pagerAdapter.getCurrentPage() == 0) {
                     isFirstTimeLoadFirstPage = false;
                     new Handler().postDelayed(() -> {
                         if (recordGallery != null) {
-                            recordGallery.setCurrentPage(position);
+                            recordGallery.setCurrentPage(pagerAdapter.getCurrentPage());
                         }
-                        mModel.refreshBackground(position);
+                        mModel.refreshBackground(pagerAdapter.getCurrentPage());
                     }, 900);
                 }
                 else {
                     if (recordGallery != null) {
-                        recordGallery.setCurrentPage(position);
+                        recordGallery.setCurrentPage(pagerAdapter.getCurrentPage());
                     }
-                    mModel.refreshBackground(position);
+                    mModel.refreshBackground(pagerAdapter.getCurrentPage());
                 }
             }
 
@@ -186,13 +193,13 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
     @Override
     protected void onResume() {
         super.onResume();
-        mBinding.banner.startTurning(5000);
+        mBinding.banner.startAutoPlay();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mBinding.banner.stopTurning();
+        mBinding.banner.stopAutoPlay();
     }
 
     @Override
@@ -344,24 +351,30 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
     }
 
     private void showImages(List<String> list) {
-        mBinding.banner.setPages(() -> {
-            List<View> viewList = new ArrayList<>();
-            viewList.add(mBinding.ivBack);
-            viewList.add(mBinding.ivOrder);
-            RecordImageHolder holder = new RecordImageHolder(getLifecycle(), viewList);
-            holder.setOnHolderListener(new RecordImageHolder.OnHolderListener() {
-                @Override
-                public void onPaletteCreated(int position, Palette palette) {
-                    mModel.cachePalette(position, palette);
-                }
+        showBanner(list);
+    }
 
-                @Override
-                public void onBoundsCreated(int position, List<ViewColorBound> bounds) {
-                    mModel.cacheViewBounds(position, bounds);
-                }
-            });
-            return holder;
-        }, list);
+    private void showBanner(List<String> list) {
+
+        List<View> viewList = new ArrayList<>();
+        viewList.add(mBinding.ivBack);
+        viewList.add(mBinding.ivOrder);
+        viewList.add(mBinding.ivSetCover);
+        pagerAdapter = new RecordPagerAdapter(mBinding.banner, getLifecycle(), viewList);
+        pagerAdapter.setList(list);
+        pagerAdapter.setOnHolderListener(new RecordPagerAdapter.OnHolderListener() {
+            @Override
+            public void onPaletteCreated(int position, Palette palette) {
+                mModel.cachePalette(position, palette);
+            }
+
+            @Override
+            public void onBoundsCreated(int position, List<ViewColorBound> bounds) {
+                mModel.cacheViewBounds(position, bounds);
+            }
+        });
+        mBinding.banner.setBannerAdapter(pagerAdapter);
+        mBinding.banner.startAutoPlay();
     }
 
     private void updateViewBounds(List<ViewColorBound> bounds) {
@@ -424,7 +437,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
                 , Animation.RELATIVE_TO_SELF, -1.5f, Animation.RELATIVE_TO_SELF, 0);
         set.addAnimation(translation);
         Animation scale = new ScaleAnimation(0, 1, 0, 1
-                , Animation.RELATIVE_TO_SELF, 0.1f, Animation.RELATIVE_TO_SELF, 1);
+                , Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0.5f);
         set.addAnimation(scale);
         return set;
     }
@@ -441,7 +454,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
                 , Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, -1.5f);
         set.addAnimation(translation);
         Animation scale = new ScaleAnimation(1, 0, 1, 0
-                , Animation.RELATIVE_TO_SELF, 0.1f, Animation.RELATIVE_TO_SELF, 1);
+                , Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0.5f);
         set.addAnimation(scale);
         set.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -468,6 +481,15 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
                 .with(OrderPhoneActivity.EXTRA_SELECT_RECORD, true)
                 .requestCode(REQUEST_ADD_ORDER)
                 .go(this);
+    }
+
+    private void onApplyImage(String path) {
+        DebugLog.e(path);
+        if (!TextUtils.isEmpty(path)) {
+            Router.build("OrderPhone")
+                    .with(OrderPhoneActivity.EXTRA_SET_COVER, path)
+                    .go(this);
+        }
     }
 
     @Override

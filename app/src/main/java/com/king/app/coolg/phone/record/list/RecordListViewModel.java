@@ -123,7 +123,6 @@ public class RecordListViewModel extends BaseViewModel {
 
     public void setStarId(long starId) {
         this.mStarId = starId;
-        onStarRecordsSortTypeChanged();
     }
 
     public void setStarType(int type) {

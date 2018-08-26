@@ -3,22 +3,22 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="com.jing.app.jjgallery.gdb.view.settings.SettingsActivity$SafetyPreferenceFragment"
+        android:fragment="com.king.app.coolg.phone.settings.SettingsActivity$SafetyPreferenceFragment"
         android:icon="@drawable/ic_fingerprint_black_36dp"
         android:title="@string/pref_header_safety" />
 
     <header
-        android:fragment="com.jing.app.jjgallery.gdb.view.settings.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="com.king.app.coolg.phone.settings.SettingsActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_home_black_36dp"
         android:title="@string/pref_header_general" />
 
     <header
-        android:fragment="com.jing.app.jjgallery.gdb.view.settings.SettingsActivity$HttpPreferenceFragment"
+        android:fragment="com.king.app.coolg.phone.settings.SettingsActivity$HttpPreferenceFragment"
         android:icon="@drawable/ic_http_black_36dp"
         android:title="@string/setting_http_title" />
 
     <header
-        android:fragment="com.jing.app.jjgallery.gdb.view.settings.SettingsActivity$GdbPreferenceFragment"
+        android:fragment="com.king.app.coolg.phone.settings.SettingsActivity$GdbPreferenceFragment"
         android:icon="@drawable/ic_account_circle_black_36dp"
         android:title="@string/setting_gdb_title" />
 

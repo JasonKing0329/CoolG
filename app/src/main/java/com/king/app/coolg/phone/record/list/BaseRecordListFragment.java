@@ -1,8 +1,6 @@
 package com.king.app.coolg.phone.record.list;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -13,7 +11,6 @@ import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentRecordListBinding;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.pad.record.RecordPadActivity;
-import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.widget.AutoLoadMoreRecyclerView;
@@ -176,6 +173,7 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
 
     public void onStarChanged(long starId) {
         mModel.setStarId(starId);
+        mModel.onStarRecordsSortTypeChanged();
         loadNewRecords();
     }
 

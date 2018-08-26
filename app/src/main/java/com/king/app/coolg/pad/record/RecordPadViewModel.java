@@ -115,8 +115,8 @@ public class RecordPadViewModel extends RecordViewModel {
 
     private ObservableSource<List<String>> loadImages() {
         return observer -> {
-//            mImageList = ImageProvider.getRecordPathList(mRecord.getName());
-            mImageList = ImageProvider.getRecordPathList("123");
+            mImageList = ImageProvider.getRecordPathList(mRecord.getName());
+//            mImageList = ImageProvider.getRecordPathList("123");
             Collections.shuffle(mImageList);
             observer.onNext(mImageList);
         };
@@ -188,5 +188,13 @@ public class RecordPadViewModel extends RecordViewModel {
 
     public void cacheViewBounds(int position, List<ViewColorBound> bounds) {
         viewBoundsMap.put(position, bounds);
+    }
+
+    public String getCurrentImage(int currentPage) {
+        try {
+            return mImageList.get(currentPage);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -25,9 +24,7 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.model.FingerPrintController;
 import com.king.app.coolg.model.http.BaseUrl;
-import com.king.app.coolg.model.repository.PropertyRepository;
 import com.king.app.coolg.model.setting.PreferenceKey;
-import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.utils.AppUtil;
 
 import java.util.List;

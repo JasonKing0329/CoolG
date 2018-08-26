@@ -1,33 +1,33 @@
 package com.king.app.coolg.pad.record;
 
 import android.arch.lifecycle.Lifecycle;
-import android.content.Context;
+import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bigkoo.convenientbanner.holder.Holder;
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.model.palette.ViewColorBound;
-import com.king.app.coolg.utils.DebugLog;
+import com.king.app.coolg.view.widget.banner.BannerAdapter;
 
 import java.util.List;
 
 /**
- * Desc:
- *
- * @author：Jing Yang
- * @date: 2018/8/22 14:56
+ * Created by Administrator on 2018/8/25 0025.
  */
-public class RecordImageHolder implements Holder<String> {
 
-    private ImageView imageView;
+public class RecordPagerAdapter extends BannerAdapter {
+
     private Lifecycle lifecycle;
     private List<View> viewList;
 
     private OnHolderListener onHolderListener;
 
-    public RecordImageHolder(Lifecycle lifecycle, List<View> viewList) {
+    private List<String> list;
+
+    public RecordPagerAdapter(ViewPager viewPager, Lifecycle lifecycle, List<View> viewList) {
+        super(viewPager);
         this.lifecycle = lifecycle;
         this.viewList = viewList;
     }
@@ -36,18 +36,20 @@ public class RecordImageHolder implements Holder<String> {
         this.onHolderListener = onHolderListener;
     }
 
-    @Override
-    public View createView(Context context) {
-        imageView = new ImageView(context);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        return imageView;
+    public void setList(List<String> list) {
+        this.list = list;
     }
 
     @Override
-    public void UpdateUI(Context context, int position, String data) {
-        GlideApp.with(context)
+    public int getItemCount() {
+        return list == null ? 0:list.size();
+    }
+
+    @Override
+    protected void onBindItem(int position, View imageView) {
+        GlideApp.with(imageView.getContext())
                 .asBitmap()
-                .load(data)
+                .load(list.get(position))
                 // listener只能添加一个，所以用RecordBitmapListener包含BitmapPaletteListener and TargetViewListener的处理
                 .listener(new RecordBitmapListener(viewList, lifecycle) {
                     @Override
@@ -64,7 +66,18 @@ public class RecordImageHolder implements Holder<String> {
                         }
                     }
                 })
-                .into(imageView);
+                .into((ImageView) imageView);
+    }
+
+    @Override
+    protected View onCreateView() {
+        ImageView imageView = new ImageView(getContext());
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        imageView.setClickable(true);
+        imageView.setOnClickListener(this);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        return imageView;
     }
 
     public interface OnHolderListener {
