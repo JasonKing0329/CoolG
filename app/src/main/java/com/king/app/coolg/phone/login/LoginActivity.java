@@ -3,6 +3,7 @@ package com.king.app.coolg.phone.login;
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
 
 import com.chenenyu.router.Router;
@@ -32,6 +33,8 @@ public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewM
         mModel.fingerprintObserver.observe(this, aBoolean -> checkFingerprint());
         mModel.loginObserver.observe(this, success -> {
             if (success) {
+                // start background service after user pass
+                startService(new Intent(LoginActivity.this, BackgroundService.class));
                 superUser();
             }
         });

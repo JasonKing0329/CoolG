@@ -18,6 +18,7 @@ import com.king.app.gdb.data.entity.RecordType1v1;
 import com.king.app.gdb.data.entity.RecordType3w;
 import com.king.app.gdb.data.param.DataConstants;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -113,13 +115,59 @@ public class RecordPadViewModel extends RecordViewModel {
         return observer -> observer.onNext(getScoreDetails());
     }
 
-    private ObservableSource<List<String>> loadImages() {
-        return observer -> {
-            mImageList = ImageProvider.getRecordPathList(mRecord.getName());
+    private Observable<List<String>> loadImages() {
+        return Observable.create(observer -> {
+            if (ImageProvider.hasRecordFolder(mRecord.getName())) {
+                mImageList = ImageProvider.getRecordPathList(mRecord.getName());
+            }
+            else {
+                mImageList = new ArrayList<>();
+                String path = ImageProvider.getRecordRandomPath(mRecord.getName(), null);
+                mImageList.add(path);
+            }
 //            mImageList = ImageProvider.getRecordPathList("123");
             Collections.shuffle(mImageList);
             observer.onNext(mImageList);
-        };
+        });
+    }
+
+    @Override
+    public void deleteImage(String path) {
+        if (!TextUtils.isEmpty(path)) {
+            File file = new File(path);
+            if (file.exists()) {
+                file.delete();
+            }
+            loadImages(mRecord);
+        }
+    }
+
+    @Override
+    protected void loadImages(Record record) {
+        loadImages()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<String>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<String> strings) {
+                        imagesObserver.setValue(strings);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     public List<String> getImageList() {

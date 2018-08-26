@@ -3,6 +3,7 @@ package com.king.app.coolg.phone.record;
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.ImageProvider;
@@ -89,7 +90,7 @@ public class RecordViewModel extends BaseViewModel {
                 });
     }
 
-    private void loadImages(Record record) {
+    protected void loadImages(Record record) {
         if (ImageProvider.hasRecordFolder(record.getName())) {
             List<String> list = ImageProvider.getRecordPathList(record.getName());
             if (list.size() > 1) {
@@ -286,11 +287,13 @@ public class RecordViewModel extends BaseViewModel {
     }
 
     public void deleteImage(String path) {
-        File file = new File(path);
-        if (file.exists()) {
-            file.delete();
+        if (!TextUtils.isEmpty(path)) {
+            File file = new File(path);
+            if (file.exists()) {
+                file.delete();
+            }
+            loadImages(mRecord);
         }
-        loadImages(mRecord);
     }
 
     public void deleteOrderOfRecord(long orderId) {

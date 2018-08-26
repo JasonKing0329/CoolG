@@ -76,6 +76,8 @@
             android:screenOrientation="landscape"
             android:launchMode="singleTask"/>
 
+        <service android:name=".phone.login.BackgroundService"/>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.king.app.coolg.fileProvider"

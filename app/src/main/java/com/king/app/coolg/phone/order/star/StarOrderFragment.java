@@ -5,11 +5,13 @@ import android.support.v7.widget.GridLayoutManager;
 import android.view.View;
 
 import com.chenenyu.router.Router;
+import com.king.app.coolg.pad.star.StarPadActivity;
 import com.king.app.coolg.phone.order.OrderFragment;
 import com.king.app.coolg.phone.order.OrderItem;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.star.list.StarCircleAdapter;
 import com.king.app.coolg.phone.star.list.StarProxy;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.gdb.data.entity.FavorStarOrder;
 
 import java.util.Map;
@@ -26,7 +28,11 @@ public class StarOrderFragment extends OrderFragment<StarOrderViewModel, FavorSt
 
     @Override
     protected void initItemsRecyclerView() {
-        mBinding.rvItems.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        int spanCount = 2;
+        if (ScreenUtils.isTablet()) {
+            spanCount = 6;
+        }
+        mBinding.rvItems.setLayoutManager(new GridLayoutManager(getActivity(), spanCount));
         mModel.starItemsObserver.observe(this, list -> {
             if (starAdapter == null) {
                 starAdapter = new StarCircleAdapter();
@@ -43,9 +49,16 @@ public class StarOrderFragment extends OrderFragment<StarOrderViewModel, FavorSt
     }
 
     private void goToStarPage(StarProxy data) {
-        Router.build("StarPhone")
-                .with(StarActivity.EXTRA_STAR_ID, data.getStar().getId())
-                .go(this);
+        if (ScreenUtils.isTablet()) {
+            Router.build("StarPad")
+                    .with(StarPadActivity.EXTRA_STAR_ID, data.getStar().getId())
+                    .go(this);
+        }
+        else {
+            Router.build("StarPhone")
+                    .with(StarActivity.EXTRA_STAR_ID, data.getStar().getId())
+                    .go(this);
+        }
     }
 
     @Override

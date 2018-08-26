@@ -121,7 +121,6 @@ public class LoginViewModel extends BaseViewModel {
                     file.mkdir();
                 }
             }
-            AppConfig.createNoMedia();
 
             // init server url
 //                BaseUrl.getInstance().setBaseUrl(SettingProperty.getServerBaseUrl());

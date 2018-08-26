@@ -11,8 +11,12 @@ import android.view.animation.AccelerateInterpolator;
 import com.king.app.coolg.R;
 
 import java.lang.reflect.Field;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by Administrator on 2018/8/25 0025.
@@ -61,6 +65,7 @@ public class CoolBanner extends ViewPager {
 
     public void setBannerAdapter(BannerAdapter adapter) {
         this.adapter = adapter;
+        removeAllViews();
         if (adapter != null) {
             adapter.init();
         }
@@ -69,10 +74,10 @@ public class CoolBanner extends ViewPager {
 
     public void startAutoPlay() {
         if (adapter != null && adapter.getItemCount() > 1) {
-//            Disposable disposable = Observable.interval(duration, TimeUnit.MILLISECONDS)
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(aLong -> adapter.nextPage());
-//            compositeDisposable.add(disposable);
+            Disposable disposable = Observable.interval(duration, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(aLong -> adapter.nextPage());
+            compositeDisposable.add(disposable);
         }
     }
 

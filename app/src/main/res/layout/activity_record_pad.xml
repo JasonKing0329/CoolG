@@ -45,12 +45,21 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageView
+            android:id="@+id/iv_delete"
+            style="@style/IvPadActionIcon"
+            android:src="@drawable/ic_delete_white_36dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toEndOf="@id/iv_set_cover"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
             android:id="@+id/iv_play"
             style="@style/IvPadActionIcon"
             android:src="@drawable/ic_play_arrow_white_36dp"
             android:layout_marginStart="0dp"
             android:layout_marginTop="20dp"
-            app:layout_constraintStart_toEndOf="@id/iv_set_cover"
+            app:layout_constraintStart_toEndOf="@id/iv_delete"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <android.support.v7.widget.RecyclerView

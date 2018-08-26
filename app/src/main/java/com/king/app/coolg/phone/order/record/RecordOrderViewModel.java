@@ -16,7 +16,6 @@ import com.king.app.gdb.data.entity.FavorRecord;
 import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.FavorRecordOrderDao;
-import com.king.app.gdb.data.entity.FavorStarDao;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -260,7 +259,7 @@ public class RecordOrderViewModel extends BaseViewModel {
         increaseDepth();
         loadingObserver.setValue(true);
         repository.getFavorRecords(parent.getId(), mSortType)
-                .flatMap(list -> toStarItems(list))
+                .flatMap(list -> toRecordItems(list))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<RecordProxy>>() {
@@ -288,19 +287,19 @@ public class RecordOrderViewModel extends BaseViewModel {
                 });
     }
 
-    private ObservableSource<List<RecordProxy>> toStarItems(List<FavorRecord> list) {
+    private ObservableSource<List<RecordProxy>> toRecordItems(List<FavorRecord> list) {
         return observer -> {
-            List<RecordProxy> starList = new ArrayList<>();
+            List<RecordProxy> recordList = new ArrayList<>();
             for (FavorRecord record:list) {
                 RecordProxy proxy = new RecordProxy();
                 proxy.setRecord(record.getRecord());
-                proxy.setImagePath(ImageProvider.getStarRandomPath(record.getRecord().getName(), null));
-                starList.add(proxy);
+                proxy.setImagePath(ImageProvider.getRecordRandomPath(record.getRecord().getName(), null));
+                recordList.add(proxy);
             }
             if (mSortType == PreferenceValue.PHONE_ORDER_SORT_BY_NAME) {
-                Collections.sort(starList, new RecordNameComparator());
+                Collections.sort(recordList, new RecordNameComparator());
             }
-            observer.onNext(starList);
+            observer.onNext(recordList);
         };
     }
 

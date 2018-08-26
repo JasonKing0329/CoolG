@@ -76,6 +76,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         ColorUtil.updateIconColor(mBinding.ivBack, getResources().getColor(R.color.colorPrimary));
         ColorUtil.updateIconColor(mBinding.ivOrder, getResources().getColor(R.color.colorPrimary));
         ColorUtil.updateIconColor(mBinding.ivSetCover, getResources().getColor(R.color.colorPrimary));
+        ColorUtil.updateIconColor(mBinding.ivDelete, getResources().getColor(R.color.colorPrimary));
 
         initRecyclerViews();
         initBanner();
@@ -83,8 +84,9 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         mBinding.ivBack.setOnClickListener(v -> finish());
         mBinding.ivOrder.setOnClickListener(v -> toggleOrders());
         mBinding.ivSetCover.setOnClickListener(v -> onApplyImage(mModel.getCurrentImage(pagerAdapter.getCurrentPage())));
+        mBinding.ivDelete.setOnClickListener(v -> mModel.deleteImage(mModel.getCurrentImage(pagerAdapter.getCurrentPage())));
         mBinding.tvOrders.setOnClickListener(v -> selectOrderToAddRecord());
-        mBinding.tvScene.setOnClickListener(v -> pagerAdapter.nextPage());
+//        mBinding.tvScene.setOnClickListener(v -> );
 //        mBinding.ivPlay.setOnClickListener(v -> );
         mBinding.tvScore.setOnClickListener(v -> {
             if (mBinding.groupDetail.getVisibility() == View.VISIBLE) {
@@ -217,6 +219,13 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         mModel.passionsObserver.observe(this, list -> showPassions(list));
         mModel.scoreObserver.observe(this, list -> showScores(list));
         mModel.imagesObserver.observe(this, list -> showImages(list));
+        mModel.singleImageObserver.observe(this, path -> {
+            if (!TextUtils.isEmpty(path)) {
+                List<String> list = new ArrayList<>();
+                list.add(path);
+                showImages(list);
+            }
+        });
         mModel.ordersObserver.observe(this, list -> showOrders(list));
         mModel.videoPathObserver.observe(this, path -> {
             if (path == null) {
@@ -356,10 +365,12 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
 
     private void showBanner(List<String> list) {
 
+        mBinding.banner.stopAutoPlay();
         List<View> viewList = new ArrayList<>();
         viewList.add(mBinding.ivBack);
         viewList.add(mBinding.ivOrder);
         viewList.add(mBinding.ivSetCover);
+        viewList.add(mBinding.ivDelete);
         pagerAdapter = new RecordPagerAdapter(mBinding.banner, getLifecycle(), viewList);
         pagerAdapter.setList(list);
         pagerAdapter.setOnHolderListener(new RecordPagerAdapter.OnHolderListener() {
@@ -413,6 +424,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
     private void showOrders(List<FavorRecordOrder> list) {
         if (ordersAdapter == null) {
             ordersAdapter = new RecordOrdersAdapter();
+            ordersAdapter.setTextColor(getResources().getColor(R.color.white));
             ordersAdapter.setList(list);
             mBinding.rvOrders.setAdapter(ordersAdapter);
         }

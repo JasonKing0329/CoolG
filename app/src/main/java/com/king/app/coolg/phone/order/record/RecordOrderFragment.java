@@ -1,15 +1,18 @@
 package com.king.app.coolg.phone.order.record;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.chenenyu.router.Router;
+import com.king.app.coolg.pad.record.RecordPadActivity;
 import com.king.app.coolg.phone.order.OrderFragment;
 import com.king.app.coolg.phone.order.OrderItem;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.record.list.RecordListAdapter;
 import com.king.app.coolg.phone.record.list.RecordProxy;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 
 import java.util.Map;
@@ -26,7 +29,12 @@ public class RecordOrderFragment extends OrderFragment<RecordOrderViewModel, Fav
 
     @Override
     protected void initItemsRecyclerView() {
-        mBinding.rvItems.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        if (ScreenUtils.isTablet()) {
+            mBinding.rvItems.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        }
+        else {
+            mBinding.rvItems.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        }
         mModel.recordItemsObserver.observe(this, list -> {
             if (recordAdapter == null) {
                 recordAdapter = new RecordListAdapter();
@@ -43,9 +51,16 @@ public class RecordOrderFragment extends OrderFragment<RecordOrderViewModel, Fav
     }
 
     private void goToRecordPage(RecordProxy data) {
-        Router.build("RecordPhone")
-                .with(RecordActivity.EXTRA_RECORD_ID, data.getRecord().getId())
-                .go(this);
+        if (ScreenUtils.isTablet()) {
+            Router.build("RecordPad")
+                    .with(RecordPadActivity.EXTRA_RECORD_ID, data.getRecord().getId())
+                    .go(this);
+        }
+        else {
+            Router.build("RecordPhone")
+                    .with(RecordActivity.EXTRA_RECORD_ID, data.getRecord().getId())
+                    .go(this);
+        }
     }
 
     @Override

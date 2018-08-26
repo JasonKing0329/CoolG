@@ -18,6 +18,8 @@ public class RecordOrdersAdapter extends BaseBindingAdapter<AdapterStarOrdersBin
 
     private OnDeleteListener onDeleteListener;
 
+    private Integer mTextColor;
+
     public RecordOrdersAdapter() {
         setOnItemLongClickListener((view, position, data) -> {
             toggleDeleteMode();
@@ -33,6 +35,10 @@ public class RecordOrdersAdapter extends BaseBindingAdapter<AdapterStarOrdersBin
         this.onDeleteListener = onDeleteListener;
     }
 
+    public void setTextColor(Integer mTextColor) {
+        this.mTextColor = mTextColor;
+    }
+
     @Override
     protected int getItemLayoutRes() {
         return R.layout.adapter_star_orders;
@@ -41,6 +47,9 @@ public class RecordOrdersAdapter extends BaseBindingAdapter<AdapterStarOrdersBin
     @Override
     protected void onBindItem(AdapterStarOrdersBinding binding, int position, FavorRecordOrder bean) {
         binding.tvName.setText(bean.getName());
+        if (mTextColor != null) {
+            binding.tvName.setTextColor(mTextColor);
+        }
         GlideApp.with(binding.ivHead.getContext())
                 .load(bean.getCoverUrl())
                 .error(R.drawable.def_small)
