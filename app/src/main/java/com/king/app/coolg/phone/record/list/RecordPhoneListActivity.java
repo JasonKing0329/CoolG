@@ -14,6 +14,7 @@ import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.scene.SceneActivity;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
+import com.king.app.coolg.view.dialog.SimpleDialogs;
 
 import java.util.List;
 
@@ -75,7 +76,18 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
                 case R.id.menu_scene:
                     selectScene();
                     break;
+                case R.id.menu_offset:
+                    showSetOffset();
+                    break;
             }
+        });
+    }
+
+    private void showSetOffset() {
+        new SimpleDialogs().openInputDialog(this, "set offset", name -> {
+            try {
+                getCurrentPage().setOffset(Integer.parseInt(name));
+            } catch (Exception e) {}
         });
     }
 

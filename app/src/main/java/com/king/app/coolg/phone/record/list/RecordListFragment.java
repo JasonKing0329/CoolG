@@ -80,6 +80,7 @@ public class RecordListFragment extends MvvmFragment<FragmentRecordListBinding, 
         mModel.recordsObserver.observe(this, list -> showList(list));
         mModel.moreObserver.observe(this, offset -> showMoreList(offset));
         mModel.countObserver.observe(this, count -> holder.updateCount(mModel.getRecordType(), count));
+        mModel.scrollPositionObserver.observe(this, offset -> mBinding.rvItems.scrollToPosition(offset));
 
         // 加载records
         loadNewRecords();
@@ -152,5 +153,14 @@ public class RecordListFragment extends MvvmFragment<FragmentRecordListBinding, 
     public void onKeywordChanged(String keyword) {
         mModel.setKeyword(keyword);
         loadNewRecords();
+    }
+
+    public void setOffset(int offset) {
+        if (offset < mModel.getOffset()) {
+            mBinding.rvItems.scrollToPosition(offset);
+        }
+        else {
+            mModel.setOffset(offset);
+        }
     }
 }

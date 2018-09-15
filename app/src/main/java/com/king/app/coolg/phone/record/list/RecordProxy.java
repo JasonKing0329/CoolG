@@ -11,6 +11,7 @@ import com.king.app.gdb.data.entity.Record;
 public class RecordProxy {
     private Record record;
     private String imagePath;
+    private int offsetIndex;
 
     public Record getRecord() {
         return record;
@@ -26,5 +27,13 @@ public class RecordProxy {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public int getOffsetIndex() {
+        return offsetIndex;
+    }
+
+    public void setOffsetIndex(int offsetIndex) {
+        this.offsetIndex = offsetIndex;
     }
 }

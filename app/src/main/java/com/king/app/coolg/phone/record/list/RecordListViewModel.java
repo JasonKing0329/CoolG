@@ -48,6 +48,7 @@ public class RecordListViewModel extends BaseViewModel {
     public MutableLiveData<List<RecordProxy>> recordsObserver = new MutableLiveData<>();
     public MutableLiveData<Integer> moreObserver = new MutableLiveData<>();
     public MutableLiveData<Integer> countObserver = new MutableLiveData<>();
+    public MutableLiveData<Integer> scrollPositionObserver = new MutableLiveData<>();
 
     private List<RecordProxy> mRecordList;
 
@@ -201,6 +202,10 @@ public class RecordListViewModel extends BaseViewModel {
     }
 
     public void loadMoreRecords() {
+        loadMoreRecords(null);
+    }
+
+    public void loadMoreRecords(Integer scrollPosition) {
         int originSize = mRecordList == null ? 0:mRecordList.size();
         queryRecords(mSortMode, mSortDesc, mShowCanBePlayed, mKeyword, mKeyScene, mFilter, mRecordType, mStarId)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -213,8 +218,12 @@ public class RecordListViewModel extends BaseViewModel {
 
                     @Override
                     public void onNext(List<RecordProxy> list) {
+                        moreCursor.number = DEFAULT_LOAD_MORE;
                         mRecordList.addAll(list);
                         moreObserver.setValue(originSize + 1);
+                        if (scrollPosition != null) {
+                            scrollPositionObserver.setValue(scrollPosition);
+                        }
                     }
 
                     @Override
@@ -422,5 +431,19 @@ public class RecordListViewModel extends BaseViewModel {
 
                     }
                 });
+    }
+
+    public int getOffset() {
+        if (moreCursor != null) {
+            return moreCursor.offset;
+        }
+        return 0;
+    }
+
+    public void setOffset(int offset) {
+        if (moreCursor != null) {
+            moreCursor.number = offset - moreCursor.offset + DEFAULT_LOAD_MORE;
+            loadMoreRecords(offset);
+        }
     }
 }

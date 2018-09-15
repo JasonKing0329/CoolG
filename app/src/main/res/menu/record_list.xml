@@ -18,4 +18,7 @@
         android:title="Play list"
         android:icon="@drawable/ic_play_circle_outline_3f51b5_36dp"
         app:showAsAction="never"/>
+    <item android:id="@+id/menu_offset"
+        android:title="Set offset"
+        app:showAsAction="never"/>
 </menu>
