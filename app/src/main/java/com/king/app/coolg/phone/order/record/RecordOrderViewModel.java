@@ -129,7 +129,9 @@ public class RecordOrderViewModel extends BaseViewModel {
                     item.setHasChild(true);
                     item.setNumber(order.getChildList().size());
                 }
-                item.setImagePath(order.getCoverUrl());
+                if (!SettingProperty.isNoImageMode()) {
+                    item.setImagePath(order.getCoverUrl());
+                }
                 results.add(item);
             }
             observer.onNext(results);
