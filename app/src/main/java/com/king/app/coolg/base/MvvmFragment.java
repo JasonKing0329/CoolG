@@ -27,29 +27,27 @@ public abstract class MvvmFragment<T extends ViewDataBinding, VM extends BaseVie
         mBinding = DataBindingUtil.inflate(inflater, getContentLayoutRes(), container, false);
         mModel = createViewModel();
         if (mModel != null) {
-            mModel.loadingObserver.observe(this, new Observer<Boolean>() {
-                @Override
-                public void onChanged(@Nullable Boolean show) {
-                    if (show) {
-                        showProgress("loading...");
-                    }
-                    else {
-                        dismissProgress();
-                    }
-                }
-            });
-            mModel.messageObserver.observe(this, new Observer<String>() {
-                @Override
-                public void onChanged(@Nullable String message) {
-                    showMessageLong(message);
-                }
-            });
+            mModel.loadingObserver.observe(this, show -> onLoadingChanged(show));
+            mModel.messageObserver.observe(this, message -> onMessageObserved(message));
         }
 
         View view = mBinding.getRoot();
         onCreate(view);
         onCreateData();
         return view;
+    }
+
+    protected void onMessageObserved(String message) {
+        showMessageLong(message);
+    }
+
+    protected void onLoadingChanged(Boolean show) {
+        if (show) {
+            showProgress("loading...");
+        }
+        else {
+            dismissProgress();
+        }
     }
 
     protected abstract VM createViewModel();

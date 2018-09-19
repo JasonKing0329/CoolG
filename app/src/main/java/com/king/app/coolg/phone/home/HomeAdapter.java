@@ -90,6 +90,14 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
                 onHeadActionListener.onClickOrders();
             }
         });
+        drawable = RippleUtil.getRippleBackground(binding.llStudio.getResources().getColor(R.color.home_section_phone_studio)
+                , binding.llStudio.getResources().getColor(R.color.ripple_color));
+        binding.llStudio.setBackground(drawable);
+        binding.llStudio.setOnClickListener(v -> {
+            if (onHeadActionListener != null) {
+                onHeadActionListener.onClickStudios();
+            }
+        });
     }
 
     @Override
@@ -160,6 +168,7 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
         void onClickStars();
         void onClickRecords();
         void onClickOrders();
+        void onClickStudios();
     }
 
     private View.OnClickListener itemListener = new View.OnClickListener() {

@@ -77,6 +77,7 @@
     <color name="home_section_phone_star">#f6879a</color>
     <color name="home_section_phone_record">#b0dc3d</color>
     <color name="home_section_phone_order">#f9d54b</color>
+    <color name="home_section_phone_studio">#19a993</color>
     <color name="ripple_color">#66000000</color>
 
 </resources>

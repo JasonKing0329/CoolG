@@ -237,4 +237,20 @@ public class SettingProperty {
         setInt("record_order_sort_type", random);
     }
 
+    public static int getStudioListType() {
+        return getInt("studio_list_type");
+    }
+
+    public static void setStudioListType(int type) {
+        setInt("studio_list_type", type);
+    }
+
+    public static int getStudioListSortType() {
+        return getInt("studio_list_sort_type");
+    }
+
+    public static void setStudioListSortType(int type) {
+        setInt("studio_list_sort_type", type);
+    }
+
 }

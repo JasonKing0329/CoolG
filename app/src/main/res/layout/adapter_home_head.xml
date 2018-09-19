@@ -111,15 +111,17 @@
 
         <LinearLayout
             android:id="@+id/ll_star"
-            android:layout_width="@dimen/home_section_width"
-            android:layout_height="160dp"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:orientation="vertical"
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal"
             android:background="@color/home_section_phone_star"
             android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ll_records">
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -127,44 +129,23 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
                 android:textSize="20dp"
                 android:textColor="@color/white"
                 android:text="Stars"/>
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/ll_order"
-            android:layout_width="@dimen/home_section_width"
-            android:layout_height="160dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:background="@color/home_section_phone_order"
-            android:gravity="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_folder_special_white_48dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="20dp"
-                android:textColor="@color/white"
-                android:text="Orders"/>
-        </LinearLayout>
-        <LinearLayout
             android:id="@+id/ll_records"
-            android:layout_width="@dimen/home_section_width"
-            android:layout_height="160dp"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
             android:layout_marginTop="10dp"
-            android:orientation="vertical"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal"
             android:background="@color/home_section_phone_record"
             android:gravity="center"
             app:layout_constraintStart_toEndOf="@id/ll_star"
-            app:layout_constraintEnd_toStartOf="@id/ll_order"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
             <ImageView
                 android:layout_width="50dp"
@@ -173,10 +154,60 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
                 android:textSize="20dp"
                 android:textColor="@color/white"
                 android:text="Records"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_order"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal"
+            android:background="@color/home_section_phone_order"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_star"
+            app:layout_constraintEnd_toStartOf="@+id/ll_studio">
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_folder_special_white_48dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="20dp"
+                android:textColor="@color/white"
+                android:text="Orders"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_studio"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal"
+            android:background="@color/home_section_phone_studio"
+            android:gravity="center"
+            app:layout_constraintStart_toEndOf="@id/ll_order"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_records">
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_movie_filter_white_48dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="20dp"
+                android:textColor="@color/white"
+                android:text="Studios"/>
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 </layout>

@@ -62,6 +62,8 @@
         <activity android:name=".phone.record.scene.SceneActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".phone.order.OrderPhoneActivity"/>
+        <activity android:name=".phone.studio.StudioActivity"
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".pad.home.HomePadActivity"
             android:screenOrientation="landscape"/>

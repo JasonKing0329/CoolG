@@ -141,6 +141,11 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
                 public void onClickOrders() {
                     goToOrderPage();
                 }
+
+                @Override
+                public void onClickStudios() {
+                    goToStudioPage();
+                }
             });
             mBinding.rvItems.setAdapter(adapter);
         });
@@ -204,6 +209,11 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
 
     private void goToOrderPage() {
         Router.build("OrderPhone")
+                .go(this);
+    }
+
+    private void goToStudioPage() {
+        Router.build("StudioPhone")
                 .go(this);
     }
 

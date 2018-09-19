@@ -75,4 +75,12 @@ public class PreferenceValue {
     public static final int PHONE_ORDER_SORT_BY_ITEMS = 1;
     public static final int PHONE_ORDER_SORT_BY_CREATE_TIME = 2;
     public static final int PHONE_ORDER_SORT_BY_UPDATE_TIME =3;
+
+    public static final int STUDIO_LIST_TYPE_SIMPLE = 0;
+    public static final int STUDIO_LIST_TYPE_RICH = 1;
+
+    public static final int STUDIO_LIST_SORT_NAME = 0;
+    public static final int STUDIO_LIST_SORT_NUM = 1;
+    public static final int STUDIO_LIST_SORT_CREATE_TIME = 2;
+    public static final int STUDIO_LIST_SORT_UPDATE_TIME =3;
 }
