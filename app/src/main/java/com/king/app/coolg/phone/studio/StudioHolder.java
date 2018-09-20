@@ -16,4 +16,6 @@ public interface StudioHolder extends IFragmentHolder {
     void showStudioPage(long studioId);
 
     void backToList();
+
+    void sendSelectedOrderResult(Long id);
 }

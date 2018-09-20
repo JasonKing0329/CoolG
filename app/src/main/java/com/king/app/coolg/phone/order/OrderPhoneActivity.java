@@ -10,6 +10,7 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityOrderPhoneBinding;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
@@ -30,7 +31,6 @@ public class OrderPhoneActivity extends MvvmActivity<ActivityOrderPhoneBinding, 
     public static final String EXTRA_SELECT_MODE = "select_mode";
     public static final String EXTRA_SELECT_STAR = "select_star";
     public static final String EXTRA_SELECT_RECORD = "select_record";
-    public static final String RESP_ORDER_ID = "order_id";
 
     private OrderFragment ftCurrent;
     private StarOrderFragment ftStar;
@@ -238,7 +238,7 @@ public class OrderPhoneActivity extends MvvmActivity<ActivityOrderPhoneBinding, 
     @Override
     public void onSelectOrder(long id) {
         Intent intent = new Intent();
-        intent.putExtra(OrderPhoneActivity.RESP_ORDER_ID, id);
+        intent.putExtra(AppConstants.RESP_ORDER_ID, id);
         setResult(RESULT_OK, intent);
         finish();
     }

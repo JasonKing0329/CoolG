@@ -18,11 +18,13 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordPhoneBinding;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.star.StarActivity;
+import com.king.app.coolg.phone.studio.StudioActivity;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -49,6 +51,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     public static final String EXTRA_RECORD_ID = "key_record_id";
 
     private final int REQUEST_ADD_ORDER = 1602;
+    private final int REQUEST_SELECT_STUDIO = 1603;
 
     private RequestOptions recordOptions;
 
@@ -112,6 +115,14 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                 onApplyImage(mModel.getSingleImagePath());
             }
         });
+        mBinding.groupStudio.setOnClickListener(view -> selectStudio());
+    }
+
+    private void selectStudio() {
+        Router.build("StudioPhone")
+                .with(StudioActivity.EXTRA_SELECT_MODE, true)
+                .requestCode(REQUEST_SELECT_STUDIO)
+                .go(this);
     }
 
     @Override
@@ -169,6 +180,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             }
         });
         mModel.passionsObserver.observe(this, list -> showPassionPoints(list));
+        mModel.studioObserver.observe(this, studio -> mBinding.tvStudio.setText(studio));
 
         mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
     }
@@ -379,7 +391,13 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ADD_ORDER) {
             if (resultCode == RESULT_OK) {
-                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                long orderId = data.getLongExtra(AppConstants.RESP_ORDER_ID, -1);
+                mModel.addToOrder(orderId);
+            }
+        }
+        else if (requestCode == REQUEST_SELECT_STUDIO) {
+            if (resultCode == RESULT_OK) {
+                long orderId = data.getLongExtra(AppConstants.RESP_ORDER_ID, -1);
                 mModel.addToOrder(orderId);
             }
         }

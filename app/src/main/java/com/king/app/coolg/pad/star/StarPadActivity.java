@@ -12,7 +12,7 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
-import com.king.app.coolg.base.adapter.BaseRecyclerAdapter;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityStarPadBinding;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.setting.SettingProperty;
@@ -20,7 +20,6 @@ import com.king.app.coolg.pad.record.list.RecordListPadFragment;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.list.FilterDialogContent;
 import com.king.app.coolg.phone.record.list.SortDialogContent;
-import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.star.StarOrdersAdapter;
 import com.king.app.coolg.phone.star.StarRatingDialog;
 import com.king.app.coolg.phone.star.StarRelationship;
@@ -30,7 +29,6 @@ import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.utils.StarRatingUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.gdb.data.entity.FavorStarOrder;
-import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarRating;
 import com.king.app.gdb.data.param.DataConstants;
@@ -284,7 +282,7 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_ADD_ORDER) {
             if (resultCode == RESULT_OK) {
-                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                long orderId = data.getLongExtra(AppConstants.RESP_ORDER_ID, -1);
                 mModel.addToOrder(orderId);
             }
         }

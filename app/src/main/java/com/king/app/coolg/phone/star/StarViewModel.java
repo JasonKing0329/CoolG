@@ -2,10 +2,12 @@ package com.king.app.coolg.phone.star;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.base.CoolApplication;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
@@ -15,11 +17,16 @@ import com.king.app.coolg.model.repository.StarRepository;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.list.RecordProxy;
+import com.king.app.gdb.data.entity.FavorRecordDao;
+import com.king.app.gdb.data.entity.FavorRecordOrder;
+import com.king.app.gdb.data.entity.FavorRecordOrderDao;
 import com.king.app.gdb.data.entity.FavorStar;
 import com.king.app.gdb.data.entity.FavorStarDao;
 import com.king.app.gdb.data.entity.FavorStarOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
+
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,12 +58,14 @@ public class StarViewModel extends BaseViewModel {
     protected Star mStar;
     private List<String> starImageList;
     private List<StarRelationship> relationList;
+    private List<StarStudioTag> studioList;
 
     protected StarRepository starRepository;
     private OrderRepository orderRepository;
 
     private RecordListFilterBean mRecordFilter;
     private String mScene;
+    private long mStudioId;
 
     private String mSingleImagePath;
 
@@ -75,6 +84,10 @@ public class StarViewModel extends BaseViewModel {
         return mRecordFilter;
     }
 
+    public void setStudioId(long mStudioId) {
+        this.mStudioId = mStudioId;
+    }
+
     public void loadStar(long starId) {
         loadingObserver.setValue(true);
         starRepository.getStar(starId)
@@ -89,6 +102,10 @@ public class StarViewModel extends BaseViewModel {
                 })
                 .flatMap(list -> {
                     relationList = list;
+                    return orderRepository.getStudioTagByStar(mStar.getId());
+                })
+                .flatMap(list -> {
+                    studioList = list;
                     return getComplexFilter();
                 })
                 .flatMap(filter -> getStarRecords(mStar, filter))
@@ -129,6 +146,10 @@ public class StarViewModel extends BaseViewModel {
 
     public List<StarRelationship> getRelationList() {
         return relationList;
+    }
+
+    public List<StarStudioTag> getStudioList() {
+        return studioList;
     }
 
     protected ObservableSource<List<String>> getStarImages(Star star) {
@@ -211,6 +232,17 @@ public class StarViewModel extends BaseViewModel {
                 return false;
             }
         }
+
+        // filter studio
+        if (filter.getStudioId() != 0) {
+            long count = getDaoSession().getFavorRecordDao().queryBuilder()
+                    .where(FavorRecordDao.Properties.RecordId.eq(record.getId()))
+                    .where(FavorRecordDao.Properties.OrderId.eq(filter.getStudioId()))
+                    .buildCount().count();
+            if (count == 0) {
+                return false;
+            }
+        }
         return result;
     }
 
@@ -251,6 +283,7 @@ public class StarViewModel extends BaseViewModel {
             filter.setRecordType(0);
             filter.setDesc(SettingProperty.isStarRecordsSortDesc());
             filter.setSortType(SettingProperty.getStarRecordsSortType());
+            filter.setStudioId(mStudioId);
             if (!AppConstants.KEY_SCENE_ALL.equals(mScene)) {
                 filter.setScene(mScene);
             }

@@ -338,6 +338,29 @@
                 android:layout_marginBottom="10dp"
                 android:visibility="gone"
                 tools:listitem="@layout/adapter_star_orders"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/vertical_divider"
+                android:background="@color/divider" />
+            <RelativeLayout
+                style="@style/GroupStarSecItem"
+                android:background="?android:attr/selectableItemBackground">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Studios"/>
+                <TextView
+                    android:id="@+id/tv_studio_single"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"/>
+            </RelativeLayout>
+            <com.king.app.coolg.view.widget.flow.FlowLayout
+                android:id="@+id/flow_studios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>

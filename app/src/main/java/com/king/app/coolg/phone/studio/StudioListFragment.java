@@ -1,6 +1,8 @@
 package com.king.app.coolg.phone.studio;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -8,6 +10,7 @@ import android.widget.PopupMenu;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.FragmentStudioListBinding;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
@@ -22,10 +25,20 @@ import java.util.List;
  */
 public class StudioListFragment extends MvvmFragment<FragmentStudioListBinding, StudioViewModel> {
 
+    private static final String ARG_SELECT_MODE = "select_mode";
+
     private StudioHolder holder;
 
     private StudioSimpleAdapter simpleAdapter;
     private StudioRichAdapter richAdapter;
+
+    public static StudioListFragment newInstance(boolean selectMode) {
+        StudioListFragment fragment = new StudioListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ARG_SELECT_MODE, selectMode);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
     @Override
     protected void bindFragmentHolder(IFragmentHolder holder) {
@@ -49,6 +62,10 @@ public class StudioListFragment extends MvvmFragment<FragmentStudioListBinding, 
         holder.getJActionBar().setOnBackListener(() -> getActivity().finish());
 
         initMenu();
+    }
+
+    private boolean isSelectMode() {
+        return getArguments().getBoolean(ARG_SELECT_MODE);
     }
 
     private void initMenu() {
@@ -136,7 +153,12 @@ public class StudioListFragment extends MvvmFragment<FragmentStudioListBinding, 
     }
 
     private void onClickOrder(FavorRecordOrder order) {
-        holder.showStudioPage(order.getId());
+        if (isSelectMode()) {
+            holder.sendSelectedOrderResult(order.getId());
+        }
+        else {
+            holder.showStudioPage(order.getId());
+        }
     }
 
 }

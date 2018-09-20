@@ -34,6 +34,7 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
 
     private Star star;
     private List<StarRelationship> mRelationships;
+    private List<StarStudioTag> mStudioList;
 
     public StarAdapter() {
         header = new StarHeader();
@@ -78,7 +79,7 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
     @Override
     protected void onBindHead(AdapterStarPhoneHeaderBinding binding) {
         header.setOnHeadActionListener(onHeadActionListener);
-        header.bind(binding, star, starImageList, list == null ? 0:list.size(), mRelationships);
+        header.bind(binding, star, starImageList, list == null ? 0:list.size(), mRelationships, mStudioList);
     }
 
     @Override
@@ -99,6 +100,10 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
 
     public void setRelationships(List<StarRelationship> relationships) {
         this.mRelationships = relationships;
+    }
+
+    public void setStudioList(List<StarStudioTag> studioList) {
+        this.mStudioList = studioList;
     }
 
     public interface OnListListener {

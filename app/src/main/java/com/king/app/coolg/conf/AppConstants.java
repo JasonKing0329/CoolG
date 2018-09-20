@@ -55,4 +55,7 @@ public class AppConstants {
             "All", "1V1", "3W", "Multi", "Long"
     };
 
+    public static final String RESP_ORDER_ID = "order_id";
+
+    public static final String ORDER_STUDIO_NAME = "Studio";
 }

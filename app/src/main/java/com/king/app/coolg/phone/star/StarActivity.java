@@ -11,6 +11,7 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityStarPhoneBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
@@ -21,7 +22,6 @@ import com.king.app.coolg.phone.record.list.SortDialogContent;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
-import com.king.app.gdb.data.entity.FavorStarOrder;
 import com.king.app.gdb.data.entity.Star;
 
 import java.util.List;
@@ -120,6 +120,7 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
             adapter.setStar(mModel.getStar());
             adapter.setStarImageList(mModel.getStarImageList());
             adapter.setRelationships(mModel.getRelationList());
+            adapter.setStudioList(mModel.getStudioList());
             adapter.setList(list);
             adapter.setSortMode(SettingProperty.getStarRecordsSortType());
             adapter.setOnListListener((view, record) -> goToRecordPage(record.getRecord().getId()));
@@ -147,6 +148,19 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
                 @Override
                 public void addStarToOrder(Star star) {
                     selectOrderToAddStar();
+                }
+
+                @Override
+                public void onFilterStudio(long studioId) {
+                    mModel.setStudioId(studioId);
+                    mModel.loadStarRecords();
+                }
+
+                @Override
+                public void onCancelFilterStudio(long studioId) {
+                    // all records
+                    mModel.setStudioId(0);
+                    mModel.loadStarRecords();
                 }
             });
             mBinding.rvList.setAdapter(adapter);
@@ -267,7 +281,7 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ADD_ORDER) {
             if (resultCode == RESULT_OK) {
-                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                long orderId = data.getLongExtra(AppConstants.RESP_ORDER_ID, -1);
                 mModel.addToOrder(orderId);
             }
         }

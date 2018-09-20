@@ -16,6 +16,7 @@ import com.allure.lbanners.adapter.LBaseAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.king.app.coolg.R;
+import com.king.app.coolg.base.adapter.BaseTagAdapter;
 import com.king.app.coolg.databinding.AdapterStarPhoneHeaderBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.utils.GlideUtil;
@@ -27,6 +28,7 @@ import com.king.app.coolg.view.widget.StarRatingView;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarRating;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -50,6 +52,10 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
 
     private OnHeadActionListener onHeadActionListener;
 
+    private StarStudioTag selectedTag;
+
+    private Integer mTotalRecordNumber;
+
     public StarHeader() {
         starOptions = GlideUtil.getStarWideOptions();
     }
@@ -58,7 +64,8 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         this.onHeadActionListener = onHeadActionListener;
     }
 
-    public void bind(AdapterStarPhoneHeaderBinding binding, Star star, List<String> starImageList, int recordNumber, List<StarRelationship> relationships) {
+    public void bind(AdapterStarPhoneHeaderBinding binding, Star star, List<String> starImageList
+            , int recordNumber, List<StarRelationship> relationships, List<StarStudioTag> studioList) {
 
         mBinding = binding;
 
@@ -74,6 +81,69 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         bindRelationships(binding, relationships);
         bindRatings(binding, star);
         bindOrders(binding, star);
+        bindStudios(binding, studioList);
+    }
+
+    private void bindStudios(AdapterStarPhoneHeaderBinding binding, List<StarStudioTag> studioList) {
+        if (studioList.size() > 0) {
+            if (studioList.size() == 1) {
+                binding.tvStudioSingle.setText(studioList.get(0).getName());
+                binding.tvStudioSingle.setVisibility(View.VISIBLE);
+                binding.flowStudios.setVisibility(View.GONE);
+            }
+            else {
+                binding.tvStudioSingle.setVisibility(View.GONE);
+
+                binding.flowStudios.removeAllViews();
+                BaseTagAdapter<StarStudioTag> adapter = new BaseTagAdapter<StarStudioTag>() {
+                    @Override
+                    protected String getText(StarStudioTag data) {
+                        return data.getName() + "(" + data.getCount() + ")";
+                    }
+
+                    @Override
+                    protected long getId(StarStudioTag data) {
+                        return data.getStudioId();
+                    }
+
+                    @Override
+                    protected boolean isDisabled(StarStudioTag item) {
+                        return false;
+                    }
+                };
+                adapter.enableUnselect();
+                adapter.setData(studioList);
+                if (selectedTag != null) {
+                    List<StarStudioTag> tags = new ArrayList<>();
+                    tags.add(selectedTag);
+                    adapter.setSelectedList(tags);
+                }
+                adapter.setOnItemSelectListener(new BaseTagAdapter.OnItemSelectListener<StarStudioTag>() {
+                    @Override
+                    public void onSelectItem(StarStudioTag tag) {
+                        selectedTag = tag;
+                        if (onHeadActionListener != null) {
+                            onHeadActionListener.onFilterStudio(tag.getStudioId());
+                        }
+                    }
+
+                    @Override
+                    public void onUnSelectItem(StarStudioTag tag) {
+                        selectedTag = null;
+                        if (onHeadActionListener != null) {
+                            onHeadActionListener.onCancelFilterStudio(tag.getStudioId());
+                        }
+                    }
+                });
+                adapter.bindFlowLayout(binding.flowStudios);
+                binding.flowStudios.setVisibility(View.VISIBLE);
+            }
+            binding.flowStudios.setVisibility(View.VISIBLE);
+        }
+        else {
+            binding.tvStudioSingle.setVisibility(View.GONE);
+            binding.flowStudios.setVisibility(View.GONE);
+        }
     }
 
     private void bindOrders(AdapterStarPhoneHeaderBinding binding, Star star) {
@@ -223,7 +293,11 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
     }
 
     private void bindBasicInfo(AdapterStarPhoneHeaderBinding binding, Star star, int recordNumber) {
-        StringBuffer buffer = new StringBuffer(recordNumber + "个视频文件");
+        // 页面第一次进入肯定是加载全部，后面可能会筛选list，因此以第一次加载的数量为准
+        if (mTotalRecordNumber == null) {
+            mTotalRecordNumber = recordNumber;
+        }
+        StringBuffer buffer = new StringBuffer(mTotalRecordNumber + "个视频文件");
         if (star.getBetop() > 0) {
             buffer.append("  ").append(star.getBetop()).append(" Top");
         }
@@ -344,6 +418,8 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         void onApplyImage(String path);
         void onDeleteImage(String path);
         void addStarToOrder(Star star);
+        void onFilterStudio(long studioId);
+        void onCancelFilterStudio(long studioId);
     }
 
 }

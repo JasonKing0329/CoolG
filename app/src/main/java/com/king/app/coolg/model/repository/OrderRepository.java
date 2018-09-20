@@ -1,6 +1,11 @@
 package com.king.app.coolg.model.repository;
 
+import android.database.Cursor;
+
+import com.king.app.coolg.base.CoolApplication;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.setting.PreferenceValue;
+import com.king.app.coolg.phone.star.StarStudioTag;
 import com.king.app.gdb.data.entity.FavorRecord;
 import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
@@ -205,6 +210,33 @@ public class OrderRepository extends BaseRepository {
                     break;
             }
             List<FavorRecord> list = builder.build().list();
+            e.onNext(list);
+        });
+    }
+
+    public Observable<List<StarStudioTag>> getStudioTagByStar(long starId) {
+        return Observable.create(e -> {
+            FavorRecordOrder studio = getDaoSession().getFavorRecordOrderDao().queryBuilder()
+                    .where(FavorRecordOrderDao.Properties.Name.eq(AppConstants.ORDER_STUDIO_NAME))
+                    .build().uniqueOrThrow();
+
+            String sql = "SELECT fodr._id, fodr.name, count(fodr._id) AS count FROM favor_order_record fodr \n" +
+                    " LEFT JOIN favor_record fr ON fodr._id=fr.order_id\n" +
+                    " LEFT JOIN record r ON fr.record_id=r._id\n" +
+                    " LEFT JOIN record_star rs ON r._id=rs.record_id\n" +
+                    " WHERE rs.star_id=? AND fodr.parent_id=?\n" +
+                    " GROUP BY fodr._id\n" +
+                    " ORDER BY count DESC";
+            Cursor cursor = CoolApplication.getInstance().getDatabase().rawQuery(sql
+                    , new String[]{String.valueOf(starId), String.valueOf(studio.getId())});
+            List<StarStudioTag> list = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                StarStudioTag tag = new StarStudioTag();
+                tag.setStudioId(cursor.getLong(0));
+                tag.setName(cursor.getString(1));
+                tag.setCount(cursor.getInt(2));
+                list.add(tag);
+            }
             e.onNext(list);
         });
     }

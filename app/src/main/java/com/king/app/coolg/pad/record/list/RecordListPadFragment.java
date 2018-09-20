@@ -7,6 +7,7 @@ import android.support.v7.widget.GridLayoutManager;
 
 import com.chenenyu.router.Router;
 import com.king.app.coolg.base.IFragmentHolder;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.list.BaseRecordListFragment;
 import com.king.app.coolg.phone.record.list.RecordProxy;
@@ -97,7 +98,7 @@ public class RecordListPadFragment extends BaseRecordListFragment<RecordGridPadA
         // 如果收不到回调，检查所在Activity是否实现了onActivityResult并且没有执行super.onActivityResult
         if (requestCode == REQUEST_ADD_ORDER) {
             if (resultCode == Activity.RESULT_OK) {
-                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                long orderId = data.getLongExtra(AppConstants.RESP_ORDER_ID, -1);
                 mModel.addToOrder(orderId);
             }
         }

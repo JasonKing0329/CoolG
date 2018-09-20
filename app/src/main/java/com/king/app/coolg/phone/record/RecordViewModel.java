@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
@@ -47,6 +48,8 @@ public class RecordViewModel extends BaseViewModel {
     public MutableLiveData<List<PassionPoint>> passionsObserver = new MutableLiveData<>();
 
     public MutableLiveData<List<FavorRecordOrder>> ordersObserver = new MutableLiveData<>();
+
+    public MutableLiveData<String> studioObserver = new MutableLiveData<>();
 
     private RecordRepository repository;
     private OrderRepository orderRepository;
@@ -232,6 +235,7 @@ public class RecordViewModel extends BaseViewModel {
 
     public void loadRecordOrders() {
         orderRepository.getRecordOrders(mRecord.getId())
+                .flatMap(list -> findStudio(list))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<FavorRecordOrder>>() {
@@ -255,6 +259,22 @@ public class RecordViewModel extends BaseViewModel {
 
                     }
                 });
+    }
+
+    private ObservableSource<List<FavorRecordOrder>> findStudio(List<FavorRecordOrder> list) {
+        return observer -> {
+            String studioName = "";
+            for (FavorRecordOrder order:list) {
+                if (order.getParent() != null) {
+                    if (order.getParent().getName().equals(AppConstants.ORDER_STUDIO_NAME)) {
+                        studioName = order.getName();
+                        break;
+                    }
+                }
+            }
+            studioObserver.postValue(studioName);
+            observer.onNext(list);
+        };
     }
 
     public void addToOrder(long orderId) {

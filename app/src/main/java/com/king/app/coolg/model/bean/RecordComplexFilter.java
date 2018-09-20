@@ -16,6 +16,7 @@ public class RecordComplexFilter {
     private RecordCursor cursor;
     private RecordListFilterBean filter;
     private long starId;
+    private long studioId;
 
     public int getSortType() {
         return sortType;
@@ -79,5 +80,13 @@ public class RecordComplexFilter {
 
     public void setStarId(long starId) {
         this.starId = starId;
+    }
+
+    public long getStudioId() {
+        return studioId;
+    }
+
+    public void setStudioId(long studioId) {
+        this.studioId = studioId;
     }
 }

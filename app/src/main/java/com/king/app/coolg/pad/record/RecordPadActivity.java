@@ -23,6 +23,7 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordPadBinding;
 import com.king.app.coolg.model.palette.PaletteUtil;
 import com.king.app.coolg.model.palette.ViewColorBound;
@@ -495,7 +496,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         // 如果收不到回调，检查所在Activity是否实现了onActivityResult并且没有执行super.onActivityResult
         if (requestCode == REQUEST_ADD_ORDER) {
             if (resultCode == Activity.RESULT_OK) {
-                long orderId = data.getLongExtra(OrderPhoneActivity.RESP_ORDER_ID, -1);
+                long orderId = data.getLongExtra(AppConstants.RESP_ORDER_ID, -1);
                 mModel.addToOrder(orderId);
             }
         }

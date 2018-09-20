@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
@@ -154,7 +155,7 @@ public class StudioViewModel extends BaseViewModel {
     private Observable<List<FavorRecordOrder>> getStudios() {
         return Observable.create(e -> {
             FavorRecordOrder studio = getDaoSession().getFavorRecordOrderDao().queryBuilder()
-                    .where(FavorRecordOrderDao.Properties.Name.eq("Studio"))
+                    .where(FavorRecordOrderDao.Properties.Name.eq(AppConstants.ORDER_STUDIO_NAME))
                     .build().uniqueOrThrow();
             int sortType = SettingProperty.getStudioListSortType();
             QueryBuilder<FavorRecordOrder> builder = getDaoSession().getFavorRecordOrderDao().queryBuilder();

@@ -1,10 +1,12 @@
 package com.king.app.coolg.phone.studio;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordStudioBinding;
 import com.king.app.coolg.phone.studio.page.StudioPageFragment;
 import com.king.app.jactionbar.JActionbar;
@@ -18,6 +20,8 @@ import com.king.app.jactionbar.JActionbar;
 @Route("StudioPhone")
 public class StudioActivity extends MvvmActivity<ActivityRecordStudioBinding, StudioViewModel> implements StudioHolder {
 
+    public static final String EXTRA_SELECT_MODE = "select_mode";
+
     private StudioListFragment ftList;
 
     private StudioPageFragment ftPage;
@@ -29,7 +33,7 @@ public class StudioActivity extends MvvmActivity<ActivityRecordStudioBinding, St
 
     @Override
     protected void initView() {
-        ftList = new StudioListFragment();
+        ftList = StudioListFragment.newInstance(getIntent().getBooleanExtra(EXTRA_SELECT_MODE, false));
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fl_ft, ftList, "StudioListFragment")
                 .commit();
@@ -77,5 +81,13 @@ public class StudioActivity extends MvvmActivity<ActivityRecordStudioBinding, St
         else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void sendSelectedOrderResult(Long orderId) {
+        Intent intent = new Intent();
+        intent.putExtra(AppConstants.RESP_ORDER_ID, orderId);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
