@@ -1,10 +1,10 @@
 package com.king.app.coolg.phone.studio;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
+import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordStudioBinding;
@@ -18,7 +18,7 @@ import com.king.app.jactionbar.JActionbar;
  * @date: 2018/9/18 11:16
  */
 @Route("StudioPhone")
-public class StudioActivity extends MvvmActivity<ActivityRecordStudioBinding, StudioViewModel> implements StudioHolder {
+public class StudioActivity extends MvvmActivity<ActivityRecordStudioBinding, BaseViewModel> implements StudioHolder {
 
     public static final String EXTRA_SELECT_MODE = "select_mode";
 
@@ -45,8 +45,8 @@ public class StudioActivity extends MvvmActivity<ActivityRecordStudioBinding, St
     }
 
     @Override
-    protected StudioViewModel createViewModel() {
-        return ViewModelProviders.of(this).get(StudioViewModel.class);
+    protected BaseViewModel createViewModel() {
+        return null;
     }
 
     @Override

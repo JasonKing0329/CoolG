@@ -22,7 +22,7 @@ import com.king.app.coolg.phone.studio.StudioViewModel;
  * @author：Jing Yang
  * @date: 2018/9/18 17:53
  */
-public class StudioPageFragment extends MvvmFragment<FragmentStudioPageBinding, StudioViewModel> {
+public class StudioPageFragment extends MvvmFragment<FragmentStudioPageBinding, StudioPageViewModel> {
 
     private static final String ARG_STUDIO_ID = "studio_id";
 
@@ -49,8 +49,8 @@ public class StudioPageFragment extends MvvmFragment<FragmentStudioPageBinding, 
     }
 
     @Override
-    protected StudioViewModel createViewModel() {
-        return ViewModelProviders.of(getActivity()).get(StudioViewModel.class);
+    protected StudioPageViewModel createViewModel() {
+        return ViewModelProviders.of(this).get(StudioPageViewModel.class);
     }
 
     @Override
@@ -83,9 +83,6 @@ public class StudioPageFragment extends MvvmFragment<FragmentStudioPageBinding, 
 
     @Override
     protected void onCreateData() {
-        mModel.pageLoadingObserver.observe(this, show -> onLoadingChanged(show));
-        mModel.pageMessageObserver.observe(this, message -> onMessageObserved(message));
-
         mModel.pageObserver.observe(this, pageItem -> showPageItem(pageItem));
 
         mModel.loadPageData(getArguments().getLong(ARG_STUDIO_ID));
@@ -93,9 +90,6 @@ public class StudioPageFragment extends MvvmFragment<FragmentStudioPageBinding, 
 
     private void showPageItem(StudioPageItem pageItem) {
         holder.getJActionBar().setTitle(pageItem.getOrder().getName());
-        mBinding.tvVideos.setText(pageItem.getStrCount());
-        mBinding.tvHigh.setText(pageItem.getStrHighCount());
-        mBinding.tvTime.setText(pageItem.getUpdateTime());
 
         adapter.setPageItem(pageItem);
         mBinding.rvPage.setAdapter(adapter);

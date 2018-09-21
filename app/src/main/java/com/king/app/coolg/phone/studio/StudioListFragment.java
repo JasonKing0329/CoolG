@@ -1,7 +1,6 @@
 package com.king.app.coolg.phone.studio;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.widget.PopupMenu;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
-import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.FragmentStudioListBinding;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
@@ -52,7 +50,7 @@ public class StudioListFragment extends MvvmFragment<FragmentStudioListBinding, 
 
     @Override
     protected StudioViewModel createViewModel() {
-        return ViewModelProviders.of(getActivity()).get(StudioViewModel.class);
+        return ViewModelProviders.of(this).get(StudioViewModel.class);
     }
 
     @Override
@@ -116,9 +114,6 @@ public class StudioListFragment extends MvvmFragment<FragmentStudioListBinding, 
 
     @Override
     protected void onCreateData() {
-        mModel.listLoadingObserver.observe(this, show -> onLoadingChanged(show));
-        mModel.listMessageObserver.observe(this, message -> onMessageObserved(message));
-
         mModel.listTypeMenuObserver.observe(this, text -> holder.getJActionBar().updateMenuText(R.id.menu_mode, text));
         mModel.simpleObserver.observe(this, list -> showSimpleList(list));
         mModel.richObserver.observe(this, list -> showRichList(list));
