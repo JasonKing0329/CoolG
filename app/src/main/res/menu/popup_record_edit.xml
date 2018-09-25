@@ -5,4 +5,6 @@
         android:title="Add to order"/>
     <item android:id="@+id/menu_set_cover"
         android:title="Set as cover"/>
+    <item android:id="@+id/menu_delete"
+        android:title="Delete"/>
 </menu>

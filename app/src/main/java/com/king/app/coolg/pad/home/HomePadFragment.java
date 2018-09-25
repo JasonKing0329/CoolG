@@ -79,6 +79,7 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
         updateIconBg(mBinding.tvIconRecord);
         updateIconBg(mBinding.tvIconStar);
         updateIconBg(mBinding.tvIconOrders);
+        updateIconBg(mBinding.tvIconStudios);
 
         mBinding.ivRec1.setOnClickListener(v -> goToRecordPage(mModel.getRecommendedRecord(0)));
         mBinding.ivRec2.setOnClickListener(v -> goToRecordPage(mModel.getRecommendedRecord(1)));
@@ -87,6 +88,7 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
         mBinding.groupRecord.setOnClickListener(v -> goToRecordListPage());
         mBinding.groupStar.setOnClickListener(v -> goToStarListPage());
         mBinding.groupOrders.setOnClickListener(v -> goToOrderPage());
+        mBinding.groupStudios.setOnClickListener(v -> goToStudioPage());
         mBinding.fabSetting.setOnClickListener(v -> showBannerSetting());
         mBinding.fabTop.setOnClickListener(v -> mBinding.rvRecords.scrollToPosition(0));
     }
@@ -227,6 +229,11 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
 
     private void goToOrderPage() {
         Router.build("OrderPhone")
+                .go(this);
+    }
+
+    private void goToStudioPage() {
+        Router.build("StudioPad")
                 .go(this);
     }
 

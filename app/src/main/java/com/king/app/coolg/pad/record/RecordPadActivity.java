@@ -28,6 +28,7 @@ import com.king.app.coolg.databinding.ActivityRecordPadBinding;
 import com.king.app.coolg.model.palette.PaletteUtil;
 import com.king.app.coolg.model.palette.ViewColorBound;
 import com.king.app.coolg.pad.star.StarPadActivity;
+import com.king.app.coolg.pad.studio.StudioPadActivity;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.PassionPoint;
 import com.king.app.coolg.phone.record.RecordOrdersAdapter;
@@ -54,6 +55,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
 
     public static final String EXTRA_RECORD_ID = "key_record_id";
     protected final int REQUEST_ADD_ORDER = 1602;
+    protected final int REQUEST_SELECT_STUDIO = 1603;
 
     private RecordStarAdapter starAdapter;
     private RecordStarDetailAdapter starDetailAdapter;
@@ -62,7 +64,6 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
 
     private RecordPagerAdapter pagerAdapter;
     private RecordGallery recordGallery;
-    private boolean isFirstTimeLoadFirstPage = true;
 
     private RecordOrdersAdapter ordersAdapter;
 
@@ -85,6 +86,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         mBinding.ivOrder.setOnClickListener(v -> toggleOrders());
         mBinding.ivSetCover.setOnClickListener(v -> onApplyImage(mModel.getCurrentImage(pagerAdapter.getCurrentPage())));
         mBinding.ivDelete.setOnClickListener(v -> mModel.deleteImage(mModel.getCurrentImage(pagerAdapter.getCurrentPage())));
+        mBinding.tvStudio.setOnClickListener(v -> selectStudio());
         mBinding.tvOrders.setOnClickListener(v -> selectOrderToAddRecord());
 //        mBinding.tvScene.setOnClickListener(v -> );
 //        mBinding.ivPlay.setOnClickListener(v -> );
@@ -196,6 +198,14 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
             }
         });
         mModel.ordersObserver.observe(this, list -> showOrders(list));
+        mModel.studioObserver.observe(this, studio -> {
+            if (TextUtils.isEmpty(studio)) {
+                mBinding.tvStudio.setText("Select Studio");
+            }
+            else {
+                mBinding.tvStudio.setText(studio);
+            }
+        });
         mModel.videoPathObserver.observe(this, path -> {
             if (path == null) {
                 mBinding.ivPlay.setVisibility(View.GONE);
@@ -249,6 +259,13 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
                 .go(this);
     }
 
+    private void selectStudio() {
+        Router.build("StudioPad")
+                .with(StudioPadActivity.EXTRA_SELECT_MODE, true)
+                .requestCode(REQUEST_SELECT_STUDIO)
+                .go(this);
+    }
+
     private void showRecord(Record record) {
         mBinding.tvName.setText(record.getName());
         if (record.getDeprecated() == DataConstants.DEPRECATED) {
@@ -261,6 +278,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         mBinding.tvBareback.setVisibility(record.getDeprecated() == DataConstants.DEPRECATED ? View.VISIBLE:View.GONE);
         mBinding.tvScene.setText(record.getScene());
 
+        mModel.loadRecordOrders();
     }
 
     /**
@@ -400,7 +418,8 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
             mBinding.llOrders.startAnimation(getOrdersDisappear());
         }
         else {
-            mModel.loadRecordOrders();
+            mBinding.llOrders.setVisibility(View.VISIBLE);
+            mBinding.llOrders.startAnimation(getOrdersAppear());
         }
     }
 
@@ -419,8 +438,6 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
             ordersAdapter.setList(list);
             ordersAdapter.notifyDataSetChanged();
         }
-        mBinding.llOrders.setVisibility(View.VISIBLE);
-        mBinding.llOrders.startAnimation(getOrdersAppear());
     }
 
     /**
@@ -496,6 +513,12 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         // 如果收不到回调，检查所在Activity是否实现了onActivityResult并且没有执行super.onActivityResult
         if (requestCode == REQUEST_ADD_ORDER) {
             if (resultCode == Activity.RESULT_OK) {
+                long orderId = data.getLongExtra(AppConstants.RESP_ORDER_ID, -1);
+                mModel.addToOrder(orderId);
+            }
+        }
+        else if (requestCode == REQUEST_SELECT_STUDIO) {
+            if (resultCode == RESULT_OK) {
                 long orderId = data.getLongExtra(AppConstants.RESP_ORDER_ID, -1);
                 mModel.addToOrder(orderId);
             }

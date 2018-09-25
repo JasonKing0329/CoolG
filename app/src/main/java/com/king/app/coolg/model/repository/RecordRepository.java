@@ -6,6 +6,8 @@ import android.text.TextUtils;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.phone.record.scene.SceneBean;
+import com.king.app.gdb.data.entity.FavorRecord;
+import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordDao;
 import com.king.app.gdb.data.entity.RecordStar;
@@ -90,6 +92,11 @@ public class RecordRepository extends BaseRepository {
             hasJoin = true;
             builder.join(RecordStar.class, RecordStarDao.Properties.RecordId)
                     .where(RecordStarDao.Properties.StarId.eq(filter.getStarId()));
+        }
+        if (filter.getStudioId() != 0) {
+            hasJoin = true;
+            builder.join(FavorRecord.class, FavorRecordDao.Properties.RecordId)
+                    .where(FavorRecordDao.Properties.OrderId.eq(filter.getStudioId()));
         }
         sortByColumn(builder, filter.getSortType(), filter.getDesc(), hasJoin);
         return builder;

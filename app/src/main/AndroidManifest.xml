@@ -77,6 +77,8 @@
         <activity android:name=".pad.record.RecordPadActivity"
             android:screenOrientation="landscape"
             android:launchMode="singleTask"/>
+        <activity android:name=".pad.studio.StudioPadActivity"
+            android:screenOrientation="landscape"/>
 
         <service android:name=".phone.login.BackgroundService"/>
 

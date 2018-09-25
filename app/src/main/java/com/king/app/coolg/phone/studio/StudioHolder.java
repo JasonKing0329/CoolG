@@ -13,7 +13,7 @@ public interface StudioHolder extends IFragmentHolder {
 
     JActionbar getJActionBar();
 
-    void showStudioPage(long studioId);
+    void showStudioPage(long studioId, String name);
 
     void backToList();
 

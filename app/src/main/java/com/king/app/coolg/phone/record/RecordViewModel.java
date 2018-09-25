@@ -261,7 +261,7 @@ public class RecordViewModel extends BaseViewModel {
                 });
     }
 
-    private ObservableSource<List<FavorRecordOrder>> findStudio(List<FavorRecordOrder> list) {
+    protected ObservableSource<List<FavorRecordOrder>> findStudio(List<FavorRecordOrder> list) {
         return observer -> {
             String studioName = "";
             for (FavorRecordOrder order:list) {

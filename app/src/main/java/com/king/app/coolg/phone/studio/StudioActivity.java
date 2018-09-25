@@ -55,7 +55,7 @@ public class StudioActivity extends MvvmActivity<ActivityRecordStudioBinding, Ba
     }
 
     @Override
-    public void showStudioPage(long studioId) {
+    public void showStudioPage(long studioId, String name) {
         ftPage = StudioPageFragment.newInstance(studioId);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fl_ft, ftPage, "StudioPageFragment")

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white_bg">
+
+        <com.king.app.jactionbar.JActionbar
+            android:id="@+id/actionbar"
+            android:layout_width="360dp"
+            android:layout_height="@dimen/actionbar_height"
+            android:background="@color/actionbar_bg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="Studios"
+            app:showIconBack="true"
+            app:menu="@menu/studios"
+            app:iconSize="@dimen/actionbar_icon_width"
+            app:iconPadding="@dimen/actionbar_icon_padding"
+            app:titleSize="@dimen/actionbar_title_text_size"
+            app:titleColor="@color/actionbar_element"
+            app:iconColor="@color/actionbar_element"/>
+
+        <com.king.app.jactionbar.JActionbar
+            android:id="@+id/actionbar_record"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/actionbar_height"
+            android:background="@color/actionbar_bg"
+            app:layout_constraintStart_toEndOf="@id/actionbar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:title=" "
+            app:showIconBack="false"
+            app:menu="@menu/studio_records_pad"
+            app:iconSize="@dimen/actionbar_icon_width"
+            app:iconPadding="@dimen/actionbar_icon_padding"
+            app:titleSize="@dimen/actionbar_title_text_size"
+            app:titleColor="@color/actionbar_element"
+            app:iconColor="@color/actionbar_element"/>
+
+        <FrameLayout
+            android:id="@+id/fl_ft_studio"
+            android:layout_width="360dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/actionbar"
+            app:layout_constraintEnd_toStartOf="@+id/fl_ft_record"/>
+
+        <FrameLayout
+            android:id="@+id/fl_ft_record"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/fl_ft_studio"
+            app:layout_constraintTop_toBottomOf="@+id/actionbar"/>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

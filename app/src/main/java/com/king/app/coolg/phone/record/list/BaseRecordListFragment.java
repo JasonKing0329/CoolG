@@ -31,6 +31,7 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
     public static final String ARG_RECORD_TYPE = "record_type";
     public static final String ARG_RECORD_SCENE = "record_scene";
     public static final String ARG_STAR_ID = "star_id";
+    public static final String ARG_ORDER_ID = "order_id";
 
     protected T adapter;
 
@@ -68,6 +69,7 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
         mModel.setRecordType(getArguments().getInt(ARG_RECORD_TYPE));
         mModel.setKeyScene(getArguments().getString(ARG_RECORD_SCENE));
         mModel.setStarId(getArguments().getLong(ARG_STAR_ID));
+        mModel.setOrderId(getArguments().getLong(ARG_ORDER_ID));
 
         mModel.recordsObserver.observe(this, list -> showList(list));
         mModel.moreObserver.observe(this, offset -> showMoreList(offset));

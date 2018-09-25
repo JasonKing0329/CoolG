@@ -43,6 +43,15 @@ public class RecordListPadFragment extends BaseRecordListFragment<RecordGridPadA
         return fragment;
     }
 
+    public static RecordListPadFragment newOrderInstance(long orderId) {
+
+        RecordListPadFragment fragment = new RecordListPadFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong(ARG_ORDER_ID, orderId);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
     @Override
     protected void bindFragmentHolder(IFragmentHolder holder) {
 

@@ -60,6 +60,7 @@ public class RecordListViewModel extends BaseViewModel {
     private String mKeyword;
     private boolean mShowCanBePlayed;
     private long mStarId;
+    private long mOrderId;
     /**
      * only available when mStarId is not 0
      */
@@ -126,6 +127,10 @@ public class RecordListViewModel extends BaseViewModel {
         this.mStarId = starId;
     }
 
+    public void setOrderId(long mOrderId) {
+        this.mOrderId = mOrderId;
+    }
+
     public void setStarType(int type) {
         this.mStarType = type;
     }
@@ -145,7 +150,7 @@ public class RecordListViewModel extends BaseViewModel {
         // 统计全部数量
         countRecords();
         // 查询前N条数据
-        queryRecords(mSortMode, mSortDesc, mShowCanBePlayed, mKeyword, mKeyScene, mFilter, mRecordType, mStarId)
+        queryRecords(mSortMode, mSortDesc, mShowCanBePlayed, mKeyword, mKeyScene, mFilter, mRecordType, mStarId, mOrderId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<RecordProxy>>() {
@@ -174,7 +179,7 @@ public class RecordListViewModel extends BaseViewModel {
     }
 
     private void countRecords() {
-        getComplexFilter(mSortMode, mSortDesc, mShowCanBePlayed, mKeyword, mKeyScene, mFilter, mRecordType, mStarId)
+        getComplexFilter(mSortMode, mSortDesc, mShowCanBePlayed, mKeyword, mKeyScene, mFilter, mRecordType, mStarId, mOrderId)
                 .flatMap(filter -> repository.getRecordCount(filter))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -207,7 +212,7 @@ public class RecordListViewModel extends BaseViewModel {
 
     public void loadMoreRecords(Integer scrollPosition) {
         int originSize = mRecordList == null ? 0:mRecordList.size();
-        queryRecords(mSortMode, mSortDesc, mShowCanBePlayed, mKeyword, mKeyScene, mFilter, mRecordType, mStarId)
+        queryRecords(mSortMode, mSortDesc, mShowCanBePlayed, mKeyword, mKeyScene, mFilter, mRecordType, mStarId, mOrderId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<RecordProxy>>() {
@@ -251,8 +256,8 @@ public class RecordListViewModel extends BaseViewModel {
      * @return
      */
     private Observable<List<RecordProxy>> queryRecords(int sortMode, boolean desc, boolean showCanBePlayed
-            , String nameLike, String whereScene, RecordListFilterBean filterBean, int mRecordType, long starId) {
-        return getComplexFilter(sortMode, desc, showCanBePlayed, nameLike, whereScene, filterBean, mRecordType, starId)
+            , String nameLike, String whereScene, RecordListFilterBean filterBean, int mRecordType, long starId, long orderId) {
+        return getComplexFilter(sortMode, desc, showCanBePlayed, nameLike, whereScene, filterBean, mRecordType, starId, orderId)
                 .flatMap(filter -> repository.getRecords(filter))
                 .flatMap(list -> {
                     moreCursor.offset += list.size();
@@ -263,7 +268,7 @@ public class RecordListViewModel extends BaseViewModel {
     }
     
     private Observable<RecordComplexFilter> getComplexFilter(int sortMode, boolean desc
-            , boolean showCanBePlayed, String like, String whereScene, RecordListFilterBean filterBean, int mRecordType, long starId) {
+            , boolean showCanBePlayed, String like, String whereScene, RecordListFilterBean filterBean, int mRecordType, long starId, long orderId) {
         return Observable.create(e -> {
             RecordComplexFilter filter = new RecordComplexFilter();
             // 加载可播放的需要从全部记录里通过对比video目录文件信息来挑选
@@ -284,6 +289,7 @@ public class RecordListViewModel extends BaseViewModel {
             filter.setRecordType(mRecordType);
             filter.setFilter(filterBean);
             filter.setStarId(starId);
+            filter.setStudioId(orderId);
 
             e.onNext(filter);
         });

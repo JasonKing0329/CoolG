@@ -2,6 +2,7 @@ package com.king.app.coolg.phone.studio;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -11,6 +12,7 @@ import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentStudioListBinding;
 import com.king.app.coolg.model.setting.PreferenceValue;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 
 import java.util.List;
@@ -55,7 +57,12 @@ public class StudioListFragment extends MvvmFragment<FragmentStudioListBinding, 
 
     @Override
     protected void onCreate(View view) {
-        mBinding.rvList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        if (isSelectMode() && ScreenUtils.isTablet()) {
+            mBinding.rvList.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        }
+        else {
+            mBinding.rvList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        }
 
         holder.getJActionBar().setOnBackListener(() -> getActivity().finish());
 
@@ -152,7 +159,7 @@ public class StudioListFragment extends MvvmFragment<FragmentStudioListBinding, 
             holder.sendSelectedOrderResult(order.getId());
         }
         else {
-            holder.showStudioPage(order.getId());
+            holder.showStudioPage(order.getId(), order.getName());
         }
     }
 

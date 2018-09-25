@@ -225,6 +225,10 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
                 case R.id.menu_set_cover:
                     selectOrderToSetCover(path);
                     break;
+                case R.id.menu_delete:
+                    mModel.deleteImage(path);
+                    showImages(mModel.getStarImageList());
+                    break;
             }
             return false;
         });
