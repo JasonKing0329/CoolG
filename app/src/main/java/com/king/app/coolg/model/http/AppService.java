@@ -4,6 +4,7 @@ import com.king.app.coolg.model.http.bean.request.FolderRequest;
 import com.king.app.coolg.model.http.bean.request.GdbCheckNewFileBean;
 import com.king.app.coolg.model.http.bean.request.GdbRequestMoveBean;
 import com.king.app.coolg.model.http.bean.request.GetStarRatingsRequest;
+import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.http.bean.request.UploadStarRatingRequest;
 import com.king.app.coolg.model.http.bean.response.AppCheckBean;
 import com.king.app.coolg.model.http.bean.response.BaseResponse;
@@ -11,6 +12,7 @@ import com.king.app.coolg.model.http.bean.response.FolderResponse;
 import com.king.app.coolg.model.http.bean.response.GdbMoveResponse;
 import com.king.app.coolg.model.http.bean.response.GdbRespBean;
 import com.king.app.coolg.model.http.bean.response.GetStarRatingResponse;
+import com.king.app.coolg.model.http.bean.response.PathResponse;
 
 import io.reactivex.Observable;
 import retrofit2.http.Body;
@@ -45,4 +47,7 @@ public interface AppService {
 
     @POST("getStarRatings")
     Observable<BaseResponse<GetStarRatingResponse>> getStarRatings(@Body GetStarRatingsRequest data);
+
+    @POST("videoPath")
+    Observable<PathResponse> getVideoPath(@Body PathRequest data);
 }

@@ -8,6 +8,11 @@ import android.text.TextUtils;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.http.AppHttpClient;
+import com.king.app.coolg.model.http.BaseHttpClient;
+import com.king.app.coolg.model.http.bean.request.PathRequest;
+import com.king.app.coolg.model.http.bean.response.GdbRespBean;
+import com.king.app.coolg.model.http.bean.response.PathResponse;
 import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.gdb.data.entity.FavorRecord;
@@ -22,6 +27,7 @@ import com.king.app.gdb.data.param.DataConstants;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
@@ -51,12 +57,16 @@ public class RecordViewModel extends BaseViewModel {
 
     public MutableLiveData<String> studioObserver = new MutableLiveData<>();
 
+    public MutableLiveData<String> videoUrlObserver = new MutableLiveData<>();
+
     private RecordRepository repository;
     private OrderRepository orderRepository;
 
     protected Record mRecord;
 
     private String mSingleImagePath;
+
+    private String mVideoCover;
 
     public RecordViewModel(@NonNull Application application) {
         super(application);
@@ -79,6 +89,8 @@ public class RecordViewModel extends BaseViewModel {
                     public void onNext(Record record) {
                         mRecord = record;
                         recordObserver.setValue(record);
+
+                        checkPlayable(record);
                     }
 
                     @Override
@@ -93,20 +105,88 @@ public class RecordViewModel extends BaseViewModel {
                 });
     }
 
+    private void checkPlayable(Record record) {
+//        if (true) {
+//            videoUrlObserver.setValue("http://192.168.11.206:8080/videos/GOTS07E05.mkv");
+//            return;
+//        }
+        AppHttpClient.getInstance().getAppService().isServerOnline()
+                .flatMap(bean -> isOnline(bean))
+                .flatMap(result -> {
+                    PathRequest request = new PathRequest();
+                    request.setPath(record.getDirectory());
+                    request.setName(record.getName());
+                    return AppHttpClient.getInstance().getAppService().getVideoPath(request);
+                })
+                .flatMap(response -> toVideoUrl(response))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(String url) {
+                        videoUrlObserver.setValue(url);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private ObservableSource<Boolean> isOnline(GdbRespBean bean) {
+        return observer -> {
+            if (bean.isOnline()) {
+                observer.onNext(true);
+            }
+            else {
+                observer.onError(new Exception("Server offline"));
+            }
+        };
+    }
+
+    private ObservableSource<String> toVideoUrl(PathResponse response) {
+        return observer -> {
+            if (response.isAvailable()) {
+                observer.onNext(BaseHttpClient.getBaseUrl() + response.getPath());
+            }
+            else {
+                observer.onError(new Exception("Video source is unavailable"));
+            }
+        };
+    }
+
+    public String getVideoCover() {
+        return mVideoCover;
+    }
+
     protected void loadImages(Record record) {
         if (ImageProvider.hasRecordFolder(record.getName())) {
             List<String> list = ImageProvider.getRecordPathList(record.getName());
             if (list.size() > 1) {
+                mVideoCover = list.get(Math.abs(new Random().nextInt()) % list.size());
                 imagesObserver.postValue(list);
             }
             else if (list.size() == 1) {
                 mSingleImagePath = list.get(0);
+                mVideoCover = mSingleImagePath;
                 singleImageObserver.postValue(list.get(0));
             }
         }
         else {
             String path = ImageProvider.getRecordRandomPath(record.getName(), null);
             mSingleImagePath = path;
+            mVideoCover = mSingleImagePath;
             singleImageObserver.postValue(path);
         }
     }

@@ -3,6 +3,8 @@ package com.king.app.coolg.phone.record;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -29,7 +31,6 @@ import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
-import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordType1v1;
@@ -38,6 +39,11 @@ import com.king.app.gdb.data.param.DataConstants;
 
 import java.util.List;
 import java.util.Random;
+
+import tcking.github.com.giraffeplayer2.GiraffePlayer;
+import tcking.github.com.giraffeplayer2.Option;
+import tcking.github.com.giraffeplayer2.PlayerManager;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  * Desc:
@@ -66,6 +72,9 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
     @Override
     protected void initView() {
+        //set global configuration: turn on multiple_requests
+        PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
+
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mBinding.rvStars.setLayoutManager(manager);
@@ -116,6 +125,25 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             }
         });
         mBinding.groupStudio.setOnClickListener(view -> selectStudio());
+
+        mBinding.scrollParent.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (mBinding.videoView.getVisibility() == View.VISIBLE && mBinding.videoView.getPlayer().isPlaying()) {
+                floatOrEmbedVideo(oldScrollY, scrollY, mBinding.videoView.getHeight());
+            }
+        });
+    }
+
+    private void floatOrEmbedVideo(int oldScrollY, int scrollY, int edge) {
+        // 上滑且超出边界
+        if (scrollY > edge && scrollY > oldScrollY
+                && mBinding.videoView.getPlayer().getDisplayModel() != GiraffePlayer.DISPLAY_FLOAT) {
+            mBinding.videoView.getPlayer().setDisplayModel(GiraffePlayer.DISPLAY_FLOAT);
+        }
+        // 下滑且超出边界
+        else if (scrollY <= edge && scrollY < oldScrollY
+                && mBinding.videoView.getPlayer().getDisplayModel() != GiraffePlayer.DISPLAY_NORMAL) {
+            mBinding.videoView.getPlayer().setDisplayModel(GiraffePlayer.DISPLAY_NORMAL);
+        }
     }
 
     private void selectStudio() {
@@ -181,6 +209,8 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         });
         mModel.passionsObserver.observe(this, list -> showPassionPoints(list));
         mModel.studioObserver.observe(this, studio -> mBinding.tvStudio.setText(studio));
+
+        mModel.videoUrlObserver.observe(this, url -> previewVideo(url));
 
         mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
     }
@@ -350,6 +380,36 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         dialogFragment.setContentFragment(bannerSettingDialog);
         dialogFragment.setTitle("Banner Setting");
         dialogFragment.show(getSupportFragmentManager(), "BannerSettingFragment");
+    }
+
+    private void previewVideo(String url) {
+        mBinding.banner.setVisibility(View.GONE);
+        mBinding.videoView.setVisibility(View.VISIBLE);
+        mBinding.videoView.getCoverView().setScaleType(ImageView.ScaleType.CENTER_CROP);
+        Glide.with(this)
+                .load(mModel.getVideoCover())
+                .apply(recordOptions)
+                .into(mBinding.videoView.getCoverView());
+        mBinding.videoView.setVideoPath(url);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // videoView必须在manifest中所属activity指定
+        // android:configChanges="orientation|screenSize",且其中两个参数缺一不可
+        // 同时在onConfigurationChanged中加入相关代码。
+        // 这样在点击全屏时才能顺畅地切换为全屏
+        PlayerManager.getInstance().onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (PlayerManager.getInstance().onBackPressed()) {
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override
