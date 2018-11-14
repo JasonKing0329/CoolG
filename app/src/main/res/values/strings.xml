@@ -14,6 +14,9 @@
     <string name="back">Back</string>
     <string name="loading">loading...</string>
     <string name="warning">warning</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_content">No content</string>
+    <string name="save_success">Save success</string>
 
     <!-- login -->
     <string name="username">User name</string>

@@ -72,6 +72,8 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
     @Override
     protected void initView() {
+        GiraffePlayer.debug = true;
+        GiraffePlayer.nativeDebug = true;
         //set global configuration: turn on multiple_requests
         PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
 

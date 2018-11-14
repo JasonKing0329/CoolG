@@ -8,8 +8,8 @@ android {
         applicationId "com.king.app.coolg"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 41
-        versionName "3.5"
+        versionCode 42
+        versionName "3.5.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -23,7 +23,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.releaseConfig
-            buildConfigField("boolean", "checkUser", "false")
+            buildConfigField("boolean", "checkUser", "true")
         }
         release {
             minifyEnabled false
@@ -40,6 +40,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
     }
 }
 
