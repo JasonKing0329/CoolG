@@ -69,6 +69,16 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .show();
     }
 
+    public void showConfirmCancelMessage(String msg, String okText, DialogInterface.OnClickListener okListener
+            , String cancelText, DialogInterface.OnClickListener cancelListener) {
+        new AlertDialog.Builder(this)
+                .setTitle(null)
+                .setMessage(msg)
+                .setPositiveButton(okText, okListener)
+                .setNegativeButton(cancelText, cancelListener)
+                .show();
+    }
+
     public void showYesNoMessage(String msg, DialogInterface.OnClickListener okListener
             , DialogInterface.OnClickListener cancelListener) {
         new AlertDialog.Builder(this)

@@ -58,4 +58,7 @@ public class AppConstants {
     public static final String RESP_ORDER_ID = "order_id";
 
     public static final String ORDER_STUDIO_NAME = "Studio";
+
+    public static final Long PLAY_ORDER_TEMP_ID = 1l;
+    public static final String PLAY_ORDER_TEMP_NAME = "temp";
 }

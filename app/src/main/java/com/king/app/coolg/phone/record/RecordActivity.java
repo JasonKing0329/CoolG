@@ -2,6 +2,7 @@ package com.king.app.coolg.phone.record;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.widget.NestedScrollView;
@@ -27,6 +28,8 @@ import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.studio.StudioActivity;
+import com.king.app.coolg.utils.DebugLog;
+import com.king.app.coolg.utils.FormatUtil;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -42,8 +45,10 @@ import java.util.Random;
 
 import tcking.github.com.giraffeplayer2.GiraffePlayer;
 import tcking.github.com.giraffeplayer2.Option;
+import tcking.github.com.giraffeplayer2.PlayerListener;
 import tcking.github.com.giraffeplayer2.PlayerManager;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkTimedText;
 
 /**
  * Desc:
@@ -133,6 +138,8 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                 floatOrEmbedVideo(oldScrollY, scrollY, mBinding.videoView.getHeight());
             }
         });
+
+        mBinding.groupAddToPlay.setOnClickListener(v -> mModel.addToPlay());
     }
 
     private void floatOrEmbedVideo(int oldScrollY, int scrollY, int edge) {
@@ -384,6 +391,10 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         dialogFragment.show(getSupportFragmentManager(), "BannerSettingFragment");
     }
 
+    /**
+     * init video player
+     * @param url
+     */
     private void previewVideo(String url) {
         mBinding.banner.setVisibility(View.GONE);
         mBinding.videoView.setVisibility(View.VISIBLE);
@@ -393,6 +404,35 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                 .apply(recordOptions)
                 .into(mBinding.videoView.getCoverView());
         mBinding.videoView.setVideoPath(url);
+
+        // 覆盖videoView里封装的播放按键的监听事件，处理恢复播放时间的功能
+        mBinding.videoView.findViewById(R.id.app_video_play).setOnClickListener(v -> {
+            GiraffePlayer player = mBinding.videoView.getPlayer();
+            if (player.isPlaying()) {
+                player.pause();
+            } else {
+                if (mModel.isInitVideo() && mModel.getRecordedDuration() > 0) {
+                    String msg = mModel.getRestorePlayMessage();
+                    showConfirmCancelMessage(msg
+                            , "Restore"
+                            , (dialog, which) -> {
+                                mModel.setSeekToLastTime(true);
+                                mModel.setInitVideo(false);
+                                player.start();
+                            }
+                            , "Restart"
+                            , (dialog, which) -> {
+                                mModel.setSeekToLastTime(false);
+                                mModel.setInitVideo(false);
+                                player.start();
+                            });
+                }
+                else {
+                    player.start();
+                }
+            }
+        });
+        mBinding.videoView.setPlayerListener(mModel.getVideoPlayerListener());
     }
 
     @Override
@@ -470,6 +510,9 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         super.onDestroy();
         if (mBinding != null && mBinding.banner != null) {
             mBinding.banner.clearImageTimerTask();
+        }
+        if (mModel != null) {
+            mModel.updatePlayToDb();
         }
     }
 

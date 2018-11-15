@@ -29,6 +29,8 @@ import com.king.app.gdb.data.entity.FavorRecord;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.FavorStar;
 import com.king.app.gdb.data.entity.FavorStarOrder;
+import com.king.app.gdb.data.entity.PlayItem;
+import com.king.app.gdb.data.entity.PlayOrder;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarDao;
 import com.king.app.gdb.data.entity.StarRating;
@@ -549,6 +551,10 @@ public class ManageViewModel extends BaseViewModel {
 
                 // 保存star_rating表数据
                 data.starRatingList = getDaoSession().getStarRatingDao().loadAll();
+
+                // 保存play_xx表数据
+                data.playItemList = getDaoSession().getPlayItemDao().loadAll();
+                data.playOrderList = getDaoSession().getPlayOrderDao().loadAll();
             } catch (Exception ee) {
                 ee.printStackTrace();
             }
@@ -596,6 +602,7 @@ public class ManageViewModel extends BaseViewModel {
             updateStarFavorFiled();
             updateFavorTables();
             updateStarRatings();
+            updatePlayList();
             e.onNext(new Object());
         });
     }
@@ -639,6 +646,18 @@ public class ManageViewModel extends BaseViewModel {
         }
     }
 
+    /**
+     * update play_order, play_item
+     */
+    private void updatePlayList() {
+        if (!ListUtil.isEmpty(mLocalData.playItemList)) {
+            getDaoSession().getPlayItemDao().insertInTx(mLocalData.playItemList);
+        }
+        if (!ListUtil.isEmpty(mLocalData.playOrderList)) {
+            getDaoSession().getPlayOrderDao().insertInTx(mLocalData.playOrderList);
+        }
+    }
+
     private class LocalData {
         Map<String, Integer> favorMap = new HashMap<>();
 
@@ -651,5 +670,9 @@ public class ManageViewModel extends BaseViewModel {
         List<FavorStarOrder> favorStarOrderList;
 
         List<StarRating> starRatingList;
+
+        List<PlayOrder> playOrderList;
+
+        List<PlayItem> playItemList;
     }
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.king.app.coolg.conf.AppConfig;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.context.GDataContext;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.gdb.data.entity.DaoMaster;
@@ -13,6 +14,10 @@ import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.FavorRecordOrderDao;
 import com.king.app.gdb.data.entity.FavorStarDao;
 import com.king.app.gdb.data.entity.FavorStarOrderDao;
+import com.king.app.gdb.data.entity.PlayDurationDao;
+import com.king.app.gdb.data.entity.PlayItemDao;
+import com.king.app.gdb.data.entity.PlayOrder;
+import com.king.app.gdb.data.entity.PlayOrderDao;
 import com.king.app.gdb.data.entity.StarRatingDao;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
@@ -86,6 +91,12 @@ public class CoolApplication extends Application {
         }
 
         @Override
+        public void onCreate(Database db) {
+            super.onCreate(db);
+            insertTempPlayOrder(db);
+        }
+
+        @Override
         public void onUpgrade(Database db, int oldVersion, int newVersion) {
             DebugLog.e(" oldVersion=" + oldVersion + ", newVersion=" + newVersion);
             switch (oldVersion) {
@@ -112,9 +123,20 @@ public class CoolApplication extends Application {
                             + FavorStarOrderDao.Properties.CreateTime.columnName + " INTEGER DEFAULT 0");
                     db.execSQL("ALTER TABLE " + FavorStarOrderDao.TABLENAME + " ADD COLUMN "
                             + FavorStarOrderDao.Properties.UpdateTime.columnName + " INTEGER DEFAULT 0");
+                case 4:
+                    PlayOrderDao.createTable(db, true);
+                    PlayItemDao.createTable(db, true);
+                    PlayDurationDao.createTable(db, true);
+                    insertTempPlayOrder(db);
                     break;
             }
         }
+
+        private void insertTempPlayOrder(Database db) {
+            PlayOrder order = new PlayOrder(AppConstants.PLAY_ORDER_TEMP_ID, AppConstants.PLAY_ORDER_TEMP_NAME);
+            new DaoMaster(db).newSession().getPlayOrderDao().insert(order);
+        }
+
     }
 
 }

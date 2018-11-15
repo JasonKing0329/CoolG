@@ -146,6 +146,36 @@
                 <LinearLayout style="@style/GroupWhiteSecOnBg">
 
                     <RelativeLayout
+                        android:id="@+id/group_add_to_play"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/gdb_record_line_height">
+
+                        <ImageView
+                            android:id="@+id/iv_add_to_play"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_play_circle_filled_ff4081_36dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_add_to_play"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Add to play order"
+                            android:textSize="20dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@id/iv_add_to_play"/>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/vertical_divider"
+                            android:background="@color/divider" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
                         android:id="@+id/group_order"
                         style="@style/GroupStarSecItem"
                         android:background="?android:attr/selectableItemBackground">
