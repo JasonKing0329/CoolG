@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".phone.record.RecordActivity">
+
+    <data>
+        <variable
+            name="model"
+            type="com.king.app.coolg.phone.record.RecordViewModel"/>
+    </data>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -99,7 +106,7 @@
                             android:scaleType="fitCenter"/>
                     </LinearLayout>
 
-                    <tcking.github.com.giraffeplayer2.VideoView
+                    <com.king.app.coolg.view.widget.video.CoolVideoView
                         android:id="@+id/video_view"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/gdb_star_header_height"
@@ -697,6 +704,17 @@
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>
+
+        <ImageView
+            android:id="@+id/iv_play_list"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:visibility="@{model.playListVisibility}"
+            app:layout_goneMarginBottom="20dp"
+            app:layout_goneMarginEnd="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_play_circle_filled_ff4081_36dp" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

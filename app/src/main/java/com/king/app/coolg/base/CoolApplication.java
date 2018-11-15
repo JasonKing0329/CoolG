@@ -25,6 +25,8 @@ import com.orhanobut.logger.Logger;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import tcking.github.com.giraffeplayer2.GiraffePlayer;
+
 /**
  * Desc:
  *
@@ -50,6 +52,8 @@ public class CoolApplication extends Application {
         // logger
         Logger.addLogAdapter(new AndroidLogAdapter());
 
+        GiraffePlayer.debug = true;
+        GiraffePlayer.nativeDebug = true;
     }
 
     /**

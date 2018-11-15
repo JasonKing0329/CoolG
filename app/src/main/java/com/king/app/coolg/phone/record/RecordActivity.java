@@ -2,7 +2,6 @@ package com.king.app.coolg.phone.record;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.widget.NestedScrollView;
@@ -28,12 +27,13 @@ import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.studio.StudioActivity;
-import com.king.app.coolg.utils.DebugLog;
+import com.king.app.coolg.phone.video.PlayListActivity;
 import com.king.app.coolg.utils.FormatUtil;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.coolg.view.widget.video.OnVideoListener;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordType1v1;
@@ -45,10 +45,8 @@ import java.util.Random;
 
 import tcking.github.com.giraffeplayer2.GiraffePlayer;
 import tcking.github.com.giraffeplayer2.Option;
-import tcking.github.com.giraffeplayer2.PlayerListener;
 import tcking.github.com.giraffeplayer2.PlayerManager;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkTimedText;
 
 /**
  * Desc:
@@ -77,8 +75,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
     @Override
     protected void initView() {
-        GiraffePlayer.debug = true;
-        GiraffePlayer.nativeDebug = true;
         //set global configuration: turn on multiple_requests
         PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
 
@@ -140,6 +136,14 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         });
 
         mBinding.groupAddToPlay.setOnClickListener(v -> mModel.addToPlay());
+
+        mBinding.ivPlayList.setOnClickListener(v -> goToPlayList());
+    }
+
+    private void goToPlayList() {
+        Router.build("PlayList")
+                .with(PlayListActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
+                .go(this);
     }
 
     private void floatOrEmbedVideo(int oldScrollY, int scrollY, int edge) {
@@ -405,34 +409,33 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                 .into(mBinding.videoView.getCoverView());
         mBinding.videoView.setVideoPath(url);
 
-        // 覆盖videoView里封装的播放按键的监听事件，处理恢复播放时间的功能
-        mBinding.videoView.findViewById(R.id.app_video_play).setOnClickListener(v -> {
-            GiraffePlayer player = mBinding.videoView.getPlayer();
-            if (player.isPlaying()) {
-                player.pause();
-            } else {
-                if (mModel.isInitVideo() && mModel.getRecordedDuration() > 0) {
-                    String msg = mModel.getRestorePlayMessage();
-                    showConfirmCancelMessage(msg
-                            , "Restore"
-                            , (dialog, which) -> {
-                                mModel.setSeekToLastTime(true);
-                                mModel.setInitVideo(false);
-                                player.start();
-                            }
-                            , "Restart"
-                            , (dialog, which) -> {
-                                mModel.setSeekToLastTime(false);
-                                mModel.setInitVideo(false);
-                                player.start();
-                            });
-                }
-                else {
-                    player.start();
-                }
+        mBinding.videoView.setOnVideoListener(new OnVideoListener() {
+            @Override
+            public int getStartSeek() {
+                return mModel.getVideoStartSeek();
+            }
+
+            @Override
+            public void updatePlayPosition(int currentPosition) {
+                mModel.updatePlayPosition(currentPosition);
+            }
+
+            @Override
+            public void onPlayComplete() {
+                mModel.resetPlayInDb();
+            }
+
+            @Override
+            public void onPause() {
+                mModel.updatePlayToDb();
+            }
+
+            @Override
+            public void onDestroy() {
+                mModel.updatePlayToDb();
             }
         });
-        mBinding.videoView.setPlayerListener(mModel.getVideoPlayerListener());
+        mBinding.videoView.prepare();
     }
 
     @Override

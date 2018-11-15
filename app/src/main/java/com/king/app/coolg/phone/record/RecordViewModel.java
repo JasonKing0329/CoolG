@@ -2,8 +2,10 @@ package com.king.app.coolg.phone.record;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
+import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
@@ -17,7 +19,6 @@ import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.utils.DebugLog;
-import com.king.app.coolg.utils.FormatUtil;
 import com.king.app.gdb.data.entity.FavorRecord;
 import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
@@ -30,9 +31,7 @@ import com.king.app.gdb.data.entity.RecordType3w;
 import com.king.app.gdb.data.param.DataConstants;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -42,9 +41,6 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import tcking.github.com.giraffeplayer2.GiraffePlayer;
-import tcking.github.com.giraffeplayer2.PlayerListener;
-import tv.danmaku.ijk.media.player.IjkTimedText;
 
 /**
  * Desc:
@@ -53,6 +49,8 @@ import tv.danmaku.ijk.media.player.IjkTimedText;
  * @date: 2018/8/8 13:24
  */
 public class RecordViewModel extends BaseViewModel {
+
+    public ObservableField<Integer> playListVisibility = new ObservableField<>(View.GONE);
 
     public MutableLiveData<Record> recordObserver = new MutableLiveData<>();
 
@@ -84,10 +82,6 @@ public class RecordViewModel extends BaseViewModel {
 
     private PlayDuration mPlayDuration;
 
-    private boolean isInitVideo = true;
-
-    private boolean isSeekToLastTime;
-
     public RecordViewModel(@NonNull Application application) {
         super(application);
         repository = new RecordRepository();
@@ -112,6 +106,34 @@ public class RecordViewModel extends BaseViewModel {
                         recordObserver.setValue(record);
 
                         checkPlayable();
+                        checkPlayList();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void checkPlayList() {
+        playRepository.hasPlayList(AppConstants.PLAY_ORDER_TEMP_ID)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(Boolean hasItems) {
+                        playListVisibility.set(hasItems ? View.VISIBLE:View.GONE);
                     }
 
                     @Override
@@ -128,7 +150,7 @@ public class RecordViewModel extends BaseViewModel {
 
     private void checkPlayable() {
         Observable<String> observable;
-        boolean isTest = true;
+        boolean isTest = false;
         if (isTest) {
             observable = Observable.create(e -> {
                 e.onNext("http://192.168.11.206:8080/videos/GOTS07E05.mkv");
@@ -177,23 +199,7 @@ public class RecordViewModel extends BaseViewModel {
                 });
     }
 
-    public boolean isInitVideo() {
-        return isInitVideo;
-    }
-
-    public void setInitVideo(boolean initVideo) {
-        isInitVideo = initVideo;
-    }
-
-    public boolean isSeekToLastTime() {
-        return isSeekToLastTime;
-    }
-
-    public void setSeekToLastTime(boolean seekToLastTime) {
-        isSeekToLastTime = seekToLastTime;
-    }
-
-    public int getRecordedDuration() {
+    public int getVideoStartSeek() {
         if (mPlayDuration != null) {
             return mPlayDuration.getDuration();
         }
@@ -249,6 +255,7 @@ public class RecordViewModel extends BaseViewModel {
 
                     @Override
                     public void onNext(PlayItem item) {
+                        checkPlayList();
                         messageObserver.setValue("Add successfully");
                     }
 
@@ -539,115 +546,4 @@ public class RecordViewModel extends BaseViewModel {
         }
     }
 
-    /**
-     * listener of video player
-     * @return
-     */
-    public PlayerListener getVideoPlayerListener() {
-        return new PlayerListener() {
-            @Override
-            public void onPrepared(GiraffePlayer giraffePlayer) {
-                DebugLog.e("current=" + giraffePlayer.getCurrentPosition() + ", total=" + giraffePlayer.getDuration());
-
-                // seekTo放在这里调比较准确，如果放在setVideoPath或者start()之后不准确
-                if (isSeekToLastTime()) {
-                    giraffePlayer.seekTo(getRecordedDuration());
-                }
-            }
-
-            @Override
-            public void onBufferingUpdate(GiraffePlayer giraffePlayer, int percent) {
-                DebugLog.e("percent " + percent);
-                // 按返回键退出页面时只能监听到onRelease，但是在onRelease里获取CurrentPosition已经是0了
-                // onBufferingUpdate是一直在执行的，所以在这里仅在内存中更新当前播放位置，再在onRelease时保存到数据库中updateToDb
-                // 但是，调试发现如果通过任务栏划掉程序，onRelease不会被执行，所以在activity的onDestroy里再执行一次updateToDb
-                // 三重保证最大限度优化记录播放的位置
-                updatePlayPosition(giraffePlayer.getCurrentPosition());
-            }
-
-            @Override
-            public boolean onInfo(GiraffePlayer giraffePlayer, int what, int extra) {
-                DebugLog.e("what " + what + ", extra " + extra);
-                return false;
-            }
-
-            @Override
-            public void onCompletion(GiraffePlayer giraffePlayer) {
-                DebugLog.e("current=" + giraffePlayer.getCurrentPosition() + ", total=" + giraffePlayer.getDuration());
-                // 播放完毕重置播放位置记录
-                resetPlayInDb();
-            }
-
-            @Override
-            public void onSeekComplete(GiraffePlayer giraffePlayer) {
-                DebugLog.e("");
-            }
-
-            @Override
-            public boolean onError(GiraffePlayer giraffePlayer, int what, int extra) {
-                DebugLog.e("what " + what + ", extra " + extra);
-                return false;
-            }
-
-            @Override
-            public void onPause(GiraffePlayer giraffePlayer) {
-                DebugLog.e("current=" + giraffePlayer.getCurrentPosition() + ", total=" + giraffePlayer.getDuration());
-                updatePlayPosition(giraffePlayer.getCurrentPosition());
-                updatePlayToDb();
-            }
-
-            @Override
-            public void onRelease(GiraffePlayer giraffePlayer) {
-                DebugLog.e("current=" + giraffePlayer.getCurrentPosition() + ", total=" + giraffePlayer.getDuration());
-                updatePlayToDb();
-            }
-
-            @Override
-            public void onStart(GiraffePlayer giraffePlayer) {
-                DebugLog.e("current=" + giraffePlayer.getCurrentPosition() + ", total=" + giraffePlayer.getDuration());
-            }
-
-            @Override
-            public void onTargetStateChange(int oldState, int newState) {
-                DebugLog.e("oldState " + oldState + ", newState " + newState);
-            }
-
-            @Override
-            public void onCurrentStateChange(int oldState, int newState) {
-                DebugLog.e("oldState " + oldState + ", newState " + newState);
-            }
-
-            @Override
-            public void onDisplayModelChange(int oldModel, int newModel) {
-                DebugLog.e("oldModel " + oldModel + ", newModel " + newModel);
-            }
-
-            @Override
-            public void onPreparing(GiraffePlayer giraffePlayer) {
-                DebugLog.e("");
-            }
-
-            @Override
-            public void onTimedText(GiraffePlayer giraffePlayer, IjkTimedText text) {
-                DebugLog.e("");
-            }
-
-            @Override
-            public void onLazyLoadProgress(GiraffePlayer giraffePlayer, int progress) {
-                DebugLog.e("progress " + progress);
-            }
-
-            @Override
-            public void onLazyLoadError(GiraffePlayer giraffePlayer, String message) {
-                DebugLog.e("message " + message);
-            }
-        };
-    }
-
-    public String getRestorePlayMessage() {
-//        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-//        String time = sdf.format(new Date(getRecordedDuration()));
-        String time = FormatUtil.formatTime(getRecordedDuration());
-        return "This video has been played to " + time + " last time. Restore or restart?";
-    }
 }

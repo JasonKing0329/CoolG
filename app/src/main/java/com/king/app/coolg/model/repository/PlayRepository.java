@@ -1,10 +1,11 @@
 package com.king.app.coolg.model.repository;
 
-import com.king.app.coolg.conf.AppConstants;
 import com.king.app.gdb.data.entity.PlayDuration;
 import com.king.app.gdb.data.entity.PlayDurationDao;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.PlayItemDao;
+
+import java.util.List;
 
 import io.reactivex.Observable;
 
@@ -40,16 +41,18 @@ public class PlayRepository extends BaseRepository {
     }
 
     public Observable<PlayDuration> getDuration(long recordId) {
-        return Observable.create(e -> {
-            PlayDuration duration = getDaoSession().getPlayDurationDao().queryBuilder()
-                    .where(PlayDurationDao.Properties.RecordId.eq(recordId))
-                    .build().unique();
-            if (duration == null) {
-                duration = new PlayDuration();
-                duration.setRecordId(recordId);
-            }
-            e.onNext(duration);
-        });
+        return Observable.create(e -> e.onNext(getDurationInstance(recordId)));
+    }
+
+    public PlayDuration getDurationInstance(long recordId) {
+        PlayDuration duration = getDaoSession().getPlayDurationDao().queryBuilder()
+                .where(PlayDurationDao.Properties.RecordId.eq(recordId))
+                .build().unique();
+        if (duration == null) {
+            duration = new PlayDuration();
+            duration.setRecordId(recordId);
+        }
+        return duration;
     }
 
     public Observable<Boolean> deleteDuration(long recordId) {
@@ -60,6 +63,19 @@ public class PlayRepository extends BaseRepository {
                     .executeDeleteWithoutDetachingEntities();
             getDaoSession().getPlayDurationDao().detachAll();
         });
+    }
+
+    public Observable<Boolean> hasPlayList(long orderId) {
+        return Observable.create(e -> {
+            long count = getDaoSession().getPlayItemDao().queryBuilder()
+                    .where(PlayItemDao.Properties.OrderId.eq(orderId))
+                    .buildCount().count();
+            e.onNext(count > 0);
+        });
+    }
+
+    public Observable<List<PlayItem>> getPlayItems(long orderId) {
+        return Observable.create(e -> e.onNext(getDaoSession().getPlayItemDao().queryBuilder().where(PlayItemDao.Properties.OrderId.eq(orderId)).list()));
     }
 
 }

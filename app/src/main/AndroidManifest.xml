@@ -53,6 +53,11 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"/>
+        <activity android:name=".phone.video.PlayListActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".phone.video.player.PlayerActivity"
+            android:screenOrientation="landscape"/>
         <activity android:name=".phone.star.list.StarListPhoneActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".phone.record.list.RecordPhoneListActivity"
