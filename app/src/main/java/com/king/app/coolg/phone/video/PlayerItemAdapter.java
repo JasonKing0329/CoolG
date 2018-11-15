@@ -15,6 +15,12 @@ import com.king.app.coolg.databinding.AdapterPlayItemBinding;
  */
 public class PlayerItemAdapter extends BaseBindingAdapter<AdapterPlayItemBinding, PlayItemViewBean> {
 
+    private OnPlayItemListener onPlayItemListener;
+
+    public void setOnPlayItemListener(OnPlayItemListener onPlayItemListener) {
+        this.onPlayItemListener = onPlayItemListener;
+    }
+
     @Override
     protected int getItemLayoutRes() {
         return R.layout.adapter_play_item;
@@ -33,6 +39,10 @@ public class PlayerItemAdapter extends BaseBindingAdapter<AdapterPlayItemBinding
                 .error(R.drawable.def_small)
                 .into(binding.videoView.getCoverView());
         binding.videoView.prepare();
+        binding.ivDelete.setOnClickListener(v -> onPlayItemListener.onDeleteItem(position, bean));
     }
 
+    public interface OnPlayItemListener {
+        void onDeleteItem(int position, PlayItemViewBean bean);
+    }
 }

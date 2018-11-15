@@ -95,6 +95,7 @@ public class PlayListActivity extends MvvmActivity<ActivityPlayListBinding, Play
     private void showItems(List<PlayItemViewBean> list) {
         if (adapter == null) {
             adapter = new PlayerItemAdapter();
+            adapter.setOnPlayItemListener((position, bean) -> mModel.deleteItem(position));
             adapter.setList(list);
             mBinding.rvVideos.setAdapter(adapter);
         }

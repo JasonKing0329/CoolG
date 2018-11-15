@@ -62,6 +62,7 @@ public class PlayRepository extends BaseRepository {
                     .buildDelete()
                     .executeDeleteWithoutDetachingEntities();
             getDaoSession().getPlayDurationDao().detachAll();
+            e.onNext(true);
         });
     }
 
@@ -76,6 +77,18 @@ public class PlayRepository extends BaseRepository {
 
     public Observable<List<PlayItem>> getPlayItems(long orderId) {
         return Observable.create(e -> e.onNext(getDaoSession().getPlayItemDao().queryBuilder().where(PlayItemDao.Properties.OrderId.eq(orderId)).list()));
+    }
+
+    public Observable<Boolean> deletePlayItem(long orderId, long recordId) {
+        return Observable.create(e -> {
+            getDaoSession().getPlayItemDao().queryBuilder()
+                    .where(PlayItemDao.Properties.OrderId.eq(orderId))
+                    .where(PlayItemDao.Properties.RecordId.eq(recordId))
+                    .buildDelete()
+                    .executeDeleteWithoutDetachingEntities();
+            getDaoSession().getPlayItemDao().detachAll();
+            e.onNext(true);
+        });
     }
 
 }

@@ -30,12 +30,15 @@ public class PlayListViewModel extends BaseViewModel {
 
     private PlayRepository repository;
 
+    private long mOrderId;
+
     public PlayListViewModel(@NonNull Application application) {
         super(application);
         repository = new PlayRepository();
     }
 
     public void loadPlayItems(long orderId) {
+        mOrderId = orderId;
         loadingObserver.setValue(true);
         repository.getPlayItems(orderId)
                 .flatMap(list -> toViewItems(list))
@@ -81,5 +84,37 @@ public class PlayListViewModel extends BaseViewModel {
             }
             observer.onNext(list);
         };
+    }
+
+    public void deleteItem(int position) {
+        loadingObserver.setValue(true);
+        repository.deletePlayItem(mOrderId, itemsObserver.getValue().get(position).getPlayItem().getRecordId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        loadingObserver.setValue(false);
+                        itemsObserver.getValue().remove(position);
+                        itemsObserver.setValue(itemsObserver.getValue());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }
