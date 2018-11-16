@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 46
-        versionName "3.8"
+        versionName "3.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -23,7 +23,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.releaseConfig
-            buildConfigField("boolean", "checkUser", "true")
+            buildConfigField("boolean", "checkUser", "false")
         }
         release {
             minifyEnabled false

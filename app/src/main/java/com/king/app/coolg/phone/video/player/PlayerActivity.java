@@ -27,6 +27,7 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
 
     public static final String EXTRA_ORDER_ID = "order_id";
     public static final String EXTRA_PLAY_RANDOM = "play_random";
+    public static final String EXTRA_PLAY_LAST = "play_last";
 
     private PlayListFragment ftList;
 
@@ -95,16 +96,28 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
         return getIntent().getLongExtra(EXTRA_ORDER_ID, -1);
     }
 
+    private boolean isRandom() {
+        return getIntent().getBooleanExtra(EXTRA_PLAY_RANDOM, false);
+    }
+
+    private boolean isPlayLast() {
+        return getIntent().getBooleanExtra(EXTRA_PLAY_LAST, false);
+    }
+
     @Override
     protected void initData() {
 
         mModel.closeListObserver.observe(this, close -> mBinding.ftList.startAnimation(listDisappear()));
         mModel.videoObserver.observe(this, bean -> playItem(bean));
 
-        mModel.loadPlayItems(getOrderId());
+        mModel.loadPlayItems(getOrderId(), isRandom(), isPlayLast());
     }
 
     private void playItem(PlayItemViewBean bean) {
+        if (bean.getPlayItem().getUrl() == null) {
+            showMessageLong("null url");
+            return;
+        }
         mBinding.videoView.getVideoInfo().setShowTopBar(true).setTitle(bean.getPlayItem().getRecord().getName());
         mBinding.videoView.setVideoPath(bean.getPlayItem().getUrl());
         mBinding.videoView.play();

@@ -48,12 +48,15 @@ public class PlayerViewModel extends BaseViewModel {
     
     private int mPlayIndex;
 
+    private boolean isRandomPlay;
+
     public PlayerViewModel(@NonNull Application application) {
         super(application);
         repository = new PlayRepository();
     }
 
-    public void loadPlayItems(long orderId) {
+    public void loadPlayItems(long orderId, boolean random, boolean playLast) {
+        isRandomPlay = random;
         loadingObserver.setValue(true);
         repository.getPlayItems(orderId)
                 .flatMap(list -> toViewItems(list))
@@ -70,7 +73,18 @@ public class PlayerViewModel extends BaseViewModel {
                         loadingObserver.setValue(false);
                         itemsObserver.setValue(playItems);
                         mPlayList = playItems;
-                        playNext();
+
+                        if (ListUtil.isEmpty(playItems)) {
+                            messageObserver.setValue("No video");
+                        }
+                        else {
+                            if (playLast) {
+                                playVideoAt(playItems.size() - 1);
+                            }
+                            else {
+                                playVideoAt(0);
+                            }
+                        }
                     }
 
                     @Override
@@ -92,16 +106,22 @@ public class PlayerViewModel extends BaseViewModel {
             messageObserver.setValue("No video");
             return;
         }
-        if (mPlayIndex + 1 >= mPlayList.size()) {
-            messageObserver.setValue("No more videos");
-            return;
-        }
-        
-        if (mPlayBean == null) {
-            mPlayIndex = 0;
+
+        if (isRandomPlay) {
+
         }
         else {
-            mPlayIndex ++;
+            if (mPlayIndex + 1 >= mPlayList.size()) {
+                messageObserver.setValue("No more videos");
+                return;
+            }
+
+            if (mPlayBean == null) {
+                mPlayIndex = 0;
+            }
+            else {
+                mPlayIndex ++;
+            }
         }
 
         playVideoAt(mPlayIndex);
@@ -125,6 +145,10 @@ public class PlayerViewModel extends BaseViewModel {
         }
 
         playVideoAt(mPlayIndex);
+    }
+
+    public int getPlayIndex() {
+        return mPlayIndex;
     }
 
     public void playVideoAt(int position) {

@@ -68,7 +68,7 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
         if (adapter == null) {
             adapter = new PlayListAdapter();
             adapter.setList(list);
-//            adapter.setPlayIndex(playerViewModel.getPlayIndex());
+            adapter.setPlayIndex(playerViewModel.getPlayIndex());
             adapter.setOnItemClickListener((view, position, data) -> playerViewModel.playVideoAt(position));
             mBinding.rvList.setAdapter(adapter);
         }

@@ -32,6 +32,7 @@ import com.king.app.coolg.pad.studio.StudioPadActivity;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.PassionPoint;
 import com.king.app.coolg.phone.record.RecordOrdersAdapter;
+import com.king.app.coolg.phone.video.player.PlayerActivity;
 import com.king.app.coolg.utils.ColorUtil;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ListUtil;
@@ -156,6 +157,17 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
                 }
             }
         });
+
+        mBinding.ivPlayVideo.setOnClickListener(v -> mModel.playVideo());
+        mModel.videoPlayOnReadyObserver.observe(this, result -> playList());
+    }
+
+    private void playList() {
+        Router.build("Player")
+                .with(PlayerActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
+                .with(PlayerActivity.EXTRA_PLAY_RANDOM, false)
+                .with(PlayerActivity.EXTRA_PLAY_LAST, true)
+                .go(this);
     }
 
     @Override
@@ -215,6 +227,8 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         });
         mModel.paletteObserver.observe(this, palette -> updatePalette(palette));
         mModel.viewBoundsObserver.observe(this, list -> updateViewBounds(list));
+
+        mModel.videoPathObserver.observe(this, url -> mBinding.ivPlayVideo.setVisibility(View.VISIBLE));
 
         mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
     }

@@ -215,4 +215,10 @@
     <dimen name="order_number_text">12dp</dimen>
     <dimen name="order_edit_size">30dp</dimen>
     <dimen name="order_edit_padding">5dp</dimen>
+    <dimen name="video_player_close_size">36dp</dimen>
+    <dimen name="video_player_close_padding">6dp</dimen>
+    <dimen name="video_player_list_thumb_width">120dp</dimen>
+    <dimen name="video_player_list_thumb_height">68dp</dimen>
+    <dimen name="video_player_list_width">300dp</dimen>
+    <dimen name="video_player_list_title_size">14dp</dimen>
 </resources>

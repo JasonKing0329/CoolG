@@ -6,8 +6,8 @@
         android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/iv_thumb"
-            android:layout_width="120dp"
-            android:layout_height="68dp"
+            android:layout_width="@dimen/video_player_list_thumb_width"
+            android:layout_height="@dimen/video_player_list_thumb_height"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"

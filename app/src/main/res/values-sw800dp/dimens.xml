@@ -187,4 +187,10 @@
     <dimen name="order_number_text">18dp</dimen>
     <dimen name="order_edit_size">50dp</dimen>
     <dimen name="order_edit_padding">10dp</dimen>
+    <dimen name="video_player_close_size">50dp</dimen>
+    <dimen name="video_player_close_padding">10dp</dimen>
+    <dimen name="video_player_list_thumb_width">200dp</dimen>
+    <dimen name="video_player_list_thumb_height">115dp</dimen>
+    <dimen name="video_player_list_width">500dp</dimen>
+    <dimen name="video_player_list_title_size">20dp</dimen>
 </resources>
