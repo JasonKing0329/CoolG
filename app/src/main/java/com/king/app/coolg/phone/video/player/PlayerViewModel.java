@@ -34,6 +34,10 @@ public class PlayerViewModel extends BaseViewModel {
 
     public MutableLiveData<PlayItemViewBean> videoObserver = new MutableLiveData<>();
 
+    public MutableLiveData<Boolean> closeListObserver = new MutableLiveData<>();
+
+    public MutableLiveData<Integer> playIndexObserver = new MutableLiveData<>();
+
     private PlayRepository repository;
     
     private List<PlayItemViewBean> mPlayList;
@@ -44,12 +48,15 @@ public class PlayerViewModel extends BaseViewModel {
     
     private int mPlayIndex;
 
+    private boolean isRandomPlay;
+
     public PlayerViewModel(@NonNull Application application) {
         super(application);
         repository = new PlayRepository();
     }
 
-    public void loadPlayItems(long orderId) {
+    public void loadPlayItems(long orderId, boolean random, boolean playLast) {
+        isRandomPlay = random;
         loadingObserver.setValue(true);
         repository.getPlayItems(orderId)
                 .flatMap(list -> toViewItems(list))
@@ -66,7 +73,18 @@ public class PlayerViewModel extends BaseViewModel {
                         loadingObserver.setValue(false);
                         itemsObserver.setValue(playItems);
                         mPlayList = playItems;
-                        playNext();
+
+                        if (ListUtil.isEmpty(playItems)) {
+                            messageObserver.setValue("No video");
+                        }
+                        else {
+                            if (playLast) {
+                                playVideoAt(playItems.size() - 1);
+                            }
+                            else {
+                                playVideoAt(0);
+                            }
+                        }
                     }
 
                     @Override
@@ -88,21 +106,58 @@ public class PlayerViewModel extends BaseViewModel {
             messageObserver.setValue("No video");
             return;
         }
-        if (mPlayIndex + 1 >= mPlayList.size()) {
-            messageObserver.setValue("No more videos");
+
+        if (isRandomPlay) {
+
+        }
+        else {
+            if (mPlayIndex + 1 >= mPlayList.size()) {
+                messageObserver.setValue("No more videos");
+                return;
+            }
+
+            if (mPlayBean == null) {
+                mPlayIndex = 0;
+            }
+            else {
+                mPlayIndex ++;
+            }
+        }
+
+        playVideoAt(mPlayIndex);
+    }
+
+    public void playPrevious() {
+        if (ListUtil.isEmpty(mPlayList)) {
+            messageObserver.setValue("No video");
             return;
         }
-        
+
         if (mPlayBean == null) {
             mPlayIndex = 0;
         }
         else {
-            mPlayIndex ++;
+            mPlayIndex --;
         }
+        if (mPlayIndex < 0) {
+            messageObserver.setValue("No more videos");
+            return;
+        }
+
+        playVideoAt(mPlayIndex);
+    }
+
+    public int getPlayIndex() {
+        return mPlayIndex;
+    }
+
+    public void playVideoAt(int position) {
+        mPlayIndex = position;
         mPlayBean = mPlayList.get(mPlayIndex);
         loadPlayDuration(mPlayBean);
         DebugLog.e("play " + mPlayBean.getPlayItem().getRecord().getName());
         videoObserver.setValue(mPlayBean);
+        playIndexObserver.setValue(mPlayIndex);
     }
 
     private ObservableSource<List<PlayItemViewBean>> toViewItems(List<PlayItem> items) {
@@ -175,5 +230,4 @@ public class PlayerViewModel extends BaseViewModel {
             getDaoSession().getPlayDurationDao().detachAll();
         }
     }
-
 }

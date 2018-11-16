@@ -233,5 +233,17 @@
                 android:layout_marginLeft="10dp"
                 tools:listitem="@layout/adapter_star_orders"/>
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_play_video"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_play_large"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/group_bottom"/>
     </android.support.constraint.ConstraintLayout>
 </layout>

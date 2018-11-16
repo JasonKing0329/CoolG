@@ -70,7 +70,7 @@ public class RecordViewModel extends BaseViewModel {
 
     private RecordRepository repository;
     private OrderRepository orderRepository;
-    private PlayRepository playRepository;
+    protected PlayRepository playRepository;
 
     protected Record mRecord;
 
@@ -78,7 +78,7 @@ public class RecordViewModel extends BaseViewModel {
 
     private String mVideoCover;
 
-    private String mPlayUrl;
+    protected String mPlayUrl;
 
     private PlayDuration mPlayDuration;
 
@@ -148,9 +148,9 @@ public class RecordViewModel extends BaseViewModel {
                 });
     }
 
-    private void checkPlayable() {
+    protected void checkPlayable() {
         Observable<String> observable;
-        boolean isTest = false;
+        boolean isTest = true;
         if (isTest) {
             observable = Observable.create(e -> {
                 e.onNext("http://192.168.11.206:8080/videos/GOTS07E05.mkv");

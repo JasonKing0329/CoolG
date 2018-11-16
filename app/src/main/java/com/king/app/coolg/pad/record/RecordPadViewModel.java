@@ -6,12 +6,15 @@ import android.support.annotation.NonNull;
 import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.VideoModel;
 import com.king.app.coolg.model.palette.ViewColorBound;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.phone.record.PassionPoint;
 import com.king.app.coolg.phone.record.RecordViewModel;
+import com.king.app.gdb.data.entity.PlayItem;
+import com.king.app.gdb.data.entity.PlayItemDao;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordType1v1;
@@ -54,6 +57,7 @@ public class RecordPadViewModel extends RecordViewModel {
     public MutableLiveData<List<PassionPoint>> passionsObserver = new MutableLiveData<>();
     public MutableLiveData<Palette> paletteObserver = new MutableLiveData<>();
     public MutableLiveData<List<ViewColorBound>> viewBoundsObserver = new MutableLiveData<>();
+    public MutableLiveData<Boolean> videoPlayOnReadyObserver = new MutableLiveData<>();
 
     private Map<Integer, Palette> paletteMap;
     private Map<Integer, List<ViewColorBound>> viewBoundsMap;
@@ -65,6 +69,7 @@ public class RecordPadViewModel extends RecordViewModel {
         viewBoundsMap = new HashMap<>();
     }
 
+    @Override
     public void loadRecord(long recordId) {
         repository.getRecord(recordId)
                 .flatMap(record -> {
@@ -93,6 +98,8 @@ public class RecordPadViewModel extends RecordViewModel {
                     @Override
                     public void onNext(List<String> strings) {
                         imagesObserver.setValue(strings);
+
+                        checkPlayable();
                     }
 
                     @Override
@@ -244,5 +251,55 @@ public class RecordPadViewModel extends RecordViewModel {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public void playVideo() {
+        // 将视频url添加到临时播放列表的末尾
+        insertOrSwitchToRear(AppConstants.PLAY_ORDER_TEMP_ID, mRecord.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<PlayItem>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(PlayItem item) {
+                        videoPlayOnReadyObserver.setValue(true);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private Observable<PlayItem> insertOrSwitchToRear(long orderId, long recordId) {
+        return Observable.create(e -> {
+            PlayItemDao dao = getDaoSession().getPlayItemDao();
+            // 已存在的删除掉重新加入（加载视频列表是按照添加顺序加入的）
+            if (playRepository.isItemExist(orderId, recordId)) {
+                dao.queryBuilder()
+                        .where(PlayItemDao.Properties.OrderId.eq(orderId))
+                        .where(PlayItemDao.Properties.RecordId.eq(recordId))
+                        .buildDelete()
+                        .executeDeleteWithoutDetachingEntities();
+                dao.detachAll();
+            }
+            PlayItem item = new PlayItem();
+            item.setUrl(mPlayUrl);
+            item.setOrderId(orderId);
+            item.setRecordId(recordId);
+            dao.insert(item);
+            dao.detachAll();
+            e.onNext(item);
+        });
     }
 }
