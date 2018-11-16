@@ -5,6 +5,8 @@ import com.king.app.gdb.data.entity.PlayDurationDao;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.PlayItemDao;
 
+import org.greenrobot.greendao.DaoException;
+
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -45,9 +47,20 @@ public class PlayRepository extends BaseRepository {
     }
 
     public PlayDuration getDurationInstance(long recordId) {
-        PlayDuration duration = getDaoSession().getPlayDurationDao().queryBuilder()
-                .where(PlayDurationDao.Properties.RecordId.eq(recordId))
-                .build().unique();
+
+        PlayDuration duration = null;
+        try {
+            duration = getDaoSession().getPlayDurationDao().queryBuilder()
+                    .where(PlayDurationDao.Properties.RecordId.eq(recordId))
+                    .build().unique();
+        } catch (DaoException e) {
+            e.printStackTrace();
+            getDaoSession().getPlayDurationDao().queryBuilder()
+                    .where(PlayDurationDao.Properties.RecordId.eq(recordId))
+                    .buildDelete()
+                    .executeDeleteWithoutDetachingEntities();
+            getDaoSession().getPlayDurationDao().detachAll();
+        }
         if (duration == null) {
             duration = new PlayDuration();
             duration.setRecordId(recordId);
