@@ -106,7 +106,7 @@
                             android:scaleType="fitCenter"/>
                     </LinearLayout>
 
-                    <com.king.app.coolg.view.widget.video.CoolVideoView
+                    <com.king.app.coolg.view.widget.video.EmbedVideoView
                         android:id="@+id/video_view"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/gdb_star_header_height"

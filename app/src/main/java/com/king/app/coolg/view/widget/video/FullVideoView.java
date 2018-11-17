@@ -7,15 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.king.app.coolg.R;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.FormatUtil;
-import com.king.app.coolg.utils.ScreenUtils;
+
+import java.lang.reflect.Field;
 
 import tcking.github.com.giraffeplayer2.GiraffePlayer;
 import tcking.github.com.giraffeplayer2.PlayerListener;
@@ -23,12 +20,23 @@ import tcking.github.com.giraffeplayer2.VideoView;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 
 /**
- * Desc: 扩展GiraffePlayer开源框架的VideoView，扩展各控制按钮的事件
+ * Desc: 扩展GiraffePlayer开源框架的VideoView
+ * 支持记录与恢复播放时间
+ * 各种控制UI元素更换为自己的布局，加入列表、前/下一个、菜单按钮
+ * 
+ * 与另一个扩展的EmbedVideoView的区别是：
+ * EmbedVideoView沿用了VideoView的全部UI元素，只扩展VideoView本身
+ * 所以EmbedVideoView作为嵌入到各种页面中的视频，可以切换横竖屏以及浮窗
  *
+ * FullVideoView采用反射修改了VideoView内部的MediaController实例
+ * 利用派生的GMediaController来重新布局各种控制类型UI元素（xml与java文件大体上照搬原DefaultMediaController与其引用的.xml，但扩展自己的UI需求）
+ * 所以适合作为一个完整的横屏视频使用，支持播放列表
  * @author：Jing Yang
  * @date: 2018/11/15 15:22
  */
-public class CoolVideoView extends VideoView implements View.OnClickListener {
+public class FullVideoView extends VideoView {
+
+    private FullMediaController mediaController;
 
     private OnVideoListener onVideoListener;
 
@@ -38,17 +46,35 @@ public class CoolVideoView extends VideoView implements View.OnClickListener {
 
     private boolean isSeekToAfterPrepared;
 
-    private boolean showRichTools;
-    
-    private boolean showFullScreen = true;
-
-    public CoolVideoView(@NonNull Context context) {
+    public FullVideoView(@NonNull Context context) {
         super(context);
-        expandParent();
+        initThis();
     }
 
-    public CoolVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public FullVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        initThis();
+    }
+
+    public FullVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        initThis();
+    }
+
+    private void initThis() {
+        mediaController = new FullMediaController(getContext());
+        try {
+            Field field = VideoView.class.getDeclaredField("mediaController");
+            field.setAccessible(true);
+            field.set(this, mediaController);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        getContainer().removeAllViews();
+        mediaController.bind(this);
+
         expandParent();
     }
 
@@ -58,14 +84,7 @@ public class CoolVideoView extends VideoView implements View.OnClickListener {
 
     public void setOnVideoListListener(OnVideoListListener onVideoListListener) {
         this.onVideoListListener = onVideoListListener;
-    }
-
-    public void setShowRichTools(boolean showRichTools) {
-        this.showRichTools = showRichTools;
-    }
-
-    public void setShowFullScreen(boolean showFullScreen) {
-        this.showFullScreen = showFullScreen;
+        mediaController.setOnVideoListListener(onVideoListListener);
     }
 
     private void expandParent() {
@@ -127,12 +146,6 @@ public class CoolVideoView extends VideoView implements View.OnClickListener {
     }
 
     public void prepare() {
-        if (showRichTools) {
-            showRichToolIcons();
-        }
-        if (!showFullScreen) {
-            hideFullScreen();
-        }
         setPlayerListener(new PlayerListener() {
             @Override
             public void onPrepared(GiraffePlayer giraffePlayer) {
@@ -241,73 +254,5 @@ public class CoolVideoView extends VideoView implements View.OnClickListener {
                 DebugLog.e("message " + message);
             }
         });
-    }
-
-    private void hideFullScreen() {
-
-        // 想不通为啥下面的代码不起作用
-        // 全屏按钮左侧的设置按钮修改为alignParentRight
-//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) findViewById(R.id.app_video_clarity).getLayoutParams();
-//        params.removeRule(RelativeLayout.LEFT_OF);
-//        params.removeRule(RelativeLayout.START_OF);
-//        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//        params.addRule(RelativeLayout.ALIGN_PARENT_END);
-//        findViewById(R.id.app_video_clarity).setLayoutParams(params);
-
-        findViewById(R.id.app_video_fullscreen).setVisibility(INVISIBLE);
-    }
-
-    private void showRichToolIcons() {
-        RelativeLayout bottomBar = findViewById(R.id.app_video_bottom_box);
-
-        LinearLayout tools = new LinearLayout(getContext());
-        tools.setId(R.id.cvv_group_rich_tools);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        bottomBar.addView(tools, params);
-        params.addRule(RelativeLayout.CENTER_VERTICAL);
-
-        // insert between end time and setting icon
-        params.addRule(RelativeLayout.LEFT_OF, R.id.app_video_clarity);
-        params.addRule(RelativeLayout.START_OF, R.id.app_video_clarity);
-        params = (RelativeLayout.LayoutParams) findViewById(R.id.app_video_endTime).getLayoutParams();
-        params.removeRule(RelativeLayout.LEFT_OF);
-        params.removeRule(RelativeLayout.START_OF);
-        params.addRule(RelativeLayout.LEFT_OF, R.id.cvv_group_rich_tools);
-        params.addRule(RelativeLayout.START_OF, R.id.cvv_group_rich_tools);
-
-        // previous
-        addIcon(R.drawable.ic_skip_previous_white_24dp, R.id.cvv_iv_previous, tools);
-        addIcon(R.drawable.ic_skip_next_white_24dp, R.id.cvv_iv_next, tools);
-        addIcon(R.drawable.ic_playlist_play_white_24dp, R.id.cvv_iv_list, tools);
-    }
-
-    private void addIcon(int srcId, int id, LinearLayout container) {
-        ImageView view = new ImageView(getContext());
-        view.setImageResource(srcId);
-        view.setPadding(ScreenUtils.dp2px(8), 0, 0 , 0);
-        view.setId(id);
-        view.setOnClickListener(this);
-        container.addView(view, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.cvv_iv_next:
-                if (onVideoListListener != null) {
-                    onVideoListListener.playNext();
-                }
-                break;
-            case R.id.cvv_iv_previous:
-                if (onVideoListListener != null) {
-                    onVideoListListener.playPrevious();
-                }
-                break;
-            case R.id.cvv_iv_list:
-                if (onVideoListListener != null) {
-                    onVideoListListener.showPlayList();
-                }
-                break;
-        }
     }
 }

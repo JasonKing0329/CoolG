@@ -1,6 +1,7 @@
 package com.king.app.coolg.phone.video.player;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Color;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -82,8 +83,6 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
                 showList();
             }
         });
-        mBinding.videoView.setShowRichTools(true);
-        mBinding.videoView.setShowFullScreen(false);
         mBinding.videoView.prepare();
     }
 
@@ -109,6 +108,7 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
 
         mModel.closeListObserver.observe(this, close -> mBinding.ftList.startAnimation(listDisappear()));
         mModel.videoObserver.observe(this, bean -> playItem(bean));
+        mModel.stopVideoObserver.observe(this, stop -> mBinding.videoView.getPlayer().stop());
 
         mModel.loadPlayItems(getOrderId(), isRandom(), isPlayLast());
     }
@@ -118,7 +118,7 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
             showMessageLong("null url");
             return;
         }
-        mBinding.videoView.getVideoInfo().setShowTopBar(true).setTitle(bean.getPlayItem().getRecord().getName());
+        mBinding.videoView.getVideoInfo().setBgColor(Color.BLACK).setShowTopBar(true).setTitle(bean.getPlayItem().getRecord().getName());
         mBinding.videoView.setVideoPath(bean.getPlayItem().getUrl());
         mBinding.videoView.play();
     }

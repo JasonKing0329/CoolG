@@ -221,4 +221,11 @@
     <dimen name="video_player_list_thumb_height">68dp</dimen>
     <dimen name="video_player_list_width">300dp</dimen>
     <dimen name="video_player_list_title_size">14dp</dimen>
+
+    <dimen name="video_player_icon_size">50dp</dimen>
+    <dimen name="video_player_icon_padding">10dp</dimen>
+    <dimen name="video_player_time_text">12dp</dimen>
+    <dimen name="video_player_side_margin">10dp</dimen>
+    <dimen name="video_player_icon_margin">10dp</dimen>
+    <dimen name="video_player_title_text">12dp</dimen>
 </resources>

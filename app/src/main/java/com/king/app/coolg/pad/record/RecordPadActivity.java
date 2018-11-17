@@ -228,7 +228,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         mModel.paletteObserver.observe(this, palette -> updatePalette(palette));
         mModel.viewBoundsObserver.observe(this, list -> updateViewBounds(list));
 
-        mModel.videoPathObserver.observe(this, url -> mBinding.ivPlayVideo.setVisibility(View.VISIBLE));
+        mModel.videoUrlObserver.observe(this, url -> mBinding.ivPlayVideo.setVisibility(View.VISIBLE));
 
         mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
     }

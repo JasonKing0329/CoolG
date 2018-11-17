@@ -18,6 +18,12 @@ public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBindi
 
     private int mPlayIndex;
 
+    private OnDeleteListener onDeleteListener;
+
+    public void setOnDeleteListener(OnDeleteListener onDeleteListener) {
+        this.onDeleteListener = onDeleteListener;
+    }
+
     @Override
     protected int getItemLayoutRes() {
         return R.layout.adapter_playlist_item;
@@ -45,5 +51,10 @@ public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBindi
         else {
             binding.getRoot().setBackgroundColor(Color.TRANSPARENT);
         }
+        binding.ivDelete.setOnClickListener(v -> onDeleteListener.onDelete(position, bean));
+    }
+
+    public interface OnDeleteListener {
+        void onDelete(int position, PlayItemViewBean bean);
     }
 }

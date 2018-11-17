@@ -36,6 +36,8 @@
             android:name="com.sec.android.support.multiwindow"
             android:value="true" />
 
+        <activity android:name=".pad.TestActivity">
+        </activity>
         <activity android:name=".phone.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,60 +45,77 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".phone.home.HomeActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".phone.settings.SettingsActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".phone.settings.ManageActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".phone.record.RecordActivity"
+        <activity
+            android:name=".phone.home.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".phone.settings.SettingsActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".phone.settings.ManageActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".phone.record.RecordActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
-        <activity android:name=".phone.video.PlayListActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".phone.video.PlayListActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".phone.video.player.PlayerActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".phone.star.list.StarListPhoneActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".phone.record.list.RecordPhoneListActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".phone.star.StarActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
-        <activity android:name=".phone.record.scene.SceneActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".phone.order.OrderPhoneActivity"/>
-        <activity android:name=".phone.studio.StudioActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".phone.video.player.PlayerActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".phone.star.list.StarListPhoneActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".phone.record.list.RecordPhoneListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".phone.star.StarActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".phone.record.scene.SceneActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".phone.order.OrderPhoneActivity" />
+        <activity
+            android:name=".phone.studio.StudioActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".pad.home.HomePadActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".pad.record.list.RecordListPadActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".pad.star.list.StarListPadActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".pad.star.StarPadActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".pad.record.RecordPadActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".pad.studio.StudioPadActivity"
+            android:screenOrientation="landscape" />
 
-        <activity android:name=".pad.home.HomePadActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".pad.record.list.RecordListPadActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".pad.star.list.StarListPadActivity"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".pad.star.StarPadActivity"
-            android:screenOrientation="landscape"
-            android:launchMode="singleTask"/>
-        <activity android:name=".pad.record.RecordPadActivity"
-            android:screenOrientation="landscape"
-            android:launchMode="singleTask"/>
-        <activity android:name=".pad.studio.StudioPadActivity"
-            android:screenOrientation="landscape"/>
-
-        <service android:name=".phone.login.BackgroundService"/>
+        <service android:name=".phone.login.BackgroundService" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.king.app.coolg.fileProvider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
     </application>
 
 </manifest>

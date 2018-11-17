@@ -150,7 +150,7 @@ public class RecordViewModel extends BaseViewModel {
 
     protected void checkPlayable() {
         Observable<String> observable;
-        boolean isTest = true;
+        boolean isTest = false;
         if (isTest) {
             observable = Observable.create(e -> {
                 e.onNext("http://192.168.11.206:8080/videos/GOTS07E05.mkv");

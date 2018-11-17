@@ -36,6 +36,8 @@ public class PlayerViewModel extends BaseViewModel {
 
     public MutableLiveData<Boolean> closeListObserver = new MutableLiveData<>();
 
+    public MutableLiveData<Boolean> stopVideoObserver = new MutableLiveData<>();
+
     public MutableLiveData<Integer> playIndexObserver = new MutableLiveData<>();
 
     private PlayRepository repository;
@@ -50,12 +52,15 @@ public class PlayerViewModel extends BaseViewModel {
 
     private boolean isRandomPlay;
 
+    private long mOrderId;
+
     public PlayerViewModel(@NonNull Application application) {
         super(application);
         repository = new PlayRepository();
     }
 
     public void loadPlayItems(long orderId, boolean random, boolean playLast) {
+        mOrderId = orderId;
         isRandomPlay = random;
         loadingObserver.setValue(true);
         repository.getPlayItems(orderId)
@@ -228,6 +233,19 @@ public class PlayerViewModel extends BaseViewModel {
             DebugLog.e("duration=" + mPlayDuration.getDuration());
             getDaoSession().getPlayDurationDao().insertOrReplace(mPlayDuration);
             getDaoSession().getPlayDurationDao().detachAll();
+        }
+    }
+
+    public void deletePlayItem(int position, PlayItemViewBean bean) {
+        getDaoSession().getPlayItemDao().delete(bean.getPlayItem());
+        getDaoSession().getPlayItemDao().detachAll();
+        mPlayList.remove(position);
+        if (position == mPlayIndex) {
+            stopVideoObserver.setValue(true);
+        }
+        mPlayIndex --;
+        if (mPlayIndex >= 0) {
+            playIndexObserver.setValue(mPlayIndex);
         }
     }
 }
