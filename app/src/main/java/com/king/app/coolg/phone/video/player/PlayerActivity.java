@@ -75,6 +75,7 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
 
             @Override
             public void playPrevious() {
+                mModel.updatePlayToDb();
                 mModel.playPrevious();
             }
 

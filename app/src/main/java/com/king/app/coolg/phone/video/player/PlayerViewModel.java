@@ -15,6 +15,7 @@ import com.king.app.gdb.data.entity.PlayItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
@@ -43,7 +44,7 @@ public class PlayerViewModel extends BaseViewModel {
     private PlayRepository repository;
     
     private List<PlayItemViewBean> mPlayList;
-    
+
     private PlayItemViewBean mPlayBean;
     
     private PlayDuration mPlayDuration;
@@ -54,9 +55,15 @@ public class PlayerViewModel extends BaseViewModel {
 
     private long mOrderId;
 
+    private RandomPlay randomPlay;
+
+    private Random random;
+
     public PlayerViewModel(@NonNull Application application) {
         super(application);
         repository = new PlayRepository();
+        randomPlay = new RandomPlay();
+        random = new Random();
     }
 
     public void loadPlayItems(long orderId, boolean random, boolean playLast) {
@@ -79,14 +86,16 @@ public class PlayerViewModel extends BaseViewModel {
                         itemsObserver.setValue(playItems);
                         mPlayList = playItems;
 
-                        if (ListUtil.isEmpty(playItems)) {
+                        if (ListUtil.isEmpty(mPlayList)) {
                             messageObserver.setValue("No video");
                         }
                         else {
                             if (playLast) {
+                                randomPlay.current = playItems.size() - 1;
                                 playVideoAt(playItems.size() - 1);
                             }
                             else {
+                                randomPlay.current = 0;
                                 playVideoAt(0);
                             }
                         }
@@ -106,6 +115,28 @@ public class PlayerViewModel extends BaseViewModel {
                 });
     }
 
+    /**
+     * 随机规则
+     * list中随机完一轮才随机新的序列号
+     * 保存上一个及下一个随机的序号
+     * next-->
+     *     >-1，last = current, current = next, next = -1
+     *     -1--> last = current, next = -1
+     *          remains > 0, current = new random
+     *          remains = 0, 新一轮随机，remains充满，current = new random
+     * last-->
+     *     >-1, next = current, current = last, last = -1
+     *     -1--> next = current, last = -1
+     *          remains > 0, current = new random
+     *          remains = 0, 新一轮随机，remains充满，current = new random
+     */
+    private class RandomPlay {
+        int current;
+        int last = -1;
+        int next = -1;
+        List<Integer> remains;
+    }
+
     public void playNext() {
         if (ListUtil.isEmpty(mPlayList)) {
             messageObserver.setValue("No video");
@@ -113,7 +144,15 @@ public class PlayerViewModel extends BaseViewModel {
         }
 
         if (isRandomPlay) {
-
+            randomPlay.last = randomPlay.current;
+            if (randomPlay.next > -1) {
+                randomPlay.current = randomPlay.next;
+            }
+            else {
+                randomPlay.current = getRandomPosition();
+            }
+            mPlayIndex = randomPlay.current;
+            randomPlay.next = -1;
         }
         else {
             if (mPlayIndex + 1 >= mPlayList.size()) {
@@ -132,21 +171,52 @@ public class PlayerViewModel extends BaseViewModel {
         playVideoAt(mPlayIndex);
     }
 
+    private int getRandomPosition() {
+        if (ListUtil.isEmpty(randomPlay.remains)) {
+            randomPlay.remains = new ArrayList<>();
+            for (int i = 0; i < mPlayList.size(); i ++) {
+                randomPlay.remains.add(i);
+            }
+        }
+        if (randomPlay.remains.size() == 1) {
+            return randomPlay.remains.get(0);
+        }
+        else {
+            int index = Math.abs(random.nextInt()) % randomPlay.remains.size();
+            int position = randomPlay.remains.get(index);
+            randomPlay.remains.remove(index);
+            return position;
+        }
+    }
+
     public void playPrevious() {
         if (ListUtil.isEmpty(mPlayList)) {
             messageObserver.setValue("No video");
             return;
         }
 
-        if (mPlayBean == null) {
-            mPlayIndex = 0;
+        if (isRandomPlay) {
+            randomPlay.next = randomPlay.current;
+            if (randomPlay.last > -1) {
+                randomPlay.current = randomPlay.last;
+            }
+            else {
+                randomPlay.current = getRandomPosition();
+            }
+            mPlayIndex = randomPlay.current;
+            randomPlay.last = -1;
         }
         else {
-            mPlayIndex --;
-        }
-        if (mPlayIndex < 0) {
-            messageObserver.setValue("No more videos");
-            return;
+            if (mPlayBean == null) {
+                mPlayIndex = 0;
+            }
+            else {
+                mPlayIndex --;
+            }
+            if (mPlayIndex < 0) {
+                messageObserver.setValue("No more videos");
+                return;
+            }
         }
 
         playVideoAt(mPlayIndex);
