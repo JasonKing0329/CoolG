@@ -65,15 +65,15 @@ public class PreviewAdapter extends BaseBindingAdapter<AdapterDownloadPreviewIte
     }
 
     public List<DownloadItem> getCheckedItems() {
-        List<DownloadItem> list = new ArrayList<>();
+        List<DownloadItem> result = new ArrayList<>();
         if (list != null) {
             for (int i = 0; i < list.size(); i ++) {
                 if (checkMap.get(i)) {
-                    list.add(list.get(i));
+                    result.add(list.get(i));
                 }
             }
         }
-        return list;
+        return result;
     }
 
     public void selectAll() {

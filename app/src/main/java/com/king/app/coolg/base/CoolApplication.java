@@ -110,23 +110,24 @@ public class CoolApplication extends Application {
                     FavorRecordOrderDao.createTable(db, true);
                     FavorStarDao.createTable(db, true);
                     FavorStarOrderDao.createTable(db, true);
-                    StarRatingDao.createTable(db, true);
-                    break;
                 case 2:
                     StarRatingDao.createTable(db, true);
                 case 3:
-                    db.execSQL("ALTER TABLE " + FavorRecordOrderDao.TABLENAME + " ADD COLUMN "
-                        + FavorRecordOrderDao.Properties.ParentId.columnName + " INTEGER DEFAULT 0");
-                    db.execSQL("ALTER TABLE " + FavorRecordDao.TABLENAME + " ADD COLUMN "
-                            + FavorRecordOrderDao.Properties.CreateTime.columnName + " INTEGER DEFAULT 0");
-                    db.execSQL("ALTER TABLE " + FavorRecordDao.TABLENAME + " ADD COLUMN "
-                            + FavorRecordOrderDao.Properties.UpdateTime.columnName + " INTEGER DEFAULT 0");
-                    db.execSQL("ALTER TABLE " + FavorStarOrderDao.TABLENAME + " ADD COLUMN "
-                            + FavorStarOrderDao.Properties.ParentId.columnName + " INTEGER DEFAULT 0");
-                    db.execSQL("ALTER TABLE " + FavorStarOrderDao.TABLENAME + " ADD COLUMN "
-                            + FavorStarOrderDao.Properties.CreateTime.columnName + " INTEGER DEFAULT 0");
-                    db.execSQL("ALTER TABLE " + FavorStarOrderDao.TABLENAME + " ADD COLUMN "
-                            + FavorStarOrderDao.Properties.UpdateTime.columnName + " INTEGER DEFAULT 0");
+                    // 如果旧版本是1，已经执行了最新的createTable结构，只有是2和3的时候还是老结构需要改字段
+                    if (oldVersion != 1) {
+                        db.execSQL("ALTER TABLE " + FavorRecordOrderDao.TABLENAME + " ADD COLUMN "
+                                + FavorRecordOrderDao.Properties.ParentId.columnName + " INTEGER DEFAULT 0");
+                        db.execSQL("ALTER TABLE " + FavorRecordDao.TABLENAME + " ADD COLUMN "
+                                + FavorRecordOrderDao.Properties.CreateTime.columnName + " INTEGER DEFAULT 0");
+                        db.execSQL("ALTER TABLE " + FavorRecordDao.TABLENAME + " ADD COLUMN "
+                                + FavorRecordOrderDao.Properties.UpdateTime.columnName + " INTEGER DEFAULT 0");
+                        db.execSQL("ALTER TABLE " + FavorStarOrderDao.TABLENAME + " ADD COLUMN "
+                                + FavorStarOrderDao.Properties.ParentId.columnName + " INTEGER DEFAULT 0");
+                        db.execSQL("ALTER TABLE " + FavorStarOrderDao.TABLENAME + " ADD COLUMN "
+                                + FavorStarOrderDao.Properties.CreateTime.columnName + " INTEGER DEFAULT 0");
+                        db.execSQL("ALTER TABLE " + FavorStarOrderDao.TABLENAME + " ADD COLUMN "
+                                + FavorStarOrderDao.Properties.UpdateTime.columnName + " INTEGER DEFAULT 0");
+                    }
                 case 4:
                     PlayOrderDao.createTable(db, true);
                     PlayItemDao.createTable(db, true);
@@ -137,8 +138,15 @@ public class CoolApplication extends Application {
         }
 
         private void insertTempPlayOrder(Database db) {
-            PlayOrder order = new PlayOrder(AppConstants.PLAY_ORDER_TEMP_ID, AppConstants.PLAY_ORDER_TEMP_NAME);
-            new DaoMaster(db).newSession().getPlayOrderDao().insert(order);
+            PlayOrderDao dao = new DaoMaster(db).newSession().getPlayOrderDao();
+            long count = dao.queryBuilder()
+                    .where(PlayOrderDao.Properties.Id.eq(AppConstants.PLAY_ORDER_TEMP_ID))
+                    .buildCount().count();
+            if (count == 0) {
+                PlayOrder order = new PlayOrder(AppConstants.PLAY_ORDER_TEMP_ID, AppConstants.PLAY_ORDER_TEMP_NAME);
+                dao.insert(order);
+                dao.detachAll();
+            }
         }
 
     }

@@ -9,6 +9,7 @@ import android.view.View;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.base.CoolApplication;
 import com.king.app.coolg.conf.AppConfig;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.bean.CheckDownloadBean;
 import com.king.app.coolg.model.bean.DownloadDialogBean;
 import com.king.app.coolg.model.http.AppHttpClient;
@@ -654,7 +655,16 @@ public class ManageViewModel extends BaseViewModel {
             getDaoSession().getPlayItemDao().insertInTx(mLocalData.playItemList);
         }
         if (!ListUtil.isEmpty(mLocalData.playOrderList)) {
-            getDaoSession().getPlayOrderDao().insertInTx(mLocalData.playOrderList);
+            // 由于onUpgrade执行了insertTempPlayOrder，所以这里要防重复
+            for (int i = 0; i < mLocalData.playOrderList.size(); i ++) {
+                if (mLocalData.playOrderList.get(i).getId() == AppConstants.PLAY_ORDER_TEMP_ID) {
+                    mLocalData.playOrderList.remove(i);
+                    break;
+                }
+            }
+            if (!ListUtil.isEmpty(mLocalData.playOrderList)) {
+                getDaoSession().getPlayOrderDao().insertInTx(mLocalData.playOrderList);
+            }
         }
     }
 
