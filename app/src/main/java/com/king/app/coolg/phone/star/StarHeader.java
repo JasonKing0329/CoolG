@@ -381,7 +381,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
                 break;
         }
         mBinding.tvRating.setText(mRatingModel.getComplex());
-        mRatingModel.saveRatingChange();
+        mRatingModel.saveRating();
     }
 
     private class HeadBannerAdapter implements LBaseAdapter<String> {

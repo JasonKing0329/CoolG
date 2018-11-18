@@ -92,11 +92,6 @@ public class StarRatingViewModel extends BaseViewModel {
         return mRating;
     }
 
-    public void saveRatingChange() {
-        getDaoSession().getStarRatingDao().update(mRating);
-        getDaoSession().getStarRatingDao().detach(mRating);
-    }
-
     public void saveRating() {
         mRating.setStarId(mStar.getId());
         mRating.setComplex(calculateComplex(mRating));
