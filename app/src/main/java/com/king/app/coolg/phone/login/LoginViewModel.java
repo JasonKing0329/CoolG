@@ -14,6 +14,7 @@ import com.king.app.coolg.BuildConfig;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.base.CoolApplication;
 import com.king.app.coolg.conf.AppConfig;
+import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.utils.DBExporter;
 import com.king.app.coolg.utils.DebugLog;
@@ -234,4 +235,12 @@ public class LoginViewModel extends BaseViewModel {
         });
     }
 
+    public void onUserPass() {
+        try {
+            AppHttpClient.getInstance().createRetrofit();
+        } catch (Exception e) {
+            messageObserver.setValue("Server Url Error");
+            e.printStackTrace();
+        }
+    }
 }

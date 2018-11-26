@@ -23,9 +23,11 @@ import android.widget.Toast;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.model.FingerPrintController;
+import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.BaseUrl;
 import com.king.app.coolg.model.setting.PreferenceKey;
 import com.king.app.coolg.utils.AppUtil;
+import com.king.app.coolg.utils.DebugLog;
 
 import java.util.List;
 
@@ -78,9 +80,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             /**
              * 站点配置变化要及时通知baseUrl变更，重新创建retrofit相关
+             * 经调试发现这个时候通知createRetrofit从SettingPreference里读取value还没有变过来，只能将新的value传入
              */
             if (preference.getKey().equals(PreferenceKey.PREF_HTTP_SERVER)) {
-                BaseUrl.getInstance().setBaseUrl(stringValue);
+                DebugLog.e("PREF_HTTP_SERVER changed");
+                try {
+                    AppHttpClient.getInstance().createRetrofit(value.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(preference.getContext(), "Url error", Toast.LENGTH_LONG).show();
+                }
             }
             return true;
         }

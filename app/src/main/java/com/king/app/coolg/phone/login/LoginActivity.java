@@ -5,6 +5,10 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 
 import com.chenenyu.router.Router;
 import com.king.app.coolg.R;
@@ -124,22 +128,16 @@ public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewM
     }
 
     private void superUser() {
-        new SimpleDialogs().showWarningActionDialog(this
-                , getResources().getString(R.string.login_start_service_insert)
-                , getResources().getString(R.string.yes)
-                , getResources().getString(R.string.no)
-                , getResources().getString(R.string.title_activity_settings)
-                , (dialog, which) -> {
-                    if (which == DialogInterface.BUTTON_POSITIVE) {
-                        goToManage();
-                    }
-                    else if (which == DialogInterface.BUTTON_NEGATIVE) {
-                        goToSetting();
-                    }
-                    else {
-                        goToHome();
-                    }
-                });
+        mModel.onUserPass();
+        mBinding.groupLogin.setVisibility(View.GONE);
+        mBinding.groupPass.setVisibility(View.VISIBLE);
+        mBinding.groupPass.startAnimation(appearNextStep());
+        mBinding.tvHome.setOnClickListener(v -> {
+            goToHome();
+            finish();
+        });
+        mBinding.tvSetting.setOnClickListener(v -> goToSetting());
+        mBinding.tvManage.setOnClickListener(v -> goToManage());
     }
 
     private void goToManage() {
@@ -160,4 +158,15 @@ public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewM
             finish();
         }
     }
+
+    private Animation appearNextStep() {
+        AnimationSet set = new AnimationSet(true);
+        set.setDuration(500);
+        AlphaAnimation alpha = new AlphaAnimation(0, 1);
+        set.addAnimation(alpha);
+        ScaleAnimation scale = new ScaleAnimation(0, 1, 0, 1, 0.5f, 0.5f);
+        set.addAnimation(scale);
+        return set;
+    }
+
 }

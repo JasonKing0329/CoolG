@@ -156,11 +156,11 @@
                 android:layout_marginTop="20dp"
                 app:cardCornerRadius="15dp">
                 <LinearLayout
+                    android:id="@+id/group_clear_images"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:background="?android:attr/selectableItemBackground"
-                    android:onClick="@{model.onClear}"
                     android:gravity="center_vertical">
                     <ImageView
                         android:layout_width="40dp"
@@ -230,7 +230,6 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:layout_marginLeft="20dp"
                         android:textColor="@color/colorPrimary"
                         android:textSize="20dp"

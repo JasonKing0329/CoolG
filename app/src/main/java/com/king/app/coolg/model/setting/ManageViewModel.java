@@ -313,10 +313,6 @@ public class ManageViewModel extends BaseViewModel {
                 });
     }
 
-    public void onClear(View view) {
-
-    }
-
     public void onCheckServer(View view) {
         loadingObserver.setValue(true);
         AppHttpClient.getInstance().getAppService().isServerOnline()

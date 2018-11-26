@@ -2,6 +2,7 @@ package com.king.app.coolg.phone.settings;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
 
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
@@ -11,6 +12,7 @@ import com.king.app.coolg.model.bean.CheckDownloadBean;
 import com.king.app.coolg.model.bean.DownloadDialogBean;
 import com.king.app.coolg.model.http.bean.data.DownloadItem;
 import com.king.app.coolg.model.http.bean.response.AppCheckBean;
+import com.king.app.coolg.model.service.FileService;
 import com.king.app.coolg.model.setting.ManageViewModel;
 import com.king.app.coolg.phone.download.DownloadFragment;
 import com.king.app.coolg.phone.download.OnDownloadListener;
@@ -36,6 +38,11 @@ public class ManageActivity extends MvvmActivity<ActivityManageBinding, ManageVi
     @Override
     protected void initView() {
         mBinding.groupSyncRating.setOnClickListener(v -> warningSyncRating());
+
+        mBinding.groupClearImages.setOnClickListener(v -> {
+            showMessageLong("Run on background...");
+            startService(new Intent().setClass(ManageActivity.this, FileService.class));
+        });
     }
 
     @Override
