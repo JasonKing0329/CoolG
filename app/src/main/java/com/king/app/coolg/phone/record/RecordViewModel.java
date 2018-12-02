@@ -184,6 +184,7 @@ public class RecordViewModel extends BaseViewModel {
                     @Override
                     public void onNext(PlayDuration duration) {
                         mPlayDuration = duration;
+                        DebugLog.e("will play url: " + mPlayUrl);
                         videoUrlObserver.setValue(mPlayUrl);
                     }
 
@@ -220,8 +221,9 @@ public class RecordViewModel extends BaseViewModel {
     private ObservableSource<String> toVideoUrl(PathResponse response) {
         return observer -> {
             if (response.isAvailable()) {
+                String baseUrl = BaseHttpClient.formatUrl(BaseHttpClient.getBaseUrl());
                 // url中不能包含空格，用%20来代替可以达到目的
-                observer.onNext(BaseHttpClient.getBaseUrl() + response.getPath().replaceAll(" ", "%20"));
+                observer.onNext(baseUrl + response.getPath().replaceAll(" ", "%20"));
             }
             else {
                 observer.onError(new Exception("Video source is unavailable"));
