@@ -64,7 +64,7 @@ public abstract class BaseHttpClient {
         createService(retrofit);
     }
 
-    private static String formatUrl(String ip) {
+    public static String formatUrl(String ip) {
         if (!ip.startsWith("http://")) {
             ip = "http://" + ip;
         }
