@@ -1,5 +1,6 @@
 package com.king.app.coolg.phone.video;
 
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.king.app.coolg.GlideApp;
@@ -28,7 +29,6 @@ public class PlayerItemAdapter extends BaseBindingAdapter<AdapterPlayItemBinding
 
     @Override
     protected void onBindItem(AdapterPlayItemBinding binding, int position, PlayItemViewBean bean) {
-        binding.videoView.setVideoPath(bean.getPlayItem().getUrl());
         if (bean.getPlayItem().getRecord() != null) {
             binding.tvName.setText(bean.getPlayItem().getRecord().getName());
         }
@@ -38,7 +38,10 @@ public class PlayerItemAdapter extends BaseBindingAdapter<AdapterPlayItemBinding
                 .load(bean.getCover())
                 .error(R.drawable.def_small)
                 .into(binding.videoView.getCoverView());
-        binding.videoView.prepare();
+        if (!TextUtils.isEmpty(bean.getPlayItem().getUrl())) {
+            binding.videoView.setVideoPath(bean.getPlayItem().getUrl());
+            binding.videoView.prepare();
+        }
         binding.ivDelete.setOnClickListener(v -> onPlayItemListener.onDeleteItem(position, bean));
     }
 
