@@ -5,11 +5,17 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.FilterHelper;
 import com.king.app.coolg.model.RecommendModel;
 import com.king.app.coolg.model.bean.RecordFilterModel;
+import com.king.app.coolg.model.http.AppHttpClient;
+import com.king.app.coolg.model.http.bean.request.PathRequest;
+import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.utils.ListUtil;
+import com.king.app.coolg.utils.UrlUtil;
+import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.param.DataConstants;
 
@@ -18,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -56,9 +63,14 @@ public class HomeViewModel extends BaseViewModel {
     private RecordFilterModel mRecordFilter;
     private RecommendModel recommendModel;
 
+    private PlayRepository playRepository;
+
+    public MutableLiveData<List<PlayItem>> playListObserver = new MutableLiveData<>();
+
     public HomeViewModel(@NonNull Application application) {
         super(application);
         recordRepository = new RecordRepository();
+        playRepository = new PlayRepository();
         mHomeBean = new HomeBean();
         mHomeBean.setRecordList(new ArrayList<>());
 
@@ -231,5 +243,82 @@ public class HomeViewModel extends BaseViewModel {
 
                     }
                 });
+    }
+
+    public void insertToPlayList(Record record) {
+        PathRequest request = new PathRequest();
+        request.setPath(record.getDirectory());
+        request.setName(record.getName());
+        loadingObserver.setValue(true);
+        AppHttpClient.getInstance().getAppService().getVideoPath(request)
+                .flatMap(response -> UrlUtil.toVideoUrl(response))
+                .flatMap(url -> insertToPlayerListDb(record.getId(), url))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<PlayItem>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(PlayItem playItem) {
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue("success");
+                        loadPlayList();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private ObservableSource<PlayItem> insertToPlayerListDb(long recordId, String url) {
+        return playRepository.checkExistence(AppConstants.PLAY_ORDER_TEMP_ID, recordId)
+                .flatMap(result -> {
+                    PlayItem item = new PlayItem();
+                    item.setOrderId(AppConstants.PLAY_ORDER_TEMP_ID);
+                    item.setRecordId(recordId);
+                    item.setUrl(url);
+                    return playRepository.insertOrReplacePlayItem(item);
+                });
+    }
+
+    public void loadPlayList() {
+        playRepository.getPlayItems(AppConstants.PLAY_ORDER_TEMP_ID)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<PlayItem>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<PlayItem> playItems) {
+                        playListObserver.setValue(playItems);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue("Load play list error: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
     }
 }

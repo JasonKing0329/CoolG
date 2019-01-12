@@ -117,4 +117,15 @@ public class PlayRepository extends BaseRepository {
         });
     }
 
+    public Observable<Boolean> deleteAllPlayItems(long orderId) {
+        return Observable.create(e -> {
+            getDaoSession().getPlayItemDao().queryBuilder()
+                    .where(PlayItemDao.Properties.OrderId.eq(orderId))
+                    .buildDelete()
+                    .executeDeleteWithoutDetachingEntities();
+            getDaoSession().getPlayItemDao().detachAll();
+            e.onNext(true);
+        });
+    }
+
 }

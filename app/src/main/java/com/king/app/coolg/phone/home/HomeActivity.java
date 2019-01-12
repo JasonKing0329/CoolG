@@ -1,6 +1,7 @@
 package com.king.app.coolg.phone.home;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,9 +13,11 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityHomeBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
+import com.king.app.coolg.phone.video.PlayListActivity;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -33,6 +36,8 @@ import java.util.Random;
 @Route("Home")
 public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewModel>
     implements NavigationView.OnNavigationItemSelectedListener{
+
+    private final int REQUEST_PLAY_LIST = 100;
 
     private ImageView navHeaderView;
     private ImageView ivFolder;
@@ -125,6 +130,11 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
                 public void onClickItem(View view, Record record) {
                     goToRecord(record);
                 }
+
+                @Override
+                public void onAddPlay(Record record) {
+                    mModel.insertToPlayList(record);
+                }
             });
             adapter.setOnHeadActionListener(new HomeAdapter.OnHeadActionListener() {
                 @Override
@@ -146,8 +156,20 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
                 public void onClickStudios() {
                     goToStudioPage();
                 }
+
+                @Override
+                public void onClickPlayItem(View view, Record record) {
+                    goToRecord(record);
+                }
+
+                @Override
+                public void goToPlayList() {
+                    goToPlayListPage();
+                }
             });
             mBinding.rvItems.setAdapter(adapter);
+
+            mModel.loadPlayList();
         });
         mModel.newRecordsObserver.observe(this, number -> {
             int start = adapter.getItemCount() - number - 1;
@@ -174,6 +196,7 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
             mBinding.ivRecord.setVisibility(View.GONE);
             mBinding.banner.setVisibility(View.VISIBLE);
         });
+        mModel.playListObserver.observe(this, list -> adapter.updatePlayList(list));
 
         mModel.loadData();
     }
@@ -192,6 +215,10 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     }
 
     private void goToRecord(Record record) {
+        if (record == null) {
+            showMessageShort("record is null");
+            return;
+        }
         Router.build("RecordPhone")
                 .with(RecordActivity.EXTRA_RECORD_ID, record.getId())
                 .go(this);
@@ -215,6 +242,23 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     private void goToStudioPage() {
         Router.build("StudioPhone")
                 .go(this);
+    }
+
+    private void goToPlayListPage() {
+        Router.build("PlayList")
+                .with(PlayListActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
+                .requestCode(REQUEST_PLAY_LIST)
+                .go(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_PLAY_LIST:
+                mModel.loadPlayList();
+                break;
+        }
     }
 
     @Override

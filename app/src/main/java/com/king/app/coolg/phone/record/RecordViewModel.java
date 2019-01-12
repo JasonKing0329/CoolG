@@ -11,14 +11,13 @@ import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.http.AppHttpClient;
-import com.king.app.coolg.model.http.BaseHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.http.bean.response.GdbRespBean;
-import com.king.app.coolg.model.http.bean.response.PathResponse;
 import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.utils.DebugLog;
+import com.king.app.coolg.utils.UrlUtil;
 import com.king.app.gdb.data.entity.FavorRecord;
 import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
@@ -165,7 +164,7 @@ public class RecordViewModel extends BaseViewModel {
                         request.setName(mRecord.getName());
                         return AppHttpClient.getInstance().getAppService().getVideoPath(request);
                     })
-                    .flatMap(response -> toVideoUrl(response));
+                    .flatMap(response -> UrlUtil.toVideoUrl(response));
         }
         observable
                 .flatMap(url -> {
@@ -214,19 +213,6 @@ public class RecordViewModel extends BaseViewModel {
             }
             else {
                 observer.onError(new Exception("Server offline"));
-            }
-        };
-    }
-
-    private ObservableSource<String> toVideoUrl(PathResponse response) {
-        return observer -> {
-            if (response.isAvailable()) {
-                String baseUrl = BaseHttpClient.formatUrl(BaseHttpClient.getBaseUrl());
-                // url中不能包含空格，用%20来代替可以达到目的
-                observer.onNext(baseUrl + response.getPath().replaceAll(" ", "%20"));
-            }
-            else {
-                observer.onError(new Exception("Video source is unavailable"));
             }
         };
     }

@@ -59,7 +59,7 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginRight="10dp"
                     android:padding="@dimen/gdb_list_icon_play_padding"
-                    android:src="@drawable/ic_play_arrow_white_36dp"
+                    android:src="@drawable/ic_playlist_add_white_24dp"
                     android:background="@drawable/shape_oval_transgrey"
                     android:scaleType="fitCenter"/>
             </RelativeLayout>

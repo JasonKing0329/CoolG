@@ -27,8 +27,6 @@ import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.studio.StudioActivity;
-import com.king.app.coolg.phone.video.PlayListActivity;
-import com.king.app.coolg.utils.FormatUtil;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -137,13 +135,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
         mBinding.groupAddToPlay.setOnClickListener(v -> mModel.addToPlay());
 
-        mBinding.ivPlayList.setOnClickListener(v -> goToPlayList());
-    }
-
-    private void goToPlayList() {
-        Router.build("PlayList")
-                .with(PlayListActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
-                .go(this);
     }
 
     private void floatOrEmbedVideo(int oldScrollY, int scrollY, int edge) {

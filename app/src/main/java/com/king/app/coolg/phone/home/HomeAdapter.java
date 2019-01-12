@@ -1,6 +1,7 @@
 package com.king.app.coolg.phone.home;
 
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -15,8 +16,10 @@ import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.RippleUtil;
+import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
+import com.king.app.gdb.data.param.DataConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,7 +38,10 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
 
     private OnListListener onListListener;
     private OnHeadActionListener onHeadActionListener;
-    
+    private List<PlayItem> mPlayList;
+
+    private HomePlayAdapter playAdapter;
+
     public HomeAdapter() {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         recordOptions = GlideUtil.getRecordOptions();
@@ -98,6 +104,28 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
                 onHeadActionListener.onClickStudios();
             }
         });
+
+        if (ListUtil.isEmpty(mPlayList)) {
+            binding.tvPlayList.setVisibility(View.GONE);
+            binding.rvPlayList.setVisibility(View.GONE);
+        }
+        else {
+            binding.tvPlayList.setVisibility(View.VISIBLE);
+            binding.rvPlayList.setVisibility(View.VISIBLE);
+            binding.tvPlayList.setText("Play List (" + mPlayList.size() + ")");
+            binding.tvPlayList.setOnClickListener(v -> onHeadActionListener.goToPlayList());
+            if (playAdapter == null) {
+                binding.rvPlayList.setLayoutManager(new LinearLayoutManager(binding.rvPlayList.getContext(), LinearLayoutManager.HORIZONTAL, false));
+                playAdapter = new HomePlayAdapter();
+                playAdapter.setList(mPlayList);
+                playAdapter.setOnItemClickListener((view, position, data) -> onHeadActionListener.onClickPlayItem(view, data.getRecord()));
+                binding.rvPlayList.setAdapter(playAdapter);
+            }
+            else {
+                playAdapter.setList(mPlayList);
+                playAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     @Override
@@ -150,7 +178,13 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
             binding.tvDeprecated.setVisibility(View.GONE);
         }
 
-        binding.ivPlay.setVisibility(View.GONE);
+        if (record.getDeprecated() == DataConstants.DEPRECATED) {
+            binding.ivPlay.setVisibility(View.GONE);
+        }
+        else {
+            binding.ivPlay.setVisibility(View.VISIBLE);
+            binding.ivPlay.setOnClickListener(v -> onListListener.onAddPlay(record));
+        }
     }
 
     private boolean isNotSameDay(Record curRecord, Record lastRecord) {
@@ -159,9 +193,16 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
         return !curDay.equals(lastDay);
     }
 
+    public void updatePlayList(List<PlayItem> list) {
+        this.mPlayList = list;
+        // refresh head
+        notifyItemChanged(0);
+    }
+
     public interface OnListListener {
         void onLoadMore();
         void onClickItem(View view, Record record);
+        void onAddPlay(Record record);
     }
 
     public interface OnHeadActionListener {
@@ -169,6 +210,8 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
         void onClickRecords();
         void onClickOrders();
         void onClickStudios();
+        void onClickPlayItem(View view, Record record);
+        void goToPlayList();
     }
 
     private View.OnClickListener itemListener = new View.OnClickListener() {

@@ -62,6 +62,7 @@
         <activity
             android:name=".phone.video.PlayListActivity"
             android:configChanges="orientation|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".phone.video.player.PlayerActivity"

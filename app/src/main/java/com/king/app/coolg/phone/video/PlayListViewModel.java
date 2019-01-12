@@ -117,4 +117,34 @@ public class PlayListViewModel extends BaseViewModel {
                     }
                 });
     }
+
+    public void clearOrder() {
+        repository.deleteAllPlayItems(mOrderId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        loadingObserver.setValue(false);
+                        itemsObserver.setValue(null);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
 }

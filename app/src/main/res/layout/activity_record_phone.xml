@@ -164,7 +164,7 @@
                             android:layout_height="24dp"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/ic_play_circle_filled_ff4081_36dp"/>
+                            android:src="@drawable/ic_playlist_add_red_a200_24dp"/>
 
                         <TextView
                             android:id="@+id/tv_add_to_play"
@@ -704,17 +704,6 @@
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>
-
-        <ImageView
-            android:id="@+id/iv_play_list"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:visibility="@{model.playListVisibility}"
-            app:layout_goneMarginBottom="20dp"
-            app:layout_goneMarginEnd="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_play_circle_filled_ff4081_36dp" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

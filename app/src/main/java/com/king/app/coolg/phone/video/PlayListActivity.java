@@ -12,9 +12,10 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityPlayListBinding;
+import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.video.player.PlayerActivity;
 import com.king.app.coolg.utils.ScreenUtils;
-import com.king.app.jactionbar.OnMenuItemListener;
+import com.king.app.gdb.data.entity.Record;
 
 import java.util.List;
 
@@ -58,17 +59,19 @@ public class PlayListActivity extends MvvmActivity<ActivityPlayListBinding, Play
         });
 
         mBinding.actionbar.setOnBackListener(() -> onBackPressed());
-        mBinding.actionbar.setOnMenuItemListener(new OnMenuItemListener() {
-            @Override
-            public void onMenuItemSelected(int menuId) {
-                switch (menuId) {
-                    case R.id.menu_play_sequence:
-                        playList(false);
-                        break;
-                    case R.id.menu_play_random:
-                        playList(true);
-                        break;
-                }
+        mBinding.actionbar.setOnMenuItemListener(menuId -> {
+            switch (menuId) {
+                case R.id.menu_play_sequence:
+                    playList(false);
+                    break;
+                case R.id.menu_play_random:
+                    playList(true);
+                    break;
+                case R.id.menu_clear:
+                    showConfirmCancelMessage("Clear all play items?"
+                            , (dialogInterface, i) -> mModel.clearOrder()
+                            , null);
+                    break;
             }
         });
     }
@@ -96,6 +99,7 @@ public class PlayListActivity extends MvvmActivity<ActivityPlayListBinding, Play
         if (adapter == null) {
             adapter = new PlayerItemAdapter();
             adapter.setOnPlayItemListener((position, bean) -> mModel.deleteItem(position));
+            adapter.setOnItemClickListener((view, position, data) -> goToRecordPage(data.getPlayItem().getRecord()));
             adapter.setList(list);
             mBinding.rvVideos.setAdapter(adapter);
         }
@@ -103,6 +107,16 @@ public class PlayListActivity extends MvvmActivity<ActivityPlayListBinding, Play
             adapter.setList(list);
             adapter.notifyDataSetChanged();
         }
+    }
+
+    private void goToRecordPage(Record record) {
+        if (record == null) {
+            showMessageShort("record is null");
+            return;
+        }
+        Router.build("RecordPhone")
+                .with(RecordActivity.EXTRA_RECORD_ID, record.getId())
+                .go(this);
     }
 
     @Override
