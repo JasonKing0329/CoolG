@@ -38,6 +38,9 @@ public class DataConstants {
 
     public static final int DEPRECATED = 1;
 
+    public static final int CATEGORY_TYPE_LEVEL = 0;
+    public static final int CATEGORY_TYPE_LIMIT_LEVEL = 1;
+
     public static String getTextForType(int type) {
         switch (type) {
             case VALUE_RELATION_TOP:

@@ -19,6 +19,8 @@ import com.king.app.gdb.data.entity.PlayItemDao;
 import com.king.app.gdb.data.entity.PlayOrder;
 import com.king.app.gdb.data.entity.PlayOrderDao;
 import com.king.app.gdb.data.entity.StarRatingDao;
+import com.king.app.gdb.data.entity.TopStarCategoryDao;
+import com.king.app.gdb.data.entity.TopStarDao;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
@@ -133,6 +135,10 @@ public class CoolApplication extends Application {
                     PlayItemDao.createTable(db, true);
                     PlayDurationDao.createTable(db, true);
                     insertTempPlayOrder(db);
+                    break;
+                case 5:
+                    TopStarCategoryDao.createTable(db, true);
+                    TopStarDao.createTable(db, true);
                     break;
             }
         }

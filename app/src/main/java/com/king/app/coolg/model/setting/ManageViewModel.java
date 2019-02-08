@@ -36,6 +36,8 @@ import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarDao;
 import com.king.app.gdb.data.entity.StarRating;
 import com.king.app.gdb.data.entity.StarRatingDao;
+import com.king.app.gdb.data.entity.TopStar;
+import com.king.app.gdb.data.entity.TopStarCategory;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -552,6 +554,10 @@ public class ManageViewModel extends BaseViewModel {
                 // 保存play_xx表数据
                 data.playItemList = getDaoSession().getPlayItemDao().loadAll();
                 data.playOrderList = getDaoSession().getPlayOrderDao().loadAll();
+
+                // 保存star_category, star_category_details表数据
+                data.categoryList = getDaoSession().getTopStarCategoryDao().loadAll();
+                data.categoryStarList = getDaoSession().getTopStarDao().loadAll();
             } catch (Exception ee) {
                 ee.printStackTrace();
             }
@@ -600,8 +606,18 @@ public class ManageViewModel extends BaseViewModel {
             updateFavorTables();
             updateStarRatings();
             updatePlayList();
+            updateCategory();
             e.onNext(new Object());
         });
+    }
+
+    private void updateCategory() {
+        if (!ListUtil.isEmpty(mLocalData.categoryList)) {
+            getDaoSession().getTopStarCategoryDao().insertInTx(mLocalData.categoryList);
+        }
+        if (!ListUtil.isEmpty(mLocalData.categoryStarList)) {
+            getDaoSession().getTopStarDao().insertInTx(mLocalData.categoryStarList);
+        }
     }
 
     /**
@@ -680,5 +696,9 @@ public class ManageViewModel extends BaseViewModel {
         List<PlayOrder> playOrderList;
 
         List<PlayItem> playItemList;
+
+        List<TopStarCategory> categoryList;
+
+        List<TopStar> categoryStarList;
     }
 }

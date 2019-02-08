@@ -13,6 +13,9 @@
     <item android:id="@+id/menu_gdb_view_mode"
         android:title="@string/menu_view_mode_grid"
         app:showAsAction="never"/>
+    <item android:id="@+id/menu_gdb_category"
+        android:title="Categories"
+        app:showAsAction="never"/>
     <item android:id="@+id/menu_gdb_expand_all"
         android:title="Expand all"
         app:showAsAction="never"/>

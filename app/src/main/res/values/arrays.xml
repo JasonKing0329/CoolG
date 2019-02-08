@@ -11,4 +11,9 @@
     <string-array name="menu_surf_item">
         <item>Delete</item>
     </string-array>
+
+    <string-array name="category_type" translatable="false">
+        <item>Level</item>
+        <item>Limit Level</item>
+    </string-array>
 </resources>

@@ -152,6 +152,9 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
                     mModel.toggleViewMode(getResources());
                     pagerAdapter.onViewModeChanged();
                     break;
+                case R.id.menu_gdb_category:
+                    goToCategory();
+                    break;
                 case R.id.menu_gdb_expand_all:
                     getCurrentPage().setExpandAll(true);
                     break;
@@ -160,6 +163,11 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
                     break;
             }
         });
+    }
+
+    private void goToCategory() {
+        Router.build("Category")
+                .go(this);
     }
 
     private PopupMenu createSortPopup(View anchorView) {

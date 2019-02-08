@@ -85,6 +85,10 @@
             android:name=".phone.studio.StudioActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".phone.star.category.CategoryActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".pad.home.HomePadActivity"
             android:screenOrientation="landscape" />
         <activity
