@@ -1,19 +1,21 @@
 package com.king.app.coolg.phone.star.category;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.View;
 
+import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
-import com.king.app.coolg.base.adapter.BaseRecyclerAdapter;
 import com.king.app.coolg.databinding.ActivityCategoryBinding;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.jactionbar.OnConfirmListener;
 
 @Route("Category")
 public class CategoryActivity extends MvvmActivity<ActivityCategoryBinding, CategoryViewModel> {
+
+    public static final int REQUEST_DETAIL = 401;
 
     private CategoryAdapter adapter;
 
@@ -35,11 +37,15 @@ public class CategoryActivity extends MvvmActivity<ActivityCategoryBinding, Cate
         mBinding.actionbar.setOnMenuItemListener(menuId -> {
             switch (menuId) {
                 case R.id.menu_add:
-                    addCategory();
+                    updateCategory(null);
                     break;
                 case R.id.menu_delete:
                     mBinding.actionbar.showConfirmStatus(R.id.menu_delete);
                     adapter.setSelectMode(true);
+                    break;
+                case R.id.menu_edit:
+                    mBinding.actionbar.showConfirmStatus(R.id.menu_edit);
+                    mModel.setEditMode(true);
                     break;
             }
         });
@@ -56,22 +62,46 @@ public class CategoryActivity extends MvvmActivity<ActivityCategoryBinding, Cate
 
             @Override
             public boolean onConfirm(int actionId) {
-                showConfirmCancelMessage("Are you sure to delete?"
-                        , (dialogInterface, i) -> mModel.deleteSelected(), null);
+                switch (actionId) {
+                    case R.id.menu_delete:
+                        showConfirmCancelMessage("Are you sure to delete?"
+                                , (dialogInterface, i) -> mModel.deleteSelected(), null);
+                        break;
+                    case R.id.menu_edit:
+                        mBinding.actionbar.cancelConfirmStatus();
+                        mModel.setEditMode(false);
+                        break;
+                }
                 return false;
             }
 
             @Override
             public boolean onCancel(int actionId) {
-                adapter.setSelectMode(false);
+                switch (actionId) {
+                    case R.id.menu_delete:
+                        adapter.setSelectMode(false);
+                        break;
+                    case R.id.menu_edit:
+                        mModel.setEditMode(false);
+                        break;
+                }
                 return true;
             }
         });
     }
 
-    private void addCategory() {
+    private void updateCategory(CategoryViewItem item) {
         AddCategoryFragment fragment = new AddCategoryFragment();
-        fragment.setOnAddCategoryListener((name, type) -> mModel.addCategory(name, type));
+        fragment.setCategoryViewItem(item);
+        fragment.setOnAddCategoryListener((name, type) -> {
+            if (item == null) {
+                mModel.addCategory(name, type);
+            }
+            else {
+                mModel.updateCategory(item.getCategory(), name);
+                adapter.notifyCategoryChanged(item);
+            }
+        });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
         dialogFragment.setContentFragment(fragment);
         dialogFragment.setTitle("Add Category");
@@ -85,10 +115,12 @@ public class CategoryActivity extends MvvmActivity<ActivityCategoryBinding, Cate
             if (adapter == null) {
                 adapter = new CategoryAdapter();
                 adapter.setList(list);
-                adapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<CategoryViewItem>() {
-                    @Override
-                    public void onClickItem(View view, int position, CategoryViewItem data) {
-
+                adapter.setOnItemClickListener((view, position, data) -> {
+                    if (mModel.isEditMode()) {
+                        updateCategory(data);
+                    }
+                    else {
+                        goToDetail(data);
                     }
                 });
                 mBinding.rvList.setAdapter(adapter);
@@ -105,5 +137,24 @@ public class CategoryActivity extends MvvmActivity<ActivityCategoryBinding, Cate
         mModel.hideConfirmStatus.observe(this, hide -> mBinding.actionbar.cancelConfirmStatus());
 
         mModel.loadCategories();
+    }
+
+    private void goToDetail(CategoryViewItem data) {
+        mModel.setDetailCategory(data);
+        Router.build("CategoryDetail")
+                .with(CategoryDetailActivity.EXTRA_CATEGORY_ID, data.getCategory().getId())
+                .requestCode(REQUEST_DETAIL)
+                .go(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_DETAIL:
+                if (resultCode == RESULT_OK) {
+                    adapter.notifyCategoryChanged(mModel.refreshCategory());
+                }
+                break;
+        }
     }
 }

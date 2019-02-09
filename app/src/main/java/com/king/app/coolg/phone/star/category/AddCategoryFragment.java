@@ -9,6 +9,8 @@ public class AddCategoryFragment extends DraggableContentFragment<FragmentDialog
 
     private OnAddCategoryListener onAddCategoryListener;
 
+    private CategoryViewItem categoryViewItem;
+
     public void setOnAddCategoryListener(OnAddCategoryListener onAddCategoryListener) {
         this.onAddCategoryListener = onAddCategoryListener;
     }
@@ -23,12 +25,22 @@ public class AddCategoryFragment extends DraggableContentFragment<FragmentDialog
 
     }
 
+    public void setCategoryViewItem(CategoryViewItem categoryViewItem) {
+        this.categoryViewItem = categoryViewItem;
+    }
+
     @Override
     protected void initView() {
         mBinding.tvOk.setOnClickListener(v -> {
             onAddCategoryListener.onAddCategory(mBinding.etName.getText().toString(), mBinding.spType.getSelectedItemPosition());
             dismissAllowingStateLoss();
         });
+
+        if (categoryViewItem != null) {
+            mBinding.etName.setText(categoryViewItem.getCategory().getName());
+            mBinding.spType.setSelection(categoryViewItem.getCategory().getType());
+            mBinding.spType.setEnabled(false);
+        }
     }
 
     public interface OnAddCategoryListener {

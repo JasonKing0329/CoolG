@@ -230,4 +230,7 @@
     <dimen name="video_player_title_text">12dp</dimen>
     <dimen name="home_play_list_height">90dp</dimen>
     <dimen name="home_play_list_width">160dp</dimen>
+    <dimen name="category_star_size">60dp</dimen>
+    <dimen name="category_star_height">90dp</dimen>
+    <dimen name="category_level_star_height">108dp</dimen>
 </resources>

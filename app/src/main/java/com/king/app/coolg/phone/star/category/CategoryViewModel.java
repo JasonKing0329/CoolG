@@ -27,8 +27,21 @@ public class CategoryViewModel extends BaseViewModel {
 
     public MutableLiveData<Boolean> hideConfirmStatus = new MutableLiveData<>();
 
+    private boolean isEditMode;
+
+    private CategoryViewItem mDetailCategory;
+
     public CategoryViewModel(@NonNull Application application) {
         super(application);
+    }
+
+    public void setDetailCategory(CategoryViewItem detailCategory) {
+        this.mDetailCategory = detailCategory;
+    }
+
+    public CategoryViewItem refreshCategory() {
+        getDaoSession().getTopStarCategoryDao().refresh(mDetailCategory.getCategory());
+        return mDetailCategory;
     }
 
     public void loadCategories() {
@@ -81,6 +94,19 @@ public class CategoryViewModel extends BaseViewModel {
 
     private void onSelectCategory(CategoryViewItem data) {
         data.setSelected(!data.isSelected());
+    }
+
+    public void setEditMode(boolean editMode) {
+        isEditMode = editMode;
+    }
+
+    public boolean isEditMode() {
+        return isEditMode;
+    }
+
+    public void updateCategory(TopStarCategory category, String name) {
+        category.setName(name);
+        getDaoSession().getTopStarCategoryDao().update(category);
     }
 
     private class InsertObserver implements Observer<TopStarCategory> {

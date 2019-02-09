@@ -38,4 +38,13 @@ public class CategoryAdapter extends BaseBindingAdapter<AdapterCategoryBinding, 
             list.get(i).setVisibility(selectMode ? View.VISIBLE:View.GONE);
         }
     }
+
+    public void notifyCategoryChanged(CategoryViewItem item) {
+        for (int i = 0; i < getItemCount(); i ++) {
+            if (list.get(i).getCategory().getId() == item.getCategory().getId()) {
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
 }
