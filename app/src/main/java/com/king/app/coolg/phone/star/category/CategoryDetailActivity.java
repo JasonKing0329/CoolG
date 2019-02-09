@@ -13,6 +13,7 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.base.adapter.TwoTypeBindingAdapter;
 import com.king.app.coolg.databinding.ActivityCategoryDetailBinding;
+import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.star.list.StarSelectorActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.jactionbar.OnConfirmListener;
@@ -95,7 +96,12 @@ public class CategoryDetailActivity extends MvvmActivity<ActivityCategoryDetailB
                 candidateAdapter.setOnItemClickListener(new TwoTypeBindingAdapter.OnItemClickListener<CategoryStar, CategoryAdd>() {
                     @Override
                     public void onClickType1(View view, int position, CategoryStar data) {
-                        data.getObserver().onSelect(data);
+                        if (mModel.isEditMode()) {
+                            data.getObserver().onSelect(data);
+                        }
+                        else {
+                            goToStarPage(data.getStar().getStarId());
+                        }
                     }
 
                     @Override
@@ -156,7 +162,12 @@ public class CategoryDetailActivity extends MvvmActivity<ActivityCategoryDetailB
 
                     @Override
                     public void onSelectLevelStar(CategoryLevel level, CategoryStar star) {
-                        mModel.onSelectLevelStar(level, star);
+                        if (mModel.isEditMode()) {
+                            mModel.onSelectLevelStar(level, star);
+                        }
+                        else {
+                            goToStarPage(star.getStar().getStarId());
+                        }
                     }
                 });
                 mBinding.rvDetails.setAdapter(levelAdapter);
@@ -198,6 +209,12 @@ public class CategoryDetailActivity extends MvvmActivity<ActivityCategoryDetailB
     private void addCandidates() {
         Router.build("StarSelector")
                 .requestCode(REQUEST_SELECT_STAR)
+                .go(this);
+    }
+
+    private void goToStarPage(long starId) {
+        Router.build("StarPhone")
+                .with(StarActivity.EXTRA_STAR_ID, starId)
                 .go(this);
     }
 

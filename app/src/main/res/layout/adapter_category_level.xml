@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <import type="com.king.app.coolg.utils.ListUtil"/>
         <variable
             name="bean"
             type="com.king.app.coolg.phone.star.category.CategoryLevel"/>
@@ -42,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text='@{"Level " + bean.level}'
+            android:text='@{"Level " + bean.level + " (" + ListUtil.getSize(bean.starList) + " actors)"}'
             android:textColor="@drawable/selector_text_grey_white"
             android:textSize="16dp"
             app:selected="@{bean.isSelected}"

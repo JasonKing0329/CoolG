@@ -12,6 +12,7 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityStarSelectorBinding;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.view.widget.FitSideBar;
 import com.king.app.jactionbar.OnConfirmListener;
 
 @Route("StarSelector")
@@ -64,6 +65,22 @@ public class StarSelectorActivity extends MvvmActivity<ActivityStarSelectorBindi
                 outRect.top = ScreenUtils.dp2px(8);
             }
         });
+
+        mBinding.sidebar.setOnSidebarStatusListener(new FitSideBar.OnSidebarStatusListener() {
+            @Override
+            public void onChangeFinished() {
+                mBinding.tvIndexPopup.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onSideIndexChanged(String index) {
+                int selection = mModel.getLetterPosition(index);
+                scrollToPosition(selection);
+
+                mBinding.tvIndexPopup.setText(index);
+                mBinding.tvIndexPopup.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void setSelectResult() {
@@ -81,6 +98,18 @@ public class StarSelectorActivity extends MvvmActivity<ActivityStarSelectorBindi
             mBinding.rvStar.setAdapter(adapter);
         });
 
+        mModel.indexObserver.observe(this, index -> mBinding.sidebar.addIndex(index));
+        mModel.indexBarObserver.observe(this, show -> {
+            mBinding.sidebar.build();
+            mBinding.sidebar.setVisibility(View.VISIBLE);
+        });
+
         mModel.loadStars();
     }
+
+    private void scrollToPosition(int selection) {
+        LinearLayoutManager manager = (LinearLayoutManager) mBinding.rvStar.getLayoutManager();
+        manager.scrollToPositionWithOffset(selection, 0);
+    }
+
 }

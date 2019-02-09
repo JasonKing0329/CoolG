@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.index.StarIndexEmitter;
 import com.king.app.coolg.phone.star.category.SelectObserver;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarDao;
@@ -24,35 +25,49 @@ public class StarSelectorViewModel extends BaseViewModel {
 
     public MutableLiveData<List<StarProxy>> starsObserver = new MutableLiveData<>();
 
+    public MutableLiveData<String> indexObserver = new MutableLiveData<>();
+
+    public MutableLiveData<Boolean> indexBarObserver = new MutableLiveData<>();
+
+    private StarIndexEmitter indexEmitter;
+
     public StarSelectorViewModel(@NonNull Application application) {
         super(application);
+        indexEmitter = new StarIndexEmitter();
     }
 
     public void loadStars() {
+        loadingObserver.setValue(true);
         getStars()
                 .flatMap(list -> toViewItems(list))
+                .flatMap(list -> {
+                    starsObserver.postValue(list);
+                    return createIndexes();
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<StarProxy>>() {
+                .subscribe(new Observer<String>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         addDisposable(d);
                     }
 
                     @Override
-                    public void onNext(List<StarProxy> starProxies) {
-                        starsObserver.setValue(starProxies);
+                    public void onNext(String index) {
+                        indexObserver.setValue(index);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
+                        loadingObserver.setValue(false);
                         messageObserver.setValue(e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-
+                        loadingObserver.setValue(false);
+                        indexBarObserver.setValue(true);
                     }
                 });
     }
@@ -63,6 +78,7 @@ public class StarSelectorViewModel extends BaseViewModel {
                     .orderAsc(StarDao.Properties.Name)
                     .build().list();
             e.onNext(stars);
+            e.onComplete();
         });
     }
 
@@ -77,7 +93,16 @@ public class StarSelectorViewModel extends BaseViewModel {
                 starProxies.add(proxy);
             }
             observer.onNext(starProxies);
+            observer.onComplete();
         };
+    }
+
+    private Observable<String> createIndexes() {
+        return Observable.create(e -> {
+            indexEmitter.clear();
+            indexEmitter.createNameIndex(e, starsObserver.getValue());
+            e.onComplete();
+        });
     }
 
     private SelectObserver<StarProxy> selectObserver = data -> onSelectStar(data);
@@ -95,4 +120,9 @@ public class StarSelectorViewModel extends BaseViewModel {
         }
         return list;
     }
+
+    public int getLetterPosition(String letter) {
+        return indexEmitter.getPlayerIndexMap().get(letter).start;
+    }
+
 }
