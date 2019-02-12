@@ -61,7 +61,7 @@ public class CategoryDetailActivity extends MvvmActivity<ActivityCategoryDetailB
 
             @Override
             public boolean disableInstantDismissCancel() {
-                return false;
+                return true;
             }
 
             @Override
@@ -72,7 +72,12 @@ public class CategoryDetailActivity extends MvvmActivity<ActivityCategoryDetailB
 
             @Override
             public boolean onCancel(int actionId) {
-                mModel.setEditMode(false);
+                showConfirmCancelMessage("Modification will not be saved, continue?"
+                        , (dialogInterface, i) -> {
+                            mModel.setEditMode(false);
+                            mModel.cancelEdit();
+                            reload();
+                        }, null);
                 return true;
             }
         });
@@ -135,7 +140,7 @@ public class CategoryDetailActivity extends MvvmActivity<ActivityCategoryDetailB
                 });
                 candidateAdapter.setOnDeleteListener((position, star) -> {
                     mModel.deleteCandidates(star);
-                    candidateAdapter.notifyItemRemoved(position);
+                    candidateAdapter.notifyDataSetChanged();
                 });
                 mBinding.rvCandidate.setAdapter(candidateAdapter);
             }
@@ -197,6 +202,10 @@ public class CategoryDetailActivity extends MvvmActivity<ActivityCategoryDetailB
             mModel.setEditMode(false);
         });
 
+        reload();
+    }
+
+    private void reload() {
         long id = getIntent().getLongExtra(EXTRA_CATEGORY_ID, -1);
         mModel.loadCandidates(id);
         mModel.loadLevels();
@@ -230,6 +239,10 @@ public class CategoryDetailActivity extends MvvmActivity<ActivityCategoryDetailB
 
     @Override
     public void onBackPressed() {
+        if (mModel.isEditMode()) {
+            showMessageLong("Please cancel or confirm edit first");
+            return;
+        }
         setResult(RESULT_OK);
         super.onBackPressed();
     }

@@ -228,7 +228,7 @@ public class CategoryDetailViewModel extends BaseViewModel {
             List<TopStar> stars = getDaoSession().getTopStarDao().queryBuilder()
                     .where(TopStarDao.Properties.CategoryId.eq(mCategoryId))
                     .where(TopStarDao.Properties.Level.notEq(0))
-                    .orderAsc(TopStarDao.Properties.Level)
+                    .orderAsc(TopStarDao.Properties.Level, TopStarDao.Properties.LevelIndex)
                     .build().list();
             CategoryLevel lastLevel = null;
             for (TopStar star:stars) {
@@ -461,18 +461,13 @@ public class CategoryDetailViewModel extends BaseViewModel {
             // level stars
             for (CategoryLevel level:levelsObserver.getValue()) {
                 if (ListUtil.isEmpty(level.getStarList())) {
-                    if (level.getLevel() == 1) {
-                        continue;
-                    }
-                    else {
-                        e.onError(new Exception("Level " + level.getLevel() + " is empty, please remove it first"));
-                        break;
-                    }
+                    e.onError(new Exception("Level " + level.getLevel() + " is empty, please remove or fill it first"));
+                    break;
                 }
-                for (Object object:level.getStarList()) {
-                    CategoryStar cs = (CategoryStar) object;
+                for (int i = 0; i < level.getStarList().size(); i ++) {
+                    CategoryStar cs = (CategoryStar) level.getStarList().get(i);
                     cs.getStar().setLevel(level.getLevel());
-                    cs.getStar().setLevelIndex(level.getLevel());
+                    cs.getStar().setLevelIndex(i);
                     updateList.add(cs.getStar());
                 }
             }
@@ -496,5 +491,9 @@ public class CategoryDetailViewModel extends BaseViewModel {
         candidatesObserver.getValue().remove(star);
         // update star number
         updateCategoryStarNumber(-1);
+    }
+
+    public void cancelEdit() {
+        getDaoSession().getTopStarDao().detachAll();
     }
 }

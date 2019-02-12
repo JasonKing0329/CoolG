@@ -27,6 +27,7 @@ public class LevelAdapter extends BaseBindingAdapter<AdapterCategoryLevelBinding
     @Override
     protected void onBindItem(AdapterCategoryLevelBinding binding, int position, CategoryLevel bean) {
         binding.setBean(bean);
+        CandidateAdapter adapter;
         if (binding.rvStars.getAdapter() == null) {
             binding.rvStars.setLayoutManager(new LinearLayoutManager(binding.rvStars.getContext(), LinearLayoutManager.HORIZONTAL, false));
             binding.rvStars.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -35,26 +36,26 @@ public class LevelAdapter extends BaseBindingAdapter<AdapterCategoryLevelBinding
                     outRect.left = ScreenUtils.dp2px(8);
                 }
             });
-            CandidateAdapter adapter = new CandidateAdapter();
+            adapter = new CandidateAdapter();
             adapter.setList(bean.getStarList());
-            adapter.setOnItemClickListener(new TwoTypeBindingAdapter.OnItemClickListener<CategoryStar, CategoryAdd>() {
-                @Override
-                public void onClickType1(View view, int position, CategoryStar data) {
-                    onLevelListener.onSelectLevelStar(bean, data);
-                }
-
-                @Override
-                public void onClickType2(View view, int position, CategoryAdd data) {
-
-                }
-            });
             binding.rvStars.setAdapter(adapter);
         }
         else {
-            CandidateAdapter adapter = (CandidateAdapter) binding.rvStars.getAdapter();
+            adapter = (CandidateAdapter) binding.rvStars.getAdapter();
             adapter.setList(bean.getStarList());
             adapter.notifyDataSetChanged();
         }
+        adapter.setOnItemClickListener(new TwoTypeBindingAdapter.OnItemClickListener<CategoryStar, CategoryAdd>() {
+            @Override
+            public void onClickType1(View view, int position, CategoryStar data) {
+                onLevelListener.onSelectLevelStar(bean, data);
+            }
+
+            @Override
+            public void onClickType2(View view, int position, CategoryAdd data) {
+
+            }
+        });
 
         binding.ivAdd.setOnClickListener(v -> onLevelListener.onInsertLevel(bean));
 
