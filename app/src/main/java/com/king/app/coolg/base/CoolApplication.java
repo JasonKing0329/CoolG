@@ -135,7 +135,6 @@ public class CoolApplication extends Application {
                     PlayItemDao.createTable(db, true);
                     PlayDurationDao.createTable(db, true);
                     insertTempPlayOrder(db);
-                    break;
                 case 5:
                     TopStarCategoryDao.createTable(db, true);
                     TopStarDao.createTable(db, true);
