@@ -38,6 +38,8 @@ import com.king.app.gdb.data.entity.StarRating;
 import com.king.app.gdb.data.entity.StarRatingDao;
 import com.king.app.gdb.data.entity.TopStar;
 import com.king.app.gdb.data.entity.TopStarCategory;
+import com.king.app.gdb.data.entity.VideoCoverPlayOrder;
+import com.king.app.gdb.data.entity.VideoCoverStar;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -554,6 +556,8 @@ public class ManageViewModel extends BaseViewModel {
                 // 保存play_xx表数据
                 data.playItemList = getDaoSession().getPlayItemDao().loadAll();
                 data.playOrderList = getDaoSession().getPlayOrderDao().loadAll();
+                data.videoCoverPlayOrders = getDaoSession().getVideoCoverPlayOrderDao().loadAll();
+                data.videoCoverStars = getDaoSession().getVideoCoverStarDao().loadAll();
 
                 // 保存star_category, star_category_details表数据
                 data.categoryList = getDaoSession().getTopStarCategoryDao().loadAll();
@@ -678,6 +682,12 @@ public class ManageViewModel extends BaseViewModel {
                 getDaoSession().getPlayOrderDao().insertInTx(mLocalData.playOrderList);
             }
         }
+        if (!ListUtil.isEmpty(mLocalData.videoCoverPlayOrders)) {
+            getDaoSession().getVideoCoverPlayOrderDao().insertInTx(mLocalData.videoCoverPlayOrders);
+        }
+        if (!ListUtil.isEmpty(mLocalData.videoCoverStars)) {
+            getDaoSession().getVideoCoverStarDao().insertInTx(mLocalData.videoCoverStars);
+        }
     }
 
     private class LocalData {
@@ -696,6 +706,10 @@ public class ManageViewModel extends BaseViewModel {
         List<PlayOrder> playOrderList;
 
         List<PlayItem> playItemList;
+
+        List<VideoCoverPlayOrder> videoCoverPlayOrders;
+
+        List<VideoCoverStar> videoCoverStars;
 
         List<TopStarCategory> categoryList;
 

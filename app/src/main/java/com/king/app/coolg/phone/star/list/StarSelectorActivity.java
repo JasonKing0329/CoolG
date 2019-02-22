@@ -20,6 +20,10 @@ public class StarSelectorActivity extends MvvmActivity<ActivityStarSelectorBindi
 
     public static final String RESP_SELECT_RESULT = "resp_select_result";
 
+    public static final String EXTRA_SINGLE = "select_single";
+
+    public static final String EXTRA_LIMIT_MAX = "select_limit_max";
+
     @Override
     protected StarSelectorViewModel createViewModel() {
         return ViewModelProviders.of(this).get(StarSelectorViewModel.class);
@@ -89,6 +93,14 @@ public class StarSelectorActivity extends MvvmActivity<ActivityStarSelectorBindi
         setResult(RESULT_OK, intent);
     }
 
+    private boolean isSingleSelect() {
+        return getIntent().getBooleanExtra(EXTRA_SINGLE, false);
+    }
+
+    private int getLimitMax() {
+        return getIntent().getIntExtra(EXTRA_LIMIT_MAX, 0);
+    }
+
     @Override
     protected void initData() {
 
@@ -104,6 +116,8 @@ public class StarSelectorActivity extends MvvmActivity<ActivityStarSelectorBindi
             mBinding.sidebar.setVisibility(View.VISIBLE);
         });
 
+        mModel.setSingleSelect(isSingleSelect());
+        mModel.setLimitMax(getLimitMax());
         mModel.loadStars();
     }
 

@@ -31,6 +31,12 @@ public class StarSelectorViewModel extends BaseViewModel {
 
     private StarIndexEmitter indexEmitter;
 
+    private StarProxy mSelectedStar;
+
+    private boolean bSingleSelect;
+
+    private int mLimitMax;
+
     public StarSelectorViewModel(@NonNull Application application) {
         super(application);
         indexEmitter = new StarIndexEmitter();
@@ -105,10 +111,41 @@ public class StarSelectorViewModel extends BaseViewModel {
         });
     }
 
+    public void setSingleSelect(boolean bSingleSelect) {
+        this.bSingleSelect = bSingleSelect;
+    }
+
+    public void setLimitMax(int limitMax) {
+        this.mLimitMax = limitMax;
+    }
+
     private SelectObserver<StarProxy> selectObserver = data -> onSelectStar(data);
 
     private void onSelectStar(StarProxy data) {
-        data.setChecked(!data.isChecked());
+        if (bSingleSelect) {
+            if (mSelectedStar != null) {
+                mSelectedStar.setChecked(false);
+            }
+            data.setChecked(true);
+            mSelectedStar = data;
+        }
+        else if (mLimitMax > 0) {
+            int count = 0;
+            for (StarProxy proxy:starsObserver.getValue()) {
+                if (proxy.isChecked()) {
+                    count ++;
+                }
+            }
+            boolean targetCheck = !data.isChecked();
+            if (targetCheck && count >= mLimitMax) {
+                messageObserver.setValue("You can select at most " + mLimitMax);
+                return;
+            }
+            data.setChecked(targetCheck);
+        }
+        else {
+            data.setChecked(!data.isChecked());
+        }
     }
 
     public ArrayList<CharSequence> getSelectedItems() {
@@ -124,5 +161,4 @@ public class StarSelectorViewModel extends BaseViewModel {
     public int getLetterPosition(String letter) {
         return indexEmitter.getPlayerIndexMap().get(letter).start;
     }
-
 }

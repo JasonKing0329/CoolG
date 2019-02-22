@@ -21,6 +21,8 @@ import com.king.app.gdb.data.entity.PlayOrderDao;
 import com.king.app.gdb.data.entity.StarRatingDao;
 import com.king.app.gdb.data.entity.TopStarCategoryDao;
 import com.king.app.gdb.data.entity.TopStarDao;
+import com.king.app.gdb.data.entity.VideoCoverPlayOrderDao;
+import com.king.app.gdb.data.entity.VideoCoverStarDao;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
@@ -138,6 +140,9 @@ public class CoolApplication extends Application {
                 case 5:
                     TopStarCategoryDao.createTable(db, true);
                     TopStarDao.createTable(db, true);
+                case 6:
+                    VideoCoverStarDao.createTable(db, true);
+                    VideoCoverPlayOrderDao.createTable(db, true);
                     break;
             }
         }
