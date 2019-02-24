@@ -1,7 +1,6 @@
 package com.king.app.coolg.phone.home;
 
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -105,27 +104,29 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
             }
         });
 
-        if (ListUtil.isEmpty(mPlayList)) {
-            binding.tvPlayList.setVisibility(View.GONE);
-            binding.rvPlayList.setVisibility(View.GONE);
-        }
-        else {
-            binding.tvPlayList.setVisibility(View.VISIBLE);
-            binding.rvPlayList.setVisibility(View.VISIBLE);
-            binding.tvPlayList.setText("Play List (" + mPlayList.size() + ")");
-            binding.tvPlayList.setOnClickListener(v -> onHeadActionListener.goToPlayList());
-            if (playAdapter == null) {
-                binding.rvPlayList.setLayoutManager(new LinearLayoutManager(binding.rvPlayList.getContext(), LinearLayoutManager.HORIZONTAL, false));
-                playAdapter = new HomePlayAdapter();
-                playAdapter.setList(mPlayList);
-                playAdapter.setOnItemClickListener((view, position, data) -> onHeadActionListener.onClickPlayItem(view, data.getRecord()));
-                binding.rvPlayList.setAdapter(playAdapter);
-            }
-            else {
-                playAdapter.setList(mPlayList);
-                playAdapter.notifyDataSetChanged();
-            }
-        }
+        binding.tvPlayList.setOnClickListener(v -> onHeadActionListener.goToPlayList());
+
+//        if (ListUtil.isEmpty(mPlayList)) {
+//            binding.tvPlayList.setVisibility(View.GONE);
+//            binding.rvPlayList.setVisibility(View.GONE);
+//        }
+//        else {
+//            binding.tvPlayList.setVisibility(View.VISIBLE);
+//            binding.rvPlayList.setVisibility(View.VISIBLE);
+//            binding.tvPlayList.setText("Play List (" + mPlayList.size() + ")");
+//            binding.tvPlayList.setOnClickListener(v -> onHeadActionListener.goToPlayList());
+//            if (playAdapter == null) {
+//                binding.rvPlayList.setLayoutManager(new LinearLayoutManager(binding.rvPlayList.getContext(), LinearLayoutManager.HORIZONTAL, false));
+//                playAdapter = new HomePlayAdapter();
+//                playAdapter.setList(mPlayList);
+//                playAdapter.setOnItemClickListener((view, position, data) -> onHeadActionListener.onClickPlayItem(view, data.getRecord()));
+//                binding.rvPlayList.setAdapter(playAdapter);
+//            }
+//            else {
+//                playAdapter.setList(mPlayList);
+//                playAdapter.notifyDataSetChanged();
+//            }
+//        }
     }
 
     @Override

@@ -143,6 +143,8 @@ public class CoolApplication extends Application {
                 case 6:
                     VideoCoverStarDao.createTable(db, true);
                     VideoCoverPlayOrderDao.createTable(db, true);
+                    db.execSQL("ALTER TABLE " + PlayOrderDao.TABLENAME + " ADD COLUMN "
+                            + PlayOrderDao.Properties.CoverUrl.columnName + " TEXT");
                     break;
             }
         }
@@ -153,7 +155,7 @@ public class CoolApplication extends Application {
                     .where(PlayOrderDao.Properties.Id.eq(AppConstants.PLAY_ORDER_TEMP_ID))
                     .buildCount().count();
             if (count == 0) {
-                PlayOrder order = new PlayOrder(AppConstants.PLAY_ORDER_TEMP_ID, AppConstants.PLAY_ORDER_TEMP_NAME);
+                PlayOrder order = new PlayOrder(AppConstants.PLAY_ORDER_TEMP_ID, AppConstants.PLAY_ORDER_TEMP_NAME, null);
                 dao.insert(order);
                 dao.detachAll();
             }

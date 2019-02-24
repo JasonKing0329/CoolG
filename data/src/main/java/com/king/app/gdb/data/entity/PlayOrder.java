@@ -1,12 +1,12 @@
 package com.king.app.gdb.data.entity;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.ToMany;
 
 import java.util.List;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
 
 /**
  * Desc:
@@ -22,6 +22,8 @@ public class PlayOrder {
 
     private String name;
 
+    private String coverUrl;
+
     @ToMany(referencedJoinProperty = "orderId")
     private List<PlayItem> list;
 
@@ -33,10 +35,11 @@ public class PlayOrder {
     @Generated(hash = 136962676)
     private transient PlayOrderDao myDao;
 
-    @Generated(hash = 1795429833)
-    public PlayOrder(Long id, String name) {
+    @Generated(hash = 1340634357)
+    public PlayOrder(Long id, String name, String coverUrl) {
         this.id = id;
         this.name = name;
+        this.coverUrl = coverUrl;
     }
 
     @Generated(hash = 127801695)
@@ -121,6 +124,14 @@ public class PlayOrder {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    public String getCoverUrl() {
+        return this.coverUrl;
+    }
+
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
     }
 
     /** called by internal mechanisms, do not call yourself. */

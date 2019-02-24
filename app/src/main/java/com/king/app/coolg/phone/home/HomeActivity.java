@@ -13,11 +13,9 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
-import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityHomeBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
-import com.king.app.coolg.phone.video.PlayListActivity;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -245,10 +243,12 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     }
 
     private void goToPlayListPage() {
-        Router.build("PlayList")
-                .with(PlayListActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
-                .requestCode(REQUEST_PLAY_LIST)
+        Router.build("VideoHomePhone")
                 .go(this);
+//        Router.build("PlayList")
+//                .with(PlayListActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
+//                .requestCode(REQUEST_PLAY_LIST)
+//                .go(this);
     }
 
     @Override

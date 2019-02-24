@@ -6,11 +6,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.chenenyu.router.Router;
+import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPhoneBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.star.list.StarSelectorActivity;
+import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 
 import java.util.ArrayList;
@@ -22,9 +24,11 @@ import java.util.Random;
  * @author：Jing Yang
  * @date: 2019/2/22 15:26
  */
+@Route("VideoHomePhone")
 public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBinding, VideoHomeViewModel> {
 
     public static final int REQUEST_SELECT_STAR = 6051;
+    public static final int REQUEST_SELECT_ORDER = 6052;
 
     private HomeAdapter adapter;
 
@@ -54,12 +58,16 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
         adapter.setOnHeadActionListener(new HomeAdapter.OnHeadActionListener() {
             @Override
             public void onSetPlayList() {
-
+                Router.build("PlayOrder")
+                        .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
+                        .requestCode(REQUEST_SELECT_ORDER)
+                        .go(VideoHomePhoneActivity.this);
             }
 
             @Override
             public void onPlayList() {
-
+                Router.build("PlayOrder")
+                        .go(VideoHomePhoneActivity.this);
             }
 
             @Override
@@ -96,7 +104,16 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
 
             }
         });
+        mBinding.rvItems.setAdapter(adapter);
 
+        mModel.headDataObserver.observe(this, data -> {
+            adapter.setHeadData(data);
+            adapter.notifyDataSetChanged();
+        });
+        mModel.itemsObserver.observe(this, list -> {
+            adapter.setList(list);
+            adapter.notifyDataSetChanged();
+        });
         mModel.buildPage();
     }
 
@@ -124,10 +141,16 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_SELECT_STAR ) {
+        if (requestCode == REQUEST_SELECT_STAR) {
             if (resultCode == RESULT_OK) {
                 ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(StarSelectorActivity.RESP_SELECT_RESULT);
                 mModel.updateVideoCoverStar(list);
+            }
+        }
+        else if (requestCode == REQUEST_SELECT_ORDER) {
+            if (resultCode == RESULT_OK) {
+                ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
+                mModel.updateVideoCoverPlayList(list);
             }
         }
     }

@@ -5,6 +5,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.model.ImageProvider;
+import com.king.app.gdb.data.entity.VideoCoverPlayOrder;
 import com.king.app.gdb.data.entity.VideoCoverStar;
 
 import java.util.ArrayList;
@@ -69,6 +71,7 @@ public class VideoHomeViewModel extends BaseViewModel {
         return Observable.create(e -> {
             VideoHeadData data = new VideoHeadData();
             data.setGuyList(getCoverGuys());
+            data.setPlayLists(getCoverPlayLists());
             e.onNext(data);
         });
     }
@@ -129,7 +132,72 @@ public class VideoHomeViewModel extends BaseViewModel {
         for (VideoCoverStar cs:list) {
             VideoGuy guy = new VideoGuy();
             guy.setStar(cs.getStar());
+            guy.setImageUrl(ImageProvider.getStarRandomPath(cs.getStar().getName(), null));
+            guys.add(guy);
         }
         return guys;
+    }
+
+    public void updateVideoCoverPlayList(ArrayList<CharSequence> list) {
+        updateCoverPlayList(list)
+                .flatMap(pass -> loadCoverPlayLists())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<VideoPlayList>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<VideoPlayList> lists) {
+                        headDataObserver.getValue().setPlayLists(lists);
+                        headDataObserver.setValue(headDataObserver.getValue());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private Observable<Boolean> updateCoverPlayList(ArrayList<CharSequence> list) {
+        return Observable.create(e -> {
+            getDaoSession().getVideoCoverPlayOrderDao().deleteAll();
+            List<VideoCoverPlayOrder> insertList = new ArrayList<>();
+            for (CharSequence str:list) {
+                long orderId = Long.parseLong(str.toString());
+                VideoCoverPlayOrder order = new VideoCoverPlayOrder();
+                order.setOrderId(orderId);
+                insertList.add(order);
+            }
+            getDaoSession().getVideoCoverPlayOrderDao().insertInTx(insertList);
+            getDaoSession().getVideoCoverPlayOrderDao().detachAll();
+            e.onNext(true);
+        });
+    }
+
+    private ObservableSource<List<VideoPlayList>> loadCoverPlayLists() {
+        return observer -> observer.onNext(getCoverPlayLists());
+    }
+
+    private List<VideoPlayList> getCoverPlayLists() {
+        List<VideoPlayList> lists = new ArrayList<>();
+        List<VideoCoverPlayOrder> list = getDaoSession().getVideoCoverPlayOrderDao().loadAll();
+        for (VideoCoverPlayOrder cs:list) {
+            VideoPlayList playList = new VideoPlayList();
+            playList.setName(cs.getOrder().getName());
+            playList.setImageUrl(cs.getOrder().getCoverUrl());
+            playList.setPlayOrder(cs.getOrder());
+            lists.add(playList);
+        }
+        return lists;
     }
 }
