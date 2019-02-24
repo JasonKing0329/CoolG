@@ -66,6 +66,7 @@ public class HomeViewModel extends BaseViewModel {
     private PlayRepository playRepository;
 
     public MutableLiveData<List<PlayItem>> playListObserver = new MutableLiveData<>();
+    private Record mRecordAddViewOrder;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
@@ -245,27 +246,26 @@ public class HomeViewModel extends BaseViewModel {
                 });
     }
 
-    public void insertToPlayList(Record record) {
+    public void insertToPlayList(ArrayList<CharSequence> list) {
         PathRequest request = new PathRequest();
-        request.setPath(record.getDirectory());
-        request.setName(record.getName());
+        request.setPath(mRecordAddViewOrder.getDirectory());
+        request.setName(mRecordAddViewOrder.getName());
         loadingObserver.setValue(true);
         AppHttpClient.getInstance().getAppService().getVideoPath(request)
                 .flatMap(response -> UrlUtil.toVideoUrl(response))
-                .flatMap(url -> insertToPlayerListDb(record.getId(), url))
+                .flatMap(url -> insertToPlayerListDb(list, mRecordAddViewOrder.getId(), url))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<PlayItem>() {
+                .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         addDisposable(d);
                     }
 
                     @Override
-                    public void onNext(PlayItem playItem) {
+                    public void onNext(Boolean pass) {
                         loadingObserver.setValue(false);
                         messageObserver.setValue("success");
-                        loadPlayList();
                     }
 
                     @Override
@@ -282,15 +282,24 @@ public class HomeViewModel extends BaseViewModel {
                 });
     }
 
-    private ObservableSource<PlayItem> insertToPlayerListDb(long recordId, String url) {
-        return playRepository.checkExistence(AppConstants.PLAY_ORDER_TEMP_ID, recordId)
-                .flatMap(result -> {
+    private ObservableSource<Boolean> insertToPlayerListDb(ArrayList<CharSequence> orderIds, long recordId, String url) {
+        return observer -> {
+            if (!ListUtil.isEmpty(orderIds)) {
+                for (CharSequence id:orderIds) {
+                    long orderId = Long.parseLong(id.toString());
+                    if (playRepository.isExist(orderId, recordId)) {
+                        continue;
+                    }
                     PlayItem item = new PlayItem();
-                    item.setOrderId(AppConstants.PLAY_ORDER_TEMP_ID);
+                    item.setOrderId(orderId);
                     item.setRecordId(recordId);
                     item.setUrl(url);
-                    return playRepository.insertOrReplacePlayItem(item);
-                });
+                    getDaoSession().getPlayItemDao().insertOrReplace(item);
+                }
+                getDaoSession().getPlayItemDao().detachAll();
+            }
+            observer.onNext(true);
+        };
     }
 
     public void loadPlayList() {
@@ -321,4 +330,9 @@ public class HomeViewModel extends BaseViewModel {
                 });
 
     }
+
+    public void saveRecordToAddViewOrder(Record record) {
+        mRecordAddViewOrder = record;
+    }
+
 }

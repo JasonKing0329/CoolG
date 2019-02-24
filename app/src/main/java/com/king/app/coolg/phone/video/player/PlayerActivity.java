@@ -13,7 +13,7 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPlayerBinding;
-import com.king.app.coolg.phone.video.PlayItemViewBean;
+import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.view.widget.video.OnVideoListListener;
 import com.king.app.coolg.view.widget.video.OnVideoListener;
 

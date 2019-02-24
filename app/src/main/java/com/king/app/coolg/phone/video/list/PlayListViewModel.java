@@ -1,4 +1,4 @@
-package com.king.app.coolg.phone.video;
+package com.king.app.coolg.phone.video.list;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
@@ -8,10 +8,12 @@ import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.gdb.data.entity.PlayItem;
+import com.king.app.gdb.data.entity.PlayOrder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -28,6 +30,8 @@ public class PlayListViewModel extends BaseViewModel {
 
     public MutableLiveData<List<PlayItemViewBean>> itemsObserver = new MutableLiveData<>();
 
+    public MutableLiveData<PlayOrder> orderObserver = new MutableLiveData<>();
+
     private PlayRepository repository;
 
     private long mOrderId;
@@ -40,7 +44,11 @@ public class PlayListViewModel extends BaseViewModel {
     public void loadPlayItems(long orderId) {
         mOrderId = orderId;
         loadingObserver.setValue(true);
-        repository.getPlayItems(orderId)
+        loadOrder(orderId)
+                .flatMap(order -> {
+                    orderObserver.postValue(order);
+                    return repository.getPlayItems(orderId);
+                })
                 .flatMap(list -> toViewItems(list))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -68,6 +76,10 @@ public class PlayListViewModel extends BaseViewModel {
 
                     }
                 });
+    }
+
+    private Observable<PlayOrder> loadOrder(long orderId) {
+        return Observable.create(e -> e.onNext(getDaoSession().getPlayOrderDao().load(orderId)));
     }
 
     private ObservableSource<List<PlayItemViewBean>> toViewItems(List<PlayItem> items) {

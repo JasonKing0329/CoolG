@@ -1,4 +1,4 @@
-package com.king.app.coolg.phone.video;
+package com.king.app.coolg.phone.video.list;
 
 import com.king.app.gdb.data.entity.PlayItem;
 

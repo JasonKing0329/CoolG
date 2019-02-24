@@ -27,18 +27,22 @@ public class PlayRepository extends BaseRepository {
         return count > 0;
     }
 
+    public boolean isExist(long orderId, long recordId) {
+        PlayItem item = getDaoSession().getPlayItemDao().queryBuilder()
+                .where(PlayItemDao.Properties.OrderId.eq(orderId))
+                .where(PlayItemDao.Properties.RecordId.eq(recordId))
+                .build().unique();
+        return item != null;
+    }
+
     public Observable<Boolean> checkExistence(long orderId, long recordId) {
         return Observable.create(e -> {
             try {
-                PlayItem item = getDaoSession().getPlayItemDao().queryBuilder()
-                        .where(PlayItemDao.Properties.OrderId.eq(orderId))
-                        .where(PlayItemDao.Properties.RecordId.eq(recordId))
-                        .build().unique();
-                if (item == null) {
-                    e.onNext(true);
+                if (isExist(orderId, recordId)) {
+                    e.onError(new Exception("Record is already added to target order"));
                 }
                 else {
-                    e.onError(new Exception("Record is already added to target order"));
+                    e.onNext(true);
                 }
             } catch (DaoException ex) {
                 ex.printStackTrace();

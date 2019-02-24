@@ -7,10 +7,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityPlayOrderBinding;
+import com.king.app.coolg.phone.video.list.PlayListActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.SimpleDialogs;
 import com.king.app.jactionbar.OnConfirmListener;
@@ -23,6 +25,8 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
     public static final String RESP_SELECT_RESULT = "select_result";
 
     private final int ACTION_MULTI_SELECT = 11;
+
+    private final int REQUEST_PLAY_LIST = 6010;
 
     private PlayOrderAdapter adapter;
 
@@ -124,6 +128,10 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
                 adapter = new PlayOrderAdapter();
                 adapter.setList(list);
                 adapter.setMultiSelect(isMultiSelect());
+                adapter.setOnItemClickListener((view, position, data) -> Router.build("PlayList")
+                        .with(PlayListActivity.EXTRA_ORDER_ID, data.getPlayOrder().getId())
+                        .requestCode(REQUEST_PLAY_LIST)
+                        .go(PlayOrderActivity.this));
                 mBinding.rvList.setAdapter(adapter);
             }
             else {
@@ -133,5 +141,14 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
         });
 
         mModel.loadOrders();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_PLAY_LIST) {
+            if (resultCode == RESULT_OK) {
+
+            }
+        }
     }
 }

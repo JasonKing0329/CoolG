@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.repository.PlayRepository;
-import com.king.app.coolg.phone.video.PlayItemViewBean;
+import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.gdb.data.entity.PlayDuration;

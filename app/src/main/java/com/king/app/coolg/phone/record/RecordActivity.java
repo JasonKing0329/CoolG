@@ -27,6 +27,7 @@ import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.studio.StudioActivity;
+import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -38,6 +39,7 @@ import com.king.app.gdb.data.entity.RecordType1v1;
 import com.king.app.gdb.data.entity.RecordType3w;
 import com.king.app.gdb.data.param.DataConstants;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -59,6 +61,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
     private final int REQUEST_ADD_ORDER = 1602;
     private final int REQUEST_SELECT_STUDIO = 1603;
+    private final int REQUEST_VIDEO_ORDER = 1604;
 
     private RequestOptions recordOptions;
 
@@ -133,7 +136,12 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             }
         });
 
-        mBinding.groupAddToPlay.setOnClickListener(v -> mModel.addToPlay());
+        mBinding.groupAddToPlay.setOnClickListener(v -> {
+            Router.build("PlayOrder")
+                    .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
+                    .requestCode(REQUEST_VIDEO_ORDER)
+                    .go(RecordActivity.this);
+        });
 
     }
 
@@ -495,6 +503,12 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             if (resultCode == RESULT_OK) {
                 long orderId = data.getLongExtra(AppConstants.RESP_ORDER_ID, -1);
                 mModel.addToOrder(orderId);
+            }
+        }
+        else if (requestCode == REQUEST_VIDEO_ORDER) {
+            if (resultCode == RESULT_OK) {
+                ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
+                mModel.addToPlay(list);
             }
         }
     }

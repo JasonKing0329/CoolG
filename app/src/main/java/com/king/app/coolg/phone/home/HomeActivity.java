@@ -16,6 +16,7 @@ import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityHomeBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
+import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -36,6 +37,7 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     implements NavigationView.OnNavigationItemSelectedListener{
 
     private final int REQUEST_PLAY_LIST = 100;
+    private final int REQUEST_VIDEO_ORDER = 101;
 
     private ImageView navHeaderView;
     private ImageView ivFolder;
@@ -131,7 +133,11 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
 
                 @Override
                 public void onAddPlay(Record record) {
-                    mModel.insertToPlayList(record);
+                    mModel.saveRecordToAddViewOrder(record);
+                    Router.build("PlayOrder")
+                            .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
+                            .requestCode(REQUEST_VIDEO_ORDER)
+                            .go(HomeActivity.this);
                 }
             });
             adapter.setOnHeadActionListener(new HomeAdapter.OnHeadActionListener() {
@@ -245,10 +251,6 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     private void goToPlayListPage() {
         Router.build("VideoHomePhone")
                 .go(this);
-//        Router.build("PlayList")
-//                .with(PlayListActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
-//                .requestCode(REQUEST_PLAY_LIST)
-//                .go(this);
     }
 
     @Override
@@ -257,6 +259,12 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
         switch (requestCode) {
             case REQUEST_PLAY_LIST:
                 mModel.loadPlayList();
+                break;
+            case REQUEST_VIDEO_ORDER:
+                if (resultCode == RESULT_OK) {
+                    ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
+                    mModel.insertToPlayList(list);
+                }
                 break;
         }
     }

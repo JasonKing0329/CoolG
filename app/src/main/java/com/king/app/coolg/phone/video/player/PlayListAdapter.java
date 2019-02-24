@@ -6,7 +6,7 @@ import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
 import com.king.app.coolg.databinding.AdapterPlaylistItemBinding;
-import com.king.app.coolg.phone.video.PlayItemViewBean;
+import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 
 /**
  * Desc:

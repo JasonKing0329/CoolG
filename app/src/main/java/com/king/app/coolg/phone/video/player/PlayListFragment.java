@@ -9,7 +9,7 @@ import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentVideoPlayListBinding;
-import com.king.app.coolg.phone.video.PlayItemViewBean;
+import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 
 import java.util.List;
 

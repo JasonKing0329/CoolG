@@ -1,4 +1,4 @@
-package com.king.app.coolg.phone.video;
+package com.king.app.coolg.phone.video.list;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Configuration;
@@ -90,6 +90,7 @@ public class PlayListActivity extends MvvmActivity<ActivityPlayListBinding, Play
 
     @Override
     protected void initData() {
+        mModel.orderObserver.observe(this, order -> mBinding.actionbar.setTitle(order.getName()));
         mModel.itemsObserver.observe(this, list -> showItems(list));
 
         mModel.loadPlayItems(getOrderId());

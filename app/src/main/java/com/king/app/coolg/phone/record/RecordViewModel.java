@@ -2,10 +2,8 @@ package com.king.app.coolg.phone.record;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
-import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.view.View;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
@@ -17,6 +15,7 @@ import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.utils.DebugLog;
+import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.UrlUtil;
 import com.king.app.gdb.data.entity.FavorRecord;
 import com.king.app.gdb.data.entity.FavorRecordDao;
@@ -48,8 +47,6 @@ import io.reactivex.schedulers.Schedulers;
  * @date: 2018/8/8 13:24
  */
 public class RecordViewModel extends BaseViewModel {
-
-    public ObservableField<Integer> playListVisibility = new ObservableField<>(View.GONE);
 
     public MutableLiveData<Record> recordObserver = new MutableLiveData<>();
 
@@ -105,34 +102,6 @@ public class RecordViewModel extends BaseViewModel {
                         recordObserver.setValue(record);
 
                         checkPlayable();
-                        checkPlayList();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    private void checkPlayList() {
-        playRepository.hasPlayList(AppConstants.PLAY_ORDER_TEMP_ID)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<Boolean>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(Boolean hasItems) {
-                        playListVisibility.set(hasItems ? View.VISIBLE:View.GONE);
                     }
 
                     @Override
@@ -221,29 +190,41 @@ public class RecordViewModel extends BaseViewModel {
         return mVideoCover;
     }
 
-    /**
-     * add to temp play order
-     */
-    public void addToPlay() {
-        playRepository.checkExistence(AppConstants.PLAY_ORDER_TEMP_ID, mRecord.getId())
-                .flatMap(result -> {
+    private Observable<Boolean> insertToVideoOrders(ArrayList<CharSequence> orderIds) {
+        return Observable.create(e -> {
+            if (!ListUtil.isEmpty(orderIds)) {
+                for (CharSequence id:orderIds) {
+                    long orderId = Long.parseLong(id.toString());
+                    if (playRepository.isExist(orderId, mRecord.getId())) {
+                        continue;
+                    }
                     PlayItem item = new PlayItem();
-                    item.setOrderId(AppConstants.PLAY_ORDER_TEMP_ID);
+                    item.setOrderId(orderId);
                     item.setRecordId(mRecord.getId());
                     item.setUrl(mPlayUrl);
-                    return playRepository.insertOrReplacePlayItem(item);
-                })
+                    getDaoSession().getPlayItemDao().insertOrReplace(item);
+                }
+                getDaoSession().getPlayItemDao().detachAll();
+            }
+            e.onNext(true);
+        });
+    }
+    /**
+     * add to temp play order
+     * @param list
+     */
+    public void addToPlay(ArrayList<CharSequence> list) {
+        insertToVideoOrders(list)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<PlayItem>() {
+                .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         addDisposable(d);
                     }
 
                     @Override
-                    public void onNext(PlayItem item) {
-                        checkPlayList();
+                    public void onNext(Boolean item) {
                         messageObserver.setValue("Add successfully");
                     }
 

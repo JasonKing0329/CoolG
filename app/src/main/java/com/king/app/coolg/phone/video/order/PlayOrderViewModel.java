@@ -70,6 +70,12 @@ public class PlayOrderViewModel extends BaseViewModel {
                 playList.setImageUrl(order.getCoverUrl());
                 playList.setPlayOrder(order);
                 playList.setVisibility(View.GONE);
+
+                long count = getDaoSession().getPlayItemDao().queryBuilder()
+                        .where(PlayItemDao.Properties.OrderId.eq(order.getId()))
+                        .buildCount().count();
+                playList.setVideos((int) count);
+
                 result.add(playList);
             }
             observer.onNext(result);

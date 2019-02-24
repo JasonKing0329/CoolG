@@ -24,6 +24,8 @@ public class VideoPlayList extends BaseObservable {
 
     private int visibility;
 
+    private int videos;
+
     public String getName() {
         return name;
     }
@@ -66,5 +68,13 @@ public class VideoPlayList extends BaseObservable {
     public void setVisibility(int visibility) {
         this.visibility = visibility;
         notifyPropertyChanged(BR.visibility);
+    }
+
+    public int getVideos() {
+        return videos;
+    }
+
+    public void setVideos(int videos) {
+        this.videos = videos;
     }
 }

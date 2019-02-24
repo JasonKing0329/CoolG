@@ -1,4 +1,4 @@
-package com.king.app.coolg.phone.video;
+package com.king.app.coolg.phone.video.list;
 
 import android.text.TextUtils;
 import android.widget.ImageView;
