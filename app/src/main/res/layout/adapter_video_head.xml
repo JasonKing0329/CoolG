@@ -33,49 +33,49 @@
             app:layout_constraintTop_toTopOf="@+id/tv_play_list"
             app:srcCompat="@drawable/ic_settings_grey_700_24dp" />
 
-        <com.github.siyamed.shapeimageview.RoundedImageView
+        <com.king.app.coolg.view.widget.CoverView
             android:id="@+id/iv_list0"
-            style="@style/IvVideoRoundCover"
+            style="@style/CoverViewOrder"
             android:layout_marginTop="8dp"
             android:visibility="@{data.getPlayListVisibility(0)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/iv_list1"
             app:layout_constraintTop_toBottomOf="@+id/tv_play_list"
-            app:siRadius="8dp"
-            app:recordUrl="@{data.getPlayListUrl(0)}"/>
+            app:coverText="@{data.getPlayListName(0)}"
+            app:coverRecordUrl="@{data.getPlayListUrl(0)}"/>
 
-        <com.github.siyamed.shapeimageview.RoundedImageView
+        <com.king.app.coolg.view.widget.CoverView
             android:id="@+id/iv_list1"
-            style="@style/IvVideoRoundCover"
+            style="@style/CoverViewOrder"
             android:layout_marginTop="8dp"
             android:visibility="@{data.getPlayListVisibility(1)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_list0"
             app:layout_constraintTop_toBottomOf="@+id/tv_play_list"
-            app:siRadius="8dp"
-            app:recordUrl="@{data.getPlayListUrl(1)}"/>
+            app:coverText="@{data.getPlayListName(1)}"
+            app:coverRecordUrl="@{data.getPlayListUrl(1)}"/>
 
-        <com.github.siyamed.shapeimageview.RoundedImageView
+        <com.king.app.coolg.view.widget.CoverView
             android:id="@+id/iv_list2"
-            style="@style/IvVideoRoundCover"
+            style="@style/CoverViewOrder"
             android:layout_marginTop="8dp"
             android:visibility="@{data.getPlayListVisibility(2)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/iv_list3"
             app:layout_constraintTop_toBottomOf="@+id/iv_list0"
-            app:siRadius="8dp"
-            app:recordUrl="@{data.getPlayListUrl(2)}"/>
+            app:coverText="@{data.getPlayListName(2)}"
+            app:coverRecordUrl="@{data.getPlayListUrl(2)}"/>
 
-        <com.github.siyamed.shapeimageview.RoundedImageView
+        <com.king.app.coolg.view.widget.CoverView
             android:id="@+id/iv_list3"
-            style="@style/IvVideoRoundCover"
+            style="@style/CoverViewOrder"
             android:layout_marginTop="8dp"
             android:visibility="@{data.getPlayListVisibility(3)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_list2"
             app:layout_constraintTop_toBottomOf="@+id/iv_list0"
-            app:siRadius="8dp"
-            app:recordUrl="@{data.getPlayListUrl(3)}"/>
+            app:coverText="@{data.getPlayListName(3)}"
+            app:coverRecordUrl="@{data.getPlayListUrl(3)}"/>
 
         <TextView
             android:id="@+id/tv_guys"
@@ -97,48 +97,48 @@
             app:layout_constraintTop_toTopOf="@+id/tv_guys"
             app:srcCompat="@drawable/ic_settings_grey_700_24dp" />
 
-        <com.github.siyamed.shapeimageview.RoundedImageView
+        <com.king.app.coolg.view.widget.CoverView
             android:id="@+id/iv_star0"
-            style="@style/IvVideoRoundCover"
+            style="@style/CoverViewOrder"
             android:layout_marginTop="8dp"
             android:visibility="@{data.getGuyVisibility(0)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/iv_star1"
             app:layout_constraintTop_toBottomOf="@+id/tv_guys"
-            app:siRadius="8dp"
-            app:starUrl="@{data.getGuyUrl(0)}"/>
+            app:coverText="@{data.getGuyName(0)}"
+            app:coverRecordUrl="@{data.getGuyUrl(0)}"/>
 
-        <com.github.siyamed.shapeimageview.RoundedImageView
+        <com.king.app.coolg.view.widget.CoverView
             android:id="@+id/iv_star1"
-            style="@style/IvVideoRoundCover"
+            style="@style/CoverViewOrder"
             android:layout_marginTop="8dp"
             android:visibility="@{data.getGuyVisibility(1)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_star0"
             app:layout_constraintTop_toBottomOf="@+id/tv_guys"
-            app:siRadius="8dp"
-            app:starUrl="@{data.getGuyUrl(1)}"/>
+            app:coverText="@{data.getGuyName(1)}"
+            app:coverRecordUrl="@{data.getGuyUrl(1)}"/>
 
-        <com.github.siyamed.shapeimageview.RoundedImageView
+        <com.king.app.coolg.view.widget.CoverView
             android:id="@+id/iv_star2"
-            style="@style/IvVideoRoundCover"
+            style="@style/CoverViewOrder"
             android:layout_marginTop="8dp"
             android:visibility="@{data.getGuyVisibility(2)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/iv_star3"
             app:layout_constraintTop_toBottomOf="@+id/iv_star0"
-            app:siRadius="8dp"
-            app:starUrl="@{data.getGuyUrl(2)}"/>
+            app:coverText="@{data.getGuyName(2)}"
+            app:coverRecordUrl="@{data.getGuyUrl(2)}"/>
 
-        <com.github.siyamed.shapeimageview.RoundedImageView
+        <com.king.app.coolg.view.widget.CoverView
             android:id="@+id/iv_star3"
-            style="@style/IvVideoRoundCover"
+            style="@style/CoverViewOrder"
             android:layout_marginTop="8dp"
             android:visibility="@{data.getGuyVisibility(3)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_star2"
             app:layout_constraintTop_toBottomOf="@+id/iv_star0"
-            app:siRadius="8dp"
-            app:starUrl="@{data.getGuyUrl(3)}"/>
+            app:coverText="@{data.getGuyName(3)}"
+            app:coverRecordUrl="@{data.getGuyUrl(3)}"/>
     </android.support.constraint.ConstraintLayout>
 </layout>

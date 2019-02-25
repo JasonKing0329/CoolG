@@ -5,6 +5,7 @@ import android.widget.ImageView;
 
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
+import com.king.app.coolg.view.widget.CoverView;
 
 /**
  * Desc:
@@ -37,4 +38,21 @@ public class CoolImageAdapter {
                 .error(R.drawable.def_person)
                 .into(view);
     }
+
+    @BindingAdapter("coverRecordUrl")
+    public static void setCoverRecordUrl(CoverView view, String url) {
+        GlideApp.with(view.getContext())
+                .load(url)
+                .error(R.drawable.def_small)
+                .into(view.getImageView());
+    }
+
+    @BindingAdapter("coverStarUrl")
+    public static void setCoverStarUrl(CoverView view, String url) {
+        GlideApp.with(view.getContext())
+                .load(url)
+                .error(R.drawable.def_person)
+                .into(view.getImageView());
+    }
+
 }

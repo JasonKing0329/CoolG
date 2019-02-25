@@ -66,4 +66,13 @@
         <attr name="switchDuration" format="integer" />
     </declare-styleable>
 
+    <declare-styleable name="CoverView">
+        <attr name="coverRadius" format="dimension" />
+        <attr name="coverSrc" format="reference" />
+        <attr name="coverText" format="string" />
+        <attr name="coverTextBackgroundColor" format="color" />
+        <attr name="coverTextColor" format="color" />
+        <attr name="coverTextSize" format="dimension" />
+    </declare-styleable>
+
 </resources>

@@ -12,6 +12,7 @@ import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPhoneBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.star.list.StarSelectorActivity;
+import com.king.app.coolg.phone.video.list.PlayListActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 
@@ -72,7 +73,9 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
 
             @Override
             public void onClickPlayList(VideoPlayList order) {
-
+                Router.build("PlayList")
+                        .with(PlayListActivity.EXTRA_ORDER_ID, order.getPlayOrder().getId())
+                        .go(VideoHomePhoneActivity.this);
             }
 
             @Override

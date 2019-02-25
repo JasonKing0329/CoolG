@@ -15,7 +15,6 @@ import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.RippleUtil;
-import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.param.DataConstants;
@@ -37,9 +36,6 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
 
     private OnListListener onListListener;
     private OnHeadActionListener onHeadActionListener;
-    private List<PlayItem> mPlayList;
-
-    private HomePlayAdapter playAdapter;
 
     public HomeAdapter() {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -105,28 +101,6 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
         });
 
         binding.tvPlayList.setOnClickListener(v -> onHeadActionListener.goToPlayList());
-
-//        if (ListUtil.isEmpty(mPlayList)) {
-//            binding.tvPlayList.setVisibility(View.GONE);
-//            binding.rvPlayList.setVisibility(View.GONE);
-//        }
-//        else {
-//            binding.tvPlayList.setVisibility(View.VISIBLE);
-//            binding.rvPlayList.setVisibility(View.VISIBLE);
-//            binding.tvPlayList.setText("Play List (" + mPlayList.size() + ")");
-//            binding.tvPlayList.setOnClickListener(v -> onHeadActionListener.goToPlayList());
-//            if (playAdapter == null) {
-//                binding.rvPlayList.setLayoutManager(new LinearLayoutManager(binding.rvPlayList.getContext(), LinearLayoutManager.HORIZONTAL, false));
-//                playAdapter = new HomePlayAdapter();
-//                playAdapter.setList(mPlayList);
-//                playAdapter.setOnItemClickListener((view, position, data) -> onHeadActionListener.onClickPlayItem(view, data.getRecord()));
-//                binding.rvPlayList.setAdapter(playAdapter);
-//            }
-//            else {
-//                playAdapter.setList(mPlayList);
-//                playAdapter.notifyDataSetChanged();
-//            }
-//        }
     }
 
     @Override
@@ -192,12 +166,6 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
         String curDay = dateFormat.format(new Date(curRecord.getLastModifyTime()));
         String lastDay = dateFormat.format(new Date(lastRecord.getLastModifyTime()));
         return !curDay.equals(lastDay);
-    }
-
-    public void updatePlayList(List<PlayItem> list) {
-        this.mPlayList = list;
-        // refresh head
-        notifyItemChanged(0);
     }
 
     public interface OnListListener {

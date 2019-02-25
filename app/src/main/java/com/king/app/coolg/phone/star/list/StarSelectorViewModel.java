@@ -48,7 +48,7 @@ public class StarSelectorViewModel extends BaseViewModel {
                 .flatMap(list -> toViewItems(list))
                 .flatMap(list -> {
                     starsObserver.postValue(list);
-                    return createIndexes();
+                    return createIndexes(list);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -103,10 +103,10 @@ public class StarSelectorViewModel extends BaseViewModel {
         };
     }
 
-    private Observable<String> createIndexes() {
+    private Observable<String> createIndexes(List<StarProxy> list) {
         return Observable.create(e -> {
             indexEmitter.clear();
-            indexEmitter.createNameIndex(e, starsObserver.getValue());
+            indexEmitter.createNameIndex(e, list);
             e.onComplete();
         });
     }

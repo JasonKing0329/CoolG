@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
-import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.FilterHelper;
 import com.king.app.coolg.model.RecommendModel;
 import com.king.app.coolg.model.bean.RecordFilterModel;
@@ -65,7 +64,6 @@ public class HomeViewModel extends BaseViewModel {
 
     private PlayRepository playRepository;
 
-    public MutableLiveData<List<PlayItem>> playListObserver = new MutableLiveData<>();
     private Record mRecordAddViewOrder;
 
     public HomeViewModel(@NonNull Application application) {
@@ -300,35 +298,6 @@ public class HomeViewModel extends BaseViewModel {
             }
             observer.onNext(true);
         };
-    }
-
-    public void loadPlayList() {
-        playRepository.getPlayItems(AppConstants.PLAY_ORDER_TEMP_ID)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<PlayItem>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(List<PlayItem> playItems) {
-                        playListObserver.setValue(playItems);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        messageObserver.setValue("Load play list error: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-
     }
 
     public void saveRecordToAddViewOrder(Record record) {

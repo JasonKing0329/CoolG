@@ -42,6 +42,15 @@ public class VideoHeadData {
         }
     }
 
+    public String getPlayListName(int position) {
+        if (playLists != null && position < playLists.size()) {
+            return playLists.get(position).getName();
+        }
+        else {
+            return null;
+        }
+    }
+
     public VideoPlayList getPlayList(int position) {
         if (playLists != null && position < playLists.size()) {
             return playLists.get(position);
@@ -63,6 +72,15 @@ public class VideoHeadData {
     public String getGuyUrl(int position) {
         if (guyList != null && position < guyList.size()) {
             return guyList.get(position).getImageUrl();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public String getGuyName(int position) {
+        if (guyList != null && position < guyList.size()) {
+            return guyList.get(position).getStar().getName();
         }
         else {
             return null;

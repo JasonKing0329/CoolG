@@ -36,7 +36,6 @@ import java.util.Random;
 public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewModel>
     implements NavigationView.OnNavigationItemSelectedListener{
 
-    private final int REQUEST_PLAY_LIST = 100;
     private final int REQUEST_VIDEO_ORDER = 101;
 
     private ImageView navHeaderView;
@@ -172,8 +171,6 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
                 }
             });
             mBinding.rvItems.setAdapter(adapter);
-
-            mModel.loadPlayList();
         });
         mModel.newRecordsObserver.observe(this, number -> {
             int start = adapter.getItemCount() - number - 1;
@@ -200,7 +197,6 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
             mBinding.ivRecord.setVisibility(View.GONE);
             mBinding.banner.setVisibility(View.VISIBLE);
         });
-        mModel.playListObserver.observe(this, list -> adapter.updatePlayList(list));
 
         mModel.loadData();
     }
@@ -257,9 +253,6 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_PLAY_LIST:
-                mModel.loadPlayList();
-                break;
             case REQUEST_VIDEO_ORDER:
                 if (resultCode == RESULT_OK) {
                     ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);

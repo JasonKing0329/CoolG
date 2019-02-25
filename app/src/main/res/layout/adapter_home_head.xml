@@ -220,18 +220,10 @@
             android:paddingLeft="16dp"
             android:paddingRight="10dp"
             android:background="?android:attr/selectableItemBackground"
-            android:text="Play list (15)"
+            android:text="Videos"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_grey_700_24dp"
             android:textColor="@color/text_main"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_order" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_play_list"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/home_play_list_height"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_play_list" />
     </android.support.constraint.ConstraintLayout>
 </layout>
