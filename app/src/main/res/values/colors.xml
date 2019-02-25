@@ -78,6 +78,7 @@
     <color name="home_section_phone_record">#b0dc3d</color>
     <color name="home_section_phone_order">#f9d54b</color>
     <color name="home_section_phone_studio">#19a993</color>
+    <color name="home_section_phone_video">#00a5c4</color>
     <color name="ripple_color">#66000000</color>
 
     <color name="playlist_bg_focus">#9900a5c4</color>

@@ -1,12 +1,21 @@
 package com.king.app.coolg.phone.video.home;
 
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.HeaderFooterBindingAdapter;
 import com.king.app.coolg.databinding.AdapterFooterMoreBinding;
 import com.king.app.coolg.databinding.AdapterVideoHeadBinding;
 import com.king.app.coolg.databinding.AdapterVideoHomeItemBinding;
+import com.king.app.coolg.phone.video.list.PlayItemViewBean;
+import com.king.app.coolg.view.widget.video.EmbedVideoView;
+import com.king.app.gdb.data.entity.Record;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Desc:
@@ -14,7 +23,7 @@ import com.king.app.coolg.databinding.AdapterVideoHomeItemBinding;
  * @author：Jing Yang
  * @date: 2019/2/22 16:20
  */
-public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterVideoHeadBinding, AdapterFooterMoreBinding, AdapterVideoHomeItemBinding, VideoItem> {
+public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterVideoHeadBinding, AdapterFooterMoreBinding, AdapterVideoHomeItemBinding, PlayItemViewBean> {
 
     private OnListListener onListListener;
 
@@ -22,12 +31,24 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterVideoHeadBind
 
     private VideoHeadData headData;
 
+    private EmbedVideoView.OnPlayEmptyUrlListener onPlayEmptyUrlListener;
+
+    private SimpleDateFormat dateFormat;
+
+    public HomeAdapter() {
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    }
+
     public void setOnListListener(OnListListener onListListener) {
         this.onListListener = onListListener;
     }
 
     public void setOnHeadActionListener(OnHeadActionListener onHeadActionListener) {
         this.onHeadActionListener = onHeadActionListener;
+    }
+
+    public void setOnPlayEmptyUrlListener(EmbedVideoView.OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
+        this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
     }
 
     public void setHeadData(VideoHeadData headData) {
@@ -76,13 +97,43 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterVideoHeadBind
     }
 
     @Override
-    protected void onBindItem(AdapterVideoHomeItemBinding binding, int position, VideoItem item) {
-        binding.setBean(item);
+    protected void onBindItem(AdapterVideoHomeItemBinding binding, int position, PlayItemViewBean bean) {
+        binding.setBean(bean);
+        binding.videoView.setFingerprint(position);
+        binding.videoView.getCoverView().setScaleType(ImageView.ScaleType.CENTER_CROP);
+        GlideApp.with(binding.videoView.getContext())
+                .load(bean.getCover())
+                .error(R.drawable.def_small)
+                .into(binding.videoView.getCoverView());
+        if (!TextUtils.isEmpty(bean.getPlayUrl())) {
+            binding.videoView.setVideoPath(bean.getPlayUrl());
+            binding.videoView.prepare();
+        }
+        binding.videoView.setOnPlayEmptyUrlListener(onPlayEmptyUrlListener);
+        binding.ivAdd.setOnClickListener(v -> onListListener.onAddToVideoOrder(bean));
+        binding.tvName.setOnClickListener(v -> onListListener.onClickItem(position, bean));
+
+        // 第一个位置以及与上一个位置日期不同的，显示日期
+        if (position == 0 || isNotSameDay(bean.getRecord(), list.get(position - 1).getRecord())) {
+            binding.tvDate.setVisibility(View.VISIBLE);
+            binding.tvDate.setText(dateFormat.format(new Date(bean.getRecord().getLastModifyTime())));
+        }
+        else {
+            binding.tvDate.setVisibility(View.GONE);
+        }
+
+    }
+
+    private boolean isNotSameDay(Record curRecord, Record lastRecord) {
+        String curDay = dateFormat.format(new Date(curRecord.getLastModifyTime()));
+        String lastDay = dateFormat.format(new Date(lastRecord.getLastModifyTime()));
+        return !curDay.equals(lastDay);
     }
 
     public interface OnListListener {
         void onLoadMore();
-        void onClickItem(View view, VideoItem record);
+        void onClickItem(int position, PlayItemViewBean bean);
+        void onAddToVideoOrder(PlayItemViewBean bean);
     }
 
     public interface OnHeadActionListener {

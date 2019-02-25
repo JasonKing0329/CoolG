@@ -210,20 +210,30 @@
                 android:text="Studios"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_play_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="10dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:text="Videos"
-            android:drawableRight="@drawable/ic_keyboard_arrow_right_grey_700_24dp"
-            android:textColor="@color/text_main"
+        <LinearLayout
+            android:id="@+id/ll_videos"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal"
+            android:background="@color/home_section_phone_video"
+            android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_order" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_order">
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_slow_motion_video_white_48dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="20dp"
+                android:textColor="@color/white"
+                android:text="Videos"/>
+        </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 </layout>

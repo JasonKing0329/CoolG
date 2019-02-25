@@ -2,7 +2,9 @@ package com.king.app.coolg.phone.video.home;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.chenenyu.router.Router;
@@ -10,9 +12,15 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPhoneBinding;
+import com.king.app.coolg.phone.home.HomeActivity;
+import com.king.app.coolg.phone.record.RecordActivity;
+import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.phone.video.list.PlayListActivity;
 import com.king.app.coolg.phone.video.list.PlayStarListActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
+import com.king.app.coolg.utils.DebugLog;
+import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.view.widget.video.EmbedVideoView;
 
 import java.util.ArrayList;
 
@@ -25,7 +33,8 @@ import java.util.ArrayList;
 @Route("VideoHomePhone")
 public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBinding, VideoHomeViewModel> {
 
-    public static final int REQUEST_SELECT_ORDER = 6052;
+    private final int REQUEST_VIDEO_ORDER = 6051;
+    private final int REQUEST_SELECT_ORDER = 6052;
 
     private HomeAdapter adapter;
 
@@ -46,8 +55,17 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
 
         mBinding.rvItems.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mBinding.rvItems.setEnableLoadMore(true);
+        mBinding.rvItems.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                int position = parent.getChildLayoutPosition(view);
+                if (position > 0) {
+                    outRect.top = ScreenUtils.dp2px(8);
+                }
+            }
+        });
+        // 不自动加载更多
 //        mBinding.rvItems.setOnLoadMoreListener(() -> mModel.loadMore());
-
     }
 
     @Override
@@ -108,13 +126,28 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
         adapter.setOnListListener(new HomeAdapter.OnListListener() {
             @Override
             public void onLoadMore() {
-
+                mModel.loadMore();
             }
 
             @Override
-            public void onClickItem(View view, VideoItem record) {
-
+            public void onClickItem(int position, PlayItemViewBean bean) {
+                Router.build("RecordPhone")
+                        .with(RecordActivity.EXTRA_RECORD_ID, bean.getRecord().getId())
+                        .go(VideoHomePhoneActivity.this);
             }
+
+            @Override
+            public void onAddToVideoOrder(PlayItemViewBean bean) {
+                mModel.saveItemToAddOrder(bean);
+                Router.build("PlayOrder")
+                        .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
+                        .requestCode(REQUEST_VIDEO_ORDER)
+                        .go(VideoHomePhoneActivity.this);
+            }
+        });
+        adapter.setOnPlayEmptyUrlListener((fingerprint, callback) -> {
+            int position = Integer.parseInt(fingerprint);
+            mModel.getRecentPlayUrl(position, callback);
         });
         mBinding.rvItems.setAdapter(adapter);
 
@@ -122,7 +155,7 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
             adapter.setHeadData(data);
             adapter.notifyDataSetChanged();
         });
-        mModel.itemsObserver.observe(this, list -> {
+        mModel.recentVideosObserver.observe(this, list -> {
             adapter.setList(list);
             adapter.notifyDataSetChanged();
         });
@@ -141,7 +174,6 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
             recAdapter.setOnPlayEmptyUrlListener((fingerprint, callback) -> {
                 mBinding.banner.stopAutoPlay();
                 mBinding.banner.setEnableSwitch(false);
-
                 int position = Integer.parseInt(fingerprint);
                 mModel.getRecommendPlayUrl(position, callback);
             });
@@ -172,6 +204,12 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
             if (resultCode == RESULT_OK) {
                 ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
                 mModel.updateVideoCoverPlayList(list);
+            }
+        }
+        else if (requestCode == REQUEST_VIDEO_ORDER) {
+            if (resultCode == RESULT_OK) {
+                ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
+                mModel.insertToPlayList(list);
             }
         }
     }

@@ -40,6 +40,18 @@ public class RecordRepository extends BaseRepository {
         });
     }
 
+    public Observable<List<Record>> getLatestPlayableRecords(int limitStart, int limitNum) {
+        return Observable.create(e -> {
+            List<Record> list = getDaoSession().getRecordDao().queryBuilder()
+                    .where(RecordDao.Properties.Deprecated.eq(0))
+                    .orderDesc(RecordDao.Properties.LastModifyTime)
+                    .offset(limitStart)
+                    .limit(limitNum)
+                    .build().list();
+            e.onNext(list);
+        });
+    }
+
     public Observable<List<Record>> getAll() {
         return Observable.create(e -> e.onNext(getDaoSession().getRecordDao().loadAll()));
     }

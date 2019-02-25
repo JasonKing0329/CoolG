@@ -76,6 +76,7 @@ public class CoolBanner extends ViewPager {
     }
 
     public void startAutoPlay() {
+        compositeDisposable.clear();
         if (adapter != null && adapter.getItemCount() > 1) {
             Disposable disposable = Observable.interval(duration, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())

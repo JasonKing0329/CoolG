@@ -99,8 +99,14 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
                 onHeadActionListener.onClickStudios();
             }
         });
-
-        binding.tvPlayList.setOnClickListener(v -> onHeadActionListener.goToPlayList());
+        drawable = RippleUtil.getRippleBackground(binding.llVideos.getResources().getColor(R.color.home_section_phone_video)
+                , binding.llVideos.getResources().getColor(R.color.ripple_color));
+        binding.llVideos.setBackground(drawable);
+        binding.llVideos.setOnClickListener(v -> {
+            if (onHeadActionListener != null) {
+                onHeadActionListener.goToPlayList();
+            }
+        });
     }
 
     @Override

@@ -19,6 +19,8 @@ public class PlayItemViewBean {
 
     private String playUrl;
 
+    private String name;
+
     public PlayItem getPlayItem() {
         return playItem;
     }
@@ -49,5 +51,13 @@ public class PlayItemViewBean {
 
     public void setPlayUrl(String playUrl) {
         this.playUrl = playUrl;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
