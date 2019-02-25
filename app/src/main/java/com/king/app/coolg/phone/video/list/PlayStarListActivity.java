@@ -15,7 +15,6 @@ import com.king.app.coolg.databinding.ActivityPlayListBinding;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.video.player.PlayerActivity;
 import com.king.app.coolg.utils.ScreenUtils;
-import com.king.app.coolg.view.widget.video.EmbedVideoView;
 import com.king.app.gdb.data.entity.Record;
 
 import java.util.List;
@@ -97,7 +96,7 @@ public class PlayStarListActivity extends MvvmActivity<ActivityPlayListBinding, 
         if (adapter == null) {
             adapter = new PlayerItemAdapter();
             adapter.setEnableDelete(false);
-            adapter.setOnItemClickListener((view, position, data) -> goToRecordPage(data.getPlayItem().getRecord()));
+            adapter.setOnItemClickListener((view, position, data) -> goToRecordPage(data.getRecord()));
             adapter.setOnPlayEmptyUrlListener((fingerprint, callback) -> {
                 int position = Integer.parseInt(fingerprint);
                 mModel.getPlayUrl(position, callback);

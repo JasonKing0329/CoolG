@@ -2,6 +2,7 @@ package com.king.app.coolg.phone.video.home;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,17 +13,16 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPhoneBinding;
-import com.king.app.coolg.phone.home.HomeActivity;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.phone.video.list.PlayListActivity;
 import com.king.app.coolg.phone.video.list.PlayStarListActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
-import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ScreenUtils;
-import com.king.app.coolg.view.widget.video.EmbedVideoView;
 
 import java.util.ArrayList;
+
+import tcking.github.com.giraffeplayer2.PlayerManager;
 
 /**
  * Desc:
@@ -213,4 +213,24 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
             }
         }
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // videoView必须在manifest中所属activity指定
+        // android:configChanges="orientation|screenSize",且其中两个参数缺一不可
+        // 同时在onConfigurationChanged中加入相关代码。
+        // 这样在点击全屏时才能顺畅地切换为全屏
+        PlayerManager.getInstance().onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (PlayerManager.getInstance().onBackPressed()) {
+            return;
+        }
+        super.onBackPressed();
+    }
+
 }

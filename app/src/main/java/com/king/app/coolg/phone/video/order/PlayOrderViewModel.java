@@ -9,6 +9,7 @@ import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.phone.video.home.VideoPlayList;
 import com.king.app.gdb.data.entity.PlayItemDao;
 import com.king.app.gdb.data.entity.PlayOrder;
+import com.king.app.gdb.data.entity.VideoCoverPlayOrderDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,11 +95,20 @@ public class PlayOrderViewModel extends BaseViewModel {
     public void executeDelete() {
         if (dataObserver.getValue() != null) {
             for (VideoPlayList item:dataObserver.getValue()) {
-                getDaoSession().getPlayOrderDao().deleteByKey(item.getPlayOrder().getId());
-                getDaoSession().getPlayItemDao().queryBuilder()
-                        .where(PlayItemDao.Properties.OrderId.eq(item.getPlayOrder().getId()))
-                        .buildDelete()
-                        .executeDeleteWithoutDetachingEntities();
+                if (item.isChecked()) {
+                    // delete from play_order
+                    getDaoSession().getPlayOrderDao().deleteByKey(item.getPlayOrder().getId());
+                    // delete from play_item
+                    getDaoSession().getPlayItemDao().queryBuilder()
+                            .where(PlayItemDao.Properties.OrderId.eq(item.getPlayOrder().getId()))
+                            .buildDelete()
+                            .executeDeleteWithoutDetachingEntities();
+                    // delete from video_cover_play_Order
+                    getDaoSession().getVideoCoverPlayOrderDao().queryBuilder()
+                            .where(VideoCoverPlayOrderDao.Properties.OrderId.eq(item.getPlayOrder().getId()))
+                            .buildDelete()
+                            .executeDeleteWithoutDetachingEntities();
+                }
             }
             getDaoSession().getPlayOrderDao().detachAll();
             getDaoSession().getPlayItemDao().detachAll();

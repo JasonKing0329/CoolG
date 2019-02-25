@@ -98,9 +98,11 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".phone.video.home.VideoHomePhoneActivity"
+            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
             android:name=".phone.video.list.PlayStarListActivity"
+            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
             android:name=".phone.video.star.PopularStarActivity"

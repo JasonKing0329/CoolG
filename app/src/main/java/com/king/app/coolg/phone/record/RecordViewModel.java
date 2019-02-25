@@ -22,6 +22,7 @@ import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.PlayDuration;
 import com.king.app.gdb.data.entity.PlayItem;
+import com.king.app.gdb.data.entity.PlayOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordType1v1;
@@ -77,6 +78,7 @@ public class RecordViewModel extends BaseViewModel {
     protected String mPlayUrl;
 
     private PlayDuration mPlayDuration;
+    private String mUrlToSetCover;
 
     public RecordViewModel(@NonNull Application application) {
         super(application);
@@ -515,4 +517,49 @@ public class RecordViewModel extends BaseViewModel {
         }
     }
 
+    public void setUrlToSetCover(String path) {
+        mUrlToSetCover = path;
+    }
+
+    public void setPlayOrderCover(ArrayList<CharSequence> list) {
+        savePlayOrderCover(list)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        messageObserver.setValue("Set successfully");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private Observable<Boolean> savePlayOrderCover(ArrayList<CharSequence> list) {
+        return Observable.create(e -> {
+            if (!ListUtil.isEmpty(list)) {
+                for (CharSequence sequence:list) {
+                    long orderId = Long.parseLong(sequence.toString());
+                    PlayOrder order = getDaoSession().getPlayOrderDao().load(orderId);
+                    order.setCoverUrl(mUrlToSetCover);
+                    getDaoSession().getPlayOrderDao().update(order);
+                }
+            }
+            e.onNext(true);
+        });
+    }
 }

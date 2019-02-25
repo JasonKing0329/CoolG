@@ -30,6 +30,7 @@ import com.king.app.coolg.phone.studio.StudioActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.LMBannerViewUtil;
+import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
 import com.king.app.coolg.view.widget.video.OnVideoListener;
@@ -62,6 +63,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     private final int REQUEST_ADD_ORDER = 1602;
     private final int REQUEST_SELECT_STUDIO = 1603;
     private final int REQUEST_VIDEO_ORDER = 1604;
+    private final int REQUEST_SET_VIDEO_COVER = 1605;
 
     private RequestOptions recordOptions;
 
@@ -477,9 +479,17 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         }
     }
 
-    private void onApplyImage(String path) {
+    private void onSetCoverForOrder(String path) {
         Router.build("OrderPhone")
                 .with(OrderPhoneActivity.EXTRA_SET_COVER, path)
+                .go(this);
+    }
+
+    private void onSetCoverForPlayOrder(String path) {
+        mModel.setUrlToSetCover(path);
+        Router.build("PlayOrder")
+                .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
+                .requestCode(REQUEST_SET_VIDEO_COVER)
                 .go(this);
     }
 
@@ -516,6 +526,12 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                 mModel.addToPlay(list);
             }
         }
+        else if (requestCode == REQUEST_SET_VIDEO_COVER) {
+            if (resultCode == RESULT_OK) {
+                ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
+                mModel.setPlayOrderCover(list);
+            }
+        }
     }
 
     @Override
@@ -527,6 +543,20 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         if (mModel != null) {
             mModel.updatePlayToDb();
         }
+    }
+
+    private void onApplyImage(String path) {
+        String[] options = new String[] {"Order", "Play Order"};
+        new AlertDialogFragment()
+                .setItems(options, (dialogInterface, i) -> {
+                    if (i == 0) {
+                        onSetCoverForOrder(path);
+                    }
+                    else if (i == 1) {
+                        onSetCoverForPlayOrder(path);
+                    }
+                })
+                .show(getSupportFragmentManager(), "AlertDialogFragment");
     }
 
     private class HeadBannerAdapter implements LBaseAdapter<String> {
