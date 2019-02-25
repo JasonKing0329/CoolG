@@ -52,7 +52,7 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterVideoHeadBind
     @Override
     protected void onBindHead(AdapterVideoHeadBinding binding) {
         binding.setData(headData);
-        binding.ivSetGuys.setOnClickListener(v -> onHeadActionListener.onSetGuy());
+        binding.ivRefreshGuys.setOnClickListener(v -> onHeadActionListener.onRefreshGuy());
         binding.tvGuys.setOnClickListener(v -> onHeadActionListener.onGuy());
         binding.ivStar0.setOnClickListener(v -> onHeadActionListener.onClickGuy(headData.getGuy(0)));
         binding.ivStar1.setOnClickListener(v -> onHeadActionListener.onClickGuy(headData.getGuy(1)));
@@ -89,7 +89,7 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterVideoHeadBind
         void onSetPlayList();
         void onPlayList();
         void onClickPlayList(VideoPlayList order);
-        void onSetGuy();
+        void onRefreshGuy();
         void onGuy();
         void onClickGuy(VideoGuy guy);
     }

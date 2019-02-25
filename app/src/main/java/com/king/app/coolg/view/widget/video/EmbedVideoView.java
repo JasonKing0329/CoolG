@@ -44,6 +44,8 @@ public class EmbedVideoView extends VideoView {
 
     private boolean showFullScreen = true;
 
+    private OnPlayEmptyUrlListener onPlayEmptyUrlListener;
+
     public EmbedVideoView(@NonNull Context context) {
         super(context);
         expandParent();
@@ -62,19 +64,48 @@ public class EmbedVideoView extends VideoView {
         this.showFullScreen = showFullScreen;
     }
 
+    public interface OnPlayEmptyUrlListener {
+        void onPlayEmptyUrl(String fingerprint, UrlCallback callback);
+    }
+
+    public interface UrlCallback {
+        void onReceiveUrl(String url);
+    }
+
+    public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
+        this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
+    }
+
     private void expandParent() {
         // 覆盖videoView里封装的播放按键的监听事件，处理恢复播放时间的功能
         findViewById(R.id.app_video_play).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                GiraffePlayer player = getPlayer();
-                if (player.isPlaying()) {
-                    pause();
-                } else {
-                    play();
+                if (getVideoInfo().getUri() == null) {
+                    if (onPlayEmptyUrlListener != null) {
+                        onPlayEmptyUrlListener.onPlayEmptyUrl(getVideoInfo().getFingerprint(), new UrlCallback() {
+                            @Override
+                            public void onReceiveUrl(String url) {
+                                setVideoPath(url);
+                                prepare();
+                                play();
+                            }
+                        });
+                        return;
+                    }
                 }
+                onClickPlay();
             }
         });
+    }
+
+    private void onClickPlay() {
+        GiraffePlayer player = getPlayer();
+        if (player.isPlaying()) {
+            pause();
+        } else {
+            play();
+        }
     }
 
     public void play() {

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="bean"
-            type="com.king.app.coolg.phone.video.home.VideoPlayList"/>
+            type="com.king.app.coolg.phone.video.home.VideoGuy"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -37,7 +37,7 @@
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{bean.name}"
+            android:text="@{bean.star.name}"
             android:textColor="@color/white"
             android:textSize="24dp"
             app:layout_constraintBottom_toBottomOf="parent"

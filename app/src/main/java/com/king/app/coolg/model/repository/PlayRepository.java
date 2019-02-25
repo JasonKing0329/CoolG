@@ -1,12 +1,20 @@
 package com.king.app.coolg.model.repository;
 
+import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.gdb.data.entity.PlayDuration;
 import com.king.app.gdb.data.entity.PlayDurationDao;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.PlayItemDao;
+import com.king.app.gdb.data.entity.Record;
+import com.king.app.gdb.data.entity.RecordDao;
+import com.king.app.gdb.data.entity.RecordStar;
+import com.king.app.gdb.data.entity.RecordStarDao;
 
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -107,6 +115,33 @@ public class PlayRepository extends BaseRepository {
 
     public Observable<List<PlayItem>> getPlayItems(long orderId) {
         return Observable.create(e -> e.onNext(getDaoSession().getPlayItemDao().queryBuilder().where(PlayItemDao.Properties.OrderId.eq(orderId)).list()));
+    }
+
+    public int getNotDeprecatedCount(long starId) {
+        return (int) getNotDeprecatedBuilder(starId).buildCount().count();
+    }
+
+    private QueryBuilder<Record> getNotDeprecatedBuilder(long starId) {
+        QueryBuilder<Record> builder = getDaoSession().getRecordDao().queryBuilder();
+        builder.join(RecordStar.class, RecordStarDao.Properties.RecordId)
+                .where(RecordStarDao.Properties.StarId.eq(starId));
+        builder.where(RecordDao.Properties.Deprecated.eq(0));
+        return builder;
+    }
+
+    public Observable<List<PlayItemViewBean>> getStarPlayItems(long starId) {
+        return Observable.create(e -> {
+            QueryBuilder<Record> builder = getNotDeprecatedBuilder(starId);
+            List<Record> records = builder.build().list();
+            List<PlayItemViewBean> list = new ArrayList<>();
+            for (Record record:records) {
+                PlayItemViewBean item = new PlayItemViewBean();
+                item.setRecord(record);
+                item.setCover(ImageProvider.getRecordRandomPath(record.getName(), null));
+                list.add(item);
+            }
+            e.onNext(list);
+        });
     }
 
     public Observable<Boolean> deletePlayItem(long orderId, long recordId) {

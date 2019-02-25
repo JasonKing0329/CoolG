@@ -1,4 +1,4 @@
-package com.king.app.coolg.phone.video.order;
+package com.king.app.coolg.phone.video.star;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -11,38 +11,39 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
-import com.king.app.coolg.databinding.ActivityPlayOrderBinding;
-import com.king.app.coolg.phone.video.list.PlayListActivity;
+import com.king.app.coolg.databinding.ActivityVideoStarListBinding;
+import com.king.app.coolg.phone.star.list.StarSelectorActivity;
+import com.king.app.coolg.phone.video.list.PlayStarListActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.SimpleDialogs;
 import com.king.app.jactionbar.OnConfirmListener;
 
-@Route("PlayOrder")
-public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, PlayOrderViewModel> {
+import java.util.ArrayList;
 
-    public static final String EXTRA_MULTI_SELECT = "select_multi";
+/**
+ * Desc:
+ *
+ * @author：Jing Yang
+ * @date: 2019/2/25 13:40
+ */
+@Route("PopularStar")
+public class PopularStarActivity extends MvvmActivity<ActivityVideoStarListBinding, PopularStarViewModel> {
 
-    public static final String RESP_SELECT_RESULT = "select_result";
-
-    private final int ACTION_MULTI_SELECT = 11;
-
-    private final int REQUEST_PLAY_LIST = 6010;
-
-    private PlayOrderAdapter adapter;
+    public static final int REQUEST_SELECT_STAR = 6101;
+    private PopularStarAdapter adapter;
 
     @Override
-    protected PlayOrderViewModel createViewModel() {
-        return ViewModelProviders.of(this).get(PlayOrderViewModel.class);
+    protected PopularStarViewModel createViewModel() {
+        return ViewModelProviders.of(this).get(PopularStarViewModel.class);
     }
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_play_order;
+        return R.layout.activity_video_star_list;
     }
 
     @Override
     protected void initView() {
-
         mBinding.rvList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mBinding.rvList.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
@@ -55,9 +56,9 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
         mBinding.actionbar.setOnMenuItemListener(menuId -> {
             switch (menuId) {
                 case R.id.menu_add:
-                    new SimpleDialogs().openInputDialog(PlayOrderActivity.this, "Create new play order", name -> {
-                        mModel.addPlayOrder(name);
-                    });
+                    Router.build("StarSelector")
+                            .requestCode(REQUEST_SELECT_STAR)
+                            .go(PopularStarActivity.this);
                     break;
                 case R.id.menu_delete:
                     mBinding.actionbar.showConfirmStatus(menuId);
@@ -80,7 +81,7 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
             public boolean onConfirm(int actionId) {
                 switch (actionId) {
                     case R.id.menu_delete:
-                        new SimpleDialogs().showWarningActionDialog(PlayOrderActivity.this
+                        new SimpleDialogs().showWarningActionDialog(PopularStarActivity.this
                                 , "Delete order will delete related items, continue?"
                                 , "Yes", null
                                 , (dialogInterface, i) -> {
@@ -88,12 +89,6 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
                                     adapter.setMultiSelect(false);
                                     mBinding.actionbar.cancelConfirmStatus();
                                 });
-                        break;
-                    case ACTION_MULTI_SELECT:
-                        Intent intent = new Intent();
-                        intent.putCharSequenceArrayListExtra(RESP_SELECT_RESULT, mModel.getSelectedItems());
-                        setResult(RESULT_OK, intent);
-                        finish();
                         break;
                 }
                 return false;
@@ -105,34 +100,22 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
                     case R.id.menu_delete:
                         adapter.setMultiSelect(false);
                         break;
-                    case ACTION_MULTI_SELECT:
-                        finish();
-                        break;
                 }
                 return true;
             }
         });
 
-        if (isMultiSelect()) {
-            mBinding.actionbar.showConfirmStatus(ACTION_MULTI_SELECT);
-        }
-    }
-
-    private boolean isMultiSelect() {
-        return getIntent().getBooleanExtra(EXTRA_MULTI_SELECT, false);
     }
 
     @Override
     protected void initData() {
-        mModel.dataObserver.observe(this, list -> {
+        mModel.starsObserver.observe(this, list -> {
             if (adapter == null) {
-                adapter = new PlayOrderAdapter();
+                adapter = new PopularStarAdapter();
                 adapter.setList(list);
-                adapter.setMultiSelect(isMultiSelect());
-                adapter.setOnItemClickListener((view, position, data) -> Router.build("PlayList")
-                        .with(PlayListActivity.EXTRA_ORDER_ID, data.getPlayOrder().getId())
-                        .requestCode(REQUEST_PLAY_LIST)
-                        .go(PlayOrderActivity.this));
+                adapter.setOnItemClickListener((view, position, data) -> Router.build("PlayStarList")
+                        .with(PlayStarListActivity.EXTRA_STAR_ID, data.getStar().getId())
+                        .go(PopularStarActivity.this));
                 mBinding.rvList.setAdapter(adapter);
             }
             else {
@@ -141,14 +124,15 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
             }
         });
 
-        mModel.loadOrders();
+        mModel.loadStars();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_PLAY_LIST) {
+        if (requestCode == REQUEST_SELECT_STAR) {
             if (resultCode == RESULT_OK) {
-
+                ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(StarSelectorActivity.RESP_SELECT_RESULT);
+                mModel.insertVideoCoverStar(list);
             }
         }
     }

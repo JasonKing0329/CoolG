@@ -67,7 +67,7 @@ public class PlayListViewModel extends BaseViewModel {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        loadingObserver.setValue(true);
+                        loadingObserver.setValue(false);
                         messageObserver.setValue(e.getMessage());
                     }
 
@@ -88,6 +88,8 @@ public class PlayListViewModel extends BaseViewModel {
             for (PlayItem item:items) {
                 PlayItemViewBean bean = new PlayItemViewBean();
                 bean.setPlayItem(item);
+                bean.setRecord(item.getRecord());
+                bean.setPlayUrl(item.getUrl());
                 if (item.getRecord() != null) {
                     String cover = ImageProvider.getRecordRandomPath(item.getRecord().getName(), null);
                     bean.setCover(cover);

@@ -39,7 +39,7 @@ public class VideoHomeViewModel extends BaseViewModel {
         loadHeadData();
     }
 
-    private void loadHeadData() {
+    public void loadHeadData() {
         getHeadData()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -76,59 +76,13 @@ public class VideoHomeViewModel extends BaseViewModel {
         });
     }
 
-    public void updateVideoCoverStar(ArrayList<CharSequence> list) {
-        updateCoverGuys(list)
-                .flatMap(pass -> loadCoverGuys())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<VideoGuy>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(List<VideoGuy> videoGuys) {
-                        headDataObserver.getValue().setGuyList(videoGuys);
-                        headDataObserver.setValue(headDataObserver.getValue());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        messageObserver.setValue(e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    private Observable<Boolean> updateCoverGuys(ArrayList<CharSequence> list) {
-        return Observable.create(e -> {
-            getDaoSession().getVideoCoverStarDao().deleteAll();
-            List<VideoCoverStar> insertList = new ArrayList<>();
-            for (CharSequence str:list) {
-                long starId = Long.parseLong(str.toString());
-                VideoCoverStar coverStar = new VideoCoverStar();
-                coverStar.setStarId(starId);
-                insertList.add(coverStar);
-            }
-            getDaoSession().getVideoCoverStarDao().insertInTx(insertList);
-            getDaoSession().getVideoCoverStarDao().detachAll();
-            e.onNext(true);
-        });
-    }
-
-    private ObservableSource<List<VideoGuy>> loadCoverGuys() {
-        return observer -> observer.onNext(getCoverGuys());
-    }
-
     private List<VideoGuy> getCoverGuys() {
         List<VideoGuy> guys = new ArrayList<>();
-        List<VideoCoverStar> list = getDaoSession().getVideoCoverStarDao().loadAll();
+        // 随机加载最多4个
+        List<VideoCoverStar> list = getDaoSession().getVideoCoverStarDao().queryBuilder()
+                .orderRaw("RANDOM()")
+                .limit(4)
+                .build().list();
         for (VideoCoverStar cs:list) {
             VideoGuy guy = new VideoGuy();
             guy.setStar(cs.getStar());

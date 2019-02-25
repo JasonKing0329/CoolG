@@ -86,7 +86,7 @@
             app:layout_constraintTop_toBottomOf="@id/iv_list2" />
 
         <ImageView
-            android:id="@+id/iv_set_guys"
+            android:id="@+id/iv_refresh_guys"
             android:layout_width="34dp"
             android:layout_height="34dp"
             android:layout_marginEnd="40dp"
@@ -95,7 +95,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/tv_guys"
             app:layout_constraintEnd_toEndOf="@+id/tv_guys"
             app:layout_constraintTop_toTopOf="@+id/tv_guys"
-            app:srcCompat="@drawable/ic_settings_grey_700_24dp" />
+            app:srcCompat="@drawable/ic_refresh_grey_700_24dp" />
 
         <com.king.app.coolg.view.widget.CoverView
             android:id="@+id/iv_star0"

@@ -241,6 +241,8 @@ public class PlayerViewModel extends BaseViewModel {
             for (PlayItem item:items) {
                 PlayItemViewBean bean = new PlayItemViewBean();
                 bean.setPlayItem(item);
+                bean.setRecord(item.getRecord());
+                bean.setPlayUrl(item.getUrl());
                 if (item.getRecord() != null) {
                     String cover = ImageProvider.getRecordRandomPath(item.getRecord().getName(), null);
                     bean.setCover(cover);

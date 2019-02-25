@@ -99,6 +99,12 @@
         <activity
             android:name=".phone.video.home.VideoHomePhoneActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".phone.video.list.PlayStarListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".phone.video.star.PopularStarActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".pad.home.HomePadActivity"

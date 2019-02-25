@@ -11,8 +11,8 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPhoneBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
-import com.king.app.coolg.phone.star.list.StarSelectorActivity;
 import com.king.app.coolg.phone.video.list.PlayListActivity;
+import com.king.app.coolg.phone.video.list.PlayStarListActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.LMBannerViewUtil;
 
@@ -28,7 +28,6 @@ import java.util.Random;
 @Route("VideoHomePhone")
 public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBinding, VideoHomeViewModel> {
 
-    public static final int REQUEST_SELECT_STAR = 6051;
     public static final int REQUEST_SELECT_ORDER = 6052;
 
     private HomeAdapter adapter;
@@ -79,21 +78,21 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
             }
 
             @Override
-            public void onSetGuy() {
-                Router.build("StarSelector")
-                        .with(StarSelectorActivity.EXTRA_LIMIT_MAX, 4)
-                        .requestCode(REQUEST_SELECT_STAR)
-                        .go(VideoHomePhoneActivity.this);
+            public void onRefreshGuy() {
+                mModel.loadHeadData();
             }
 
             @Override
             public void onGuy() {
-
+                Router.build("PopularStar")
+                        .go(VideoHomePhoneActivity.this);
             }
 
             @Override
             public void onClickGuy(VideoGuy guy) {
-
+                Router.build("PlayStarList")
+                        .with(PlayStarListActivity.EXTRA_STAR_ID, guy.getStar().getId())
+                        .go(VideoHomePhoneActivity.this);
             }
         });
         adapter.setOnListListener(new HomeAdapter.OnListListener() {
@@ -144,13 +143,7 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_SELECT_STAR) {
-            if (resultCode == RESULT_OK) {
-                ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(StarSelectorActivity.RESP_SELECT_RESULT);
-                mModel.updateVideoCoverStar(list);
-            }
-        }
-        else if (requestCode == REQUEST_SELECT_ORDER) {
+        if (requestCode == REQUEST_SELECT_ORDER) {
             if (resultCode == RESULT_OK) {
                 ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
                 mModel.updateVideoCoverPlayList(list);

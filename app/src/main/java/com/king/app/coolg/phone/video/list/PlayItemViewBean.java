@@ -1,6 +1,7 @@
 package com.king.app.coolg.phone.video.list;
 
 import com.king.app.gdb.data.entity.PlayItem;
+import com.king.app.gdb.data.entity.Record;
 
 /**
  * Desc:
@@ -13,6 +14,10 @@ public class PlayItemViewBean {
     private PlayItem playItem;
 
     private String cover;
+
+    private Record record;
+
+    private String playUrl;
 
     public PlayItem getPlayItem() {
         return playItem;
@@ -28,5 +33,21 @@ public class PlayItemViewBean {
 
     public void setCover(String cover) {
         this.cover = cover;
+    }
+
+    public Record getRecord() {
+        return record;
+    }
+
+    public void setRecord(Record record) {
+        this.record = record;
+    }
+
+    public String getPlayUrl() {
+        return playUrl;
+    }
+
+    public void setPlayUrl(String playUrl) {
+        this.playUrl = playUrl;
     }
 }
