@@ -6,6 +6,13 @@ import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.http.AppHttpClient;
+import com.king.app.coolg.model.http.bean.request.PathRequest;
+import com.king.app.coolg.model.repository.PlayRepository;
+import com.king.app.coolg.phone.video.list.PlayItemViewBean;
+import com.king.app.coolg.utils.UrlUtil;
+import com.king.app.coolg.view.widget.video.EmbedVideoView;
+import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.VideoCoverPlayOrder;
 import com.king.app.gdb.data.entity.VideoCoverStar;
 
@@ -29,14 +36,64 @@ public class VideoHomeViewModel extends BaseViewModel {
 
     public MutableLiveData<List<VideoItem>> itemsObserver = new MutableLiveData<>();
 
+    public MutableLiveData<List<PlayItemViewBean>> recommendObserver = new MutableLiveData<>();
+
     public MutableLiveData<VideoHeadData> headDataObserver = new MutableLiveData<>();
+
+    public MutableLiveData<Boolean> getPlayUrlFailed = new MutableLiveData<>();
+
+    private PlayRepository playRepository;
 
     public VideoHomeViewModel(@NonNull Application application) {
         super(application);
+        playRepository = new PlayRepository();
     }
 
     public void buildPage() {
         loadHeadData();
+        loadRecommend();
+    }
+
+    public void loadRecommend() {
+        playRepository.getPlayableRecords(5)
+                .flatMap(list -> toRecommendItems(list))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<PlayItemViewBean>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<PlayItemViewBean> list) {
+                        recommendObserver.setValue(list);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private ObservableSource<List<PlayItemViewBean>> toRecommendItems(List<Record> records) {
+        return observer -> {
+            List<PlayItemViewBean> list = new ArrayList<>();
+            for (Record record:records) {
+                PlayItemViewBean bean = new PlayItemViewBean();
+                bean.setRecord(record);
+                bean.setCover(ImageProvider.getRecordRandomPath(record.getName(), null));
+                list.add(bean);
+            }
+            observer.onNext(list);
+        };
     }
 
     public void loadHeadData() {
@@ -153,5 +210,43 @@ public class VideoHomeViewModel extends BaseViewModel {
             lists.add(playList);
         }
         return lists;
+    }
+
+    public void getRecommendPlayUrl(int position, EmbedVideoView.UrlCallback callback) {
+        PlayItemViewBean bean = recommendObserver.getValue().get(position);
+        PathRequest request = new PathRequest();
+        request.setName(bean.getRecord().getName());
+        request.setPath(bean.getRecord().getDirectory());
+        loadingObserver.setValue(true);
+        AppHttpClient.getInstance().getAppService().getVideoPath(request)
+                .flatMap(response -> UrlUtil.toVideoUrl(response))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(String url) {
+                        loadingObserver.setValue(false);
+                        itemsObserver.getValue().get(position).setPlayUrl(url);
+                        callback.onReceiveUrl(url);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                        getPlayUrlFailed.setValue(true);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

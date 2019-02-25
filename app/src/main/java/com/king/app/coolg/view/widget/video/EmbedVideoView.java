@@ -97,6 +97,31 @@ public class EmbedVideoView extends VideoView {
                 onClickPlay();
             }
         });
+        // 覆盖videoView里封装的全屏按键的监听事件，处理url为空的情况
+        findViewById(R.id.app_video_fullscreen).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getVideoInfo().getUri() == null) {
+                    if (onPlayEmptyUrlListener != null) {
+                        onPlayEmptyUrlListener.onPlayEmptyUrl(getVideoInfo().getFingerprint(), new UrlCallback() {
+                            @Override
+                            public void onReceiveUrl(String url) {
+                                setVideoPath(url);
+                                prepare();
+                                onClickFullScreen();
+                            }
+                        });
+                        return;
+                    }
+                }
+                onClickFullScreen();
+            }
+        });
+    }
+
+    private void onClickFullScreen() {
+        GiraffePlayer player = getPlayer();
+        player.toggleFullScreen();
     }
 
     private void onClickPlay() {
@@ -226,6 +251,9 @@ public class EmbedVideoView extends VideoView {
             @Override
             public void onStart(GiraffePlayer giraffePlayer) {
                 DebugLog.e("current=" + giraffePlayer.getCurrentPosition() + ", total=" + giraffePlayer.getDuration());
+                if (onVideoListener != null) {
+                    onVideoListener.onStart();
+                }
             }
 
             @Override

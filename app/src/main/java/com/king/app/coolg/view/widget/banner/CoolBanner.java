@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
 
 import com.king.app.coolg.R;
@@ -29,6 +30,8 @@ public class CoolBanner extends ViewPager {
     private CompositeDisposable compositeDisposable;
 
     private int duration = 5000;
+
+    private boolean enableSwitch = true;
 
     public CoolBanner(@NonNull Context context) {
         super(context);
@@ -87,5 +90,29 @@ public class CoolBanner extends ViewPager {
 
     public void stopAutoPlay() {
         compositeDisposable.clear();
+    }
+
+    public void setEnableSwitch(boolean enableSwitch) {
+        this.enableSwitch = enableSwitch;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (enableSwitch) {
+            return super.onInterceptTouchEvent(ev);
+        }
+        else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (enableSwitch) {
+            return super.onTouchEvent(ev);
+        }
+        else {
+            return false;
+        }
     }
 }

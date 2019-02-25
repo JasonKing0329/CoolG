@@ -1,6 +1,8 @@
 package com.king.app.coolg.view.widget.banner;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -37,11 +39,31 @@ public abstract class BannerAdapter extends PagerAdapter
         initView(false);
         setDataToView();
     }
-    
+
+    /**
+     * 不能直接拿viewPager.getContext()，拿到的类型是ContextThemeWrapper
+     * @return
+     */
     protected Context getContext() {
-        return viewPager.getContext();
+        return getContext(viewPager);
     }
-    
+
+    /**
+     * try get host activity from view.
+     * views hosted on floating window like dialog and toast will sure return null.
+     * @return host activity; or null if not available
+     */
+    public static Context getContext(View view) {
+        Context context = view.getContext();
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) {
+                return (Activity) context;
+            }
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return null;
+    }
+
     public abstract int getItemCount();
 
     public void setItemClickListener(ItemClickListener itemClickListener) {

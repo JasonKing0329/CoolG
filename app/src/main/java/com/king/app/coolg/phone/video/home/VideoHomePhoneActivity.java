@@ -10,14 +10,11 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPhoneBinding;
-import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.video.list.PlayListActivity;
 import com.king.app.coolg.phone.video.list.PlayStarListActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
-import com.king.app.coolg.utils.LMBannerViewUtil;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Desc:
@@ -31,6 +28,8 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
     public static final int REQUEST_SELECT_ORDER = 6052;
 
     private HomeAdapter adapter;
+
+    private VideoRecAdapter recAdapter;
 
     @Override
     protected VideoHomeViewModel createViewModel() {
@@ -49,7 +48,18 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
         mBinding.rvItems.setEnableLoadMore(true);
 //        mBinding.rvItems.setOnLoadMoreListener(() -> mModel.loadMore());
 
-        setBannerParams();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mBinding.banner.startAutoPlay();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mBinding.banner.stopAutoPlay();
     }
 
     @Override
@@ -116,29 +126,44 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
             adapter.setList(list);
             adapter.notifyDataSetChanged();
         });
+        // 获取url失败，重新启动轮播
+        mModel.getPlayUrlFailed.observe(this, failed -> {
+            mBinding.banner.startAutoPlay();
+            mBinding.banner.setEnableSwitch(true);
+        });
+        mModel.recommendObserver.observe(this, list -> {
+            mBinding.banner.stopAutoPlay();
+
+            recAdapter = new VideoRecAdapter(mBinding.banner);
+            recAdapter.setList(list);
+            // 只要按下播放键就停止轮播
+            // url尚未获取，需要先获取url
+            recAdapter.setOnPlayEmptyUrlListener((fingerprint, callback) -> {
+                mBinding.banner.stopAutoPlay();
+                mBinding.banner.setEnableSwitch(false);
+
+                int position = Integer.parseInt(fingerprint);
+                mModel.getRecommendPlayUrl(position, callback);
+            });
+            recAdapter.setOnPlayListener(new VideoRecAdapter.OnPlayListener() {
+                @Override
+                public void onStartPlay() {
+                    // 有可能是url已获取的情况按播放键直接播放了
+                    mBinding.banner.stopAutoPlay();
+                    mBinding.banner.setEnableSwitch(false);
+                }
+
+                @Override
+                public void onPausePlay() {
+                    mBinding.banner.startAutoPlay();
+                    mBinding.banner.setEnableSwitch(true);
+                }
+            });
+            mBinding.banner.setBannerAdapter(recAdapter);
+
+            mBinding.banner.startAutoPlay();
+        });
         mModel.buildPage();
-    }
-
-    private void setBannerParams() {
-        // 禁用btnStart(只在onPageScroll触发后有效)
-        mBinding.banner.isGuide(false);
-        // 不显示引导圆点
-        mBinding.banner.hideIndicatorLayout();
-        int time = SettingProperty.getRecommendAnimTime();
-        if (time < 3000) {
-            time = 3000;
-        }
-        // 轮播切换时间
-        mBinding.banner.setDurtion(time);
-
-        if (SettingProperty.isRandomRecommend()) {
-            Random random = new Random();
-            int type = Math.abs(random.nextInt()) % LMBannerViewUtil.ANIM_TYPES.length;
-            LMBannerViewUtil.setScrollAnim(mBinding.banner, type);
-        }
-        else {
-            LMBannerViewUtil.setScrollAnim(mBinding.banner, SettingProperty.getRecommendAnimType());
-        }
     }
 
     @Override

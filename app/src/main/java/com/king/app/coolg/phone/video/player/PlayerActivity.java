@@ -57,6 +57,11 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
             }
 
             @Override
+            public void onStart() {
+
+            }
+
+            @Override
             public void onPause() {
                 mModel.updatePlayToDb();
             }

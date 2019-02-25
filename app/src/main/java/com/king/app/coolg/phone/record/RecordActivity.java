@@ -425,6 +425,11 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             }
 
             @Override
+            public void onStart() {
+
+            }
+
+            @Override
             public void onPause() {
                 mModel.updatePlayToDb();
             }

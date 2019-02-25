@@ -21,31 +21,19 @@
                 app:scrimVisibleHeightTrigger="@dimen/home_scrim_visible_height"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                <RelativeLayout
+                <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/app_bar_height">
-                    <com.allure.lbanners.LMBanners
+                    <com.king.app.coolg.view.widget.banner.CoolBanner
                         android:id="@+id/banner"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
-                        android:visibility="invisible"
-                        app:isGuide="false"
-                        app:auto_play="true"
-                        app:canLoop="true"
-                        app:durtion="5000"
-                        app:horizontal_transitionEffect="accordion"
-                        app:indicatorBottomPadding="10"
-                        app:indicator_position="bottom_mid"
-                        app:isVertical="false"
-                        app:scroll_duration="1000"/>
-                    <ImageView
-                        android:id="@+id/iv_record"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/def_large"
-                        android:scaleType="centerCrop"/>
-                </RelativeLayout>
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:switchDuration="5000"/>
+                </android.support.constraint.ConstraintLayout>
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
@@ -62,7 +50,7 @@
                         android:layout_height="?android:attr/actionBarSize"
                         android:background="@color/actionbar_bg"
                         android:theme="@style/EtActionSearch"
-                        app:title="Home"
+                        app:title="Videos"
                         app:menu="@menu/home_phone"
                         app:maxShowIcon="5"
                         app:showIconBack="false"

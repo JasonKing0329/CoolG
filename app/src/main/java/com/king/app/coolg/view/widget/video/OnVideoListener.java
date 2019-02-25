@@ -12,4 +12,5 @@ public interface OnVideoListener {
     void onPlayComplete();
     void onPause();
     void onDestroy();
+    void onStart();
 }
