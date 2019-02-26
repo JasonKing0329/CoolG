@@ -6,10 +6,14 @@ import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.http.AppHttpClient;
+import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ListUtil;
+import com.king.app.coolg.utils.UrlUtil;
+import com.king.app.coolg.view.widget.video.UrlCallback;
 import com.king.app.gdb.data.entity.PlayDuration;
 import com.king.app.gdb.data.entity.PlayItem;
 
@@ -17,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -55,6 +60,8 @@ public class PlayerViewModel extends BaseViewModel {
 
     private long mOrderId;
 
+    private long mStarId;
+
     private RandomPlay randomPlay;
 
     private Random random;
@@ -66,12 +73,22 @@ public class PlayerViewModel extends BaseViewModel {
         random = new Random();
     }
 
-    public void loadPlayItems(long orderId, boolean random, boolean playLast) {
+    private Observable<List<PlayItemViewBean>> getObservable() {
+        if (mOrderId != 0) {
+            return repository.getPlayItems(mOrderId)
+                    .flatMap(list -> toViewItems(list));
+        }
+        else {
+            return repository.getStarPlayItems(mStarId);
+        }
+    }
+
+    public void loadPlayItems(long orderId, long starId, boolean random, boolean playLast) {
         mOrderId = orderId;
+        mStarId = starId;
         isRandomPlay = random;
         loadingObserver.setValue(true);
-        repository.getPlayItems(orderId)
-                .flatMap(list -> toViewItems(list))
+        getObservable()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<PlayItemViewBean>>() {
@@ -113,6 +130,10 @@ public class PlayerViewModel extends BaseViewModel {
 
                     }
                 });
+    }
+
+    public Boolean isPlayOrder() {
+        return mOrderId != 0;
     }
 
     /**
@@ -230,9 +251,60 @@ public class PlayerViewModel extends BaseViewModel {
         mPlayIndex = position;
         mPlayBean = mPlayList.get(mPlayIndex);
         loadPlayDuration(mPlayBean);
-        DebugLog.e("play " + mPlayBean.getPlayItem().getRecord().getName());
-        videoObserver.setValue(mPlayBean);
+        DebugLog.e("play " + mPlayBean.getRecord().getName());
+
+        // 播放star列表，url均未加载过
+        if (mPlayBean.getPlayUrl() == null) {
+            loadPlayUrl(null);
+        }
+        else {
+            videoObserver.setValue(mPlayBean);
+        }
         playIndexObserver.setValue(mPlayIndex);
+    }
+
+    public void loadPlayUrl(UrlCallback callback) {
+        if (mPlayBean == null) {
+            return;
+        }
+        PathRequest request = new PathRequest();
+        request.setName(mPlayBean.getRecord().getName());
+        request.setPath(mPlayBean.getRecord().getDirectory());
+        loadingObserver.setValue(true);
+        AppHttpClient.getInstance().getAppService().getVideoPath(request)
+                .flatMap(response -> UrlUtil.toVideoUrl(response))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(String url) {
+                        loadingObserver.setValue(false);
+                        mPlayBean.setPlayUrl(url);
+                        if (callback == null) {
+                            videoObserver.setValue(mPlayBean);
+                        }
+                        else {
+                            callback.onReceiveUrl(url);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private ObservableSource<List<PlayItemViewBean>> toViewItems(List<PlayItem> items) {
@@ -261,7 +333,7 @@ public class PlayerViewModel extends BaseViewModel {
     }
     
     private void loadPlayDuration(PlayItemViewBean bean) {
-        mPlayDuration = repository.getDurationInstance(bean.getPlayItem().getRecordId());
+        mPlayDuration = repository.getDurationInstance(bean.getRecord().getId());
     }
 
     public void updatePlayPosition(int currentPosition) {
@@ -308,8 +380,8 @@ public class PlayerViewModel extends BaseViewModel {
         }
     }
 
-    public void deletePlayItem(int position, PlayItemViewBean bean) {
-        getDaoSession().getPlayItemDao().delete(bean.getPlayItem());
+    public void deletePlayItem(int position, PlayItem item) {
+        getDaoSession().getPlayItemDao().delete(item);
         getDaoSession().getPlayItemDao().detachAll();
         mPlayList.remove(position);
         if (position == mPlayIndex) {

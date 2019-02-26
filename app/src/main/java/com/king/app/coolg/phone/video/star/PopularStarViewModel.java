@@ -9,13 +9,12 @@ import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.phone.video.home.VideoGuy;
-import com.king.app.coolg.phone.video.home.VideoPlayList;
-import com.king.app.gdb.data.entity.PlayItemDao;
-import com.king.app.gdb.data.entity.VideoCoverPlayOrder;
 import com.king.app.gdb.data.entity.VideoCoverStar;
 import com.king.app.gdb.data.entity.VideoCoverStarDao;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -32,7 +31,7 @@ import io.reactivex.schedulers.Schedulers;
  * @date: 2019/2/25 13:39
  */
 public class PopularStarViewModel extends BaseViewModel {
-    
+
     public MutableLiveData<List<VideoGuy>> starsObserver = new MutableLiveData<>();
     
     private PlayRepository playRepository;
@@ -46,6 +45,7 @@ public class PopularStarViewModel extends BaseViewModel {
         loadingObserver.setValue(true);
         getStars()
                 .flatMap(stars -> toViewItems(stars))
+                .flatMap(stars -> sort(stars))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<VideoGuy>>() {
@@ -91,6 +91,21 @@ public class PopularStarViewModel extends BaseViewModel {
             }
             observer.onNext(guys);
         };
+    }
+
+    private ObservableSource<List<VideoGuy>> sort(List<VideoGuy> list) {
+        return observer -> {
+            Collections.sort(list, new NameComparator());
+            observer.onNext(list);
+        };
+    }
+
+    private class NameComparator implements Comparator<VideoGuy> {
+
+        @Override
+        public int compare(VideoGuy left, VideoGuy right) {
+            return left.getStar().getName().toLowerCase().compareTo(right.getStar().getName().toLowerCase());
+        }
     }
 
     public void executeDelete() {

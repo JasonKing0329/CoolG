@@ -14,7 +14,7 @@ import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.UrlUtil;
-import com.king.app.coolg.view.widget.video.EmbedVideoView;
+import com.king.app.coolg.view.widget.video.UrlCallback;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
@@ -246,15 +246,15 @@ public class VideoHomeViewModel extends BaseViewModel {
         return lists;
     }
 
-    public void getRecentPlayUrl(int position, EmbedVideoView.UrlCallback callback) {
+    public void getRecentPlayUrl(int position, UrlCallback callback) {
         getPlayUrl(position, callback, recentVideosObserver);
     }
 
-    public void getRecommendPlayUrl(int position, EmbedVideoView.UrlCallback callback) {
+    public void getRecommendPlayUrl(int position, UrlCallback callback) {
         getPlayUrl(position, callback, recommendObserver);
     }
 
-    public void getPlayUrl(int position, EmbedVideoView.UrlCallback callback, MutableLiveData<List<PlayItemViewBean>> liveData) {
+    public void getPlayUrl(int position, UrlCallback callback, MutableLiveData<List<PlayItemViewBean>> liveData) {
         PlayItemViewBean bean = liveData.getValue().get(position);
         PathRequest request = new PathRequest();
         request.setName(bean.getRecord().getName());

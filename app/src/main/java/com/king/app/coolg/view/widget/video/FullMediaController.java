@@ -61,7 +61,15 @@ public class FullMediaController extends BaseMediaController {
     private int displayModel = GiraffePlayer.DISPLAY_NORMAL;
 
     // @Jing Yang 扩展部分
+    private OnPlayEmptyUrlListener onPlayEmptyUrlListener;
+
+    // @Jing Yang 扩展部分
     private OnVideoListListener onVideoListListener;
+
+    // @Jing Yang 扩展部分
+    public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
+        this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
+    }
 
     // @Jing Yang 扩展部分
     public void setOnVideoListListener(OnVideoListListener onVideoListListener) {
@@ -238,61 +246,99 @@ public class FullMediaController extends BaseMediaController {
     protected final View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            GiraffePlayer player = videoView.getPlayer();
-            if (v.getId() == R.id.app_video_fullscreen) {
-                player.toggleFullScreen();
-            } else if (v.getId() == R.id.app_video_play) {
-                if (player.isPlaying()) {
-                    player.pause();
-                } else {
-                    player.start();
+            // @Jing Yang 扩展部分，处理Url为空的情况
+            if (handleCustomClick(v)) {
+                return;
+            }
+            if (videoView.getVideoInfo().getUri() == null) {
+                if (onPlayEmptyUrlListener != null) {
+                    onPlayEmptyUrlListener.onPlayEmptyUrl(videoView.getVideoInfo().getFingerprint(), new UrlCallback() {
+                        @Override
+                        public void onReceiveUrl(String url) {
+                            videoView.setVideoPath(url);
+                            // 接收到url，继续执行
+                            handleOriginClick(v);
+                        }
+                    });
+                    return;
                 }
-            } else if (v.getId() == R.id.app_video_replay_icon) {
-                player.seekTo(0);
+            }
+            handleOriginClick(v);
+        }
+    };
+
+    /**
+     * @Jing Yang 扩展部分
+     * 不需要用到GiraffePlayer，（支持url为空的情况）
+     * @param v
+     */
+    private boolean handleCustomClick(View v) {
+        boolean result = true;
+        if (v.getId() == R.id.app_video_more) {
+        }
+        else if (v.getId() == R.id.app_video_next) {
+            if (onVideoListListener != null) {
+                onVideoListListener.playNext();
+            }
+        }
+        else if (v.getId() == R.id.app_video_last) {
+            if (onVideoListListener != null) {
+                onVideoListListener.playPrevious();
+            }
+        }
+        else if (v.getId() == R.id.app_video_list) {
+            if (onVideoListListener != null) {
+                onVideoListListener.showPlayList();
+            }
+        }
+        else {
+            result = false;
+        }
+        return result;
+    }
+
+    /**
+     * @Jing Yang 扩展部分
+     * 以下均为原生代码，只是单独抽出来，因为以下按钮事件都需要用到GiraffePlayer（url不能为空，否则会抛异常）
+     * @param v
+     */
+    private void handleOriginClick(View v) {
+        GiraffePlayer player = videoView.getPlayer();
+        if (v.getId() == R.id.app_video_fullscreen) {
+            player.toggleFullScreen();
+        } else if (v.getId() == R.id.app_video_play) {
+            if (player.isPlaying()) {
+                player.pause();
+            } else {
                 player.start();
+            }
+        } else if (v.getId() == R.id.app_video_replay_icon) {
+            player.seekTo(0);
+            player.start();
 //                videoView.seekTo(0);
 //                videoView.start();
 //                doPauseResume();
-            } else if (v.getId() == R.id.app_video_finish) {
-                if (!player.onBackPressed()) {
-                    ((Activity) videoView.getContext()).finish();
-                }
-            } else if (v.getId() == R.id.app_video_float_close) {
-                player.stop();
-                player.setDisplayModel(GiraffePlayer.DISPLAY_NORMAL);
-            } else if (v.getId() == R.id.app_video_float_full) {
-                player.setDisplayModel(GiraffePlayer.DISPLAY_FULL_WINDOW);
-            } else if (v.getId() == R.id.app_video_clarity) {
-                Activity activity = (Activity) videoView.getContext();
-                if (activity instanceof AppCompatActivity) {
-                    TrackSelectorFragment trackSelectorFragment = new TrackSelectorFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("fingerprint", videoView.getVideoInfo().getFingerprint());
-                    trackSelectorFragment.setArguments(bundle);
-                    FragmentManager supportFragmentManager = ((AppCompatActivity) activity).getSupportFragmentManager();
-                    trackSelectorFragment.show(supportFragmentManager, "player_track");
-                }
+        } else if (v.getId() == R.id.app_video_finish) {
+            if (!player.onBackPressed()) {
+                ((Activity) videoView.getContext()).finish();
             }
-            // @Jing Yang 扩展部分
-            else if (v.getId() == R.id.app_video_more) {
-            }
-            else if (v.getId() == R.id.app_video_next) {
-                if (onVideoListListener != null) {
-                    onVideoListListener.playNext();
-                }
-            }
-            else if (v.getId() == R.id.app_video_last) {
-                if (onVideoListListener != null) {
-                    onVideoListListener.playPrevious();
-                }
-            }
-            else if (v.getId() == R.id.app_video_list) {
-                if (onVideoListListener != null) {
-                    onVideoListListener.showPlayList();
-                }
+        } else if (v.getId() == R.id.app_video_float_close) {
+            player.stop();
+            player.setDisplayModel(GiraffePlayer.DISPLAY_NORMAL);
+        } else if (v.getId() == R.id.app_video_float_full) {
+            player.setDisplayModel(GiraffePlayer.DISPLAY_FULL_WINDOW);
+        } else if (v.getId() == R.id.app_video_clarity) {
+            Activity activity = (Activity) videoView.getContext();
+            if (activity instanceof AppCompatActivity) {
+                TrackSelectorFragment trackSelectorFragment = new TrackSelectorFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("fingerprint", videoView.getVideoInfo().getFingerprint());
+                trackSelectorFragment.setArguments(bundle);
+                FragmentManager supportFragmentManager = ((AppCompatActivity) activity).getSupportFragmentManager();
+                trackSelectorFragment.show(supportFragmentManager, "player_track");
             }
         }
-    };
+    }
 
     @Override
     protected void initView(View view) {

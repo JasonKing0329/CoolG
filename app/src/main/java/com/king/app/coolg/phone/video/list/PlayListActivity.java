@@ -99,7 +99,10 @@ public class PlayListActivity extends MvvmActivity<ActivityPlayListBinding, Play
     private void showItems(List<PlayItemViewBean> list) {
         if (adapter == null) {
             adapter = new PlayerItemAdapter();
-            adapter.setOnPlayItemListener((position, bean) -> mModel.deleteItem(position));
+            adapter.setOnPlayItemListener((position, bean) -> {
+                mModel.deleteItem(position);
+                setResultChanged();
+            });
             adapter.setOnItemClickListener((view, position, data) -> goToRecordPage(data.getPlayItem().getRecord()));
             adapter.setList(list);
             mBinding.rvVideos.setAdapter(adapter);
@@ -137,6 +140,10 @@ public class PlayListActivity extends MvvmActivity<ActivityPlayListBinding, Play
             return;
         }
         super.onBackPressed();
+    }
+
+    public void setResultChanged() {
+        setResult(RESULT_OK);
     }
 
 }

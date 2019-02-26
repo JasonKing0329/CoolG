@@ -1,6 +1,7 @@
 package com.king.app.coolg.phone.video.player;
 
 import android.graphics.Color;
+import android.view.View;
 
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
@@ -19,6 +20,7 @@ public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBindi
     private int mPlayIndex;
 
     private OnDeleteListener onDeleteListener;
+    private boolean enableDelete;
 
     public void setOnDeleteListener(OnDeleteListener onDeleteListener) {
         this.onDeleteListener = onDeleteListener;
@@ -39,11 +41,11 @@ public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBindi
                 .load(bean.getCover())
                 .error(R.drawable.def_small)
                 .into(binding.ivThumb);
-        if (bean.getPlayItem().getRecord() == null) {
+        if (bean.getRecord() == null) {
             binding.tvName.setText("");
         }
         else {
-            binding.tvName.setText(bean.getPlayItem().getRecord().getName());
+            binding.tvName.setText(bean.getRecord().getName());
         }
         if (position == mPlayIndex) {
             binding.getRoot().setBackgroundColor(binding.getRoot().getContext().getResources().getColor(R.color.playlist_bg_focus));
@@ -51,7 +53,12 @@ public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBindi
         else {
             binding.getRoot().setBackgroundColor(Color.TRANSPARENT);
         }
+        binding.ivDelete.setVisibility(enableDelete ? View.VISIBLE:View.GONE);
         binding.ivDelete.setOnClickListener(v -> onDeleteListener.onDelete(position, bean));
+    }
+
+    public void enableDelete(boolean enableDelete) {
+        this.enableDelete = enableDelete;
     }
 
     public interface OnDeleteListener {

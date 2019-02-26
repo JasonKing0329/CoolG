@@ -74,7 +74,7 @@ public class PlayStarListActivity extends MvvmActivity<ActivityPlayListBinding, 
 
     private void playList(boolean isRandom) {
         Router.build("Player")
-                .with(PlayerActivity.EXTRA_ORDER_ID, getStarId())
+                .with(PlayerActivity.EXTRA_STAR_ID, getStarId())
                 .with(PlayerActivity.EXTRA_PLAY_RANDOM, isRandom)
                 .go(this);
     }

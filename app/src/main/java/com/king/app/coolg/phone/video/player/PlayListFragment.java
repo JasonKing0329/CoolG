@@ -68,9 +68,10 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
             adapter = new PlayListAdapter();
             adapter.setList(list);
             adapter.setPlayIndex(playerViewModel.getPlayIndex());
+            adapter.enableDelete(playerViewModel.isPlayOrder());
             adapter.setOnItemClickListener((view, position, data) -> playerViewModel.playVideoAt(position));
             adapter.setOnDeleteListener((position, bean) -> {
-                playerViewModel.deletePlayItem(position, bean);
+                playerViewModel.deletePlayItem(position, bean.getPlayItem());
                 adapter.notifyItemRemoved(position);
             });
             mBinding.rvList.setAdapter(adapter);

@@ -11,7 +11,7 @@ import com.king.app.coolg.databinding.AdapterFooterMoreBinding;
 import com.king.app.coolg.databinding.AdapterVideoHeadBinding;
 import com.king.app.coolg.databinding.AdapterVideoHomeItemBinding;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
-import com.king.app.coolg.view.widget.video.EmbedVideoView;
+import com.king.app.coolg.view.widget.video.OnPlayEmptyUrlListener;
 import com.king.app.gdb.data.entity.Record;
 
 import java.text.SimpleDateFormat;
@@ -31,7 +31,7 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterVideoHeadBind
 
     private VideoHeadData headData;
 
-    private EmbedVideoView.OnPlayEmptyUrlListener onPlayEmptyUrlListener;
+    private OnPlayEmptyUrlListener onPlayEmptyUrlListener;
 
     private SimpleDateFormat dateFormat;
 
@@ -47,7 +47,7 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterVideoHeadBind
         this.onHeadActionListener = onHeadActionListener;
     }
 
-    public void setOnPlayEmptyUrlListener(EmbedVideoView.OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
+    public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
         this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
     }
 

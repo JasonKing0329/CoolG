@@ -9,7 +9,7 @@ import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.utils.UrlUtil;
-import com.king.app.coolg.view.widget.video.EmbedVideoView;
+import com.king.app.coolg.view.widget.video.UrlCallback;
 import com.king.app.gdb.data.entity.Star;
 
 import java.util.List;
@@ -81,7 +81,7 @@ public class PlayStarListViewModel extends BaseViewModel {
         return Observable.create(e -> e.onNext(getDaoSession().getStarDao().load(starId)));
     }
 
-    public void getPlayUrl(int position, EmbedVideoView.UrlCallback callback) {
+    public void getPlayUrl(int position, UrlCallback callback) {
         PlayItemViewBean bean = itemsObserver.getValue().get(position);
         PathRequest request = new PathRequest();
         request.setName(bean.getRecord().getName());

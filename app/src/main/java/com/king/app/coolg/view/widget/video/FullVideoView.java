@@ -29,7 +29,7 @@ import tv.danmaku.ijk.media.player.IjkTimedText;
  * 所以EmbedVideoView作为嵌入到各种页面中的视频，可以切换横竖屏以及浮窗
  *
  * FullVideoView采用反射修改了VideoView内部的MediaController实例
- * 利用派生的GMediaController来重新布局各种控制类型UI元素（xml与java文件大体上照搬原DefaultMediaController与其引用的.xml，但扩展自己的UI需求）
+ * 利用派生的FullMediaController来重新布局各种控制类型UI元素（xml与java文件大体上照搬原DefaultMediaController与其引用的.xml，但扩展自己的UI需求）
  * 所以适合作为一个完整的横屏视频使用，支持播放列表
  * @author：Jing Yang
  * @date: 2018/11/15 15:22
@@ -41,6 +41,8 @@ public class FullVideoView extends VideoView {
     private OnVideoListener onVideoListener;
 
     private OnVideoListListener onVideoListListener;
+
+    private OnPlayEmptyUrlListener onPlayEmptyUrlListener;
 
     private boolean isInitVideo = true;
 
@@ -87,19 +89,41 @@ public class FullVideoView extends VideoView {
         mediaController.setOnVideoListListener(onVideoListListener);
     }
 
+    public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
+        this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
+        mediaController.setOnPlayEmptyUrlListener(onPlayEmptyUrlListener);
+    }
+
     private void expandParent() {
         // 覆盖videoView里封装的播放按键的监听事件，处理恢复播放时间的功能
         findViewById(R.id.app_video_play).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                GiraffePlayer player = getPlayer();
-                if (player.isPlaying()) {
-                    pause();
-                } else {
-                    play();
+                if (getVideoInfo().getUri() == null) {
+                    if (onPlayEmptyUrlListener != null) {
+                        onPlayEmptyUrlListener.onPlayEmptyUrl(getVideoInfo().getFingerprint(), new UrlCallback() {
+                            @Override
+                            public void onReceiveUrl(String url) {
+                                setVideoPath(url);
+                                prepare();
+                                play();
+                            }
+                        });
+                        return;
+                    }
                 }
+                onClickPlay();
             }
         });
+    }
+
+    private void onClickPlay() {
+        GiraffePlayer player = getPlayer();
+        if (player.isPlaying()) {
+            pause();
+        } else {
+            play();
+        }
     }
 
     public void play() {

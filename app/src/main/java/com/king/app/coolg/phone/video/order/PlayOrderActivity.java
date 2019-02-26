@@ -1,6 +1,7 @@
 package com.king.app.coolg.phone.video.order;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,8 +13,10 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityPlayOrderBinding;
+import com.king.app.coolg.phone.video.home.VideoPlayList;
 import com.king.app.coolg.phone.video.list.PlayListActivity;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.SimpleDialogs;
 import com.king.app.jactionbar.OnConfirmListener;
 
@@ -29,6 +32,8 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
     private final int REQUEST_PLAY_LIST = 6010;
 
     private PlayOrderAdapter adapter;
+
+    private boolean isEditMode;
 
     @Override
     protected PlayOrderViewModel createViewModel() {
@@ -59,9 +64,25 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
                         mModel.addPlayOrder(name);
                     });
                     break;
+                case R.id.menu_edit:
+                    mBinding.actionbar.showConfirmStatus(menuId);
+                    isEditMode = true;
+                    break;
                 case R.id.menu_delete:
                     mBinding.actionbar.showConfirmStatus(menuId);
                     adapter.setMultiSelect(true);
+                    break;
+                case R.id.menu_sort:
+                    new AlertDialogFragment()
+                            .setItems(getResources().getStringArray(R.array.sort_play_order), (dialog, which) -> {
+                                if (which == 0) {
+                                    mModel.sortById();
+                                }
+                                else if (which == 1) {
+                                    mModel.sortByName();
+                                }
+                            })
+                            .show(getSupportFragmentManager(), "AlertDialogFragment");
                     break;
             }
         });
@@ -87,8 +108,12 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
                                     mModel.executeDelete();
                                     adapter.setMultiSelect(false);
                                     mBinding.actionbar.cancelConfirmStatus();
+                                    setResultChanged();
                                 });
                         break;
+                    case R.id.menu_edit:
+                        isEditMode = false;
+                        return true;
                     case ACTION_MULTI_SELECT:
                         Intent intent = new Intent();
                         intent.putCharSequenceArrayListExtra(RESP_SELECT_RESULT, mModel.getSelectedItems());
@@ -104,6 +129,9 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
                 switch (actionId) {
                     case R.id.menu_delete:
                         adapter.setMultiSelect(false);
+                        break;
+                    case R.id.menu_edit:
+                        isEditMode = false;
                         break;
                     case ACTION_MULTI_SELECT:
                         finish();
@@ -129,10 +157,17 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
                 adapter = new PlayOrderAdapter();
                 adapter.setList(list);
                 adapter.setMultiSelect(isMultiSelect());
-                adapter.setOnItemClickListener((view, position, data) -> Router.build("PlayList")
-                        .with(PlayListActivity.EXTRA_ORDER_ID, data.getPlayOrder().getId())
-                        .requestCode(REQUEST_PLAY_LIST)
-                        .go(PlayOrderActivity.this));
+                adapter.setOnItemClickListener((view, position, data) -> {
+                    if (isEditMode) {
+                        updateOrderName(position, data);
+                    }
+                    else {
+                        Router.build("PlayList")
+                                .with(PlayListActivity.EXTRA_ORDER_ID, data.getPlayOrder().getId())
+                                .requestCode(REQUEST_PLAY_LIST)
+                                .go(PlayOrderActivity.this);
+                    }
+                });
                 mBinding.rvList.setAdapter(adapter);
             }
             else {
@@ -144,12 +179,25 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
         mModel.loadOrders();
     }
 
+    private void updateOrderName(int position, VideoPlayList data) {
+        new SimpleDialogs().openInputDialog(this, "Rename", data.getName()
+            , name -> {
+                    mModel.updateOrderName(data, name);
+                    adapter.notifyItemChanged(position);
+                    setResultChanged();
+                });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_PLAY_LIST) {
             if (resultCode == RESULT_OK) {
-
+                mModel.loadOrders();
             }
         }
+    }
+
+    public void setResultChanged() {
+        setResult(RESULT_OK);
     }
 }

@@ -11,6 +11,7 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.view.widget.banner.BannerAdapter;
 import com.king.app.coolg.view.widget.video.EmbedVideoView;
+import com.king.app.coolg.view.widget.video.OnPlayEmptyUrlListener;
 import com.king.app.coolg.view.widget.video.OnVideoListener;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class VideoRecAdapter extends BannerAdapter {
 
     private List<PlayItemViewBean> list;
 
-    private EmbedVideoView.OnPlayEmptyUrlListener onPlayEmptyUrlListener;
+    private OnPlayEmptyUrlListener onPlayEmptyUrlListener;
 
     private OnPlayListener onPlayListener;
 
@@ -37,7 +38,7 @@ public class VideoRecAdapter extends BannerAdapter {
         this.list = list;
     }
 
-    public void setOnPlayEmptyUrlListener(EmbedVideoView.OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
+    public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
         this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
     }
 

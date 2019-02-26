@@ -28,7 +28,7 @@ import tv.danmaku.ijk.media.player.IjkTimedText;
  * 所以EmbedVideoView作为嵌入到各种页面中的视频，可以切换横竖屏以及浮窗
  *
  * FullVideoView采用反射修改了VideoView内部的MediaController实例
- * 利用派生的GMediaController来重新布局各种控制类型UI元素（xml与java文件大体上照搬原DefaultMediaController与其引用的.xml，但扩展自己的UI需求）
+ * 利用派生的FullMediaController来重新布局各种控制类型UI元素（xml与java文件大体上照搬原DefaultMediaController与其引用的.xml，但扩展自己的UI需求）
  * 所以适合作为一个完整的横屏视频使用，支持播放列表
  *
  * @author：Jing Yang
@@ -62,14 +62,6 @@ public class EmbedVideoView extends VideoView {
 
     public void setShowFullScreen(boolean showFullScreen) {
         this.showFullScreen = showFullScreen;
-    }
-
-    public interface OnPlayEmptyUrlListener {
-        void onPlayEmptyUrl(String fingerprint, UrlCallback callback);
-    }
-
-    public interface UrlCallback {
-        void onReceiveUrl(String url);
     }
 
     public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
@@ -307,7 +299,7 @@ public class EmbedVideoView extends VideoView {
         findViewById(R.id.app_video_fullscreen).setVisibility(INVISIBLE);
     }
 
-    @Deprecated/* 改用GVideoView与GMediaController重构布局 */
+    @Deprecated/* 改用FullVideoView与FullMediaController重构布局 */
     private void showRichToolIcons() {
         RelativeLayout bottomBar = findViewById(R.id.app_video_bottom_box);
 
@@ -332,7 +324,7 @@ public class EmbedVideoView extends VideoView {
         addIcon(R.drawable.ic_playlist_play_white_24dp, R.id.cvv_iv_list, tools);
     }
 
-    @Deprecated/* 改用GVideoView与GMediaController重构布局 */
+    @Deprecated/* 改用FullVideoView与FullMediaController重构布局 */
     private void addIcon(int srcId, int id, LinearLayout container) {
 //        ImageView view = new ImageView(getContext());
 //        view.setImageResource(srcId);

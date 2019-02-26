@@ -8,7 +8,7 @@ import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
 import com.king.app.coolg.databinding.AdapterPlayItemBinding;
-import com.king.app.coolg.view.widget.video.EmbedVideoView;
+import com.king.app.coolg.view.widget.video.OnPlayEmptyUrlListener;
 
 /**
  * Desc:
@@ -23,13 +23,13 @@ public class PlayerItemAdapter extends BaseBindingAdapter<AdapterPlayItemBinding
 
     private int instantPlayIndex;
 
-    private EmbedVideoView.OnPlayEmptyUrlListener onPlayEmptyUrlListener;
+    private OnPlayEmptyUrlListener onPlayEmptyUrlListener;
 
     public void setOnPlayItemListener(OnPlayItemListener onPlayItemListener) {
         this.onPlayItemListener = onPlayItemListener;
     }
 
-    public void setOnPlayEmptyUrlListener(EmbedVideoView.OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
+    public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
         this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
     }
 

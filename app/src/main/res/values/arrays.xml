@@ -16,4 +16,9 @@
         <item>Level</item>
         <item>Limit Level</item>
     </string-array>
+
+    <string-array name="sort_play_order" translatable="false">
+        <item>By Id</item>
+        <item>By Name</item>
+    </string-array>
 </resources>

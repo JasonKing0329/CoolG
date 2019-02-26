@@ -14,8 +14,10 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPlayerBinding;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
+import com.king.app.coolg.view.widget.video.OnPlayEmptyUrlListener;
 import com.king.app.coolg.view.widget.video.OnVideoListListener;
 import com.king.app.coolg.view.widget.video.OnVideoListener;
+import com.king.app.coolg.view.widget.video.UrlCallback;
 
 /**
  * Desc:
@@ -27,6 +29,7 @@ import com.king.app.coolg.view.widget.video.OnVideoListener;
 public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, PlayerViewModel> {
 
     public static final String EXTRA_ORDER_ID = "order_id";
+    public static final String EXTRA_STAR_ID = "star_id";
     public static final String EXTRA_PLAY_RANDOM = "play_random";
     public static final String EXTRA_PLAY_LAST = "play_last";
 
@@ -89,6 +92,12 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
                 showList();
             }
         });
+        mBinding.videoView.setOnPlayEmptyUrlListener(new OnPlayEmptyUrlListener() {
+            @Override
+            public void onPlayEmptyUrl(String fingerprint, UrlCallback callback) {
+                mModel.loadPlayUrl(callback);
+            }
+        });
         mBinding.videoView.prepare();
     }
 
@@ -98,7 +107,11 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
     }
 
     private long getOrderId() {
-        return getIntent().getLongExtra(EXTRA_ORDER_ID, -1);
+        return getIntent().getLongExtra(EXTRA_ORDER_ID, 0);
+    }
+
+    private long getStarId() {
+        return getIntent().getLongExtra(EXTRA_STAR_ID, 0);
     }
 
     private boolean isRandom() {
@@ -116,16 +129,16 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
         mModel.videoObserver.observe(this, bean -> playItem(bean));
         mModel.stopVideoObserver.observe(this, stop -> mBinding.videoView.getPlayer().stop());
 
-        mModel.loadPlayItems(getOrderId(), isRandom(), isPlayLast());
+        mModel.loadPlayItems(getOrderId(), getStarId(), isRandom(), isPlayLast());
     }
 
     private void playItem(PlayItemViewBean bean) {
-        if (bean.getPlayItem().getUrl() == null) {
+        if (bean.getPlayUrl() == null) {
             showMessageLong("null url");
             return;
         }
-        mBinding.videoView.getVideoInfo().setBgColor(Color.BLACK).setShowTopBar(true).setTitle(bean.getPlayItem().getRecord().getName());
-        mBinding.videoView.setVideoPath(bean.getPlayItem().getUrl());
+        mBinding.videoView.getVideoInfo().setBgColor(Color.BLACK).setShowTopBar(true).setTitle(bean.getRecord().getName());
+        mBinding.videoView.setVideoPath(bean.getPlayUrl());
         mBinding.videoView.play();
     }
 

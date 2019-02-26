@@ -33,8 +33,9 @@ import tcking.github.com.giraffeplayer2.PlayerManager;
 @Route("VideoHomePhone")
 public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBinding, VideoHomeViewModel> {
 
-    private final int REQUEST_VIDEO_ORDER = 6051;
-    private final int REQUEST_SELECT_ORDER = 6052;
+    private final int REQUEST_INSERT_TO_PLAY_ORDER = 6051;
+    private final int REQUEST_SET_PLAY_ORDER = 6052;
+    private final int REQUEST_ENTER_PLAY_ORDER = 6053;
 
     private HomeAdapter adapter;
 
@@ -88,13 +89,14 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
             public void onSetPlayList() {
                 Router.build("PlayOrder")
                         .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
-                        .requestCode(REQUEST_SELECT_ORDER)
+                        .requestCode(REQUEST_SET_PLAY_ORDER)
                         .go(VideoHomePhoneActivity.this);
             }
 
             @Override
             public void onPlayList() {
                 Router.build("PlayOrder")
+                        .requestCode(REQUEST_ENTER_PLAY_ORDER)
                         .go(VideoHomePhoneActivity.this);
             }
 
@@ -141,7 +143,7 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
                 mModel.saveItemToAddOrder(bean);
                 Router.build("PlayOrder")
                         .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
-                        .requestCode(REQUEST_VIDEO_ORDER)
+                        .requestCode(REQUEST_INSERT_TO_PLAY_ORDER)
                         .go(VideoHomePhoneActivity.this);
             }
         });
@@ -200,16 +202,21 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_SELECT_ORDER) {
+        if (requestCode == REQUEST_SET_PLAY_ORDER) {
             if (resultCode == RESULT_OK) {
                 ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
                 mModel.updateVideoCoverPlayList(list);
             }
         }
-        else if (requestCode == REQUEST_VIDEO_ORDER) {
+        else if (requestCode == REQUEST_INSERT_TO_PLAY_ORDER) {
             if (resultCode == RESULT_OK) {
                 ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
                 mModel.insertToPlayList(list);
+            }
+        }
+        else if (requestCode == REQUEST_ENTER_PLAY_ORDER) {
+            if (resultCode == RESULT_OK) {
+                mModel.loadHeadData();
             }
         }
     }
