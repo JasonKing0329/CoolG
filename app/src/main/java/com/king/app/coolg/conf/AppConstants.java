@@ -61,4 +61,17 @@ public class AppConstants {
 
     public static final Long PLAY_ORDER_TEMP_ID = 1l;
     public static final String PLAY_ORDER_TEMP_NAME = "temp";
+
+    public static final String[] RECORD_SQL_EXPRESSIONS = new String[]{
+            "score > ",
+            "score_bareback > 0",
+            "score_passion > ",
+            "score_cum > ",
+            "score_feel > ",
+            "score_star > ",
+            "hd_level = ",
+            "scene = ''",
+            "special_desc LIKE '%%'",
+    };
+
 }

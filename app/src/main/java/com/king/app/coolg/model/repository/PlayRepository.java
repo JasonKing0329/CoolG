@@ -131,7 +131,7 @@ public class PlayRepository extends BaseRepository {
     public Observable<List<Record>> getPlayableRecords(int number, String where) {
         return Observable.create(e -> {
             RecordDao dao = getDaoSession().getRecordDao();
-            String sql = where + " AND deprecated=? ORDER BY RANDOM() LIMIT " + number;
+            String sql = " WHERE " + where + " AND deprecated=? ORDER BY RANDOM() LIMIT " + number;
             List<Record> list = dao.queryRaw(sql, new String[]{"0"});
             e.onNext(list);
         });

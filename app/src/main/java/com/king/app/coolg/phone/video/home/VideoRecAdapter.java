@@ -63,6 +63,7 @@ public class VideoRecAdapter extends BannerAdapter {
         PlayItemViewBean item = list.get(position);
         videoView.setFingerprint(position);
         videoView.getCoverView().setScaleType(ImageView.ScaleType.CENTER_CROP);
+        videoView.getCoverView().setOnClickListener(v -> onPlayListener.onClickPlayItem(item));
         GlideApp.with(videoView.getContext())
                 .load(item.getCover())
                 .placeholder(R.drawable.def_small)
@@ -109,5 +110,7 @@ public class VideoRecAdapter extends BannerAdapter {
     public interface OnPlayListener {
         void onStartPlay();
         void onPausePlay();
+
+        void onClickPlayItem(PlayItemViewBean item);
     }
 }

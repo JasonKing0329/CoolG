@@ -19,6 +19,7 @@ import com.king.app.coolg.phone.video.list.PlayListActivity;
 import com.king.app.coolg.phone.video.list.PlayStarListActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 
 import java.util.ArrayList;
 
@@ -65,6 +66,13 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
                     }
                     break;
                 case R.id.menu_recommend_setting:
+                    RecommendFragment content = new RecommendFragment();
+                    content.setOnRecommendListener(bean -> mModel.updateRecommend(bean));
+                    DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+                    dialogFragment.setTitle("Recommend Setting");
+                    dialogFragment.setContentFragment(content);
+                    dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
+                    dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
                     break;
             }
         });
@@ -183,6 +191,11 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
         });
         mModel.recommendObserver.observe(this, list -> {
             mBinding.banner.stopAutoPlay();
+            if (list.size() == 0) {
+                showMessageShort("No video to recommend");
+                mBinding.banner.setAdapter(null);
+                return;
+            }
 
             recAdapter = new VideoRecAdapter(mBinding.banner);
             recAdapter.setList(list);
@@ -206,6 +219,13 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
                 public void onPausePlay() {
                     mBinding.banner.startAutoPlay();
                     mBinding.banner.setEnableSwitch(true);
+                }
+
+                @Override
+                public void onClickPlayItem(PlayItemViewBean item) {
+                    Router.build("RecordPhone")
+                            .with(RecordActivity.EXTRA_RECORD_ID, item.getRecord().getId())
+                            .go(VideoHomePhoneActivity.this);
                 }
             });
             mBinding.banner.setBannerAdapter(recAdapter);

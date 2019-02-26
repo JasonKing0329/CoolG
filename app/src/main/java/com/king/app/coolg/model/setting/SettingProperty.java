@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import com.google.gson.Gson;
 import com.king.app.coolg.base.CoolApplication;
 import com.king.app.coolg.model.bean.HsvColorBean;
+import com.king.app.coolg.phone.video.home.RecommendBean;
 
 /**
  * 描述:
@@ -267,6 +268,23 @@ public class SettingProperty {
 
     public static void setVideoPlayOrderViewType(int type) {
         setInt(PreferenceKey.PREF_VIDEO_PLAY_ORDER_VIEW_TYPE, type);
+    }
+
+    public static RecommendBean getVideoRecBean() {
+        String sql = getString(PreferenceKey.PREF_VIDEO_REC_SQL);
+        try {
+            RecommendBean bean = new Gson().fromJson(sql, RecommendBean.class);
+            return bean;
+        } catch (Exception e) {}
+        return null;
+    }
+
+    public static void setVideoRecBean(RecommendBean bean) {
+        String sql = null;
+        try {
+            sql = new Gson().toJson(bean);
+        } catch (Exception e) {}
+        setString(PreferenceKey.PREF_VIDEO_REC_SQL, sql);
     }
 
 }

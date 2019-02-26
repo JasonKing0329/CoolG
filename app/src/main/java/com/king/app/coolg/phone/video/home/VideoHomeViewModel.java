@@ -11,6 +11,7 @@ import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.UrlUtil;
@@ -70,7 +71,15 @@ public class VideoHomeViewModel extends BaseViewModel {
     }
 
     public void loadRecommend() {
-        playRepository.getPlayableRecords(5)
+        Observable<List<Record>> observable;
+        RecommendBean bean = SettingProperty.getVideoRecBean();
+        if (bean == null || (!bean.isWithFkType() && TextUtils.isEmpty(bean.getSql()))) {
+            observable = playRepository.getPlayableRecords(5);
+        }
+        else {
+            observable = playRepository.getPlayableRecords(5, bean.getSql());
+        }
+        observable
                 .flatMap(list -> toPlayItems(list))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -426,5 +435,10 @@ public class VideoHomeViewModel extends BaseViewModel {
             }
             e.onNext(true);
         });
+    }
+
+    public void updateRecommend(RecommendBean bean) {
+        SettingProperty.setVideoRecBean(bean);
+        loadRecommend();
     }
 }
