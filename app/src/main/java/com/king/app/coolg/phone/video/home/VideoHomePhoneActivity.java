@@ -54,6 +54,21 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
     @Override
     protected void initView() {
 
+        mBinding.actionbar.setOnMenuItemListener(menuId -> {
+            switch (menuId) {
+                case R.id.menu_refresh:
+                    if (mBinding.banner.isEnableSwitch()) {
+                        mModel.loadRecommend();
+                    }
+                    else {
+                        showMessageShort("Please stop video first!");
+                    }
+                    break;
+                case R.id.menu_recommend_setting:
+                    break;
+            }
+        });
+
         mBinding.rvItems.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mBinding.rvItems.setEnableLoadMore(true);
         mBinding.rvItems.addItemDecoration(new RecyclerView.ItemDecoration() {

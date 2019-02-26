@@ -97,6 +97,10 @@ public class CoolBanner extends ViewPager {
         this.enableSwitch = enableSwitch;
     }
 
+    public boolean isEnableSwitch() {
+        return enableSwitch;
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (enableSwitch) {

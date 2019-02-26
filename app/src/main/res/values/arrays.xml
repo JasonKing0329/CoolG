@@ -26,4 +26,13 @@
         <item>By Name</item>
         <item>By Video Number</item>
     </string-array>
+
+    <string-array name="recommend_often_use" translatable="false">
+        <item>score ></item>
+        <item>scoreBareback > 0</item>
+        <item>score >  AND scoreBareback > 0</item>
+        <item>scorePassion > </item>
+        <item>scoreCum > </item>
+        <item>specialDesc LIKE '%%'</item>
+    </string-array>
 </resources>

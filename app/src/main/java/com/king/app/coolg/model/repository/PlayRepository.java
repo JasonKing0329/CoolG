@@ -128,6 +128,15 @@ public class PlayRepository extends BaseRepository {
         });
     }
 
+    public Observable<List<Record>> getPlayableRecords(int number, String where) {
+        return Observable.create(e -> {
+            RecordDao dao = getDaoSession().getRecordDao();
+            String sql = where + " AND deprecated=? ORDER BY RANDOM() LIMIT " + number;
+            List<Record> list = dao.queryRaw(sql, new String[]{"0"});
+            e.onNext(list);
+        });
+    }
+
     public int getNotDeprecatedCount(long starId) {
         return (int) getNotDeprecatedBuilder(starId).buildCount().count();
     }

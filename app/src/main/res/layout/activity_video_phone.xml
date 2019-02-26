@@ -52,7 +52,7 @@
                         android:background="@color/actionbar_bg"
                         android:theme="@style/EtActionSearch"
                         app:title="Videos"
-                        app:menu="@menu/home_phone"
+                        app:menu="@menu/video_home"
                         app:maxShowIcon="5"
                         app:showIconBack="false"
                         app:iconColor="@color/actionbar_element"
