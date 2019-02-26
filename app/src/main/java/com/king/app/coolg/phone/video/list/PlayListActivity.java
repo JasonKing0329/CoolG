@@ -11,7 +11,7 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
-import com.king.app.coolg.databinding.ActivityPlayListBinding;
+import com.king.app.coolg.databinding.ActivityVideoOrderPlayListBinding;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.video.player.PlayerActivity;
 import com.king.app.coolg.utils.ScreenUtils;
@@ -30,7 +30,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * @date: 2018/11/15 14:32
  */
 @Route("PlayList")
-public class PlayListActivity extends MvvmActivity<ActivityPlayListBinding, PlayListViewModel> {
+public class PlayListActivity extends MvvmActivity<ActivityVideoOrderPlayListBinding, PlayListViewModel> {
 
     public static final String EXTRA_ORDER_ID = "order_id";
 
@@ -38,7 +38,7 @@ public class PlayListActivity extends MvvmActivity<ActivityPlayListBinding, Play
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_play_list;
+        return R.layout.activity_video_order_play_list;
     }
 
     private long getOrderId() {
@@ -47,6 +47,8 @@ public class PlayListActivity extends MvvmActivity<ActivityPlayListBinding, Play
 
     @Override
     protected void initView() {
+        mBinding.setModel(mModel);
+
         //set global configuration: turn on multiple_requests
         PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
 

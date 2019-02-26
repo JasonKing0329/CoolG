@@ -32,8 +32,14 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class PopularStarViewModel extends BaseViewModel {
 
+    private final int SORT_BY_NAME = 0;
+
+    private final int SORT_BY_VIDEO = 1;
+
+    private int mSortType = SORT_BY_NAME;
+
     public MutableLiveData<List<VideoGuy>> starsObserver = new MutableLiveData<>();
-    
+
     private PlayRepository playRepository;
     
     public PopularStarViewModel(@NonNull Application application) {
@@ -93,19 +99,16 @@ public class PopularStarViewModel extends BaseViewModel {
         };
     }
 
-    private ObservableSource<List<VideoGuy>> sort(List<VideoGuy> list) {
-        return observer -> {
-            Collections.sort(list, new NameComparator());
-            observer.onNext(list);
-        };
-    }
-
-    private class NameComparator implements Comparator<VideoGuy> {
-
-        @Override
-        public int compare(VideoGuy left, VideoGuy right) {
-            return left.getStar().getName().toLowerCase().compareTo(right.getStar().getName().toLowerCase());
-        }
+    private Observable<List<VideoGuy>> sort(List<VideoGuy> list) {
+        return Observable.create(e -> {
+            if (mSortType == SORT_BY_VIDEO) {
+                Collections.sort(list, new VideoComparator());
+            }
+            else {
+                Collections.sort(list, new NameComparator());
+            }
+            e.onNext(list);
+        });
     }
 
     public void executeDelete() {
@@ -170,6 +173,67 @@ public class PopularStarViewModel extends BaseViewModel {
             getDaoSession().getVideoCoverStarDao().detachAll();
             e.onNext(true);
         });
+    }
+
+    public void sortByVideo() {
+        if (mSortType != SORT_BY_VIDEO) {
+            mSortType = SORT_BY_VIDEO;
+            sort();
+        }
+    }
+
+    public void sortByName() {
+        if (mSortType != SORT_BY_NAME) {
+            mSortType = SORT_BY_NAME;
+            sort();
+        }
+    }
+
+    private void sort() {
+        loadingObserver.setValue(true);
+        sort(starsObserver.getValue())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<VideoGuy>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<VideoGuy> list) {
+                        starsObserver.setValue(list);
+                        loadingObserver.setValue(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                        loadingObserver.setValue(false);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private class NameComparator implements Comparator<VideoGuy> {
+
+        @Override
+        public int compare(VideoGuy left, VideoGuy right) {
+            return left.getStar().getName().toLowerCase().compareTo(right.getStar().getName().toLowerCase());
+        }
+    }
+
+    private class VideoComparator implements Comparator<VideoGuy> {
+
+        @Override
+        public int compare(VideoGuy left, VideoGuy right) {
+            return right.getVideos() - left.getVideos();
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package com.king.app.coolg.phone.video.list;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
+import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
@@ -31,6 +32,8 @@ public class PlayListViewModel extends BaseViewModel {
     public MutableLiveData<List<PlayItemViewBean>> itemsObserver = new MutableLiveData<>();
 
     public MutableLiveData<PlayOrder> orderObserver = new MutableLiveData<>();
+
+    public ObservableField<String> totalText = new ObservableField<>();
 
     private PlayRepository repository;
 
@@ -62,6 +65,7 @@ public class PlayListViewModel extends BaseViewModel {
                     public void onNext(List<PlayItemViewBean> playItems) {
                         loadingObserver.setValue(false);
                         itemsObserver.setValue(playItems);
+                        totalText.set(playItems.size() + " Videos");
                     }
 
                     @Override

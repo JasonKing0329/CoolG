@@ -47,6 +47,9 @@ public class PreferenceKey {
     // gdb game scene
     public static final String PREF_GDB_GAME_SCENES = "pref_gdb_game_scenes";
 
+    public static final String PREF_VIDEO_STAR_ORDER_VIEW_TYPE = "pref_video_star_order_view_type";
+    public static final String PREF_VIDEO_PLAY_ORDER_VIEW_TYPE = "pref_video_play_order_view_type";
+
     /**
      * http
      */

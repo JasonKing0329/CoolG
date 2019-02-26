@@ -3,6 +3,7 @@ package com.king.app.coolg.phone.video.star;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,9 +13,12 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoStarListBinding;
+import com.king.app.coolg.model.setting.PreferenceValue;
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.star.list.StarSelectorActivity;
 import com.king.app.coolg.phone.video.list.PlayStarListActivity;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.SimpleDialogs;
 import com.king.app.jactionbar.OnConfirmListener;
 
@@ -44,13 +48,7 @@ public class PopularStarActivity extends MvvmActivity<ActivityVideoStarListBindi
 
     @Override
     protected void initView() {
-        mBinding.rvList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mBinding.rvList.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                outRect.top = ScreenUtils.dp2px(8);
-            }
-        });
+        updateListViewType();
 
         mBinding.actionbar.setOnBackListener(() -> onBackPressed());
         mBinding.actionbar.setOnMenuItemListener(menuId -> {
@@ -63,6 +61,29 @@ public class PopularStarActivity extends MvvmActivity<ActivityVideoStarListBindi
                 case R.id.menu_delete:
                     mBinding.actionbar.showConfirmStatus(menuId);
                     adapter.setMultiSelect(true);
+                    break;
+                case R.id.menu_sort:
+                    new AlertDialogFragment()
+                            .setItems(getResources().getStringArray(R.array.sort_video_star_order), (dialog, which) -> {
+                                if (which == 0) {
+                                    mModel.sortByName();
+                                }
+                                else if (which == 1) {
+                                    mModel.sortByVideo();
+                                }
+                            })
+                            .show(getSupportFragmentManager(), "AlertDialogFragment");
+                    break;
+                case R.id.menu_list_view_type:
+                    int type = SettingProperty.getVideoStarOrderViewType();
+                    if (type == PreferenceValue.VIEW_TYPE_GRID) {
+                        type = PreferenceValue.VIEW_TYPE_LIST;
+                    }
+                    else {
+                        type = PreferenceValue.VIEW_TYPE_GRID;
+                    }
+                    SettingProperty.setVideoStarOrderViewType(type);
+                    updateListViewType();
                     break;
             }
         });
@@ -105,6 +126,49 @@ public class PopularStarActivity extends MvvmActivity<ActivityVideoStarListBindi
             }
         });
 
+    }
+
+    private RecyclerView.ItemDecoration linearDecoration = new RecyclerView.ItemDecoration() {
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            outRect.top = ScreenUtils.dp2px(8);
+        }
+    };
+
+    private RecyclerView.ItemDecoration gridDecoration = new RecyclerView.ItemDecoration() {
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildLayoutPosition(view);
+            outRect.top = ScreenUtils.dp2px(8);
+            if (position % 2 == 0) {
+                outRect.left = ScreenUtils.dp2px(8);
+                outRect.right = ScreenUtils.dp2px(4);
+            }
+            else {
+                outRect.left = ScreenUtils.dp2px(4);
+                outRect.right = ScreenUtils.dp2px(8);
+            }
+        }
+    };
+
+    private void updateListViewType() {
+        int type = SettingProperty.getVideoStarOrderViewType();
+        if (type == PreferenceValue.VIEW_TYPE_GRID) {
+            mBinding.rvList.removeItemDecoration(linearDecoration);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+            mBinding.rvList.setLayoutManager(gridLayoutManager);
+            mBinding.rvList.addItemDecoration(gridDecoration);
+            mBinding.actionbar.updateMenuText(R.id.menu_list_view_type, "List View");
+        }
+        else {
+            mBinding.rvList.removeItemDecoration(gridDecoration);
+            mBinding.rvList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+            mBinding.rvList.addItemDecoration(linearDecoration);
+            mBinding.actionbar.updateMenuText(R.id.menu_list_view_type, "Grid View");
+        }
+        if (adapter != null) {
+            adapter.setViewType(type);
+        }
     }
 
     @Override

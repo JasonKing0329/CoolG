@@ -253,4 +253,20 @@ public class SettingProperty {
         setInt("studio_list_sort_type", type);
     }
 
+    public static int getVideoStarOrderViewType() {
+        return getInt(PreferenceKey.PREF_VIDEO_STAR_ORDER_VIEW_TYPE);
+    }
+
+    public static void setVideoStarOrderViewType(int type) {
+        setInt(PreferenceKey.PREF_VIDEO_STAR_ORDER_VIEW_TYPE, type);
+    }
+
+    public static int getVideoPlayOrderViewType() {
+        return getInt(PreferenceKey.PREF_VIDEO_PLAY_ORDER_VIEW_TYPE);
+    }
+
+    public static void setVideoPlayOrderViewType(int type) {
+        setInt(PreferenceKey.PREF_VIDEO_PLAY_ORDER_VIEW_TYPE, type);
+    }
+
 }

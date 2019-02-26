@@ -83,4 +83,7 @@ public class PreferenceValue {
     public static final int STUDIO_LIST_SORT_NUM = 1;
     public static final int STUDIO_LIST_SORT_CREATE_TIME = 2;
     public static final int STUDIO_LIST_SORT_UPDATE_TIME =3;
+
+    public static final int VIEW_TYPE_LIST =0;
+    public static final int VIEW_TYPE_GRID =1;
 }

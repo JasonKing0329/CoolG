@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -13,6 +14,8 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityPlayOrderBinding;
+import com.king.app.coolg.model.setting.PreferenceValue;
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.video.home.VideoPlayList;
 import com.king.app.coolg.phone.video.list.PlayListActivity;
 import com.king.app.coolg.utils.ScreenUtils;
@@ -47,6 +50,7 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
 
     @Override
     protected void initView() {
+        updateListViewType();
 
         mBinding.rvList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mBinding.rvList.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -83,6 +87,17 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
                                 }
                             })
                             .show(getSupportFragmentManager(), "AlertDialogFragment");
+                    break;
+                case R.id.menu_list_view_type:
+                    int type = SettingProperty.getVideoPlayOrderViewType();
+                    if (type == PreferenceValue.VIEW_TYPE_GRID) {
+                        type = PreferenceValue.VIEW_TYPE_LIST;
+                    }
+                    else {
+                        type = PreferenceValue.VIEW_TYPE_GRID;
+                    }
+                    SettingProperty.setVideoPlayOrderViewType(type);
+                    updateListViewType();
                     break;
             }
         });
@@ -143,6 +158,49 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
 
         if (isMultiSelect()) {
             mBinding.actionbar.showConfirmStatus(ACTION_MULTI_SELECT);
+        }
+    }
+
+    private RecyclerView.ItemDecoration linearDecoration = new RecyclerView.ItemDecoration() {
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            outRect.top = ScreenUtils.dp2px(8);
+        }
+    };
+
+    private RecyclerView.ItemDecoration gridDecoration = new RecyclerView.ItemDecoration() {
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildLayoutPosition(view);
+            outRect.top = ScreenUtils.dp2px(8);
+            if (position % 2 == 0) {
+                outRect.left = ScreenUtils.dp2px(8);
+                outRect.right = ScreenUtils.dp2px(4);
+            }
+            else {
+                outRect.left = ScreenUtils.dp2px(4);
+                outRect.right = ScreenUtils.dp2px(8);
+            }
+        }
+    };
+
+    private void updateListViewType() {
+        int type = SettingProperty.getVideoPlayOrderViewType();
+        if (type == PreferenceValue.VIEW_TYPE_GRID) {
+            mBinding.rvList.removeItemDecoration(linearDecoration);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+            mBinding.rvList.setLayoutManager(gridLayoutManager);
+            mBinding.rvList.addItemDecoration(gridDecoration);
+            mBinding.actionbar.updateMenuText(R.id.menu_list_view_type, "List View");
+        }
+        else {
+            mBinding.rvList.removeItemDecoration(gridDecoration);
+            mBinding.rvList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+            mBinding.rvList.addItemDecoration(linearDecoration);
+            mBinding.actionbar.updateMenuText(R.id.menu_list_view_type, "Grid View");
+        }
+        if (adapter != null) {
+            adapter.setViewType(type);
         }
     }
 
