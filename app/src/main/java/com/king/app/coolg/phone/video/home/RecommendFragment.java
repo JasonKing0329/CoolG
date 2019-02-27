@@ -68,15 +68,20 @@ public class RecommendFragment extends DraggableContentFragment<FragmentVideoRec
                     return;
                 }
             }
-            if (!isTypeChecked()) {
-                setAllTypeChecked();
-            }
             mBean.setFkType1(mBinding.cbFtype1.isChecked());
             mBean.setFkType2(mBinding.cbFtype2.isChecked());
             mBean.setFkType3(mBinding.cbFtype3.isChecked());
             mBean.setFkType4(mBinding.cbFtype4.isChecked());
             mBean.setFkType5(mBinding.cbFtype5.isChecked());
             mBean.setFkType6(mBinding.cbFtype6.isChecked());
+            mBean.setTypeAll(mBinding.cbTypeAll.isChecked());
+            mBean.setType1v1(mBinding.cbType1v1.isChecked());
+            mBean.setType3w(mBinding.cbType3w.isChecked());
+            mBean.setTypeMulti(mBinding.cbTypeMulti.isChecked());
+            mBean.setTypeTogether(mBinding.cbTypeTogether.isChecked());
+            if (!isTypeChecked()) {
+                setAllTypeChecked();
+            }
             onRecommendListener.onSetSql(mBean);
             dismissAllowingStateLoss();
         });
