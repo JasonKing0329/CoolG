@@ -17,9 +17,9 @@
             android:id="@+id/tv_sql_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
             android:layout_marginTop="24dp"
-            android:text="Sql (Only effective for table record)"
+            android:text="Sql (conditions for table record)"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
             android:text="Expressions"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_sql_title" />
@@ -37,33 +37,82 @@
             android:id="@+id/et_sql"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="@dimen/dlg_recommend_margin_hor"
+            android:hint="eg. score>=400 and scene='bed'"
             android:text="@{bean.sql}"
-            android:hint="eg. score>=400 and scoreBareback>0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_often" />
+
+        <LinearLayout
+            android:id="@+id/ll_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/dlg_recommend_margin_hor"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_sql">
+
+            <CheckBox
+                android:id="@+id/cb_type_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@{bean.isTypeAll}"
+                android:text="All" />
+
+            <CheckBox
+                android:id="@+id/cb_type_1v1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@{bean.isType1v1}"
+                android:text="1v1" />
+
+            <CheckBox
+                android:id="@+id/cb_type_3w"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@{bean.isType3w}"
+                android:text="3w" />
+
+            <CheckBox
+                android:id="@+id/cb_type_multi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@{bean.isTypeMulti}"
+                android:text="Multi" />
+
+            <CheckBox
+                android:id="@+id/cb_type_together"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@{bean.isTypeTogether}"
+                android:text="Together" />
+
+        </LinearLayout>
 
         <CheckBox
             android:id="@+id/cb_ftype"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
             android:layout_marginTop="8dp"
-            android:text="With F type"
             android:checked="@{bean.withFkType}"
+            android:text="With F type(Only effective for type 1v1)"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_sql" />
+            app:layout_constraintTop_toBottomOf="@+id/ll_type" />
 
         <LinearLayout
             android:id="@+id/ll_ftype"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="@dimen/dlg_recommend_margin_hor"
             android:orientation="horizontal"
             android:visibility="@{bean.withFkType ? View.VISIBLE:View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"

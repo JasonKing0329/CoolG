@@ -233,4 +233,5 @@
     <dimen name="category_star_size">60dp</dimen>
     <dimen name="category_star_height">90dp</dimen>
     <dimen name="category_level_star_height">108dp</dimen>
+    <dimen name="dlg_recommend_margin_hor">16dp</dimen>
 </resources>

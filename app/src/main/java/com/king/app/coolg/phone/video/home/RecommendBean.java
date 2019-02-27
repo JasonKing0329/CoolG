@@ -23,6 +23,56 @@ public class RecommendBean extends BaseObservable {
 
     private boolean isFkType6;
 
+    private boolean isTypeAll;
+
+    private boolean isType1v1;
+
+    private boolean isType3w;
+
+    private boolean isTypeMulti;
+
+    private boolean isTypeTogether;
+
+    public boolean isTypeAll() {
+        return isTypeAll;
+    }
+
+    public void setTypeAll(boolean typeAll) {
+        isTypeAll = typeAll;
+    }
+
+    public boolean isType1v1() {
+        return isType1v1;
+    }
+
+    public void setType1v1(boolean type1v1) {
+        isType1v1 = type1v1;
+    }
+
+    public boolean isType3w() {
+        return isType3w;
+    }
+
+    public void setType3w(boolean type3w) {
+        isType3w = type3w;
+    }
+
+    public boolean isTypeMulti() {
+        return isTypeMulti;
+    }
+
+    public void setTypeMulti(boolean typeMulti) {
+        isTypeMulti = typeMulti;
+    }
+
+    public boolean isTypeTogether() {
+        return isTypeTogether;
+    }
+
+    public void setTypeTogether(boolean typeTogether) {
+        isTypeTogether = typeTogether;
+    }
+
     public String getSql() {
         return sql;
     }

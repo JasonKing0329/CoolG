@@ -1,7 +1,11 @@
 package com.king.app.coolg.model.repository;
 
+import android.text.TextUtils;
+
 import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
+import com.king.app.coolg.utils.DebugLog;
 import com.king.app.gdb.data.entity.PlayDuration;
 import com.king.app.gdb.data.entity.PlayDurationDao;
 import com.king.app.gdb.data.entity.PlayItem;
@@ -10,6 +14,9 @@ import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordDao;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordStarDao;
+import com.king.app.gdb.data.entity.RecordType1v1;
+import com.king.app.gdb.data.entity.RecordType1v1Dao;
+import com.king.app.gdb.data.param.DataConstants;
 
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -132,6 +139,74 @@ public class PlayRepository extends BaseRepository {
         return Observable.create(e -> {
             RecordDao dao = getDaoSession().getRecordDao();
             String sql = " WHERE " + where + " AND deprecated=? ORDER BY RANDOM() LIMIT " + number;
+            List<Record> list = dao.queryRaw(sql, new String[]{"0"});
+            e.onNext(list);
+        });
+    }
+
+    public Observable<List<Record>> getPlayableRecords(int number, RecommendBean bean) {
+        return Observable.create(e -> {
+            RecordDao dao = getDaoSession().getRecordDao();
+            StringBuffer buffer = new StringBuffer();
+            if (bean.isWithFkType()) {
+                buffer.append(" JOIN record_type1 RT ON T.RECORD_DETAIL_ID=RT._id AND T.TYPE=").append(DataConstants.VALUE_RECORD_TYPE_1V1);
+                if (bean.isFkType1()) {
+                    buffer.append(" AND RT.SCORE_FK_TYPE1>0");
+                }
+                if (bean.isFkType2()) {
+                    buffer.append(" AND RT.SCORE_FK_TYPE2>0");
+                }
+                if (bean.isFkType3()) {
+                    buffer.append(" AND RT.SCORE_FK_TYPE3>0");
+                }
+                if (bean.isFkType4()) {
+                    buffer.append(" AND RT.SCORE_FK_TYPE4>0");
+                }
+                if (bean.isFkType5()) {
+                    buffer.append(" AND RT.SCORE_FK_TYPE5>0");
+                }
+                if (bean.isFkType6()) {
+                    buffer.append(" AND RT.SCORE_FK_TYPE6>0");
+                }
+            }
+            buffer.append(" WHERE T.deprecated=?");
+            StringBuffer whereBuffer = new StringBuffer();
+            if (!TextUtils.isEmpty(bean.getSql())) {
+                whereBuffer.append(" AND ").append(bean.getSql());
+            }
+            if (!bean.isWithFkType() && !bean.isTypeAll()) {
+                List<Integer> types = new ArrayList<>();
+                if (bean.isType1v1()) {
+                    types.add(DataConstants.VALUE_RECORD_TYPE_1V1);
+                }
+                if (bean.isType3w()) {
+                    types.add(DataConstants.VALUE_RECORD_TYPE_3W);
+                }
+                if (bean.isTypeMulti()) {
+                    types.add(DataConstants.VALUE_RECORD_TYPE_MULTI);
+                }
+                if (bean.isTypeTogether()) {
+                    types.add(DataConstants.VALUE_RECORD_TYPE_LONG);
+                }
+                if (types.size() > 0) {
+                    if (types.size() == 1) {
+                        buffer.append(" AND T.TYPE=").append(types.get(0));
+                    }
+                    else {
+                        buffer.append(" AND (");
+                        for (int i = 0; i < types.size(); i ++) {
+                            if (i > 0) {
+                                buffer.append(" OR ");
+                            }
+                            buffer.append("T.TYPE=").append(types.get(i));
+                        }
+                        buffer.append(")");
+                    }
+                }
+            }
+            buffer.append(" ORDER BY RANDOM() LIMIT ").append(number);
+            String sql = buffer.toString();
+            DebugLog.e(sql);
             List<Record> list = dao.queryRaw(sql, new String[]{"0"});
             e.onNext(list);
         });
