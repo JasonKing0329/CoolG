@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.video.home.VideoPlayList;
 import com.king.app.gdb.data.entity.PlayItemDao;
 import com.king.app.gdb.data.entity.PlayOrder;
@@ -31,12 +32,13 @@ public class PlayOrderViewModel extends BaseViewModel {
 
     private final int SORT_BY_NAME = 1;
 
-    private int mSortType = SORT_BY_ID;
+    private int mSortType;
 
     public MutableLiveData<List<VideoPlayList>> dataObserver = new MutableLiveData<>();
 
     public PlayOrderViewModel(@NonNull Application application) {
         super(application);
+        mSortType = SettingProperty.getVideoPlayOrderViewType();
     }
 
     public void loadOrders() {

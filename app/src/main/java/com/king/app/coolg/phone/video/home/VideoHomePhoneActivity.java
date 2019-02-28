@@ -20,6 +20,7 @@ import com.king.app.coolg.phone.video.list.PlayStarListActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
+import com.king.app.coolg.view.transformer.CubePageTransformer;
 
 import java.util.ArrayList;
 
@@ -90,6 +91,9 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
         });
         // 不自动加载更多
 //        mBinding.rvItems.setOnLoadMoreListener(() -> mModel.loadMore());
+
+        // viewpager切换效果
+        mBinding.banner.setPageTransformer(true, new CubePageTransformer());
     }
 
     @Override

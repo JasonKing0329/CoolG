@@ -31,7 +31,6 @@ public abstract class BannerAdapter extends PagerAdapter
 
     public BannerAdapter(ViewPager viewPager) {
         this.viewPager = viewPager;
-        viewPager.addOnPageChangeListener(this);
     }
 
     public void init() {
@@ -213,6 +212,15 @@ public abstract class BannerAdapter extends PagerAdapter
 
     @Override
     public void onPageScrollStateChanged(int state) {
+        DebugLog.e("state=" + state);
+        switch (state) {
+            case ViewPager.SCROLL_STATE_IDLE:
+                break;
+            case ViewPager.SCROLL_STATE_DRAGGING:
+                break;
+            case ViewPager.SCROLL_STATE_SETTLING:
+                break;
+        }
     }
 
     @Override

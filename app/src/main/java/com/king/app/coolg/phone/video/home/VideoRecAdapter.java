@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
@@ -105,6 +106,9 @@ public class VideoRecAdapter extends BannerAdapter {
                 onPlayListener.onStartPlay();
             }
         });
+
+        TextView testView = view.findViewById(R.id.tv_index);
+        testView.setText(position + "--" + item.getName());
     }
 
     public interface OnPlayListener {

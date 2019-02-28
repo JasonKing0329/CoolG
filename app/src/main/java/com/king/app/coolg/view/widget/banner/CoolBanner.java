@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
 
 import com.king.app.coolg.R;
+import com.king.app.coolg.utils.DebugLog;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,8 @@ public class CoolBanner extends ViewPager {
     private int duration = 5000;
 
     private boolean enableSwitch = true;
+
+    private int timeCount;
 
     public CoolBanner(@NonNull Context context) {
         super(context);
@@ -67,20 +70,30 @@ public class CoolBanner extends ViewPager {
     }
 
     public void setBannerAdapter(BannerAdapter adapter) {
+        removeOnPageChangeListener(adapter);
         this.adapter = adapter;
         removeAllViews();
         if (adapter != null) {
             adapter.init();
         }
         setAdapter(adapter);
+        addOnPageChangeListener(adapter);
     }
 
     public void startAutoPlay() {
+        timeCount = 0;
         compositeDisposable.clear();
         if (adapter != null && adapter.getItemCount() > 1) {
-            Disposable disposable = Observable.interval(duration, TimeUnit.MILLISECONDS)
+            Disposable disposable = Observable.interval(1000, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(aLong -> adapter.nextPage());
+                    .subscribe(aLong -> {
+                        timeCount += 1000;
+                        DebugLog.e("timeCount=" + timeCount);
+                        if (timeCount >= duration) {
+                            timeCount = 0;
+                            adapter.nextPage();
+                        }
+                    });
             compositeDisposable.add(disposable);
         }
     }
@@ -90,6 +103,7 @@ public class CoolBanner extends ViewPager {
     }
 
     public void stopAutoPlay() {
+        timeCount = 0;
         compositeDisposable.clear();
     }
 
@@ -120,4 +134,34 @@ public class CoolBanner extends ViewPager {
             return false;
         }
     }
+
+    /**
+     * 当有touch事件时，重置计时
+     * @param ev
+     * @return
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        // 必须在dispatchTouchEvent处理，因为这里onTouchEvent里接收不到ACTION_DOWN事件
+        if (enableSwitch) {
+            switch (ev.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_MOVE:
+                    resetTimer();
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    break;
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * 暂停切换计时
+     */
+    private void resetTimer() {
+        timeCount = 0;
+    }
+
 }
