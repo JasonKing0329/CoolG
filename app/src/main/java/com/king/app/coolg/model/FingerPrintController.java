@@ -8,6 +8,7 @@ import com.samsung.android.sdk.pass.Spass;
 import com.samsung.android.sdk.pass.SpassFingerprint;
 import com.samsung.android.sdk.pass.SpassFingerprint.IdentifyListener;
 
+@Deprecated
 public class FingerPrintController implements IdentifyListener {
 
 	private final String TAG = "FingerPrintController";

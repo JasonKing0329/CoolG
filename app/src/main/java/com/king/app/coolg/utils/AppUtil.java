@@ -1,6 +1,7 @@
 package com.king.app.coolg.utils;
 
 import android.content.pm.PackageManager;
+import android.os.Build;
 
 import com.king.app.coolg.base.CoolApplication;
 
@@ -21,4 +22,14 @@ public class AppUtil {
         return null;
     }
 
+    /**
+     * android P (9.0)
+     * @return
+     */
+    public static boolean isAndroidP() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -15,6 +15,8 @@
     <!-- *****samsung fingerprint sdk permission******* -->
     <uses-permission android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY" />
 
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+
     <application
         android:name=".base.CoolApplication"
         android:allowBackup="true"

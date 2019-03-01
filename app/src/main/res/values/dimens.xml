@@ -234,4 +234,6 @@
     <dimen name="category_star_height">90dp</dimen>
     <dimen name="category_level_star_height">108dp</dimen>
     <dimen name="dlg_recommend_margin_hor">16dp</dimen>
+    <dimen name="dlg_fingerprint_width">320dp</dimen>
+    <dimen name="dlg_fingerprint_height">200dp</dimen>
 </resources>
