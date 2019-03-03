@@ -68,12 +68,8 @@ public class SettingProperty {
         editor.commit();
     }
 
-    public static void setEnableFingerPrint(boolean enable) {
-        setBoolean("enable_finger_print", enable);
-    }
-
     public static boolean isEnableFingerPrint() {
-        return getBoolean("enable_finger_print");
+        return getBoolean(PreferenceKey.PREF_SAFETY_FP);
     }
 
     /**

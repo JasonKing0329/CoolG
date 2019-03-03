@@ -12,7 +12,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,6 +21,7 @@ import android.widget.Toast;
 
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
+import com.king.app.coolg.model.fingerprint.FingerprintHelper;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.setting.PreferenceKey;
 import com.king.app.coolg.utils.AppUtil;
@@ -176,7 +176,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         // Add 'general' preferences.
         addPreferencesFromResource(R.xml.pref_safety);
-        if (!FingerprintManagerCompat.from(this).isHardwareDetected()) {
+        if (!FingerprintHelper.isDeviceSupport(this)) {
             findPreference(PreferenceKey.PREF_SAFETY_FP).setEnabled(false);
         }
 
@@ -337,7 +337,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_safety);
             setHasOptionsMenu(true);
 
-            if (!FingerprintManagerCompat.from(getActivity()).isHardwareDetected()) {
+            if (!FingerprintHelper.isDeviceSupport(getActivity())) {
                 findPreference(PreferenceKey.PREF_SAFETY_FP).setEnabled(false);
             }
 

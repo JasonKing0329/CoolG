@@ -4,7 +4,7 @@
         android:title="@string/pref_header_safety"/>
     <SwitchPreference
         android:defaultValue="false"
-        android:key="enable_finger_print"
+        android:key="pref_safety_fingerprint"
         android:summary="@string/pref_safety_fingerprint_desc"
         android:title="@string/pref_safety_fingerprint_title" />
 

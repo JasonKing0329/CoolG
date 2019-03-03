@@ -15,6 +15,7 @@ import com.chenenyu.router.Router;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityLoginBinding;
+import com.king.app.coolg.model.fingerprint.samsung.SamsungFingerPrint;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.utils.AppUtil;
 import com.king.app.coolg.utils.ScreenUtils;
@@ -28,6 +29,8 @@ import java.lang.reflect.Method;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewModel> {
+
+    private SamsungFingerPrint fingerPrint;
 
     @Override
     protected int getContentView() {
@@ -77,6 +80,21 @@ public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewM
             }
         }
         else {
+            // 三星Tab S(Android6.0)有指纹识别，但是系统方法判断为没有，继续用三星的sdk操作
+            checkSamsungFingerprint();
+        }
+    }
+
+    private void checkSamsungFingerprint() {
+        fingerPrint = new SamsungFingerPrint(LoginActivity.this);
+        if (fingerPrint.isSupported()) {
+            if (fingerPrint.hasRegistered()) {
+                startSamsungFingerPrintDialog();
+            } else {
+                showMessageLong("设备未注册指纹");
+            }
+            return;
+        } else {
             showMessageLong("设备不支持指纹识别");
         }
     }
@@ -138,10 +156,37 @@ public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewM
         mModel.initCreate();
     }
 
+    /**
+     * 通用指纹识别对话框
+     */
     private void startFingerPrintDialog() {
         FingerprintDialog dialog = new FingerprintDialog();
         dialog.setOnFingerPrintListener(() -> superUser());
         dialog.show(getSupportFragmentManager(), "FingerprintDialog");
+    }
+
+    /**
+     * 三星指纹识别对话框
+     */
+    private void startSamsungFingerPrintDialog() {
+        boolean withPW = false;
+        fingerPrint.showIdentifyDialog(withPW, new SamsungFingerPrint.SimpleIdentifyListener() {
+
+            @Override
+            public void onSuccess() {
+                superUser();
+            }
+
+            @Override
+            public void onFail() {
+
+            }
+
+            @Override
+            public void onCancel() {
+                finish();
+            }
+        });
     }
 
     private void superUser() {
