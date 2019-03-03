@@ -62,10 +62,6 @@
         <attr name="viewUpdater" format="string"/>
     </declare-styleable>
 
-    <declare-styleable name="CoolBanner">
-        <attr name="switchDuration" format="integer" />
-    </declare-styleable>
-
     <declare-styleable name="CoverView">
         <attr name="coverRadius" format="dimension" />
         <attr name="coverSrc" format="reference" />

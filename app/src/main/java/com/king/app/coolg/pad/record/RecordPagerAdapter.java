@@ -1,15 +1,14 @@
 package com.king.app.coolg.pad.record;
 
 import android.arch.lifecycle.Lifecycle;
-import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.king.app.coolg.GlideApp;
+import com.king.app.coolg.R;
 import com.king.app.coolg.model.palette.ViewColorBound;
-import com.king.app.coolg.view.widget.banner.BannerAdapter;
+import com.king.lib.banner.CoolBannerAdapter;
 
 import java.util.List;
 
@@ -17,18 +16,17 @@ import java.util.List;
  * Created by Administrator on 2018/8/25 0025.
  */
 
-public class RecordPagerAdapter extends BannerAdapter {
+public class RecordPagerAdapter extends CoolBannerAdapter<String> {
 
     private Lifecycle lifecycle;
     private List<View> viewList;
 
     private OnHolderListener onHolderListener;
-
-    private List<String> list;
-
-    public RecordPagerAdapter(ViewPager viewPager, Lifecycle lifecycle, List<View> viewList) {
-        super(viewPager);
+    public RecordPagerAdapter(Lifecycle lifecycle) {
         this.lifecycle = lifecycle;
+    }
+
+    public void setViewList(List<View> viewList) {
         this.viewList = viewList;
     }
 
@@ -36,20 +34,17 @@ public class RecordPagerAdapter extends BannerAdapter {
         this.onHolderListener = onHolderListener;
     }
 
-    public void setList(List<String> list) {
-        this.list = list;
+    @Override
+    protected int getLayoutRes() {
+        return R.layout.adapter_record_banner_item_pad;
     }
 
     @Override
-    public int getItemCount() {
-        return list == null ? 0:list.size();
-    }
-
-    @Override
-    protected void onBindItem(int position, View imageView) {
+    protected void onBindView(View view, int position, String bean) {
+        ImageView imageView = view.findViewById(R.id.iv_image);
         GlideApp.with(imageView.getContext())
                 .asBitmap()
-                .load(list.get(position))
+                .load(bean)
                 // listener只能添加一个，所以用RecordBitmapListener包含BitmapPaletteListener and TargetViewListener的处理
                 .listener(new RecordBitmapListener(viewList, lifecycle) {
                     @Override
@@ -66,18 +61,7 @@ public class RecordPagerAdapter extends BannerAdapter {
                         }
                     }
                 })
-                .into((ImageView) imageView);
-    }
-
-    @Override
-    protected View onCreateView() {
-        ImageView imageView = new ImageView(getContext());
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-        imageView.setClickable(true);
-        imageView.setOnClickListener(this);
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        return imageView;
+                .into(imageView);
     }
 
     public interface OnHolderListener {

@@ -51,8 +51,6 @@ public class RecordViewModel extends BaseViewModel {
 
     public MutableLiveData<Record> recordObserver = new MutableLiveData<>();
 
-    public MutableLiveData<String> singleImageObserver = new MutableLiveData<>();
-
     public MutableLiveData<List<String>> imagesObserver = new MutableLiveData<>();
 
     public MutableLiveData<List<RecordStar>> starsObserver = new MutableLiveData<>();
@@ -244,24 +242,23 @@ public class RecordViewModel extends BaseViewModel {
     }
 
     protected void loadImages(Record record) {
+        List<String> list = ImageProvider.getRecordPathList(record.getName());
         if (ImageProvider.hasRecordFolder(record.getName())) {
-            List<String> list = ImageProvider.getRecordPathList(record.getName());
             if (list.size() > 1) {
                 mVideoCover = list.get(Math.abs(new Random().nextInt()) % list.size());
-                imagesObserver.postValue(list);
             }
             else if (list.size() == 1) {
                 mSingleImagePath = list.get(0);
                 mVideoCover = mSingleImagePath;
-                singleImageObserver.postValue(list.get(0));
             }
         }
         else {
             String path = ImageProvider.getRecordRandomPath(record.getName(), null);
             mSingleImagePath = path;
             mVideoCover = mSingleImagePath;
-            singleImageObserver.postValue(path);
+            list.add(path);
         }
+        imagesObserver.postValue(list);
     }
 
     public String getSingleImagePath() {

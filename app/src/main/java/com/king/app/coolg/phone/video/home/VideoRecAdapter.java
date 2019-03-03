@@ -1,8 +1,6 @@
 package com.king.app.coolg.phone.video.home;
 
-import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,12 +8,10 @@ import android.widget.TextView;
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
-import com.king.app.coolg.view.widget.banner.BannerAdapter;
 import com.king.app.coolg.view.widget.video.EmbedVideoView;
 import com.king.app.coolg.view.widget.video.OnPlayEmptyUrlListener;
 import com.king.app.coolg.view.widget.video.OnVideoListener;
-
-import java.util.List;
+import com.king.lib.banner.CoolBannerAdapter;
 
 /**
  * Desc:
@@ -23,21 +19,11 @@ import java.util.List;
  * @author：Jing Yang
  * @date: 2019/2/25 14:49
  */
-public class VideoRecAdapter extends BannerAdapter {
-
-    private List<PlayItemViewBean> list;
+public class VideoRecAdapter extends CoolBannerAdapter<PlayItemViewBean> {
 
     private OnPlayEmptyUrlListener onPlayEmptyUrlListener;
 
     private OnPlayListener onPlayListener;
-
-    public VideoRecAdapter(ViewPager viewPager) {
-        super(viewPager);
-    }
-
-    public void setList(List<PlayItemViewBean> list) {
-        this.list = list;
-    }
 
     public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
         this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
@@ -48,18 +34,12 @@ public class VideoRecAdapter extends BannerAdapter {
     }
 
     @Override
-    public int getItemCount() {
-        return list == null ? 0:list.size();
+    protected int getLayoutRes() {
+        return R.layout.adapter_video_recommend;
     }
 
     @Override
-    protected View onCreateView() {
-        View group = LayoutInflater.from(getContext()).inflate(R.layout.adapter_video_recommend, null);
-        return group;
-    }
-
-    @Override
-    protected void onBindItem(int position, View view) {
+    protected void onBindView(View view, int position, PlayItemViewBean bean) {
         EmbedVideoView videoView = view.findViewById(R.id.video_view);
         PlayItemViewBean item = list.get(position);
         videoView.setFingerprint(position);
@@ -114,7 +94,7 @@ public class VideoRecAdapter extends BannerAdapter {
     public interface OnPlayListener {
         void onStartPlay();
         void onPausePlay();
-
         void onClickPlayItem(PlayItemViewBean item);
     }
+
 }

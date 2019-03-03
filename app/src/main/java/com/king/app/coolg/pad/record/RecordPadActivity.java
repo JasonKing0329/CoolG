@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,6 +42,7 @@ import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.param.DataConstants;
+import com.king.lib.banner.BannerFlipStyleProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,8 +87,8 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
 
         mBinding.ivBack.setOnClickListener(v -> finish());
         mBinding.ivOrder.setOnClickListener(v -> toggleOrders());
-        mBinding.ivSetCover.setOnClickListener(v -> onApplyImage(mModel.getCurrentImage(pagerAdapter.getCurrentPage())));
-        mBinding.ivDelete.setOnClickListener(v -> mModel.deleteImage(mModel.getCurrentImage(pagerAdapter.getCurrentPage())));
+        mBinding.ivSetCover.setOnClickListener(v -> onApplyImage(mModel.getCurrentImage(mBinding.banner.getCurrentItem())));
+        mBinding.ivDelete.setOnClickListener(v -> mModel.deleteImage(mModel.getCurrentImage(mBinding.banner.getCurrentItem())));
         mBinding.tvStudio.setOnClickListener(v -> selectStudio());
         mBinding.tvOrders.setOnClickListener(v -> selectOrderToAddRecord());
 //        mBinding.tvScene.setOnClickListener(v -> );
@@ -109,13 +111,14 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
     private void initGallery() {
         recordGallery = new RecordGallery();
         if (pagerAdapter != null) {
-            recordGallery.setCurrentPage(pagerAdapter.getCurrentPage());
+            recordGallery.setCurrentPage(mBinding.banner.getCurrentItem());
         }
         recordGallery.setImageList(mModel.getImageList());
-        recordGallery.setOnItemClickListener((view, position, data) -> pagerAdapter.showIndex(position));
+        recordGallery.setOnItemClickListener((view, position, data) -> mBinding.banner.getController().setPage(position));
     }
 
     private void initBanner() {
+        BannerFlipStyleProvider.setPagerAnim(mBinding.banner, 3);
     }
 
     private void initRecyclerViews() {
@@ -202,13 +205,6 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         mModel.passionsObserver.observe(this, list -> showPassions(list));
         mModel.scoreObserver.observe(this, list -> showScores(list));
         mModel.imagesObserver.observe(this, list -> showImages(list));
-        mModel.singleImageObserver.observe(this, path -> {
-            if (!TextUtils.isEmpty(path)) {
-                List<String> list = new ArrayList<>();
-                list.add(path);
-                showImages(list);
-            }
-        });
         mModel.ordersObserver.observe(this, list -> showOrders(list));
         mModel.studioObserver.observe(this, studio -> {
             if (TextUtils.isEmpty(studio)) {
@@ -372,14 +368,30 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         viewList.add(mBinding.ivOrder);
         viewList.add(mBinding.ivSetCover);
         viewList.add(mBinding.ivDelete);
-        pagerAdapter = new RecordPagerAdapter(mBinding.banner, getLifecycle(), viewList);
+        pagerAdapter = new RecordPagerAdapter(getLifecycle());
+        pagerAdapter.setViewList(viewList);
         pagerAdapter.setList(list);
-        pagerAdapter.setOnSetPageListener(position -> onPagePresented(position));
+        mBinding.banner.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                onPagePresented(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
         pagerAdapter.setOnHolderListener(new RecordPagerAdapter.OnHolderListener() {
             @Override
             public void onPaletteCreated(int position, Palette palette) {
                 mModel.cachePalette(position, palette);
-                if (position == pagerAdapter.getCurrentPage()) {
+                if (position == mBinding.banner.getCurrentItem()) {
                     onPagePresented(position);
                 }
             }
@@ -387,12 +399,12 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
             @Override
             public void onBoundsCreated(int position, List<ViewColorBound> bounds) {
                 mModel.cacheViewBounds(position, bounds);
-                if (position == pagerAdapter.getCurrentPage()) {
+                if (position == mBinding.banner.getCurrentItem()) {
                     onPagePresented(position);
                 }
             }
         });
-        mBinding.banner.setBannerAdapter(pagerAdapter);
+        mBinding.banner.setAdapter(pagerAdapter);
         mBinding.banner.startAutoPlay();
     }
 

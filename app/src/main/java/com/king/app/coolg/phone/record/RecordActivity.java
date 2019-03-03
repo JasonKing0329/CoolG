@@ -178,27 +178,33 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mModel.loadRecord(intent.getLongExtra(EXTRA_RECORD_ID, -1));
     }
 
+    private void setSingleImage(String path) {
+        mBinding.banner.setVisibility(View.GONE);
+        mBinding.ivRecord.setVisibility(View.VISIBLE);
+        mBinding.ivSetCover.setVisibility(View.VISIBLE);
+        mBinding.ivDelete.setVisibility(View.VISIBLE);
+        Glide.with(RecordActivity.this)
+                .load(path)
+                .apply(recordOptions)
+                .into(mBinding.ivRecord);
+    }
+
     @Override
     protected void initData() {
 
         recordOptions = GlideUtil.getRecordOptions();
 
-        mModel.singleImageObserver.observe(this, path -> {
-            mBinding.banner.setVisibility(View.GONE);
-            mBinding.ivRecord.setVisibility(View.VISIBLE);
-            mBinding.ivSetCover.setVisibility(View.VISIBLE);
-            mBinding.ivDelete.setVisibility(View.VISIBLE);
-            Glide.with(RecordActivity.this)
-                    .load(path)
-                    .apply(recordOptions)
-                    .into(mBinding.ivRecord);
-        });
         mModel.imagesObserver.observe(this, list -> {
-            mBinding.ivRecord.setVisibility(View.GONE);
-            mBinding.ivSetCover.setVisibility(View.GONE);
-            mBinding.ivDelete.setVisibility(View.GONE);
-            mBinding.banner.setVisibility(View.VISIBLE);
-            showBanner(list);
+            if (list.size() == 1) {
+                setSingleImage(list.get(0));
+            }
+            else {
+                mBinding.ivRecord.setVisibility(View.GONE);
+                mBinding.ivSetCover.setVisibility(View.GONE);
+                mBinding.ivDelete.setVisibility(View.GONE);
+                mBinding.banner.setVisibility(View.VISIBLE);
+                showBanner(list);
+            }
         });
         mModel.starsObserver.observe(this, list -> showStars(list));
         mModel.recordObserver.observe(this, record -> {
