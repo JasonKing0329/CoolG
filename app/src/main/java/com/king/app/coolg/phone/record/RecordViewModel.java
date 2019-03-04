@@ -242,8 +242,9 @@ public class RecordViewModel extends BaseViewModel {
     }
 
     protected void loadImages(Record record) {
-        List<String> list = ImageProvider.getRecordPathList(record.getName());
+        List<String> list = new ArrayList<>();
         if (ImageProvider.hasRecordFolder(record.getName())) {
+            list = ImageProvider.getRecordPathList(record.getName());
             if (list.size() > 1) {
                 mVideoCover = list.get(Math.abs(new Random().nextInt()) % list.size());
             }

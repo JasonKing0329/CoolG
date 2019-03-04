@@ -2,17 +2,14 @@ package com.king.app.coolg.phone.star;
 
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.graphics.Rect;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.allure.lbanners.LMBanners;
-import com.allure.lbanners.adapter.LBaseAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.king.app.coolg.R;
@@ -20,13 +17,17 @@ import com.king.app.coolg.base.adapter.BaseTagAdapter;
 import com.king.app.coolg.databinding.AdapterStarPhoneHeaderBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.utils.GlideUtil;
-import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.utils.StarRatingUtil;
 import com.king.app.coolg.view.widget.StarRatingView;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarRating;
+import com.king.lib.banner.BannerFlipStyleProvider;
+import com.king.lib.banner.CoolBanner;
+import com.king.lib.banner.CoolBannerAdapter;
+import com.king.lib.banner.OnBannerPageListener;
+import com.king.lib.banner.guide.GuideView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -259,6 +260,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
     private void bindImages(AdapterStarPhoneHeaderBinding binding, List<String> starImageList) {
         if (ListUtil.isEmpty(starImageList) || starImageList.size() == 1) {
             binding.banner.setVisibility(View.INVISIBLE);
+            binding.guideView.setVisibility(View.INVISIBLE);
             binding.ivStar.setVisibility(View.VISIBLE);
             if (starImageList.size() == 1) {
                 Glide.with(binding.ivStar.getContext())
@@ -288,7 +290,8 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
             binding.ivDelete.setVisibility(View.INVISIBLE);
             binding.ivSetCover.setVisibility(View.INVISIBLE);
             binding.banner.setVisibility(View.VISIBLE);
-            showBanner(binding.banner, starImageList);
+            binding.guideView.setVisibility(View.VISIBLE);
+            showBanner(binding.banner, binding.guideView, starImageList);
         }
     }
 
@@ -325,29 +328,27 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         binding.tvVideo.setText(StarRatingUtil.getRatingValue(rating.getVideo()));
     }
 
-    private void showBanner(LMBanners banner, List<String> list) {
+    private void showBanner(CoolBanner banner, GuideView guideView, List<String> list) {
         setBannerParams(banner);
         HeadBannerAdapter adapter = new HeadBannerAdapter();
-        banner.setAdapter(adapter, list);
+        adapter.setList(list);
+
+        guideView.setPointNumber(list.size());
+        guideView.setGuideTextGravity(Gravity.CENTER);
+        banner.setOnBannerPageListener((page, adapterIndex) -> guideView.setFocusIndex(page));
+
+        banner.setAdapter(adapter);
+        banner.startAutoPlay();
     }
 
-    private void setBannerParams(LMBanners banner) {
-        // 禁用btnStart(只在onPageScroll触发后有效)
-        banner.isGuide(false);
-        // 显示引导圆点
-//        lmBanners.hideIndicatorLayout();
-        banner.setIndicatorPosition(LMBanners.IndicaTorPosition.BOTTOM_MID);
-        // 可以不写，因为文件名直接覆用的mBinding.banner-1.0.8里的res
-        banner.setSelectIndicatorRes(R.drawable.page_indicator_select);
-        banner.setUnSelectUnIndicatorRes(R.drawable.page_indicator_unselect);
-        // 轮播切换时间
-        banner.setDurtion(SettingProperty.getStarRecommendAnimTime());
+    private void setBannerParams(CoolBanner banner) {
+        banner.setDuration(SettingProperty.getStarRecommendAnimTime());
         if (SettingProperty.isStarRandomRecommend()) {
             Random random = new Random();
-            int type = Math.abs(random.nextInt()) % LMBannerViewUtil.ANIM_TYPES.length;
-            LMBannerViewUtil.setScrollAnim(banner, type);
+            int type = Math.abs(random.nextInt()) % BannerFlipStyleProvider.ANIM_TYPES.length;
+            BannerFlipStyleProvider.setPagerAnim(banner, type);
         } else {
-            LMBannerViewUtil.setScrollAnim(banner, SettingProperty.getStarRecommendAnimType());
+            BannerFlipStyleProvider.setPagerAnim(banner, SettingProperty.getStarRecommendAnimType());
         }
     }
 
@@ -384,18 +385,21 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         mRatingModel.saveRating();
     }
 
-    private class HeadBannerAdapter implements LBaseAdapter<String> {
+    private class HeadBannerAdapter extends CoolBannerAdapter<String> {
+        @Override
+        protected int getLayoutRes() {
+            return R.layout.adapter_banner_image;
+        }
 
         @Override
-        public View getView(LMBanners lBanners, Context context, int position, String path) {
-            View view = LayoutInflater.from(context).inflate(R.layout.adapter_banner_image, null);
+        protected void onBindView(View view, int position, String path) {
             ImageView imageView = view.findViewById(R.id.iv_image);
             ImageView ivCover = view.findViewById(R.id.iv_set_cover);
             ImageView ivDelete = view.findViewById(R.id.iv_delete);
             ivCover.setVisibility(View.VISIBLE);
             ivDelete.setVisibility(View.VISIBLE);
 
-            Glide.with(context)
+            Glide.with(view.getContext())
                     .load(path)
                     .apply(starOptions)
                     .into(imageView);
@@ -410,7 +414,6 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
                     onHeadActionListener.onDeleteImage(path);
                 }
             });
-            return view;
         }
     }
 

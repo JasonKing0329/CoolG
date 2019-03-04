@@ -8,8 +8,8 @@ android {
         applicationId "com.king.app.coolg"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 77
-        versionName "4.7.1"
+        versionCode 78
+        versionName "4.7.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -86,7 +86,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
 
     implementation 'com.king.lib:jactionbar:1.0.8'
-    implementation 'com.king.lib:banner:1.0.2'
+    implementation 'com.king.lib:banner:1.0.4'
 
     implementation 'android.arch.lifecycle:runtime:1.1.1'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
@@ -94,9 +94,6 @@ dependencies {
 
     /*compressor*/
     implementation 'id.zelory:compressor:2.1.0'
-
-    /*LMBanners*/
-    implementation "com.allure0:LMBanners:${LMBANNER_VERSION}"
 
     /*boommenu*/
     implementation 'com.nightonke:boommenu:2.1.1'

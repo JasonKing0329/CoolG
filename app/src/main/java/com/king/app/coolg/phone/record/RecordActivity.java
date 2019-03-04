@@ -1,18 +1,15 @@
 package com.king.app.coolg.phone.record;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.allure.lbanners.LMBanners;
-import com.allure.lbanners.adapter.LBaseAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.chenenyu.router.Router;
@@ -29,7 +26,6 @@ import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.studio.StudioActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.GlideUtil;
-import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
@@ -39,6 +35,8 @@ import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordType1v1;
 import com.king.app.gdb.data.entity.RecordType3w;
 import com.king.app.gdb.data.param.DataConstants;
+import com.king.lib.banner.BannerFlipStyleProvider;
+import com.king.lib.banner.CoolBannerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -178,8 +176,20 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mModel.loadRecord(intent.getLongExtra(EXTRA_RECORD_ID, -1));
     }
 
+    private void setNoImage() {
+        mBinding.banner.setVisibility(View.GONE);
+        mBinding.guideView.setVisibility(View.GONE);
+        mBinding.ivRecord.setVisibility(View.VISIBLE);
+        mBinding.ivSetCover.setVisibility(View.GONE);
+        mBinding.ivDelete.setVisibility(View.GONE);
+        Glide.with(RecordActivity.this)
+                .load(R.drawable.def_small)
+                .into(mBinding.ivRecord);
+    }
+
     private void setSingleImage(String path) {
         mBinding.banner.setVisibility(View.GONE);
+        mBinding.guideView.setVisibility(View.GONE);
         mBinding.ivRecord.setVisibility(View.VISIBLE);
         mBinding.ivSetCover.setVisibility(View.VISIBLE);
         mBinding.ivDelete.setVisibility(View.VISIBLE);
@@ -195,7 +205,10 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         recordOptions = GlideUtil.getRecordOptions();
 
         mModel.imagesObserver.observe(this, list -> {
-            if (list.size() == 1) {
+            if (list.size() == 0) {
+                setNoImage();
+            }
+            else if (list.size() == 1) {
                 setSingleImage(list.get(0));
             }
             else {
@@ -203,6 +216,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                 mBinding.ivSetCover.setVisibility(View.GONE);
                 mBinding.ivDelete.setVisibility(View.GONE);
                 mBinding.banner.setVisibility(View.VISIBLE);
+                mBinding.guideView.setVisibility(View.VISIBLE);
                 showBanner(list);
             }
         });
@@ -244,26 +258,25 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     private void showBanner(List<String> list) {
         setBannerParams();
         HeadBannerAdapter adapter = new HeadBannerAdapter();
-        mBinding.banner.setAdapter(adapter, list);
+        adapter.setList(list);
+
+        mBinding.guideView.setPointNumber(list.size());
+        mBinding.guideView.setGuideTextGravity(Gravity.CENTER);
+        mBinding.banner.setOnBannerPageListener((page, adapterIndex) -> mBinding.guideView.setFocusIndex(page));
+
+        mBinding.banner.setAdapter(adapter);
+        mBinding.banner.startAutoPlay();
     }
 
     private void setBannerParams() {
-        // 禁用btnStart(只在onPageScroll触发后有效)
-        mBinding.banner.isGuide(false);
-        // 显示引导圆点
-//        lmBanners.hideIndicatorLayout();
-        mBinding.banner.setIndicatorPosition(LMBanners.IndicaTorPosition.BOTTOM_MID);
-        // 可以不写，因为文件名直接覆用的mBinding.banner-1.0.8里的res
-        mBinding.banner.setSelectIndicatorRes(R.drawable.page_indicator_select);
-        mBinding.banner.setUnSelectUnIndicatorRes(R.drawable.page_indicator_unselect);
         // 轮播切换时间
-        mBinding.banner.setDurtion(SettingProperty.getRecommendAnimTime());
+        mBinding.banner.setDuration(SettingProperty.getRecommendAnimTime());
         if (SettingProperty.isRandomRecommend()) {
             Random random = new Random();
-            int type = Math.abs(random.nextInt()) % LMBannerViewUtil.ANIM_TYPES.length;
-            LMBannerViewUtil.setScrollAnim(mBinding.banner, type);
+            int type = Math.abs(random.nextInt()) % BannerFlipStyleProvider.ANIM_TYPES.length;
+            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, type);
         } else {
-            LMBannerViewUtil.setScrollAnim(mBinding.banner, SettingProperty.getRecommendAnimType());
+            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, SettingProperty.getRecommendAnimType());
         }
     }
 
@@ -473,7 +486,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     public void onPause() {
         super.onPause();
         if (mBinding != null && mBinding.banner != null) {
-            mBinding.banner.stopImageTimerTask();
+            mBinding.banner.stopAutoPlay();
         }
     }
 
@@ -481,7 +494,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     public void onResume() {
         super.onResume();
         if (mBinding != null && mBinding.banner != null) {
-            mBinding.banner.startImageTimerTask();
+            mBinding.banner.startAutoPlay();
         }
     }
 
@@ -544,7 +557,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     public void onDestroy() {
         super.onDestroy();
         if (mBinding != null && mBinding.banner != null) {
-            mBinding.banner.clearImageTimerTask();
+            mBinding.banner.stopAutoPlay();
         }
         if (mModel != null) {
             mModel.updatePlayToDb();
@@ -565,18 +578,22 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                 .show(getSupportFragmentManager(), "AlertDialogFragment");
     }
 
-    private class HeadBannerAdapter implements LBaseAdapter<String> {
+    private class HeadBannerAdapter extends CoolBannerAdapter<String> {
 
         @Override
-        public View getView(LMBanners lBanners, Context context, int position, String path) {
-            View view = LayoutInflater.from(context).inflate(R.layout.adapter_banner_image, null);
+        protected int getLayoutRes() {
+            return R.layout.adapter_banner_image;
+        }
+
+        @Override
+        protected void onBindView(View view, int position, String path) {
             ImageView imageView = view.findViewById(R.id.iv_image);
             ImageView ivCover = view.findViewById(R.id.iv_set_cover);
             ImageView ivDelete = view.findViewById(R.id.iv_delete);
             ivCover.setVisibility(View.VISIBLE);
             ivDelete.setVisibility(View.VISIBLE);
 
-            Glide.with(context)
+            Glide.with(view.getContext())
                     .load(path)
                     .apply(recordOptions)
                     .into(imageView);
@@ -587,7 +604,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             ivDelete.setOnClickListener(v -> {
                 onDeleteImage(path);
             });
-            return view;
         }
     }
 }

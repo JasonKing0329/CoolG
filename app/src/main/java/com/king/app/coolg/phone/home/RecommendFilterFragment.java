@@ -9,10 +9,10 @@ import com.king.app.coolg.databinding.FragmentRecommendFilterBinding;
 import com.king.app.coolg.model.FilterHelper;
 import com.king.app.coolg.model.bean.RecordFilterModel;
 import com.king.app.coolg.model.setting.SettingProperty;
-import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableContentFragment;
+import com.king.lib.banner.BannerFlipStyleProvider;
 
 /**
  * Desc:
@@ -64,10 +64,10 @@ public class RecommendFilterFragment extends DraggableContentFragment<FragmentRe
         } else {
             mBinding.rbFixed.setChecked(true);
             try {
-                mBinding.rbFixed.setText(formatFixedText(LMBannerViewUtil.ANIM_TYPES[SettingProperty.getRecommendAnimType()]));
+                mBinding.rbFixed.setText(formatFixedText(BannerFlipStyleProvider.ANIM_TYPES[SettingProperty.getRecommendAnimType()]));
             } catch (Exception e) {
                 e.printStackTrace();
-                mBinding.rbFixed.setText(formatFixedText(LMBannerViewUtil.ANIM_TYPES[0]));
+                mBinding.rbFixed.setText(formatFixedText(BannerFlipStyleProvider.ANIM_TYPES[0]));
             }
         }
 
@@ -113,8 +113,8 @@ public class RecommendFilterFragment extends DraggableContentFragment<FragmentRe
     private void showAnimationSelector() {
         new AlertDialogFragment()
                 .setTitle(null)
-                .setItems(LMBannerViewUtil.ANIM_TYPES, (dialog, which) -> {
-                    mBinding.rbFixed.setText(formatFixedText(LMBannerViewUtil.ANIM_TYPES[which]));
+                .setItems(BannerFlipStyleProvider.ANIM_TYPES, (dialog, which) -> {
+                    mBinding.rbFixed.setText(formatFixedText(BannerFlipStyleProvider.ANIM_TYPES[which]));
                     SettingProperty.setRecommendAnimType(which);
                 }).show(getChildFragmentManager(), "AlertDialogFragment");
     }

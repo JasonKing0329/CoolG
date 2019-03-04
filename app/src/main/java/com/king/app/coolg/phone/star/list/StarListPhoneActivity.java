@@ -1,20 +1,15 @@
 package com.king.app.coolg.phone.star.list;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 
-import com.allure.lbanners.LMBanners;
-import com.allure.lbanners.adapter.LBaseAdapter;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
+import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
@@ -22,12 +17,12 @@ import com.king.app.coolg.databinding.ActivityStarListPhoneBinding;
 import com.king.app.coolg.model.ImageProvider;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.star.StarActivity;
-import com.king.app.coolg.utils.GlideUtil;
-import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.param.DataConstants;
+import com.king.lib.banner.BannerFlipStyleProvider;
+import com.king.lib.banner.CoolBannerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -213,39 +208,30 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
     }
 
     private void initBanner() {
-        // 禁用btnStart(只在onPageScroll触发后有效)
-        mBinding.lmbanner.isGuide(false);
-        // 不显示引导圆点
-        mBinding.lmbanner.hideIndicatorLayout();
-        // 轮播切换时间
-        mBinding.lmbanner.setDurtion(SettingProperty.getStarRecommendAnimTime());
+        mBinding.banner.setDuration(SettingProperty.getStarRecommendAnimTime());
         if (SettingProperty.isStarRandomRecommend()) {
             Random random = new Random();
-            int type = Math.abs(random.nextInt()) % LMBannerViewUtil.ANIM_TYPES.length;
-            LMBannerViewUtil.setScrollAnim(mBinding.lmbanner, type);
+            int type = Math.abs(random.nextInt()) % BannerFlipStyleProvider.ANIM_TYPES.length;
+            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, type);
         }
         else {
-            LMBannerViewUtil.setScrollAnim(mBinding.lmbanner, SettingProperty.getStarRecommendAnimType());
+            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, SettingProperty.getStarRecommendAnimType());
         }
 }
 
     private void initRecommend() {
 
-        // 采用getView时生成随机推荐，这里初始化3个item就够了（LMBanner内部也是根据view pager设置下标
-        // 来循环的）
+        // 采用getView时生成随机推荐，这里初始化5个（引发pageradapter的重新创建view操作）
         List<Star> list = new ArrayList<>();
         list.add(new Star());
         list.add(new Star());
         list.add(new Star());
+        list.add(new Star());
+        list.add(new Star());
         HeadBannerAdapter adapter = new HeadBannerAdapter();
-        mBinding.lmbanner.setAdapter(adapter, list);
-
-        mBinding.progress.setVisibility(View.GONE);
-        // 这里一定要加载完后再设置可见，因为LMBanners的内部代码里有一个btnStart，本来是受isGuide的控制
-        // 但是1.0.8版本里只在onPageScroll里面判断了这个属性。导致如果一开始LMBanners处于可见状态，
-        // adapter里还没有数据，btnStart就会一直显示在那里，直到开始触发onPageScroll才会隐藏
-        // 本来引入library，在setGuide把btnStart的visibility置为gone就可以了，但是这个项目已经引入了很多module了，就不再引入了
-        mBinding.lmbanner.setVisibility(View.VISIBLE);
+        adapter.setList(list);
+        mBinding.banner.setAdapter(adapter);
+        mBinding.banner.startAutoPlay();
     }
 
     @Override
@@ -342,8 +328,8 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
     @Override
     public void onPause() {
         super.onPause();
-        if (mBinding.lmbanner != null) {
-            mBinding.lmbanner.stopImageTimerTask();
+        if (mBinding.banner != null) {
+            mBinding.banner.stopAutoPlay();
         }
     }
 
@@ -358,8 +344,8 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
     @Override
     public void onResume() {
         super.onResume();
-        if (mBinding.lmbanner != null) {
-            mBinding.lmbanner.startImageTimerTask();
+        if (mBinding.banner != null) {
+            mBinding.banner.startAutoPlay();
         }
 
         // 控制tvIndex在切换显示列表后的隐藏状况
@@ -379,38 +365,34 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mBinding.lmbanner != null) {
-            mBinding.lmbanner.clearImageTimerTask();
+        if (mBinding.banner != null) {
+            mBinding.banner.stopAutoPlay();
         }
     }
 
-    private class HeadBannerAdapter implements LBaseAdapter<Star>, View.OnClickListener {
+    private class HeadBannerAdapter extends CoolBannerAdapter<Star> implements View.OnClickListener {
 
-        private RequestOptions requestOptions;
-
-        public HeadBannerAdapter() {
-            requestOptions = GlideUtil.getRecordOptions();
+        @Override
+        protected int getLayoutRes() {
+            return R.layout.adapter_banner_image;
         }
 
         @Override
-        public View getView(LMBanners lBanners, Context context, int position, Star bean) {
-            View view = LayoutInflater.from(context).inflate(R.layout.adapter_banner_image, null);
-
+        protected void onBindView(View view, int position, Star bean) {
             bean = mModel.nextFavorStar();
             if (bean != null) {
                 ImageView imageView = view.findViewById(R.id.iv_image);
                 String path = ImageProvider.getStarRandomPath(bean.getName(), null);
 
-                Glide.with(context)
+                GlideApp.with(view.getContext())
                         .load(path)
-                        .apply(requestOptions)
+                        .error(R.drawable.def_person)
                         .into(imageView);
 
                 ViewGroup groupContainer = view.findViewById(R.id.group_container);
                 groupContainer.setTag(bean);
                 groupContainer.setOnClickListener(this);
             }
-            return view;
         }
 
         @Override

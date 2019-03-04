@@ -24,27 +24,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/gdb_star_header_height">
 
-                    <com.allure.lbanners.LMBanners
-                        android:id="@+id/lmbanner"
+                    <com.king.lib.banner.CoolBanner
+                        android:id="@+id/banner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
-                        android:visibility="invisible"
-                        app:isGuide="false"
-                        app:auto_play="true"
-                        app:canLoop="true"
-                        app:durtion="5000"
-                        app:horizontal_transitionEffect="accordion"
-                        app:indicatorBottomPadding="10"
-                        app:indicator_position="bottom_mid"
-                        app:isVertical="false"
-                        app:scroll_duration="1000"/>
-                    <ProgressBar
-                        android:id="@+id/progress"
-                        style="@android:style/Widget.ProgressBar.Inverse"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"/>
+                        app:switchDuration="5000"/>
                     <RelativeLayout
                         android:id="@+id/group_setting"
                         android:layout_width="wrap_content"

@@ -46,22 +46,20 @@
                         android:id="@+id/group_record"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/gdb_star_header_height">
-                        <com.allure.lbanners.LMBanners
+                        <com.king.lib.banner.CoolBanner
                             android:id="@+id/banner"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@android:color/transparent"
                             android:visibility="invisible"
                             android:transitionName="@string/anim_record_page_img"
-                            app:isGuide="false"
-                            app:auto_play="true"
-                            app:canLoop="true"
-                            app:durtion="5000"
-                            app:horizontal_transitionEffect="accordion"
-                            app:indicatorBottomPadding="10"
-                            app:indicator_position="bottom_mid"
-                            app:isVertical="false"
-                            app:scroll_duration="1000"/>
+                            app:switchDuration="5000"/>
+                        <com.king.lib.banner.guide.GuideView
+                            android:id="@+id/guide_view"
+                            android:layout_width="0dp"
+                            android:layout_height="30dp"
+                            android:layout_alignParentBottom="true"
+                            app:guideAsTextAtNum="16"/>
                         <ImageView
                             android:id="@+id/iv_record"
                             android:layout_width="match_parent"

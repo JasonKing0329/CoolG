@@ -286,4 +286,21 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
             }
         }
     }
+
+    @Override
+    protected void onResume() {
+        if (adapter != null) {
+            adapter.onResume();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        if (adapter != null) {
+            adapter.onStop();
+        }
+        super.onStop();
+    }
+
 }

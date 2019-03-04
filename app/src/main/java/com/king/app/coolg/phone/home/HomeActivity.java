@@ -17,10 +17,10 @@ import com.king.app.coolg.databinding.ActivityHomeBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
-import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.gdb.data.entity.Record;
+import com.king.lib.banner.BannerFlipStyleProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,35 +76,20 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     }
 
     private void setBannerParams() {
-        // 禁用btnStart(只在onPageScroll触发后有效)
-        mBinding.banner.isGuide(false);
-        // 不显示引导圆点
-        mBinding.banner.hideIndicatorLayout();
         int time = SettingProperty.getRecommendAnimTime();
         if (time < 3000) {
             time = 3000;
         }
         // 轮播切换时间
-        mBinding.banner.setDurtion(time);
-
-//        mLBanners.setAutoPlay(true);//自动播放
-//        mLBanners.setVertical(false);//是否锤子播放
-//        mLBanners.setScrollDurtion(2000);//两页切换时间
-//        mLBanners.setCanLoop(true);//循环播放
-//        mLBanners.setSelectIndicatorRes(R.drawable.guide_indicator_select);//选中的原点
-//        mLBanners.setUnSelectUnIndicatorRes(R.drawable.guide_indicator_unselect);//未选中的原点
-//        //若自定义原点到底部的距离,默认20,必须在setIndicatorWidth之前调用
-//        mLBanners.setIndicatorBottomPadding(30);
-//        mLBanners.setIndicatorWidth(10);//原点默认为5dp
-//        mLBanners.setIndicatorPosition(LMBanners.IndicaTorPosition.BOTTOM_MID);//设置原点显示位置
+        mBinding.banner.setDuration(time);
 
         if (SettingProperty.isRandomRecommend()) {
             Random random = new Random();
-            int type = Math.abs(random.nextInt()) % LMBannerViewUtil.ANIM_TYPES.length;
-            LMBannerViewUtil.setScrollAnim(mBinding.banner, type);
+            int type = Math.abs(random.nextInt()) % BannerFlipStyleProvider.ANIM_TYPES.length;
+            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, type);
         }
         else {
-            LMBannerViewUtil.setScrollAnim(mBinding.banner, SettingProperty.getRecommendAnimType());
+            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, SettingProperty.getRecommendAnimType());
         }
     }
 
@@ -189,13 +174,20 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
                     goToRecord(record);
                 }
             });
+
+            // RecommendAdapter采用通过回调每次加载新的record，因此在默认缓存3个item的条件下，将list固定为5个，以便保证引起pageradapter的重新创建view从而调用onbindview
             List<Record> list = new ArrayList<>();
             list.add(record);
             list.add(record);
             list.add(record);
-            mBinding.banner.setAdapter(recommendAdapter, list);
-            mBinding.ivRecord.setVisibility(View.GONE);
+            list.add(record);
+            list.add(record);
+            recommendAdapter.setList(list);
+
+            mBinding.banner.setAdapter(recommendAdapter);
             mBinding.banner.setVisibility(View.VISIBLE);
+            mBinding.ivRecord.setVisibility(View.GONE);
+            mBinding.banner.startAutoPlay();
         });
 
         mModel.loadData();
@@ -271,7 +263,7 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     public void onPause() {
         super.onPause();
         if (mBinding != null && mBinding.banner != null) {
-            mBinding.banner.stopImageTimerTask();
+            mBinding.banner.stopAutoPlay();
         }
     }
 
@@ -279,7 +271,7 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     public void onResume() {
         super.onResume();
         if (mBinding != null && mBinding.banner != null) {
-            mBinding.banner.startImageTimerTask();
+            mBinding.banner.startAutoPlay();
         }
     }
 
@@ -287,7 +279,7 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     public void onDestroy() {
         super.onDestroy();
         if (mBinding != null && mBinding.banner != null) {
-            mBinding.banner.clearImageTimerTask();
+            mBinding.banner.stopAutoPlay();
         }
     }
 

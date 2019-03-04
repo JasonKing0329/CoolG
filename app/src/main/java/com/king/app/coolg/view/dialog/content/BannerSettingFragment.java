@@ -3,9 +3,9 @@ package com.king.app.coolg.view.dialog.content;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.databinding.FragmentBannerSettingBinding;
-import com.king.app.coolg.utils.LMBannerViewUtil;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableContentFragment;
+import com.king.lib.banner.BannerFlipStyleProvider;
 
 /**
  * Desc:
@@ -49,10 +49,10 @@ public class BannerSettingFragment extends DraggableContentFragment<FragmentBann
         else {
             mBinding.rbFixed.setChecked(true);
             try {
-                mBinding.rbFixed.setText(formatFixedText(LMBannerViewUtil.ANIM_TYPES[onAnimSettingListener.getAnimType()]));
+                mBinding.rbFixed.setText(formatFixedText(BannerFlipStyleProvider.ANIM_TYPES[onAnimSettingListener.getAnimType()]));
             } catch (Exception e) {
                 e.printStackTrace();
-                mBinding.rbFixed.setText(formatFixedText(LMBannerViewUtil.ANIM_TYPES[0]));
+                mBinding.rbFixed.setText(formatFixedText(BannerFlipStyleProvider.ANIM_TYPES[0]));
             }
         }
 
@@ -68,8 +68,8 @@ public class BannerSettingFragment extends DraggableContentFragment<FragmentBann
     private void showAnimationSelector() {
         new AlertDialogFragment()
                 .setTitle(null)
-                .setItems(LMBannerViewUtil.ANIM_TYPES, (dialog, which) -> {
-                    mBinding.rbFixed.setText(formatFixedText(LMBannerViewUtil.ANIM_TYPES[which]));
+                .setItems(BannerFlipStyleProvider.ANIM_TYPES, (dialog, which) -> {
+                    mBinding.rbFixed.setText(formatFixedText(BannerFlipStyleProvider.ANIM_TYPES[which]));
                     onAnimSettingListener.onSaveAnimType(which);
                 }).show(getChildFragmentManager(), "AlertDialogFragment");
     }
