@@ -12,13 +12,15 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.king.app.coolg.R;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ScreenUtils;
 
 /**
- * Desc:
+ * Desc: 根据控件实际布局情况，对point的实际大小进行缩放，根据调整结果适应控件的高度
+ * 可以适配任意layout布局（wrap, exactly, match 或者嵌套在HorizontalScrollView中）
  *
  * @author：Jing Yang
  * @date: 2018/8/8 16:26
@@ -47,6 +49,11 @@ public class PointListView extends View {
         init(attrs);
     }
 
+    public PointListView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(attrs);
+    }
+
     private void init(AttributeSet attrs) {
         if (attrs == null) {
             mTextSize = ScreenUtils.dp2px(12);
@@ -60,11 +67,12 @@ public class PointListView extends View {
             mPointMargin = a.getDimensionPixelSize(R.styleable.PointListView_pointMargin, ScreenUtils.dp2px(10));
             mResizeWhenOver = a.getBoolean(R.styleable.PointListView_resizeWhenOver, true);
         }
+        DebugLog.e("---mPointSize=" + mPointSize);
     }
 
     public void setAdapter(PointAdapter adapter) {
+        DebugLog.e("");
         this.adapter = adapter;
-        createPointRealSize();
         requestLayout();
         invalidate();
     }
@@ -86,23 +94,21 @@ public class PointListView extends View {
      * specMode判断控件设置的layout_width
      * 1. 本view layout_width指定为固定值，specMode=固定值
      * 2. 本view嵌套在HorizontalScrollView中，HorizontalScrollView作用于横向滚动
-     * --> 无论本view layout_width设置的是match_parent还是wrap_content，specMode=UNSPECIFIED
-     * 为支持嵌入HorizontalScrollView滚动视图，在UNSPECIFIED里计算本view应该有的宽度
+     *      --> 无论本view layout_width设置的是match_parent还是wrap_content，specMode=UNSPECIFIED
+     *          为支持嵌入HorizontalScrollView滚动视图，在UNSPECIFIED里计算本view应该有的宽度
      * 3. 本view嵌套在其他没有横向滚动功能的ViewGroup中
-     * --> ViewGroup宽度已知（指定过大小，或match_parent，parent已知大小，比如整个屏幕）
-     * --> 无论本view layout_width设置的是match_parent还是wrap_content，specMode=AT_MOST
-     * 所以这里选择在AT_MOST也运用本view应该有的宽度，也可以改为运用parent的宽度
-     * --> ViewGroup宽度未知（不是说设置为wrap_content就是未知，而是比如嵌套在HorizontalScrollView中，导致ViewGroup的宽度也未知）
-     * --> 同第2条
-     * <p>
-     * measureHeight同理，考虑layout_height与是否嵌入ScrollView
+     *      --> ViewGroup宽度已知（指定过大小，或match_parent，parent已知大小，比如整个屏幕）
+     *          --> 无论本view layout_width设置的是match_parent还是wrap_content，specMode=AT_MOST
+     *              所以这里选择在AT_MOST也运用本view应该有的宽度，也可以改为运用parent的宽度
+     *      --> ViewGroup宽度未知（不是说设置为wrap_content就是未知，而是比如嵌套在HorizontalScrollView中，导致ViewGroup的宽度也未知）
+     *          --> 同第2条
      *
+     *  measureHeight同理，考虑layout_height与是否嵌入ScrollView
      * @param defaultWidth
      * @param measureSpec
      * @return
      */
     private int measureWidth(int defaultWidth, int measureSpec) {
-
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
         DebugLog.e("---speSize = " + specSize + "");
@@ -110,33 +116,90 @@ public class PointListView extends View {
         switch (specMode) {
             case MeasureSpec.AT_MOST:
                 DebugLog.e("---speMode = AT_MOST");
-                if (adapter != null) {
-                    defaultWidth = getPaddingLeft() + getPaddingRight()
-                            + mPointSize * adapter.getItemCount()
-                            + mPointMargin * (adapter.getItemCount() - 1);
-                }
+                defaultWidth = measureWidthWithinParent(defaultWidth);
                 break;
             case MeasureSpec.EXACTLY:
                 DebugLog.e("---speMode = EXACTLY");
-                defaultWidth = specSize;
+                defaultWidth = measureWidthWithinExact(specSize);
                 break;
             case MeasureSpec.UNSPECIFIED:
                 DebugLog.e("---speMode = UNSPECIFIED");
 //                defaultWidth = Math.max(defaultWidth, specSize);
-                if (adapter != null) {
-                    defaultWidth = getPaddingLeft() + getPaddingRight()
-                            + mPointSize * adapter.getItemCount()
-                            + mPointMargin * (adapter.getItemCount() - 1);
-                }
+                defaultWidth = measureWidthWithinParent(defaultWidth);
         }
         DebugLog.e("---defaultWidth = " + defaultWidth + "");
-        createPointRealSize();
         return defaultWidth;
     }
 
+    /**
+     * EXACTLY模式下，实际宽度肯定为specSize，只计算mPointRealSize
+     *
+     * @param specSize
+     * @return
+     */
+    private int measureWidthWithinExact(int specSize) {
+        mPointRealSize = mPointSize;
+        if (adapter != null) {
+            int width = getPaddingLeft() + getPaddingRight();
+            if (adapter.getItemCount() > 0) {
+                width += mPointSize * adapter.getItemCount();
+                int margins = 0;
+                if (adapter.getItemCount() > 1) {
+                    margins = mPointMargin * (adapter.getItemCount() - 1);
+                }
+                width += margins;
+                // 超出specSize，并且mResizeWhenOver为true，resize
+                if (width > specSize && mResizeWhenOver) {
+                    DebugLog.e("---resize=");
+                    int space = specSize - getPaddingLeft() - getPaddingRight() - margins;
+                    mPointRealSize = space / adapter.getItemCount();
+                }
+            }
+        }
+        DebugLog.e("---mPointRealSize=" + mPointRealSize);
+        return specSize;
+    }
 
+    /**
+     * AT_MOST与UNSPECIFIED的情况下，不仅要计算mPointRealSize，还要计算最后的实际宽度
+     *
+     * @param defaultWidth
+     * @return
+     */
+    private int measureWidthWithinParent(int defaultWidth) {
+        mPointRealSize = mPointSize;
+        if (adapter != null) {
+            int width = getPaddingLeft() + getPaddingRight();
+            if (adapter.getItemCount() > 0) {
+                width += mPointSize * adapter.getItemCount();
+                int margins = 0;
+                if (adapter.getItemCount() > 1) {
+                    margins = mPointMargin * (adapter.getItemCount() - 1);
+                }
+                width += margins;
+                // 超出父控件宽度，并且mResizeWhenOver为true，resize
+                int parentWidth = ((ViewGroup) getParent()).getWidth();
+                DebugLog.e("---parentWidth=" + parentWidth);
+                if (parentWidth > 0 && width > parentWidth && mResizeWhenOver) {
+                    DebugLog.e("---resize=");
+                    int space = parentWidth - getPaddingLeft() - getPaddingRight() - margins;
+                    mPointRealSize = space / adapter.getItemCount();
+                    width = parentWidth;
+                }
+            }
+            return width;
+        }
+        DebugLog.e("---mPointRealSize=" + mPointRealSize);
+        return defaultWidth;
+    }
+
+    /**
+     * 宽度除了EXACT，其他情况根据mPointRealSize构造
+     * @param defaultHeight
+     * @param measureSpec
+     * @return
+     */
     private int measureHeight(int defaultHeight, int measureSpec) {
-
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
         DebugLog.e("---speSize = " + specSize + "");
@@ -144,35 +207,18 @@ public class PointListView extends View {
         switch (specMode) {
             case MeasureSpec.AT_MOST:
                 DebugLog.e("---speMode = AT_MOST");
-                if (adapter != null && adapter.getItemCount() > 0) {
-                    defaultHeight = getPaddingTop() + getPaddingBottom() + mPointRealSize;
-                }
+                defaultHeight = getPaddingTop() + getPaddingBottom() + mPointRealSize;
                 break;
             case MeasureSpec.EXACTLY:
+                DebugLog.e("---speMode = EXACTLY");
                 defaultHeight = specSize;
-                DebugLog.e("---speSize = EXACTLY");
                 break;
             case MeasureSpec.UNSPECIFIED:
-//                defaultHeight = Math.max(defaultHeight, specSize);
-                DebugLog.e("---speSize = UNSPECIFIED");
-                if (adapter != null && adapter.getItemCount() > 0) {
-                    defaultHeight = getPaddingTop() + getPaddingBottom() + mPointRealSize;
-                }
-                break;
+                DebugLog.e("---speMode = UNSPECIFIED");
+                defaultHeight = getPaddingTop() + getPaddingBottom() + mPointRealSize;
         }
         DebugLog.e("---defaultHeight = " + defaultHeight + "");
         return defaultHeight;
-    }
-
-    private void createPointRealSize() {
-        mPointRealSize = mPointSize;
-        // 超出边界重新计算point大小
-        if (mResizeWhenOver && adapter != null && adapter.getItemCount() > 0) {
-            int extraWidth = getPaddingLeft() + getPaddingRight() + mPointMargin * (adapter.getItemCount() - 1);
-            if (mPointSize * adapter.getItemCount() + extraWidth > getWidth()) {
-                mPointRealSize = (getWidth() - extraWidth) / adapter.getItemCount();
-            }
-        }
     }
 
     @Override
