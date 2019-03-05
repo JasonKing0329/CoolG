@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.king.lib.banner.CoolBanner
+            android:id="@+id/banner"
+            android:layout_width="780dp"
+            android:layout_height="440dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.king.app.coolg.view.widget.CoverView
+            android:id="@+id/iv_list0"
+            style="@style/CoverViewOrderPad"
+            android:visibility="@{data.getPlayListVisibility(0)}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iv_list1"
+            app:layout_constraintTop_toBottomOf="@+id/banner"
+            app:coverText="@{data.getPlayListName(0)}"
+            app:coverRecordUrl="@{data.getPlayListUrl(0)}"/>
+
+        <com.king.app.coolg.view.widget.CoverView
+            android:id="@+id/iv_list1"
+            style="@style/CoverViewOrderPad"
+            android:visibility="@{data.getPlayListVisibility(1)}"
+            app:layout_constraintStart_toEndOf="@+id/iv_list0"
+            app:layout_constraintTop_toBottomOf="@+id/banner"
+            app:coverText="@{data.getPlayListName(1)}"
+            app:coverRecordUrl="@{data.getPlayListUrl(1)}"/>
+
+        <com.king.app.coolg.view.widget.CoverView
+            android:id="@+id/iv_list2"
+            style="@style/CoverViewOrderPad"
+            android:visibility="@{data.getPlayListVisibility(2)}"
+            app:layout_constraintStart_toEndOf="@+id/iv_list1"
+            app:layout_constraintTop_toBottomOf="@+id/banner"
+            app:coverText="@{data.getPlayListName(2)}"
+            app:coverRecordUrl="@{data.getPlayListUrl(2)}"/>
+
+        <com.king.app.coolg.view.widget.CoverView
+            android:id="@+id/iv_list3"
+            style="@style/CoverViewOrderPad"
+            android:visibility="@{data.getPlayListVisibility(3)}"
+            app:layout_constraintStart_toEndOf="@+id/iv_list2"
+            app:layout_constraintTop_toBottomOf="@+id/banner"
+            app:coverText="@{data.getPlayListName(3)}"
+            app:coverRecordUrl="@{data.getPlayListUrl(3)}"/>
+
+        <com.king.app.coolg.view.widget.CoverView
+            android:id="@+id/iv_star0"
+            style="@style/CoverViewOrderPad"
+            android:visibility="@{data.getGuyVisibility(0)}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_list0"
+            app:coverText="@{data.getGuyName(0)}"
+            app:coverRecordUrl="@{data.getGuyUrl(0)}"/>
+
+        <com.king.app.coolg.view.widget.CoverView
+            android:id="@+id/iv_star1"
+            style="@style/CoverViewOrderPad"
+            android:visibility="@{data.getGuyVisibility(1)}"
+            app:layout_constraintStart_toEndOf="@+id/iv_star0"
+            app:layout_constraintTop_toBottomOf="@+id/iv_list0"
+            app:coverText="@{data.getGuyName(1)}"
+            app:coverRecordUrl="@{data.getGuyUrl(1)}"/>
+
+        <com.king.app.coolg.view.widget.CoverView
+            android:id="@+id/iv_star2"
+            style="@style/CoverViewOrderPad"
+            android:visibility="@{data.getGuyVisibility(2)}"
+            app:layout_constraintStart_toEndOf="@+id/iv_star1"
+            app:layout_constraintTop_toBottomOf="@+id/iv_list0"
+            app:coverText="@{data.getGuyName(2)}"
+            app:coverRecordUrl="@{data.getGuyUrl(2)}"/>
+
+        <com.king.app.coolg.view.widget.CoverView
+            android:id="@+id/iv_star3"
+            style="@style/CoverViewOrderPad"
+            android:visibility="@{data.getGuyVisibility(3)}"
+            app:layout_constraintStart_toEndOf="@+id/iv_star2"
+            app:layout_constraintTop_toBottomOf="@+id/iv_list0"
+            app:coverText="@{data.getGuyName(3)}"
+            app:coverRecordUrl="@{data.getGuyUrl(3)}"/>
+
+        <com.king.app.coolg.view.widget.CoverView
+            android:id="@+id/tv_play_list"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:coverText="PlayList"
+            app:coverTextSize="30dp"
+            app:coverTextColor="@color/white"
+            app:coverTextBackgroundColor="#33000000"
+            app:coverRadius="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_guys"
+            app:layout_constraintStart_toEndOf="@+id/iv_setting"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.king.app.coolg.view.widget.CoverView
+            android:id="@+id/tv_guys"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:coverText="Guys"
+            app:coverTextSize="30dp"
+            app:coverTextColor="@color/white"
+            app:coverTextBackgroundColor="#33000000"
+            app:coverRadius="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/iv_list3"
+            app:layout_constraintStart_toEndOf="@+id/iv_setting"
+            app:layout_constraintTop_toBottomOf="@+id/tv_play_list" />
+
+        <ImageView
+            android:id="@+id/iv_setting"
+            style="@style/VideoHomeIconPad"
+            app:layout_constraintStart_toEndOf="@id/banner"
+            app:layout_constraintEnd_toStartOf="@+id/tv_guys"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/iv_refresh"
+            app:srcCompat="@drawable/ic_settings_grey_700_48dp" />
+
+        <ImageView
+            android:id="@+id/iv_refresh"
+            style="@style/VideoHomeIconPad"
+            app:layout_constraintStart_toEndOf="@id/banner"
+            app:layout_constraintEnd_toStartOf="@+id/tv_guys"
+            app:layout_constraintTop_toBottomOf="@id/iv_setting"
+            app:layout_constraintBottom_toTopOf="@+id/iv_play_list"
+            app:srcCompat="@drawable/ic_refresh_grey_700_48dp" />
+
+        <ImageView
+            android:id="@+id/iv_play_list"
+            style="@style/VideoHomeIconPad"
+            app:layout_constraintStart_toEndOf="@id/banner"
+            app:layout_constraintEnd_toStartOf="@+id/tv_guys"
+            app:layout_constraintTop_toBottomOf="@id/iv_refresh"
+            app:layout_constraintBottom_toTopOf="@+id/iv_guys"
+            app:srcCompat="@drawable/ic_dashboard_grey_700_48dp" />
+
+        <ImageView
+            android:id="@+id/iv_guys"
+            style="@style/VideoHomeIconPad"
+            app:layout_constraintStart_toEndOf="@id/banner"
+            app:layout_constraintEnd_toStartOf="@+id/tv_guys"
+            app:layout_constraintTop_toBottomOf="@id/iv_play_list"
+            app:layout_constraintBottom_toTopOf="@id/iv_list3"
+            app:srcCompat="@drawable/ic_supervisor_account_grey_700_48dp" />
+    </android.support.constraint.ConstraintLayout>
+</layout>
