@@ -130,6 +130,9 @@
         <activity
             android:name=".pad.studio.StudioPadActivity"
             android:screenOrientation="landscape" />
+        <activity
+            android:name=".pad.video.VideoHomePadActivity"
+            android:screenOrientation="landscape" />
 
         <service android:name=".phone.login.BackgroundService" />
 
