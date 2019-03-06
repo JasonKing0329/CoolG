@@ -18,7 +18,12 @@ public class PlayOrderAdapter extends BaseBindingAdapter<AdapterPlayOrderItemBin
     private int mViewType;
 
     public PlayOrderAdapter() {
-        mViewType = SettingProperty.getVideoPlayOrderViewType();
+        if (ScreenUtils.isTablet()) {
+            mViewType = PreferenceValue.VIEW_TYPE_GRID_TAB;
+        }
+        else {
+            mViewType = SettingProperty.getVideoPlayOrderViewType();
+        }
     }
 
     public void setMultiSelect(boolean multiSelect) {
@@ -36,7 +41,15 @@ public class PlayOrderAdapter extends BaseBindingAdapter<AdapterPlayOrderItemBin
     @Override
     protected void onBindItem(AdapterPlayOrderItemBinding binding, int position, VideoPlayList bean) {
         binding.setBean(bean);
-        if (mViewType == PreferenceValue.VIEW_TYPE_GRID) {
+        if (mViewType == PreferenceValue.VIEW_TYPE_LIST) {
+            binding.tvName.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
+            binding.tvVideos.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.tvVideos.getLayoutParams();
+            params.setMarginEnd(ScreenUtils.dp2px(16));
+            params.bottomMargin = ScreenUtils.dp2px(16);
+            binding.tvVideos.setLayoutParams(params);
+        }
+        else if (mViewType == PreferenceValue.VIEW_TYPE_GRID) {
             binding.tvName.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
             binding.tvVideos.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.tvVideos.getLayoutParams();

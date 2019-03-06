@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.video.home.VideoPlayList;
 import com.king.app.gdb.data.entity.PlayItemDao;
@@ -81,7 +82,7 @@ public class PlayOrderViewModel extends BaseViewModel {
             for (PlayOrder order:list) {
                 VideoPlayList playList = new VideoPlayList();
                 playList.setName(order.getName());
-                playList.setImageUrl(order.getCoverUrl());
+                playList.setImageUrl(ImageProvider.parseCoverUrl(order.getCoverUrl()));
                 playList.setPlayOrder(order);
                 playList.setVisibility(View.GONE);
 

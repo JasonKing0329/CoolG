@@ -86,4 +86,5 @@ public class PreferenceValue {
 
     public static final int VIEW_TYPE_LIST =0;
     public static final int VIEW_TYPE_GRID =1;
+    public static final int VIEW_TYPE_GRID_TAB =2;
 }
