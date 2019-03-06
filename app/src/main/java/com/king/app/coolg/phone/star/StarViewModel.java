@@ -2,14 +2,12 @@ package com.king.app.coolg.phone.star;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
-import com.king.app.coolg.base.CoolApplication;
 import com.king.app.coolg.conf.AppConstants;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.repository.OrderRepository;
@@ -18,15 +16,11 @@ import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.gdb.data.entity.FavorRecordDao;
-import com.king.app.gdb.data.entity.FavorRecordOrder;
-import com.king.app.gdb.data.entity.FavorRecordOrderDao;
 import com.king.app.gdb.data.entity.FavorStar;
 import com.king.app.gdb.data.entity.FavorStarDao;
 import com.king.app.gdb.data.entity.FavorStarOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
-
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.File;
 import java.util.ArrayList;

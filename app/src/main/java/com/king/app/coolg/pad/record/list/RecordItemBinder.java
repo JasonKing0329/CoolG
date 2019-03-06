@@ -2,16 +2,14 @@ package com.king.app.coolg.pad.record.list;
 
 import android.view.View;
 
-import com.bumptech.glide.request.RequestOptions;
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.databinding.AdapterRecordItemGridPadBinding;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.VideoModel;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.coolg.utils.FormatUtil;
-import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;

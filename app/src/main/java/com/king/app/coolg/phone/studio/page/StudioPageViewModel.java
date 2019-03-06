@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Record;

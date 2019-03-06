@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.FilterHelper;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.RecommendModel;
 import com.king.app.coolg.model.bean.RecordFilterModel;
 import com.king.app.coolg.model.repository.RecordRepository;

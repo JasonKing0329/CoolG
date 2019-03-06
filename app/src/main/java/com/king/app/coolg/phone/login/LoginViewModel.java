@@ -18,6 +18,7 @@ import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.utils.DBExporter;
 import com.king.app.coolg.utils.DebugLog;
+import com.king.app.coolg.utils.FileUtil;
 import com.king.app.coolg.utils.MD5Util;
 import com.king.lib.resmanager.JPrefManager;
 
@@ -121,6 +122,13 @@ public class LoginViewModel extends BaseViewModel {
                 if (!file.exists()) {
                     file.mkdir();
                 }
+            }
+
+            // copy demo images
+            if (!AppConfig.DEMO_IMAGE_VERSION.equals(SettingProperty.getDemoImageVersion())) {
+                SettingProperty.setDemoImageVersion(AppConfig.DEMO_IMAGE_VERSION);
+                FileUtil.deleteFilesUnderFolder(new File(AppConfig.GDB_IMG_DEMO));
+                FileUtil.copyAssets("img", AppConfig.GDB_IMG_DEMO);
             }
 
             // init server url

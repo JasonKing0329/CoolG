@@ -5,7 +5,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
 import com.king.app.coolg.databinding.AdapterRecordStarPhoneBinding;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.param.DataConstants;

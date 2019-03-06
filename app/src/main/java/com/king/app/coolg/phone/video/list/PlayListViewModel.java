@@ -6,7 +6,7 @@ import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.PlayOrder;

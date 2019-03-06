@@ -5,7 +5,7 @@ import android.widget.ImageView;
 
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 
 public class GlideBindAdapter {
 

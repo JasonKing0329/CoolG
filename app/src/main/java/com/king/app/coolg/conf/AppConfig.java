@@ -15,6 +15,7 @@ import java.io.IOException;
  */
 public class AppConfig {
     public static final String DB_NAME = "gdata.db";
+    public static final String DEMO_IMAGE_VERSION = "1.0";
 
     public static final String SDCARD = Environment.getExternalStorageDirectory().getPath();
 
@@ -25,6 +26,7 @@ public class AppConfig {
     public static final String GDB_IMG = APP_DIR_IMG + "/gdb";
     public static final String GDB_IMG_STAR = GDB_IMG + "/star";
     public static final String GDB_IMG_RECORD = GDB_IMG + "/record";
+    public static final String GDB_IMG_DEMO = GDB_IMG + "/demo";
     public static final String APP_DIR_IMG_SAVEAS = APP_ROOT + "/saveas";
     public static final String APP_DIR_DB_HISTORY = APP_ROOT + "/history";
     public static final String APP_DIR_GAME = APP_ROOT + "/game";
@@ -48,7 +50,7 @@ public class AppConfig {
 
     public static final String[] DIRS = new String[] {
             APP_ROOT, APP_DIR_IMG, APP_DIR_CROP_IMG, DOWNLOAD_IMAGE_DEFAULT,
-            GDB_IMG, GDB_IMG_STAR, GDB_IMG_RECORD, APP_DIR_IMG_SAVEAS,
+            GDB_IMG, GDB_IMG_STAR, GDB_IMG_RECORD, GDB_IMG_DEMO, APP_DIR_IMG_SAVEAS,
             APP_DIR_DB_HISTORY, APP_DIR_GAME, APP_DIR_EXPORT, EXTEND_RES_DIR,
             EXTEND_RES_COLOR, APP_DIR_CONF, APP_DIR_CONF_PREF, APP_DIR_CONF_PREF_DEF,
             APP_DIR_CONF_CRASH, APP_DIR_CONF_APP

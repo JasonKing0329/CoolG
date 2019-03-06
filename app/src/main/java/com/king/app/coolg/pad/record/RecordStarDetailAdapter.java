@@ -4,7 +4,7 @@ import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
 import com.king.app.coolg.databinding.AdapterRecordStarDetailPadBinding;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.param.DataConstants;
 

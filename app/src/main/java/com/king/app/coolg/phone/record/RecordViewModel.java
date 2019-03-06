@@ -7,7 +7,7 @@ import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.http.bean.response.GdbRespBean;

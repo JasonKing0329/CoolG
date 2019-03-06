@@ -16,6 +16,10 @@ public class VideoHeadData {
 
     private List<VideoPlayList> playLists;
 
+    private String padPlayListCover;
+
+    private String padGuyCover;
+
     public void setGuyList(List<VideoGuy> guyList) {
         this.guyList = guyList;
     }
@@ -96,4 +100,19 @@ public class VideoHeadData {
         }
     }
 
+    public String getPadPlayListCover() {
+        return padPlayListCover;
+    }
+
+    public void setPadPlayListCover(String padPlayListCover) {
+        this.padPlayListCover = padPlayListCover;
+    }
+
+    public String getPadGuyCover() {
+        return padGuyCover;
+    }
+
+    public void setPadGuyCover(String padGuyCover) {
+        this.padGuyCover = padGuyCover;
+    }
 }

@@ -11,7 +11,7 @@ import com.king.app.coolg.base.adapter.HeaderFooterBindingAdapter;
 import com.king.app.coolg.databinding.AdapterFooterMoreBinding;
 import com.king.app.coolg.databinding.AdapterHomeHeadBinding;
 import com.king.app.coolg.databinding.AdapterHomeRecordListBinding;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.RippleUtil;

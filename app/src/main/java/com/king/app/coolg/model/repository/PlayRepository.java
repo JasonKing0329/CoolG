@@ -2,7 +2,7 @@ package com.king.app.coolg.model.repository;
 
 import android.text.TextUtils;
 
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.utils.DebugLog;
@@ -14,8 +14,6 @@ import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordDao;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordStarDao;
-import com.king.app.gdb.data.entity.RecordType1v1;
-import com.king.app.gdb.data.entity.RecordType1v1Dao;
 import com.king.app.gdb.data.param.DataConstants;
 
 import org.greenrobot.greendao.DaoException;

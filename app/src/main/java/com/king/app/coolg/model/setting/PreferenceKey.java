@@ -51,6 +51,8 @@ public class PreferenceKey {
     public static final String PREF_VIDEO_PLAY_ORDER_VIEW_TYPE = "pref_video_play_order_view_type";
     public static final String PREF_VIDEO_REC_SQL = "pref_video_rec_sql";
 
+    public static final String PREF_DEMO_IMAGE_VERSION = "pref_demo_image_version";
+
     /**
      * http
      */

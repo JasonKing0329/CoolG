@@ -4,7 +4,7 @@ import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
 import com.king.app.coolg.databinding.AdapterHomePlayListBinding;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.gdb.data.entity.PlayItem;
 
 public class HomePlayAdapter extends BaseBindingAdapter<AdapterHomePlayListBinding, PlayItem> {

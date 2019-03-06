@@ -283,4 +283,12 @@ public class SettingProperty {
         setString(PreferenceKey.PREF_VIDEO_REC_SQL, sql);
     }
 
+    public static String getDemoImageVersion() {
+        return getString(PreferenceKey.PREF_DEMO_IMAGE_VERSION);
+    }
+
+    public static void setDemoImageVersion(String version) {
+        setString(PreferenceKey.PREF_DEMO_IMAGE_VERSION, version);
+    }
+
 }

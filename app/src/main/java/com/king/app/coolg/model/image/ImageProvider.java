@@ -1,8 +1,9 @@
-package com.king.app.coolg.model;
+package com.king.app.coolg.model.image;
 
+import com.king.app.coolg.BuildConfig;
 import com.king.app.coolg.conf.AppConfig;
-import com.king.app.coolg.model.setting.PreferenceKey;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.utils.DebugLog;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -106,6 +107,9 @@ public class ImageProvider {
         if (SettingProperty.isNoImageMode()) {
             return "";
         }
+        if (BuildConfig.demoImage) {
+            return getRandomDemoImage(index, indexPackage);
+        }
 
         String path;
         if (hasFolder(parent, name)) {
@@ -138,6 +142,33 @@ public class ImageProvider {
             }
         }
         return path;
+    }
+
+    public static String getRandomDemoImage(int index, IndexPackage indexPackage) {
+        String path = null;
+        File[] fileList = new File(AppConfig.GDB_IMG_DEMO).listFiles(fileFilter);
+        if (index >=0 && index < fileList.length) {
+            path = fileList[index].getPath();
+        }
+        else {
+            if (fileList.length > 0) {
+                int pos = Math.abs(new Random().nextInt()) % fileList.length;
+                if (indexPackage != null) {
+                    indexPackage.index = pos;
+                }
+                path = fileList[pos].getPath();
+            }
+        }
+        return path;
+    }
+
+    private static List<String> getDemoImages() {
+        List<String> list = new ArrayList<>();
+        File[] fileList = new File(AppConfig.GDB_IMG_DEMO).listFiles(fileFilter);
+        for (File file:fileList) {
+            list.add(file.getPath());
+        }
+        return list;
     }
 
     /**
@@ -183,6 +214,10 @@ public class ImageProvider {
     };
 
     private static List<String> getImagePathList(String parent, String name) {
+        if (BuildConfig.demoImage) {
+            return getDemoImages();
+        }
+
         List<String> list = new ArrayList<>();
         File file = new File(parent + "/" + name);
         List<File> fileList = new ArrayList<>();
@@ -217,12 +252,7 @@ public class ImageProvider {
         }
         else {
             File dir = new File(AppConfig.GDB_IMG_RECORD);
-            File[] files = dir.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File file) {
-                    return !file.getName().endsWith(".nomedia");
-                }
-            });
+            File[] files = dir.listFiles(fileFilter);
             if (files != null && files.length > 0) {
                 return files[Math.abs(new Random().nextInt()) % files.length].getPath();
             }
@@ -257,6 +287,16 @@ public class ImageProvider {
             }
         }
         return null;
+    }
+
+    public static String parseCoverUrl(String coverUrl) {
+        if (SettingProperty.isNoImageMode()) {
+            return "";
+        }
+        if (BuildConfig.demoImage) {
+            return getRandomDemoImage(-1, null);
+        }
+        return coverUrl;
     }
 
     public static class IndexPackage {

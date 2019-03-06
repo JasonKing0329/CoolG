@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.king.app.coolg.base.BaseViewModel;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.phone.video.home.VideoGuy;
 import com.king.app.gdb.data.entity.VideoCoverStar;

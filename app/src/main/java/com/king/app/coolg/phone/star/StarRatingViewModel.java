@@ -8,7 +8,7 @@ import android.support.v7.graphics.Palette;
 
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.BaseViewModel;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.palette.PaletteUtil;
 import com.king.app.coolg.model.repository.StarRepository;
 import com.king.app.coolg.utils.FormatUtil;

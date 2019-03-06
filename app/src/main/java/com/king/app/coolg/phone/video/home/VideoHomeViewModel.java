@@ -5,8 +5,9 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.king.app.coolg.BuildConfig;
 import com.king.app.coolg.base.BaseViewModel;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.repository.PlayRepository;
@@ -172,8 +173,16 @@ public class VideoHomeViewModel extends BaseViewModel {
             VideoHeadData data = new VideoHeadData();
             data.setGuyList(getCoverGuys());
             data.setPlayLists(getCoverPlayLists());
+            getPadCovers(data);
             e.onNext(data);
         });
+    }
+
+    /**
+     * 子类实现
+     * @param data
+     */
+    protected void getPadCovers(VideoHeadData data) {
     }
 
     private List<VideoGuy> getCoverGuys() {
@@ -248,7 +257,7 @@ public class VideoHomeViewModel extends BaseViewModel {
         for (VideoCoverPlayOrder cs:list) {
             VideoPlayList playList = new VideoPlayList();
             playList.setName(cs.getOrder().getName());
-            playList.setImageUrl(cs.getOrder().getCoverUrl());
+            playList.setImageUrl(ImageProvider.parseCoverUrl(cs.getOrder().getCoverUrl()));
             playList.setPlayOrder(cs.getOrder());
             lists.add(playList);
         }

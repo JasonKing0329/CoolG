@@ -17,7 +17,7 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentHomePadBinding;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.pad.record.RecordPadActivity;
 import com.king.app.coolg.pad.star.StarPadActivity;
 import com.king.app.coolg.phone.home.RecommendFilterFragment;

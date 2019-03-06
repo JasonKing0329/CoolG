@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.gdb.data.entity.Record;
 import com.king.lib.banner.CoolBannerAdapter;
 

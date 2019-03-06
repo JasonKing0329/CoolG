@@ -1,11 +1,10 @@
 package com.king.app.coolg.pad.record;
 
-import com.bumptech.glide.Glide;
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
 import com.king.app.coolg.databinding.AdapterRecordStarPadBinding;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.gdb.data.entity.RecordStar;
 
 /**

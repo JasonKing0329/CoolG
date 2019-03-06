@@ -9,7 +9,7 @@ import com.king.app.coolg.base.CoolApplication;
 import com.king.app.coolg.base.adapter.HeadChildBindingAdapter;
 import com.king.app.coolg.databinding.AdapterHomeRecordHeadPadBinding;
 import com.king.app.coolg.databinding.AdapterHomeRecordListBinding;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.gdb.data.entity.Record;

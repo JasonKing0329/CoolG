@@ -4,12 +4,11 @@ import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.view.View;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.conf.RatingType;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.comparator.StarNameComparator;
 import com.king.app.coolg.model.comparator.StarRatingComparator;
 import com.king.app.coolg.model.comparator.StarRecordsNumberComparator;

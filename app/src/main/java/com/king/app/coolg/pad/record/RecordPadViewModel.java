@@ -7,7 +7,7 @@ import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 
 import com.king.app.coolg.conf.AppConstants;
-import com.king.app.coolg.model.ImageProvider;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.VideoModel;
 import com.king.app.coolg.model.palette.ViewColorBound;
 import com.king.app.coolg.model.repository.RecordRepository;
