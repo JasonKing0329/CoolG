@@ -203,4 +203,7 @@
     <dimen name="category_star_size">60dp</dimen>
     <dimen name="category_star_height">90dp</dimen>
     <dimen name="category_level_star_height">108dp</dimen>
+
+    <dimen name="video_item_width">400dp</dimen>
+    <dimen name="video_item_height">225dp</dimen>
 </resources>

@@ -200,8 +200,6 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
         int type = SettingProperty.getVideoPlayOrderViewType();
         if (ScreenUtils.isTablet()) {
             type = PreferenceValue.VIEW_TYPE_GRID_TAB;
-        }
-        if (ScreenUtils.isTablet()) {
             GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
             mBinding.rvList.setLayoutManager(gridLayoutManager);
             mBinding.rvList.addItemDecoration(gridTabDecoration);

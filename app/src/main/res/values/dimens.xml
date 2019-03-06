@@ -236,4 +236,7 @@
     <dimen name="dlg_recommend_margin_hor">16dp</dimen>
     <dimen name="dlg_fingerprint_width">320dp</dimen>
     <dimen name="dlg_fingerprint_height">200dp</dimen>
+
+    <dimen name="video_item_width">344dp</dimen>
+    <dimen name="video_item_height">210dp</dimen>
 </resources>

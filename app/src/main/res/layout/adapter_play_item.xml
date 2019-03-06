@@ -4,12 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:layout_height="wrap_content">
         <com.king.app.coolg.view.widget.video.EmbedVideoView
             android:id="@+id/video_view"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/gdb_star_header_height"
+            android:layout_width="@dimen/video_item_width"
+            android:layout_height="@dimen/video_item_height"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -17,16 +16,16 @@
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="10dp"
+            android:layout_height="36dp"
+            android:background="@color/white"
+            android:paddingLeft="10dp"
+            android:paddingRight="40dp"
             android:maxLines="2"
             android:textSize="10dp"
+            android:gravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/iv_delete"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/video_view"
+            app:layout_constraintStart_toStartOf="@id/video_view"
             app:layout_constraintTop_toBottomOf="@id/video_view" />
 
         <ImageView
@@ -36,9 +35,9 @@
             android:layout_marginEnd="4dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:padding="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/video_view"
+            app:layout_constraintBottom_toBottomOf="@id/tv_name"
+            app:layout_constraintEnd_toEndOf="@id/tv_name"
+            app:layout_constraintTop_toTopOf="@id/tv_name"
             app:srcCompat="@drawable/ic_delete_grey_600_24dp" />
     </android.support.constraint.ConstraintLayout>
 </layout>

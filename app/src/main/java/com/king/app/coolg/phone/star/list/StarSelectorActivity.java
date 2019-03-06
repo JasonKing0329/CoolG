@@ -2,7 +2,9 @@ package com.king.app.coolg.phone.star.list;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -36,6 +38,38 @@ public class StarSelectorActivity extends MvvmActivity<ActivityStarSelectorBindi
 
     @Override
     protected void initView() {
+        if (ScreenUtils.isTablet()) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            mBinding.rvStar.setLayoutManager(new GridLayoutManager(this, 3));
+            mBinding.rvStar.addItemDecoration(new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    int position = parent.getChildLayoutPosition(view);
+                    outRect.top = ScreenUtils.dp2px(8);
+                    if (position % 3 == 0) {
+                        outRect.left = ScreenUtils.dp2px(16);
+                    }
+                    else if (position % 3 == 1) {
+                        outRect.left = ScreenUtils.dp2px(16);
+                    }
+                    else {
+                        outRect.left = ScreenUtils.dp2px(16);
+                        outRect.right = ScreenUtils.dp2px(8);
+                    }
+                }
+            });
+        }
+        else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mBinding.rvStar.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+            mBinding.rvStar.addItemDecoration(new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    outRect.top = ScreenUtils.dp2px(8);
+                }
+            });
+        }
+
         mBinding.actionbar.setOnBackListener(() -> onBackPressed());
         mBinding.actionbar.showConfirmStatus(0);
         mBinding.actionbar.setOnConfirmListener(new OnConfirmListener() {
@@ -60,13 +94,6 @@ public class StarSelectorActivity extends MvvmActivity<ActivityStarSelectorBindi
             public boolean onCancel(int actionId) {
                 finish();
                 return true;
-            }
-        });
-        mBinding.rvStar.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mBinding.rvStar.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                outRect.top = ScreenUtils.dp2px(8);
             }
         });
 

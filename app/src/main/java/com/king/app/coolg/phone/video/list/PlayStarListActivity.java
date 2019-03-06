@@ -1,8 +1,10 @@
 package com.king.app.coolg.phone.video.list;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Rect;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -52,13 +54,40 @@ public class PlayStarListActivity extends MvvmActivity<ActivityVideoStarPlayList
         //set global configuration: turn on multiple_requests
         PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
 
-        mBinding.rvVideos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mBinding.rvVideos.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                outRect.top = ScreenUtils.dp2px(10);
-            }
-        });
+        if (ScreenUtils.isTablet()) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+            mBinding.tvTotal.setVisibility(View.GONE);
+
+            mBinding.rvVideos.setLayoutManager(new GridLayoutManager(this, 3));
+            mBinding.rvVideos.addItemDecoration(new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    int position = parent.getChildLayoutPosition(view);
+                    outRect.top = ScreenUtils.dp2px(10);
+                    if (position % 3 == 0) {
+                        outRect.left = ScreenUtils.dp2px(8);
+                    }
+                    else if (position % 3 == 1) {
+                        outRect.left = ScreenUtils.dp2px(8);
+                    }
+                    else {
+                        outRect.left = ScreenUtils.dp2px(8);
+                        outRect.right = ScreenUtils.dp2px(8);
+                    }
+                }
+            });
+        }
+        else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mBinding.rvVideos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+            mBinding.rvVideos.addItemDecoration(new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    outRect.top = ScreenUtils.dp2px(10);
+                }
+            });
+        }
 
         mBinding.actionbar.setOnBackListener(() -> onBackPressed());
         mBinding.actionbar.setOnMenuItemListener(menuId -> {
@@ -88,7 +117,7 @@ public class PlayStarListActivity extends MvvmActivity<ActivityVideoStarPlayList
 
     @Override
     protected void initData() {
-        mModel.starObserver.observe(this, star -> mBinding.actionbar.setTitle(star.getName()));
+        mModel.starObserver.observe(this, star -> {});
         mModel.itemsObserver.observe(this, list -> showItems(list));
 
         mModel.loadPlayItems(getStarId());
@@ -117,7 +146,7 @@ public class PlayStarListActivity extends MvvmActivity<ActivityVideoStarPlayList
             showMessageShort("record is null");
             return;
         }
-        Router.build("RecordPhone")
+        Router.build("RecordPad")
                 .with(RecordActivity.EXTRA_RECORD_ID, record.getId())
                 .go(this);
     }

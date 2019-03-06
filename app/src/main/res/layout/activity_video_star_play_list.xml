@@ -21,7 +21,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="Play List"
+            app:title="@{model.actionbarTitleText}"
             app:showIconBack="true"
             app:menu="@menu/video_play_type"
             app:titleColor="@color/actionbar_element"

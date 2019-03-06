@@ -4,11 +4,13 @@ import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.repository.PlayRepository;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.utils.UrlUtil;
 import com.king.app.coolg.view.widget.video.UrlCallback;
 import com.king.app.gdb.data.entity.Star;
@@ -35,6 +37,8 @@ public class PlayStarListViewModel extends BaseViewModel {
 
     public ObservableField<String> totalText = new ObservableField<>();
 
+    public ObservableField<String> actionbarTitleText = new ObservableField<>();
+
     private PlayRepository repository;
 
     private long mStarId;
@@ -42,6 +46,16 @@ public class PlayStarListViewModel extends BaseViewModel {
     public PlayStarListViewModel(@NonNull Application application) {
         super(application);
         repository = new PlayRepository();
+        updateTotalText("", "");
+    }
+
+    private void updateTotalText(String starName, String total) {
+        String actionText = starName;
+        if (ScreenUtils.isTablet() && !TextUtils.isEmpty(total)) {
+            actionText = starName + " (" + total + ")";
+        }
+        actionbarTitleText.set(actionText);
+        totalText.set(total);
     }
 
     public void loadPlayItems(long starId) {
@@ -64,7 +78,7 @@ public class PlayStarListViewModel extends BaseViewModel {
                     public void onNext(List<PlayItemViewBean> playItems) {
                         loadingObserver.setValue(false);
                         itemsObserver.setValue(playItems);
-                        totalText.set(playItems.size() + " Videos");
+                        updateTotalText(starObserver.getValue().getName(), playItems.size() + " Videos");
                     }
 
                     @Override

@@ -2,6 +2,7 @@ package com.king.app.coolg.phone.video.star;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,6 +49,12 @@ public class PopularStarActivity extends MvvmActivity<ActivityVideoStarListBindi
 
     @Override
     protected void initView() {
+        if (ScreenUtils.isTablet()) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+        else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         updateListViewType();
 
         mBinding.actionbar.setOnBackListener(() -> onBackPressed());
@@ -151,21 +158,44 @@ public class PopularStarActivity extends MvvmActivity<ActivityVideoStarListBindi
         }
     };
 
+    private RecyclerView.ItemDecoration gridTabDecoration = new RecyclerView.ItemDecoration() {
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildLayoutPosition(view);
+            if (position / 3 == 0) {
+                outRect.top = ScreenUtils.dp2px(8);
+            }
+            else {
+                outRect.top = 0;
+            }
+        }
+    };
+
     private void updateListViewType() {
         int type = SettingProperty.getVideoStarOrderViewType();
-        if (type == PreferenceValue.VIEW_TYPE_GRID) {
-            mBinding.rvList.removeItemDecoration(linearDecoration);
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        if (ScreenUtils.isTablet()) {
+            type = PreferenceValue.VIEW_TYPE_GRID_TAB;
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
             mBinding.rvList.setLayoutManager(gridLayoutManager);
-            mBinding.rvList.addItemDecoration(gridDecoration);
-            mBinding.actionbar.updateMenuText(R.id.menu_list_view_type, "List View");
+            mBinding.rvList.addItemDecoration(gridTabDecoration);
+            mBinding.actionbar.updateMenuItemVisible(R.id.menu_list_view_type, false);
         }
         else {
-            mBinding.rvList.removeItemDecoration(gridDecoration);
-            mBinding.rvList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            mBinding.rvList.addItemDecoration(linearDecoration);
-            mBinding.actionbar.updateMenuText(R.id.menu_list_view_type, "Grid View");
+            if (type == PreferenceValue.VIEW_TYPE_GRID) {
+                mBinding.rvList.removeItemDecoration(linearDecoration);
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+                mBinding.rvList.setLayoutManager(gridLayoutManager);
+                mBinding.rvList.addItemDecoration(gridDecoration);
+                mBinding.actionbar.updateMenuText(R.id.menu_list_view_type, "List View");
+            }
+            else {
+                mBinding.rvList.removeItemDecoration(gridDecoration);
+                mBinding.rvList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                mBinding.rvList.addItemDecoration(linearDecoration);
+                mBinding.actionbar.updateMenuText(R.id.menu_list_view_type, "Grid View");
+            }
         }
+
         if (adapter != null) {
             adapter.setViewType(type);
         }

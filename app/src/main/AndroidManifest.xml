@@ -65,7 +65,7 @@
             android:name=".phone.video.list.PlayListActivity"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="user" />
         <activity
             android:name=".phone.video.player.PlayerActivity"
             android:screenOrientation="landscape" />
@@ -94,7 +94,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".phone.star.list.StarSelectorActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="user" />
         <activity
             android:name=".phone.video.order.PlayOrderActivity"
             android:screenOrientation="user" />
@@ -105,10 +105,10 @@
         <activity
             android:name=".phone.video.list.PlayStarListActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="user" />
         <activity
             android:name=".phone.video.star.PopularStarActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="user" />
 
         <activity
             android:name=".pad.home.HomePadActivity"

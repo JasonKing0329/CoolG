@@ -44,6 +44,14 @@ public class PopularStarAdapter extends BaseBindingAdapter<AdapterPopularStarIte
             params.bottomMargin = ScreenUtils.dp2px(8);
             binding.tvVideos.setLayoutParams(params);
         }
+        else if (mViewType == PreferenceValue.VIEW_TYPE_LIST) {
+            binding.tvName.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
+            binding.tvVideos.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.tvVideos.getLayoutParams();
+            params.setMarginEnd(ScreenUtils.dp2px(16));
+            params.bottomMargin = ScreenUtils.dp2px(16);
+            binding.tvVideos.setLayoutParams(params);
+        }
         else {
             binding.tvName.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
             binding.tvVideos.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);

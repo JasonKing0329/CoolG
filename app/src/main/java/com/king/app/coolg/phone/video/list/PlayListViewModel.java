@@ -4,10 +4,12 @@ import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.repository.PlayRepository;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.PlayOrder;
 
@@ -35,6 +37,8 @@ public class PlayListViewModel extends BaseViewModel {
 
     public ObservableField<String> totalText = new ObservableField<>();
 
+    public ObservableField<String> actionbarTitleText = new ObservableField<>();
+
     private PlayRepository repository;
 
     private long mOrderId;
@@ -42,6 +46,16 @@ public class PlayListViewModel extends BaseViewModel {
     public PlayListViewModel(@NonNull Application application) {
         super(application);
         repository = new PlayRepository();
+        updateTotalText("");
+    }
+
+    private void updateTotalText(String total) {
+        String actionText = "Play List";
+        if (ScreenUtils.isTablet() && !TextUtils.isEmpty(total)) {
+            actionText = "Play List (" + total + ")";
+        }
+        actionbarTitleText.set(actionText);
+        totalText.set(total);
     }
 
     public void loadPlayItems(long orderId) {
@@ -65,7 +79,7 @@ public class PlayListViewModel extends BaseViewModel {
                     public void onNext(List<PlayItemViewBean> playItems) {
                         loadingObserver.setValue(false);
                         itemsObserver.setValue(playItems);
-                        totalText.set(playItems.size() + " Videos");
+                        updateTotalText(playItems.size() + " Videos");
                     }
 
                     @Override
