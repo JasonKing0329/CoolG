@@ -119,9 +119,7 @@ public class StarOrderViewModel extends BaseViewModel {
                     item.setHasChild(true);
                     item.setNumber(order.getChildList().size());
                 }
-                if (!SettingProperty.isNoImageMode()) {
-                    item.setImagePath(order.getCoverUrl());
-                }
+                item.setImagePath(ImageProvider.parseCoverUrl(order.getCoverUrl()));
                 results.add(item);
             }
             observer.onNext(results);

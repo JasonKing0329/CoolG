@@ -13,6 +13,10 @@
         android:title="@string/setting_gdb_no_image" />
     <SwitchPreference
         android:defaultValue="false"
+        android:key="pref_demo_image"
+        android:title="@string/setting_demo_image" />
+    <SwitchPreference
+        android:defaultValue="false"
         android:key="pref_gdb_surf_relate"
         android:title="@string/pref_gdb_surf_relate" />
 </PreferenceScreen>

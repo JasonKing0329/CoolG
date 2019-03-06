@@ -12,11 +12,14 @@ import com.king.app.coolg.model.VideoModel;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.repository.OrderRepository;
+import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.utils.ListUtil;
 import com.king.app.gdb.data.RecordCursor;
 import com.king.app.gdb.data.entity.FavorRecord;
+import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.param.DataConstants;
@@ -69,6 +72,10 @@ public class RecordListViewModel extends BaseViewModel {
      * record to be added into order
      */
     private Record mRecordToAdd;
+    /**
+     * record to be added into play order
+     */
+    private Record mRecordToPlayOrder;
 
     public RecordListViewModel(@NonNull Application application) {
         super(application);
@@ -451,5 +458,62 @@ public class RecordListViewModel extends BaseViewModel {
             moreCursor.number = offset - moreCursor.offset + DEFAULT_LOAD_MORE;
             loadMoreRecords(offset);
         }
+    }
+
+    public void saveRecordToPlayOrder(Record record) {
+        mRecordToPlayOrder = record;
+    }
+
+    /**
+     * add to temp play order
+     * @param list
+     */
+    public void addToPlay(ArrayList<CharSequence> list) {
+        insertToVideoOrders(list)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(Boolean item) {
+                        messageObserver.setValue("Add successfully");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private Observable<Boolean> insertToVideoOrders(ArrayList<CharSequence> orderIds) {
+        return Observable.create(e -> {
+            if (!ListUtil.isEmpty(orderIds)) {
+                PlayRepository playRepository = new PlayRepository();
+                for (CharSequence id:orderIds) {
+                    long orderId = Long.parseLong(id.toString());
+                    if (playRepository.isExist(orderId, mRecordToPlayOrder.getId())) {
+                        continue;
+                    }
+                    PlayItem item = new PlayItem();
+                    item.setOrderId(orderId);
+                    item.setRecordId(mRecordToPlayOrder.getId());
+                    item.setUrl(null);
+                    getDaoSession().getPlayItemDao().insertOrReplace(item);
+                }
+                getDaoSession().getPlayItemDao().detachAll();
+            }
+            e.onNext(true);
+        });
     }
 }

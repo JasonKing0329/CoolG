@@ -1,6 +1,8 @@
 package com.king.app.coolg.phone.record.list;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,10 +14,12 @@ import com.king.app.coolg.databinding.FragmentRecordListBinding;
 import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.pad.record.RecordPadActivity;
 import com.king.app.coolg.phone.record.RecordActivity;
+import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.widget.AutoLoadMoreRecyclerView;
 import com.king.app.gdb.data.entity.Record;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +31,7 @@ import java.util.List;
 public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> extends MvvmFragment<FragmentRecordListBinding, RecordListViewModel> {
 
     protected final int REQUEST_ADD_ORDER = 1602;
+    protected final int REQUEST_VIDEO_ORDER = 1603;
 
     public static final String ARG_RECORD_TYPE = "record_type";
     public static final String ARG_RECORD_SCENE = "record_scene";
@@ -84,15 +89,27 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
         PopupMenu menu = new PopupMenu(getActivity(), view);
         menu.getMenuInflater().inflate(R.menu.popup_record_edit, menu.getMenu());
         menu.getMenu().findItem(R.id.menu_set_cover).setVisible(false);
+        menu.getMenu().findItem(R.id.menu_delete).setVisible(false);
         menu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_add_to_order:
                     selectOrderToAddRecord(data);
                     break;
+                case R.id.menu_add_to_play_order:
+                    addToPlayOrder(data);
+                    break;
             }
             return false;
         });
         menu.show();
+    }
+
+    private void addToPlayOrder(Record record) {
+        mModel.saveRecordToPlayOrder(record);
+        Router.build("PlayOrder")
+                .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
+                .requestCode(REQUEST_VIDEO_ORDER)
+                .go(this);
     }
 
     protected void selectOrderToAddRecord(Record data) {
@@ -182,5 +199,15 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
     public void filterByStarType(int starType) {
         mModel.setStarType(starType);
         loadNewRecords();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_VIDEO_ORDER) {
+            if (resultCode == Activity.RESULT_OK) {
+                ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
+                mModel.addToPlay(list);
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
@@ -182,9 +183,7 @@ public class StudioViewModel extends BaseViewModel {
             for (FavorRecordOrder order:list) {
                 StudioRichItem item = new StudioRichItem();
                 item.setOrder(order);
-                if (!SettingProperty.isNoImageMode()) {
-                    item.setImageUrl(order.getCoverUrl());
-                }
+                item.setImageUrl(ImageProvider.parseCoverUrl(order.getCoverUrl()));
                 item.setName(order.getName());
                 countRichInfo(order, item);
                 result.add(item);

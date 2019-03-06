@@ -65,6 +65,7 @@
 
     <string name="setting_gdb_latest_num">Latest records number</string>
     <string name="setting_gdb_no_image">No image mode</string>
+    <string name="setting_demo_image">Demo image mode</string>
     <string name="pref_gdb_surf_relate" translatable="false">Auto-relate surf files to record</string>
 
     <string name="login_finger_not_support">Fingerprint is not supported on current device!</string>

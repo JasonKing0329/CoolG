@@ -69,6 +69,8 @@ public class PreferenceKey {
     public static final String PREF_GDB_LATEST_NUM = "pref_gdb_latest_num";
     // no image mode
     public static final String PREF_GDB_NO_IMAGE = "pref_gdb_no_image";
+    // demo image mode
+    public static final String PREF_DEMO_IMAGE = "pref_demo_image";
     // random animation of recommend item
     public static final String PREF_GDB_REC_ANIM_RANDOM = "pref_gdb_rec_anim_random";
     // fixed animation of recommend item

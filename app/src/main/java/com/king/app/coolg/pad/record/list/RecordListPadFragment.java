@@ -104,6 +104,7 @@ public class RecordListPadFragment extends BaseRecordListFragment<RecordGridPadA
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         // 如果收不到回调，检查所在Activity是否实现了onActivityResult并且没有执行super.onActivityResult
         if (requestCode == REQUEST_ADD_ORDER) {
             if (resultCode == Activity.RESULT_OK) {

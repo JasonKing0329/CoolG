@@ -32,12 +32,15 @@ import com.king.app.coolg.pad.star.StarPadActivity;
 import com.king.app.coolg.pad.studio.StudioPadActivity;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.PassionPoint;
+import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.record.RecordOrdersAdapter;
+import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.phone.video.player.PlayerActivity;
 import com.king.app.coolg.utils.ColorUtil;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
@@ -59,6 +62,8 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
     public static final String EXTRA_RECORD_ID = "key_record_id";
     protected final int REQUEST_ADD_ORDER = 1602;
     protected final int REQUEST_SELECT_STUDIO = 1603;
+    private final int REQUEST_VIDEO_ORDER = 1604;
+    private final int REQUEST_SET_VIDEO_COVER = 1605;
 
     private RecordStarAdapter starAdapter;
     private RecordStarDetailAdapter starDetailAdapter;
@@ -81,6 +86,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         ColorUtil.updateIconColor(mBinding.ivOrder, getResources().getColor(R.color.colorPrimary));
         ColorUtil.updateIconColor(mBinding.ivSetCover, getResources().getColor(R.color.colorPrimary));
         ColorUtil.updateIconColor(mBinding.ivDelete, getResources().getColor(R.color.colorPrimary));
+        ColorUtil.updateIconColor(mBinding.ivAddPlayOrder, getResources().getColor(R.color.colorPrimary));
 
         initRecyclerViews();
         initBanner();
@@ -88,6 +94,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         mBinding.ivBack.setOnClickListener(v -> finish());
         mBinding.ivOrder.setOnClickListener(v -> toggleOrders());
         mBinding.ivSetCover.setOnClickListener(v -> onApplyImage(mModel.getCurrentImage(mBinding.banner.getCurrentItem())));
+        mBinding.ivAddPlayOrder.setOnClickListener(v -> onAddToPlayOrder());
         mBinding.ivDelete.setOnClickListener(v -> mModel.deleteImage(mModel.getCurrentImage(mBinding.banner.getCurrentItem())));
         mBinding.tvStudio.setOnClickListener(v -> selectStudio());
         mBinding.tvOrders.setOnClickListener(v -> selectOrderToAddRecord());
@@ -368,6 +375,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         viewList.add(mBinding.ivOrder);
         viewList.add(mBinding.ivSetCover);
         viewList.add(mBinding.ivDelete);
+        viewList.add(mBinding.ivAddPlayOrder);
         pagerAdapter = new RecordPagerAdapter(getLifecycle());
         pagerAdapter.setViewList(viewList);
         pagerAdapter.setList(list);
@@ -525,11 +533,42 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
                 .go(this);
     }
 
+    private void onAddToPlayOrder() {
+        Router.build("PlayOrder")
+                .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
+                .requestCode(REQUEST_VIDEO_ORDER)
+                .go(this);
+    }
+
     private void onApplyImage(String path) {
         DebugLog.e(path);
+        String[] options = new String[] {"Order", "Play Order"};
+        new AlertDialogFragment()
+                .setItems(options, (dialogInterface, i) -> {
+                    if (i == 0) {
+                        onSetCoverForOrder(path);
+                    }
+                    else if (i == 1) {
+                        onSetCoverForPlayOrder(path);
+                    }
+                })
+                .show(getSupportFragmentManager(), "AlertDialogFragment");
+    }
+
+    private void onSetCoverForOrder(String path) {
         if (!TextUtils.isEmpty(path)) {
             Router.build("OrderPhone")
                     .with(OrderPhoneActivity.EXTRA_SET_COVER, path)
+                    .go(this);
+        }
+    }
+
+    private void onSetCoverForPlayOrder(String path) {
+        if (!TextUtils.isEmpty(path)) {
+            mModel.setUrlToSetCover(path);
+            Router.build("PlayOrder")
+                    .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
+                    .requestCode(REQUEST_SET_VIDEO_COVER)
                     .go(this);
         }
     }
@@ -547,6 +586,18 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
             if (resultCode == RESULT_OK) {
                 long orderId = data.getLongExtra(AppConstants.RESP_ORDER_ID, -1);
                 mModel.addToOrder(orderId);
+            }
+        }
+        else if (requestCode == REQUEST_VIDEO_ORDER) {
+            if (resultCode == RESULT_OK) {
+                ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
+                mModel.addToPlay(list);
+            }
+        }
+        else if (requestCode == REQUEST_SET_VIDEO_COVER) {
+            if (resultCode == RESULT_OK) {
+                ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
+                mModel.setPlayOrderCover(list);
             }
         }
     }

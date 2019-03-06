@@ -91,6 +91,10 @@ public class SettingProperty {
         return getBoolean(PreferenceKey.PREF_GDB_NO_IMAGE);
     }
 
+    public static boolean isDemoImageMode() {
+        return getBoolean(PreferenceKey.PREF_DEMO_IMAGE);
+    }
+
     public static String getNavHeadImage() {
         return getString(PreferenceKey.PREF_GDB_NAV_HEADER_BG);
     }

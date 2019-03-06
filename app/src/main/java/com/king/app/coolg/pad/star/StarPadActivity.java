@@ -220,6 +220,7 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
         PopupMenu menu = new PopupMenu(this, view);
         menu.getMenuInflater().inflate(R.menu.popup_record_edit, menu.getMenu());
         menu.getMenu().findItem(R.id.menu_add_to_order).setVisible(false);
+        menu.getMenu().findItem(R.id.menu_add_to_play_order).setVisible(false);
         menu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_set_cover:

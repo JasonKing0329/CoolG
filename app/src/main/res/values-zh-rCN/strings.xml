@@ -61,6 +61,7 @@
 
     <string name="setting_gdb_latest_num">最近添加记录数量</string>
     <string name="setting_gdb_no_image">无图模式</string>
+    <string name="setting_demo_image">Demo图片模式</string>
 
     <string name="login_finger_not_support">该设备不支持指纹识别！</string>
 

@@ -107,7 +107,7 @@ public class ImageProvider {
         if (SettingProperty.isNoImageMode()) {
             return "";
         }
-        if (BuildConfig.demoImage) {
+        if (SettingProperty.isDemoImageMode()) {
             return getRandomDemoImage(index, indexPackage);
         }
 
@@ -214,7 +214,7 @@ public class ImageProvider {
     };
 
     private static List<String> getImagePathList(String parent, String name) {
-        if (BuildConfig.demoImage) {
+        if (SettingProperty.isDemoImageMode()) {
             return getDemoImages();
         }
 
@@ -234,30 +234,6 @@ public class ImageProvider {
             Collections.shuffle(list);
         }
         return list;
-    }
-
-    public static String getNavHeadImage() {
-        if (SettingProperty.isNoImageMode()) {
-            return "";
-        }
-        else {
-            return SettingProperty.getNavHeadImage();
-        }
-    }
-
-    public static String getRandomNavHeadImage() {
-
-        if (SettingProperty.isNoImageMode()) {
-            return "";
-        }
-        else {
-            File dir = new File(AppConfig.GDB_IMG_RECORD);
-            File[] files = dir.listFiles(fileFilter);
-            if (files != null && files.length > 0) {
-                return files[Math.abs(new Random().nextInt()) % files.length].getPath();
-            }
-            return null;
-        }
     }
 
     /**
@@ -293,7 +269,7 @@ public class ImageProvider {
         if (SettingProperty.isNoImageMode()) {
             return "";
         }
-        if (BuildConfig.demoImage) {
+        if (SettingProperty.isDemoImageMode()) {
             return getRandomDemoImage(-1, null);
         }
         return coverUrl;

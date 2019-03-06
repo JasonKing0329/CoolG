@@ -18,6 +18,7 @@ import com.king.app.coolg.databinding.ActivityLoginBinding;
 import com.king.app.coolg.model.fingerprint.samsung.SamsungFingerPrint;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.utils.AppUtil;
+import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.SimpleDialogs;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -26,6 +27,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import cn.com.tcsl.screenhelper.ScreenUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewModel> {
@@ -39,6 +41,9 @@ public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewM
 
     @Override
     protected void initView() {
+
+        DebugLog.e(ScreenUtil.getScreenInfor(this));
+
         mBinding.setModel(mModel);
         mModel.fingerprintObserver.observe(this, aBoolean -> checkFingerprint());
         mModel.loginObserver.observe(this, success -> {
