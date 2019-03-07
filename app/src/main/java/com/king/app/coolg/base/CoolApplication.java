@@ -143,8 +143,10 @@ public class CoolApplication extends Application {
                 case 6:
                     VideoCoverStarDao.createTable(db, true);
                     VideoCoverPlayOrderDao.createTable(db, true);
-                    db.execSQL("ALTER TABLE " + PlayOrderDao.TABLENAME + " ADD COLUMN "
-                            + PlayOrderDao.Properties.CoverUrl.columnName + " TEXT");
+                    if (oldVersion == 6) {
+                        db.execSQL("ALTER TABLE " + PlayOrderDao.TABLENAME + " ADD COLUMN "
+                                + PlayOrderDao.Properties.CoverUrl.columnName + " TEXT");
+                    }
                     break;
             }
         }
