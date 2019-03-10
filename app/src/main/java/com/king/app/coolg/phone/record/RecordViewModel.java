@@ -14,6 +14,7 @@ import com.king.app.coolg.model.http.bean.response.GdbRespBean;
 import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
+import com.king.app.coolg.phone.video.home.VideoPlayList;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.UrlUtil;
@@ -22,6 +23,7 @@ import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.PlayDuration;
 import com.king.app.gdb.data.entity.PlayItem;
+import com.king.app.gdb.data.entity.PlayItemDao;
 import com.king.app.gdb.data.entity.PlayOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
@@ -58,6 +60,8 @@ public class RecordViewModel extends BaseViewModel {
     public MutableLiveData<List<PassionPoint>> passionsObserver = new MutableLiveData<>();
 
     public MutableLiveData<List<FavorRecordOrder>> ordersObserver = new MutableLiveData<>();
+
+    public MutableLiveData<List<VideoPlayList>> playOrdersObserver = new MutableLiveData<>();
 
     public MutableLiveData<String> studioObserver = new MutableLiveData<>();
 
@@ -226,6 +230,7 @@ public class RecordViewModel extends BaseViewModel {
                     @Override
                     public void onNext(Boolean item) {
                         messageObserver.setValue("Add successfully");
+                        loadRecordPlayOrders();
                     }
 
                     @Override
@@ -428,6 +433,48 @@ public class RecordViewModel extends BaseViewModel {
         };
     }
 
+    public void loadRecordPlayOrders() {
+        playRepository.getRecordPlayOrders(mRecord.getId())
+                .flatMap(list -> toPlayOrders(list))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<VideoPlayList>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<VideoPlayList> list) {
+                        playOrdersObserver.setValue(list);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private ObservableSource<List<VideoPlayList>> toPlayOrders(List<PlayOrder> list) {
+        return observer -> {
+            List<VideoPlayList> result = new ArrayList<>();
+            for (PlayOrder order:list) {
+                VideoPlayList pl = new VideoPlayList();
+                pl.setPlayOrder(order);
+                pl.setName(order.getName());
+                pl.setImageUrl(ImageProvider.parseCoverUrl(order.getCoverUrl()));
+                result.add(pl);
+            }
+            observer.onNext(result);
+        };
+    }
+
     public void addToOrder(long orderId) {
         orderRepository.addFavorRecord(orderId, mRecord.getId())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -474,6 +521,15 @@ public class RecordViewModel extends BaseViewModel {
                 .buildDelete()
                 .executeDeleteWithoutDetachingEntities();
         getDaoSession().getFavorRecordDao().detachAll();
+    }
+
+    public void deletePlayOrderOfRecord(VideoPlayList order) {
+        getDaoSession().getPlayItemDao().queryBuilder()
+                .where(PlayItemDao.Properties.OrderId.eq(order.getPlayOrder().getId()))
+                .where(PlayItemDao.Properties.RecordId.eq(mRecord.getId()))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
+        getDaoSession().getPlayItemDao().detachAll();
     }
 
     public void resetPlayInDb() {

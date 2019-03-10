@@ -148,9 +148,16 @@ public class PlayListActivity extends MvvmActivity<ActivityVideoOrderPlayListBin
             showMessageShort("record is null");
             return;
         }
-        Router.build("RecordPad")
-                .with(RecordActivity.EXTRA_RECORD_ID, record.getId())
-                .go(this);
+        if (ScreenUtils.isTablet()) {
+            Router.build("RecordPad")
+                    .with(RecordActivity.EXTRA_RECORD_ID, record.getId())
+                    .go(this);
+        }
+        else {
+            Router.build("RecordPhone")
+                    .with(RecordActivity.EXTRA_RECORD_ID, record.getId())
+                    .go(this);
+        }
     }
 
     @Override

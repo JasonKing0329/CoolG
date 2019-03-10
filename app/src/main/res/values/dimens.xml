@@ -239,4 +239,6 @@
 
     <dimen name="video_item_width">344dp</dimen>
     <dimen name="video_item_height">210dp</dimen>
+    <dimen name="pad_record_added_order_width">105dp</dimen>
+    <dimen name="pad_record_added_order_height">60dp</dimen>
 </resources>

@@ -151,36 +151,6 @@
                 <LinearLayout style="@style/GroupWhiteSecOnBg">
 
                     <RelativeLayout
-                        android:id="@+id/group_add_to_play"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/gdb_record_line_height">
-
-                        <ImageView
-                            android:id="@+id/iv_add_to_play"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/ic_playlist_add_red_a200_24dp"/>
-
-                        <TextView
-                            android:id="@+id/tv_add_to_play"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Add to play order"
-                            android:textSize="20dp"
-                            android:layout_marginRight="10dp"
-                            android:layout_centerVertical="true"
-                            android:layout_toLeftOf="@id/iv_add_to_play"/>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/vertical_divider"
-                            android:background="@color/divider" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
                         android:id="@+id/group_order"
                         style="@style/GroupStarSecItem"
                         android:background="?android:attr/selectableItemBackground">
@@ -232,6 +202,59 @@
                         android:layout_marginBottom="10dp"
                         android:visibility="gone"
                         tools:listitem="@layout/adapter_star_orders"/>
+
+                    <RelativeLayout
+                        android:id="@+id/group_play_order"
+                        style="@style/GroupStarSecItem"
+                        android:background="?android:attr/selectableItemBackground">
+                        <TextView
+                            android:id="@+id/iv_play_order_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="Play Orders"/>
+                        <ImageView
+                            android:id="@+id/iv_play_order_add"
+                            android:layout_width="@dimen/gdb_record_line_height"
+                            android:layout_height="@dimen/gdb_record_line_height"
+                            android:padding="12dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_toRightOf="@id/iv_play_order_title"
+                            android:layout_centerVertical="true"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_add_grey_600_48dp"/>
+                        <ImageView
+                            android:id="@+id/iv_play_order_delete"
+                            android:layout_width="@dimen/gdb_record_line_height"
+                            android:layout_height="@dimen/gdb_record_line_height"
+                            android:padding="12dp"
+                            android:layout_toRightOf="@id/iv_play_order_add"
+                            android:layout_centerVertical="true"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_delete_grey_600_24dp"/>
+                        <ImageView
+                            android:id="@+id/iv_play_order_arrow"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_keyboard_arrow_down_grey_700_24dp"/>
+                        <TextView
+                            android:id="@+id/tv_play_order"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@id/iv_play_order_arrow"
+                            android:layout_centerVertical="true"
+                            android:text="0"/>
+                    </RelativeLayout>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_play_orders"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:visibility="gone"
+                        tools:listitem="@layout/adapter_record_play_order"/>
 
                     <RelativeLayout
                         android:id="@+id/group_studio"

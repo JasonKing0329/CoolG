@@ -10,6 +10,7 @@ import com.king.app.gdb.data.entity.PlayDuration;
 import com.king.app.gdb.data.entity.PlayDurationDao;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.PlayItemDao;
+import com.king.app.gdb.data.entity.PlayOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordDao;
 import com.king.app.gdb.data.entity.RecordStar;
@@ -260,4 +261,13 @@ public class PlayRepository extends BaseRepository {
         });
     }
 
+    public Observable<List<PlayOrder>> getRecordPlayOrders(long recordId) {
+        return Observable.create(e -> {
+            QueryBuilder<PlayOrder> builder = getDaoSession().getPlayOrderDao().queryBuilder();
+            builder.join(PlayItem.class, PlayItemDao.Properties.OrderId)
+                    .where(PlayItemDao.Properties.RecordId.eq(recordId));
+            List<PlayOrder> list = builder.build().list();
+            e.onNext(list);
+        });
+    }
 }

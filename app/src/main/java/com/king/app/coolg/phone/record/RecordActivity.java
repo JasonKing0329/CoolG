@@ -68,6 +68,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     private RecordStarAdapter starAdapter;
 
     private RecordOrdersAdapter orderAdapter;
+    private RecordPlayOrdersAdapter playOrdersAdapter;
 
     @Override
     protected int getContentView() {
@@ -116,7 +117,35 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                 mBinding.rvOrders.setVisibility(View.VISIBLE);
             }
         });
-        mBinding.rvOrders.setLayoutManager(new LinearLayoutManager(mBinding.rvOrders.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        mBinding.rvOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        mBinding.ivPlayOrderAdd.setOnClickListener(v -> {
+            Router.build("PlayOrder")
+                    .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
+                    .requestCode(REQUEST_VIDEO_ORDER)
+                    .go(RecordActivity.this);
+        });
+        mBinding.ivPlayOrderDelete.setOnClickListener(v -> {
+            if (playOrdersAdapter != null) {
+                playOrdersAdapter.toggleDeleteMode();
+                playOrdersAdapter.notifyDataSetChanged();
+            }
+        });
+        mBinding.groupPlayOrder.setOnClickListener(view -> {
+            // collapse
+            if (mBinding.ivPlayOrderArrow.isSelected()) {
+                mBinding.ivPlayOrderArrow.setSelected(false);
+                mBinding.ivPlayOrderArrow.setImageResource(R.drawable.ic_keyboard_arrow_down_grey_700_24dp);
+                mBinding.rvPlayOrders.setVisibility(View.GONE);
+            }
+            // expand
+            else {
+                mBinding.ivPlayOrderArrow.setSelected(true);
+                mBinding.ivPlayOrderArrow.setImageResource(R.drawable.ic_keyboard_arrow_up_grey_700_24dp);
+                mBinding.rvPlayOrders.setVisibility(View.VISIBLE);
+            }
+        });
+        mBinding.rvPlayOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         mBinding.ivDelete.setOnClickListener(view -> {
             if (!TextUtils.isEmpty(mModel.getSingleImagePath())) {
@@ -134,13 +163,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             if (mBinding.videoView.getVisibility() == View.VISIBLE && mBinding.videoView.getPlayer().isPlaying()) {
                 floatOrEmbedVideo(oldScrollY, scrollY, mBinding.videoView.getHeight());
             }
-        });
-
-        mBinding.groupAddToPlay.setOnClickListener(v -> {
-            Router.build("PlayOrder")
-                    .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
-                    .requestCode(REQUEST_VIDEO_ORDER)
-                    .go(RecordActivity.this);
         });
 
     }
@@ -224,6 +246,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mModel.recordObserver.observe(this, record -> {
             showRecord(record);
             mModel.loadRecordOrders();
+            mModel.loadRecordPlayOrders();
         });
         mModel.ordersObserver.observe(this, list -> {
             mBinding.tvOrder.setText(String.valueOf(list.size()));
@@ -239,6 +262,22 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             else {
                 orderAdapter.setList(list);
                 orderAdapter.notifyDataSetChanged();
+            }
+        });
+        mModel.playOrdersObserver.observe(this, list -> {
+            mBinding.tvPlayOrder.setText(String.valueOf(list.size()));
+            if (playOrdersAdapter == null) {
+                playOrdersAdapter = new RecordPlayOrdersAdapter();
+                playOrdersAdapter.setOnDeleteListener(order -> {
+                    mModel.deletePlayOrderOfRecord(order);
+                    mModel.loadRecordPlayOrders();
+                });
+                playOrdersAdapter.setList(list);
+                mBinding.rvPlayOrders.setAdapter(playOrdersAdapter);
+            }
+            else {
+                playOrdersAdapter.setList(list);
+                playOrdersAdapter.notifyDataSetChanged();
             }
         });
         mModel.passionsObserver.observe(this, list -> showPassionPoints(list));
