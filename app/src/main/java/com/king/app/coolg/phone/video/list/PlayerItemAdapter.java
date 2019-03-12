@@ -8,6 +8,7 @@ import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
 import com.king.app.coolg.databinding.AdapterPlayItemBinding;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.widget.video.OnPlayEmptyUrlListener;
 
 /**
@@ -46,6 +47,10 @@ public class PlayerItemAdapter extends BaseBindingAdapter<AdapterPlayItemBinding
         binding.ivDelete.setVisibility(enableDelete ? View.VISIBLE:View.GONE);
         binding.videoView.setFingerprint(position);
         binding.videoView.getCoverView().setScaleType(ImageView.ScaleType.CENTER_CROP);
+        // 横屏下必须设置这个，否则从全屏返回会激活屏幕为portrait方向（GiraffePlayer源码的setDisplayModel(DISPLAY_NORMAL)可以看出从全屏到非全屏执行了请求屏幕方向SCREEN_ORIENTATION_PORTRAIT）
+        if (ScreenUtils.isTablet()) {
+            binding.videoView.getVideoInfo().setPortraitWhenFullScreen(false);
+        }
         GlideApp.with(binding.videoView.getContext())
                 .load(bean.getCover())
                 .error(R.drawable.def_small)

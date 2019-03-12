@@ -133,6 +133,10 @@ public class PlayListActivity extends MvvmActivity<ActivityVideoOrderPlayListBin
                 mModel.deleteItem(position);
                 setResultChanged();
             });
+            adapter.setOnPlayEmptyUrlListener((fingerprint, callback) -> {
+                int position = Integer.parseInt(fingerprint);
+                mModel.getPlayUrl(position, callback);
+            });
             adapter.setOnItemClickListener((view, position, data) -> goToRecordPage(data.getPlayItem().getRecord()));
             adapter.setList(list);
             mBinding.rvVideos.setAdapter(adapter);

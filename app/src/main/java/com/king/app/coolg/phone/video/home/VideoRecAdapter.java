@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.widget.video.EmbedVideoView;
 import com.king.app.coolg.view.widget.video.OnPlayEmptyUrlListener;
 import com.king.app.coolg.view.widget.video.OnVideoListener;
@@ -45,6 +46,10 @@ public class VideoRecAdapter extends CoolBannerAdapter<PlayItemViewBean> {
         videoView.setFingerprint(position);
         videoView.getCoverView().setScaleType(ImageView.ScaleType.CENTER_CROP);
         videoView.getCoverView().setOnClickListener(v -> onPlayListener.onClickPlayItem(item));
+        // 横屏下必须设置这个，否则从全屏返回会激活屏幕为portrait方向（GiraffePlayer源码的setDisplayModel(DISPLAY_NORMAL)可以看出从全屏到非全屏执行了请求屏幕方向SCREEN_ORIENTATION_PORTRAIT）
+        if (ScreenUtils.isTablet()) {
+            videoView.getVideoInfo().setPortraitWhenFullScreen(false);
+        }
         GlideApp.with(videoView.getContext())
                 .load(item.getCover())
                 .placeholder(R.drawable.def_small)

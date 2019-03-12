@@ -7,9 +7,13 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.model.http.AppHttpClient;
+import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.utils.UrlUtil;
+import com.king.app.coolg.view.widget.video.UrlCallback;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.PlayOrder;
 
@@ -164,6 +168,43 @@ public class PlayListViewModel extends BaseViewModel {
                     public void onNext(Boolean aBoolean) {
                         loadingObserver.setValue(false);
                         itemsObserver.setValue(null);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void getPlayUrl(int position, UrlCallback callback) {
+        PlayItemViewBean bean = itemsObserver.getValue().get(position);
+        PathRequest request = new PathRequest();
+        request.setName(bean.getRecord().getName());
+        request.setPath(bean.getRecord().getDirectory());
+        loadingObserver.setValue(true);
+        AppHttpClient.getInstance().getAppService().getVideoPath(request)
+                .flatMap(response -> UrlUtil.toVideoUrl(response))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(String url) {
+                        loadingObserver.setValue(false);
+                        itemsObserver.getValue().get(position).setPlayUrl(url);
+                        callback.onReceiveUrl(url);
                     }
 
                     @Override
