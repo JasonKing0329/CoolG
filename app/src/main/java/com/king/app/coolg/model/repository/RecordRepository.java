@@ -16,7 +16,6 @@ import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordStarDao;
 import com.king.app.gdb.data.param.DataConstants;
 
-import org.greenrobot.greendao.query.Join;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
@@ -197,15 +196,18 @@ public class RecordRepository extends BaseRepository {
         return Observable.create(e -> {
             RecordDao dao = getDaoSession().getRecordDao();
             StringBuffer buffer = new StringBuffer();
-            if (bean.isWithFkType()) {
+            if (bean.isOnlyType1v1() && !TextUtils.isEmpty(bean.getSql1v1())) {
                 buildQueryFrom1v1(bean, buffer);
+            }
+            else if (bean.isOnlyType3w() && !TextUtils.isEmpty(bean.getSql3w())) {
+                buildQueryFrom3w(bean, buffer);
             }
             buffer.append(" WHERE T.deprecated=?");
             StringBuffer whereBuffer = new StringBuffer();
             if (!TextUtils.isEmpty(bean.getSql())) {
                 whereBuffer.append(" AND ").append(bean.getSql());
             }
-            if (!bean.isWithFkType() && !bean.isTypeAll()) {
+            if (!bean.isTypeAll() && !bean.isOnlyType1v1() && !bean.isOnlyType3w()) {
                 List<Integer> types = new ArrayList<>();
                 if (bean.isType1v1()) {
                     types.add(DataConstants.VALUE_RECORD_TYPE_1V1);
@@ -237,7 +239,7 @@ public class RecordRepository extends BaseRepository {
             }
             buffer.append(" ORDER BY RANDOM()");
             if (bean.getNumber() > 0) {
-                buffer.append(" LIMIT").append(bean.getNumber());
+                buffer.append(" LIMIT ").append(bean.getNumber());
             }
             String sql = buffer.toString();
             DebugLog.e(sql);
@@ -248,23 +250,11 @@ public class RecordRepository extends BaseRepository {
 
     private void buildQueryFrom1v1(RecommendBean bean, StringBuffer buffer) {
         buffer.append(" JOIN record_type1 RT ON T.RECORD_DETAIL_ID=RT._id AND T.TYPE=").append(DataConstants.VALUE_RECORD_TYPE_1V1);
-        if (bean.isFkType1()) {
-            buffer.append(" AND RT.SCORE_FK_TYPE1>0");
-        }
-        if (bean.isFkType2()) {
-            buffer.append(" AND RT.SCORE_FK_TYPE2>0");
-        }
-        if (bean.isFkType3()) {
-            buffer.append(" AND RT.SCORE_FK_TYPE3>0");
-        }
-        if (bean.isFkType4()) {
-            buffer.append(" AND RT.SCORE_FK_TYPE4>0");
-        }
-        if (bean.isFkType5()) {
-            buffer.append(" AND RT.SCORE_FK_TYPE5>0");
-        }
-        if (bean.isFkType6()) {
-            buffer.append(" AND RT.SCORE_FK_TYPE6>0");
-        }
+        buffer.append(" AND " + bean.getSql1v1());
+    }
+
+    private void buildQueryFrom3w(RecommendBean bean, StringBuffer buffer) {
+        buffer.append(" JOIN record_type3 RT ON T.RECORD_DETAIL_ID=RT._id AND T.TYPE=").append(DataConstants.VALUE_RECORD_TYPE_3W);
+        buffer.append(" AND " + bean.getSql3w());
     }
 }

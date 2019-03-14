@@ -88,4 +88,19 @@ public class AppConstants {
             "RT.score_bjob > "
     };
 
+    public static final String[] RECORD_3w_SQL_EXPRESSIONS = new String[]{
+            "RT.score_fk_type1 > 0",
+            "RT.score_fk_type2 > 0",
+            "RT.score_fk_type3 > 0",
+            "RT.score_fk_type4 > 0",
+            "RT.score_fk_type5 > 0",
+            "RT.score_fk_type6 > 0",
+            "RT.score_fk_type7 > 0",
+            "RT.score_fk_type8 > 0",
+            "RT.score_story > ",
+            "RT.score_cshow > ",
+            "RT.score_foreplay > ",
+            "RT.score_bjob > "
+    };
+
 }

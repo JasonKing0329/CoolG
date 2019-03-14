@@ -55,35 +55,35 @@
                 android:id="@+id/cb_type_all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="@{bean.isTypeAll}"
+                android:checked="@{bean.typeAll}"
                 android:text="All" />
 
             <CheckBox
                 android:id="@+id/cb_type_1v1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="@{bean.isType1v1}"
+                android:checked="@{bean.type1v1}"
                 android:text="1v1" />
 
             <CheckBox
                 android:id="@+id/cb_type_3w"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="@{bean.isType3w}"
+                android:checked="@{bean.type3w}"
                 android:text="3w" />
 
             <CheckBox
                 android:id="@+id/cb_type_multi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="@{bean.isTypeMulti}"
+                android:checked="@{bean.typeMulti}"
                 android:text="Multi" />
 
             <CheckBox
                 android:id="@+id/cb_type_together"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="@{bean.isTypeTogether}"
+                android:checked="@{bean.typeTogether}"
                 android:text="Together" />
 
         </LinearLayout>
@@ -123,7 +123,7 @@
             android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
             android:text="Expressions for record_type3"
             android:textAllCaps="false"
-            android:visibility="@{bean.isOnlyType3w() ? View.VISIBLE:View.GONE}"
+            android:visibility="@{bean.isOnlyType3w() ? View.VISIBLE:View.INVISIBLE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_sql_1v1" />
 
@@ -136,7 +136,7 @@
             android:layout_marginEnd="@dimen/dlg_recommend_margin_hor"
             android:hint="eg. RT.score_cshow>0 and RT.score_fk_type1>0"
             android:text="@{bean.sql3w}"
-            android:visibility="@{bean.isOnlyType1v1() ? View.VISIBLE:View.GONE}"
+            android:visibility="@{bean.isOnlyType3w() ? View.VISIBLE:View.INVISIBLE}"
             android:textSize="14dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
