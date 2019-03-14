@@ -75,4 +75,17 @@ public class AppConstants {
             "special_desc LIKE '%%'",
     };
 
+    public static final String[] RECORD_1v1_SQL_EXPRESSIONS = new String[]{
+            "RT.score_fk_type1 > 0",
+            "RT.score_fk_type2 > 0",
+            "RT.score_fk_type3 > 0",
+            "RT.score_fk_type4 > 0",
+            "RT.score_fk_type5 > 0",
+            "RT.score_fk_type6 > 0",
+            "RT.score_story > ",
+            "RT.score_cshow > ",
+            "RT.score_foreplay > ",
+            "RT.score_bjob > "
+    };
+
 }

@@ -6,12 +6,15 @@ import android.text.TextUtils;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.phone.record.scene.SceneBean;
+import com.king.app.coolg.phone.video.home.RecommendBean;
+import com.king.app.coolg.utils.DebugLog;
 import com.king.app.gdb.data.entity.FavorRecord;
 import com.king.app.gdb.data.entity.FavorRecordDao;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordDao;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordStarDao;
+import com.king.app.gdb.data.param.DataConstants;
 
 import org.greenrobot.greendao.query.Join;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -177,5 +180,91 @@ public class RecordRepository extends BaseRepository {
         bean.setAverage(cursor.getDouble(2));
         bean.setMax(cursor.getInt(3));
         return bean;
+    }
+
+    public Observable<List<Record>> getPlayableRecords(int number) {
+        return Observable.create(e -> {
+            List<Record> list = getDaoSession().getRecordDao().queryBuilder()
+                    .where(RecordDao.Properties.Deprecated.eq(0))
+                    .orderRaw("RANDOM()")
+                    .limit(number)
+                    .build().list();
+            e.onNext(list);
+        });
+    }
+
+    public Observable<List<Record>> getPlayableRecords(RecommendBean bean) {
+        return Observable.create(e -> {
+            RecordDao dao = getDaoSession().getRecordDao();
+            StringBuffer buffer = new StringBuffer();
+            if (bean.isWithFkType()) {
+                buildQueryFrom1v1(bean, buffer);
+            }
+            buffer.append(" WHERE T.deprecated=?");
+            StringBuffer whereBuffer = new StringBuffer();
+            if (!TextUtils.isEmpty(bean.getSql())) {
+                whereBuffer.append(" AND ").append(bean.getSql());
+            }
+            if (!bean.isWithFkType() && !bean.isTypeAll()) {
+                List<Integer> types = new ArrayList<>();
+                if (bean.isType1v1()) {
+                    types.add(DataConstants.VALUE_RECORD_TYPE_1V1);
+                }
+                if (bean.isType3w()) {
+                    types.add(DataConstants.VALUE_RECORD_TYPE_3W);
+                }
+                if (bean.isTypeMulti()) {
+                    types.add(DataConstants.VALUE_RECORD_TYPE_MULTI);
+                }
+                if (bean.isTypeTogether()) {
+                    types.add(DataConstants.VALUE_RECORD_TYPE_LONG);
+                }
+                if (types.size() > 0) {
+                    if (types.size() == 1) {
+                        buffer.append(" AND T.TYPE=").append(types.get(0));
+                    }
+                    else {
+                        buffer.append(" AND (");
+                        for (int i = 0; i < types.size(); i ++) {
+                            if (i > 0) {
+                                buffer.append(" OR ");
+                            }
+                            buffer.append("T.TYPE=").append(types.get(i));
+                        }
+                        buffer.append(")");
+                    }
+                }
+            }
+            buffer.append(" ORDER BY RANDOM()");
+            if (bean.getNumber() > 0) {
+                buffer.append(" LIMIT").append(bean.getNumber());
+            }
+            String sql = buffer.toString();
+            DebugLog.e(sql);
+            List<Record> list = dao.queryRaw(sql, new String[]{"0"});
+            e.onNext(list);
+        });
+    }
+
+    private void buildQueryFrom1v1(RecommendBean bean, StringBuffer buffer) {
+        buffer.append(" JOIN record_type1 RT ON T.RECORD_DETAIL_ID=RT._id AND T.TYPE=").append(DataConstants.VALUE_RECORD_TYPE_1V1);
+        if (bean.isFkType1()) {
+            buffer.append(" AND RT.SCORE_FK_TYPE1>0");
+        }
+        if (bean.isFkType2()) {
+            buffer.append(" AND RT.SCORE_FK_TYPE2>0");
+        }
+        if (bean.isFkType3()) {
+            buffer.append(" AND RT.SCORE_FK_TYPE3>0");
+        }
+        if (bean.isFkType4()) {
+            buffer.append(" AND RT.SCORE_FK_TYPE4>0");
+        }
+        if (bean.isFkType5()) {
+            buffer.append(" AND RT.SCORE_FK_TYPE5>0");
+        }
+        if (bean.isFkType6()) {
+            buffer.append(" AND RT.SCORE_FK_TYPE6>0");
+        }
     }
 }

@@ -75,10 +75,11 @@ public class VideoHomeViewModel extends BaseViewModel {
         Observable<List<Record>> observable;
         RecommendBean bean = SettingProperty.getVideoRecBean();
         if (bean == null) {
-            observable = playRepository.getPlayableRecords(5);
+            observable = recordRepository.getPlayableRecords(5);
         }
         else {
-            observable = playRepository.getPlayableRecords(5, bean);
+            bean.setNumber(5);
+            observable = recordRepository.getPlayableRecords(bean);
         }
         observable
                 .flatMap(list -> toPlayItems(list))

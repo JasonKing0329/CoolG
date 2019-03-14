@@ -9,19 +9,10 @@
             name="bean"
             type="com.king.app.coolg.phone.video.home.RecommendBean"/>
     </data>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/tv_sql_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
-            android:layout_marginTop="24dp"
-            android:text="Sql (conditions for table record)"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/btn_often"
@@ -29,9 +20,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
-            android:text="Expressions"
+            android:text="Expressions for record"
+            android:textAllCaps="false"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_sql_title" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/et_sql"
@@ -40,7 +32,8 @@
             android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/dlg_recommend_margin_hor"
-            android:hint="eg. score>=400 and scene='bed'"
+            android:hint="eg. T.score>=400 and T.scene='bed'"
+            android:textSize="14dp"
             android:text="@{bean.sql}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -95,72 +88,59 @@
 
         </LinearLayout>
 
-        <CheckBox
-            android:id="@+id/cb_ftype"
+        <Button
+            android:id="@+id/btn_often_1v1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
             android:layout_marginTop="8dp"
-            android:checked="@{bean.withFkType}"
-            android:text="With F type(Only effective for type 1v1)"
+            android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
+            android:text="Expressions for record_type1"
+            android:textAllCaps="false"
+            android:visibility="@{bean.isOnlyType1v1() ? View.VISIBLE:View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_type" />
 
-        <LinearLayout
-            android:id="@+id/ll_ftype"
+        <EditText
+            android:id="@+id/et_sql_1v1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/dlg_recommend_margin_hor"
-            android:orientation="horizontal"
-            android:visibility="@{bean.withFkType ? View.VISIBLE:View.GONE}"
+            android:hint="eg. RT.score_cshow>0 and RT.score_fk_type1>0"
+            android:text="@{bean.sql1v1}"
+            android:textSize="14dp"
+            android:visibility="@{bean.isOnlyType1v1() ? View.VISIBLE:View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cb_ftype">
+            app:layout_constraintTop_toBottomOf="@+id/btn_often_1v1" />
 
-            <CheckBox
-                android:id="@+id/cb_ftype1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="@{bean.isFkType1}"
-                android:text="1" />
+        <Button
+            android:id="@+id/btn_often_3w"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
+            android:text="Expressions for record_type3"
+            android:textAllCaps="false"
+            android:visibility="@{bean.isOnlyType3w() ? View.VISIBLE:View.GONE}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_sql_1v1" />
 
-            <CheckBox
-                android:id="@+id/cb_ftype2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="@{bean.isFkType2}"
-                android:text="2" />
-
-            <CheckBox
-                android:id="@+id/cb_ftype3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="@{bean.isFkType3}"
-                android:text="3" />
-
-            <CheckBox
-                android:id="@+id/cb_ftype4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="@{bean.isFkType4}"
-                android:text="4" />
-
-            <CheckBox
-                android:id="@+id/cb_ftype5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="@{bean.isFkType5}"
-                android:text="5" />
-
-            <CheckBox
-                android:id="@+id/cb_ftype6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="@{bean.isFkType6}"
-                android:text="6" />
-        </LinearLayout>
+        <EditText
+            android:id="@+id/et_sql_3w"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dlg_recommend_margin_hor"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/dlg_recommend_margin_hor"
+            android:hint="eg. RT.score_cshow>0 and RT.score_fk_type1>0"
+            android:text="@{bean.sql3w}"
+            android:visibility="@{bean.isOnlyType1v1() ? View.VISIBLE:View.GONE}"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_often_3w" />
 
         <TextView
             android:id="@+id/tv_ok"
@@ -170,6 +150,6 @@
             android:text="@string/ok"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_ftype" />
+            app:layout_constraintTop_toBottomOf="@+id/et_sql_3w" />
     </android.support.constraint.ConstraintLayout>
 </layout>
