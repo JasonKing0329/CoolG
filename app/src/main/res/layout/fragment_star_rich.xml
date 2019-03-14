@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="model"
+            type="com.king.app.coolg.phone.star.list.StarListViewModel"/>
+    </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,7 +20,7 @@
             android:layout_height="match_parent"
             android:background="#99ffffff"
             android:elevation="10dp"
-            android:visibility="gone"
+            android:visibility="@{model.indexBarVisibility}"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

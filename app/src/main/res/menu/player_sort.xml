@@ -19,4 +19,6 @@
         android:title="By rating passion"/>
     <item android:id="@+id/menu_sort_rating_video"
         android:title="By rating video"/>
+    <item android:id="@+id/menu_sort_random"
+        android:title="By Random"/>
 </menu>

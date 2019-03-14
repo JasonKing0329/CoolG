@@ -68,7 +68,8 @@ public class StarListTitleViewModel extends BaseViewModel {
     }
 
     public void setSortMode(int sortMode) {
-        if (sortMode != mSortMode) {
+        // 如果是random，每次都有效。否则，只有当排序模式变化才重新排序
+        if (sortMode == AppConstants.STAR_SORT_RANDOM || sortMode != mSortMode) {
             mSortMode = sortMode;
             sortTypeObserver.setValue(mSortMode);
         }

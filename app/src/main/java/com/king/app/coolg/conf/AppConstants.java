@@ -21,6 +21,7 @@ public class AppConstants {
     public static final int STAR_SORT_RATING_SEXUALITY = 6;
     public static final int STAR_SORT_RATING_PASSION = 7;
     public static final int STAR_SORT_RATING_VIDEO = 8;
+    public static final int STAR_SORT_RANDOM = 9;
 
     public static final int SCENE_SORT_NAME = 0;
     public static final int SCENE_SORT_NUMBER = 1;

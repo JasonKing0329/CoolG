@@ -197,6 +197,9 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
                 case R.id.menu_sort_rating_video:
                     mModel.setSortMode(AppConstants.STAR_SORT_RATING_VIDEO);
                     break;
+                case R.id.menu_sort_random:
+                    mModel.setSortMode(AppConstants.STAR_SORT_RANDOM);
+                    break;
             }
             return false;
         });

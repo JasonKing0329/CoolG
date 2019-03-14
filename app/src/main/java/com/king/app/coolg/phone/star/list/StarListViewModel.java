@@ -2,8 +2,10 @@ package com.king.app.coolg.phone.star.list;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
+import android.databinding.ObservableInt;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
@@ -70,6 +72,8 @@ public class StarListViewModel extends BaseViewModel {
 
     public MutableLiveData<Boolean> circleUpdateObserver = new MutableLiveData<>();
     public MutableLiveData<Boolean> richUpdateObserver = new MutableLiveData<>();
+
+    public ObservableInt indexBarVisibility = new ObservableInt();
 
     public StarListViewModel(@NonNull Application application) {
         super(application);
@@ -151,6 +155,12 @@ public class StarListViewModel extends BaseViewModel {
                         isLoading = false;
                         loadingObserver.setValue(false);
                         indexBarObserver.setValue(true);
+                        if (mSortType == AppConstants.STAR_SORT_RANDOM) {
+                            indexBarVisibility.set(View.GONE);
+                        }
+                        else {
+                            indexBarVisibility.set(View.VISIBLE);
+                        }
                         if (currentViewMode == PreferenceValue.STAR_LIST_VIEW_CIRCLE) {
                             circleListObserver.setValue(mList);
                         }
@@ -179,7 +189,10 @@ public class StarListViewModel extends BaseViewModel {
 
     private Observable<List<StarProxy>> sortStars() {
         return Observable.create(e -> {
-            if (mSortType == AppConstants.STAR_SORT_RECORDS) {// order by records number
+            if (mSortType == AppConstants.STAR_SORT_RANDOM) {// order by records number
+                Collections.shuffle(mList);
+            }
+            else if (mSortType == AppConstants.STAR_SORT_RECORDS) {// order by records number
                 Collections.sort(mList, new StarRecordsNumberComparator());
             }
             else if (mSortType == AppConstants.STAR_SORT_RATING) {// order by rating
@@ -221,6 +234,9 @@ public class StarListViewModel extends BaseViewModel {
                     break;
                 case AppConstants.SCENE_SORT_NAME:
                     indexEmitter.createNameIndex(e, mList);
+                    break;
+                case AppConstants.STAR_SORT_RANDOM:
+                    e.onNext("");
                     break;
                 default:
                     indexEmitter.createRatingIndex(e, mList, mSortType);
@@ -278,6 +294,12 @@ public class StarListViewModel extends BaseViewModel {
                     public void onComplete() {
                         loadingObserver.setValue(false);
                         indexBarObserver.setValue(true);
+                        if (mSortType == AppConstants.STAR_SORT_RANDOM) {
+                            indexBarVisibility.set(View.GONE);
+                        }
+                        else {
+                            indexBarVisibility.set(View.VISIBLE);
+                        }
                         if (currentViewMode == PreferenceValue.STAR_LIST_VIEW_CIRCLE) {
                             circleUpdateObserver.setValue(true);
                         }
@@ -334,6 +356,12 @@ public class StarListViewModel extends BaseViewModel {
                             loadingObserver.setValue(false);
                         }
                         indexBarObserver.setValue(true);
+                        if (mSortType == AppConstants.STAR_SORT_RANDOM) {
+                            indexBarVisibility.set(View.GONE);
+                        }
+                        else {
+                            indexBarVisibility.set(View.VISIBLE);
+                        }
                         if (currentViewMode == PreferenceValue.STAR_LIST_VIEW_CIRCLE) {
                             circleUpdateObserver.setValue(true);
                         }

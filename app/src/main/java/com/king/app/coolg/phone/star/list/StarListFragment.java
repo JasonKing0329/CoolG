@@ -63,6 +63,8 @@ public class StarListFragment extends MvvmFragment<FragmentStarRichBinding, Star
 
     @Override
     protected void onCreate(View view) {
+        mBinding.setModel(mModel);
+
         mBinding.rvList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -166,7 +168,6 @@ public class StarListFragment extends MvvmFragment<FragmentStarRichBinding, Star
         mModel.indexObserver.observe(this, index -> mBinding.sidebar.addIndex(index));
         mModel.indexBarObserver.observe(this, result -> {
             mBinding.sidebar.build();
-            mBinding.sidebar.setVisibility(View.VISIBLE);
         });
         mModel.circleListObserver.observe(this, list -> showCircleList(list));
         mModel.richListObserver.observe(this, list -> showRichList(list));
