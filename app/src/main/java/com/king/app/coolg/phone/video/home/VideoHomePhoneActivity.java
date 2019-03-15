@@ -13,6 +13,7 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPhoneBinding;
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.phone.video.list.PlayListActivity;
@@ -68,6 +69,8 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
                     break;
                 case R.id.menu_recommend_setting:
                     RecommendFragment content = new RecommendFragment();
+                    content.setHideOnline(true);
+                    content.setBean(SettingProperty.getVideoRecBean());
                     content.setOnRecommendListener(bean -> mModel.updateRecommend(bean));
                     DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
                     dialogFragment.setTitle("Recommend Setting");

@@ -10,6 +10,7 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPadBinding;
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.phone.video.home.VideoGuy;
@@ -81,6 +82,8 @@ public class VideoHomePadActivity extends MvvmActivity<ActivityVideoPadBinding, 
 
         mBinding.ivSetting.setOnClickListener(v -> {
             RecommendFragment content = new RecommendFragment();
+            content.setHideOnline(true);
+            content.setBean(SettingProperty.getVideoRecBean());
             content.setOnRecommendListener(bean -> mModel.updateRecommend(bean));
             DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
             dialogFragment.setTitle("Recommend Setting");

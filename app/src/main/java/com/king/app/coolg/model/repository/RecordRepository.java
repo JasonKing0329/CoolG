@@ -181,33 +181,48 @@ public class RecordRepository extends BaseRepository {
         return bean;
     }
 
-    public Observable<List<Record>> getPlayableRecords(int number) {
+    public Observable<List<Record>> getRecordsBy(int number, boolean isOnline) {
         return Observable.create(e -> {
-            List<Record> list = getDaoSession().getRecordDao().queryBuilder()
-                    .where(RecordDao.Properties.Deprecated.eq(0))
-                    .orderRaw("RANDOM()")
-                    .limit(number)
-                    .build().list();
+            QueryBuilder<Record> builder = getDaoSession().getRecordDao().queryBuilder();
+            if (isOnline) {
+                builder.where(RecordDao.Properties.Deprecated.eq(0));
+            }
+            builder.orderRaw("RANDOM()");
+            if (number > 0) {
+                builder.limit(number);
+            }
+            List<Record> list = builder.build().list();
             e.onNext(list);
         });
     }
 
-    public Observable<List<Record>> getPlayableRecords(RecommendBean bean) {
+    private boolean isBuildType1v1(RecommendBean bean) {
+        return bean.isOnlyType1v1() && !TextUtils.isEmpty(bean.getSql1v1());
+    }
+
+    private boolean isBuildType3w(RecommendBean bean) {
+        return bean.isOnlyType3w() && !TextUtils.isEmpty(bean.getSql3w());
+    }
+
+    public Observable<List<Record>> getRecordsBy(RecommendBean bean) {
         return Observable.create(e -> {
             RecordDao dao = getDaoSession().getRecordDao();
             StringBuffer buffer = new StringBuffer();
-            if (bean.isOnlyType1v1() && !TextUtils.isEmpty(bean.getSql1v1())) {
+            if (isBuildType1v1(bean)) {
                 buildQueryFrom1v1(bean, buffer);
             }
-            else if (bean.isOnlyType3w() && !TextUtils.isEmpty(bean.getSql3w())) {
+            else if (isBuildType3w(bean)) {
                 buildQueryFrom3w(bean, buffer);
             }
-            buffer.append(" WHERE T.deprecated=?");
-            StringBuffer whereBuffer = new StringBuffer();
-            if (!TextUtils.isEmpty(bean.getSql())) {
-                whereBuffer.append(" AND ").append(bean.getSql());
+            buffer.append(" WHERE");
+            StringBuffer where = new StringBuffer();
+            if (bean.isOnline()) {
+                appendWhere(where, "T.deprecated=0");
             }
-            if (!bean.isTypeAll() && !bean.isOnlyType1v1() && !bean.isOnlyType3w()) {
+            if (!TextUtils.isEmpty(bean.getSql())) {
+                appendWhere(where, bean.getSql());
+            }
+            if (!bean.isTypeAll() && !isBuildType1v1(bean) && !isBuildType3w(bean)) {
                 List<Integer> types = new ArrayList<>();
                 if (bean.isType1v1()) {
                     types.add(DataConstants.VALUE_RECORD_TYPE_1V1);
@@ -223,29 +238,42 @@ public class RecordRepository extends BaseRepository {
                 }
                 if (types.size() > 0) {
                     if (types.size() == 1) {
-                        buffer.append(" AND T.TYPE=").append(types.get(0));
+                        appendWhere(where, "T.TYPE=").append(types.get(0));
                     }
                     else {
-                        buffer.append(" AND (");
+                        appendWhere(where, "(");
                         for (int i = 0; i < types.size(); i ++) {
                             if (i > 0) {
-                                buffer.append(" OR ");
+                                where.append(" OR ");
                             }
-                            buffer.append("T.TYPE=").append(types.get(i));
+                            where.append("T.TYPE=").append(types.get(i));
                         }
-                        buffer.append(")");
+                        where.append(")");
                     }
                 }
             }
+            buffer.append(where.toString());
+
             buffer.append(" ORDER BY RANDOM()");
             if (bean.getNumber() > 0) {
                 buffer.append(" LIMIT ").append(bean.getNumber());
             }
             String sql = buffer.toString();
             DebugLog.e(sql);
-            List<Record> list = dao.queryRaw(sql, new String[]{"0"});
+            List<Record> list = dao.queryRaw(sql, new String[]{});
             e.onNext(list);
+            e.onComplete();
         });
+    }
+
+    private StringBuffer appendWhere(StringBuffer where, String condition) {
+        if (where.length() == 0) {
+            where.append(" ").append(condition);
+        }
+        else {
+            where.append(" AND ").append(condition);
+        }
+        return where;
     }
 
     private void buildQueryFrom1v1(RecommendBean bean, StringBuffer buffer) {

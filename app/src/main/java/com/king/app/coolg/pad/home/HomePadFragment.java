@@ -18,14 +18,17 @@ import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentHomePadBinding;
 import com.king.app.coolg.model.image.ImageProvider;
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.pad.record.RecordPadActivity;
 import com.king.app.coolg.pad.star.StarPadActivity;
-import com.king.app.coolg.phone.home.RecommendFilterFragment;
 import com.king.app.coolg.phone.star.list.StarProxy;
+import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.utils.ColorUtil;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
+import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
 import com.king.app.coolg.view.widget.cardslider.CardSnapHelper;
 import com.king.app.gdb.data.entity.Record;
 
@@ -91,22 +94,75 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
         mBinding.groupOrders.setOnClickListener(v -> goToOrderPage());
         mBinding.groupStudios.setOnClickListener(v -> goToStudioPage());
         mBinding.groupVideo.setOnClickListener(v -> goToVideoPage());
-        mBinding.fabSetting.setOnClickListener(v -> showBannerSetting());
+        mBinding.fabSetting.setOnClickListener(v -> {
+            new AlertDialogFragment()
+                    .setItems(new String[]{"Set switch time", "Set recommend"}
+                        , (dialogInterface, i) -> {
+                                if (i == 0) {
+                                    showBannerSetting();
+                                }
+                                else {
+                                    showRecommendSetting();
+                                }
+                    }).show(getChildFragmentManager(), "AlertDialogFragment");
+        });
         mBinding.fabTop.setOnClickListener(v -> mBinding.rvRecords.scrollToPosition(0));
     }
 
+    private void showRecommendSetting() {
+        RecommendFragment content = new RecommendFragment();
+        content.setBean(SettingProperty.getHomeRecBean());
+        content.setOnRecommendListener(bean -> mModel.updateRecordFilter(bean));
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setTitle("Recommend Setting");
+        dialogFragment.setContentFragment(content);
+        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
+        dialogFragment.show(getChildFragmentManager(), "RecommendFragment");
+    }
+
     private void showBannerSetting() {
-        RecommendFilterFragment content = new RecommendFilterFragment();
-        content.setOnRecordFilterListener(model -> {
-            mModel.updateRecordFilter(model);
-            mModel.resetTimer();
-            mModel.refreshRec();
+        BannerSettingFragment bannerSettingDialog = new BannerSettingFragment();
+        bannerSettingDialog.setHideAnimType(true);
+        bannerSettingDialog.setOnAnimSettingListener(new BannerSettingFragment.OnAnimSettingListener() {
+            @Override
+            public void onRandomAnim(boolean random) {
+
+            }
+
+            @Override
+            public boolean isRandomAnim() {
+                return false;
+            }
+
+            @Override
+            public int getAnimType() {
+                return 0;
+            }
+
+            @Override
+            public void onSaveAnimType(int type) {
+
+            }
+
+            @Override
+            public int getAnimTime() {
+                return SettingProperty.getRecommendAnimTime();
+            }
+
+            @Override
+            public void onSaveAnimTime(int time) {
+                SettingProperty.setRecommendAnimTime(time);
+            }
+
+            @Override
+            public void onParamsSaved() {
+                mModel.resetTimer();
+            }
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
-        dialogFragment.setContentFragment(content);
-        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight());
-        dialogFragment.setTitle("Recommend Setting");
-        dialogFragment.show(getChildFragmentManager(), "RecommendFilterFragment");
+        dialogFragment.setContentFragment(bannerSettingDialog);
+        dialogFragment.setTitle("Switch Time");
+        dialogFragment.show(getChildFragmentManager(), "BannerSettingFragment");
     }
 
     private void updateIconBg(TextView view) {
@@ -244,4 +300,15 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
                 .go(this);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mModel.onResume();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mModel.onStop();
+    }
 }

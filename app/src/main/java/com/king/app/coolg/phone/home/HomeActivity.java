@@ -16,9 +16,11 @@ import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityHomeBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
+import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
+import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
 import com.king.app.gdb.data.entity.Record;
 import com.king.lib.banner.BannerFlipStyleProvider;
 
@@ -66,6 +68,9 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
             switch (menuId) {
                 case R.id.menu_recommend_setting:
                     showRecommendSetting();
+                    break;
+                case R.id.menu_anim_setting:
+                    showAnimSetting();
                     break;
             }
         });
@@ -193,17 +198,59 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
         mModel.loadData();
     }
 
-    private void showRecommendSetting() {
-        RecommendFilterFragment content = new RecommendFilterFragment();
-        content.setOnRecordFilterListener(model -> {
-            mModel.updateRecordFilter(model);
-            setBannerParams();
+    private void showAnimSetting() {
+        BannerSettingFragment bannerSettingDialog = new BannerSettingFragment();
+        bannerSettingDialog.setOnAnimSettingListener(new BannerSettingFragment.OnAnimSettingListener() {
+            @Override
+            public void onRandomAnim(boolean random) {
+                SettingProperty.setRandomRecommend(random);
+            }
+
+            @Override
+            public boolean isRandomAnim() {
+                return SettingProperty.isRandomRecommend();
+            }
+
+            @Override
+            public int getAnimType() {
+                return SettingProperty.getRecommendAnimType();
+            }
+
+            @Override
+            public void onSaveAnimType(int type) {
+                SettingProperty.setRecommendAnimType(type);
+            }
+
+            @Override
+            public int getAnimTime() {
+                return SettingProperty.getRecommendAnimTime();
+            }
+
+            @Override
+            public void onSaveAnimTime(int time) {
+                SettingProperty.setRecommendAnimTime(time);
+            }
+
+            @Override
+            public void onParamsSaved() {
+                setBannerParams();
+            }
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
-        dialogFragment.setContentFragment(content);
-        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight());
+        dialogFragment.setContentFragment(bannerSettingDialog);
+        dialogFragment.setTitle("Banner Setting");
+        dialogFragment.show(getSupportFragmentManager(), "BannerSettingFragment");
+    }
+
+    private void showRecommendSetting() {
+        RecommendFragment content = new RecommendFragment();
+        content.setBean(SettingProperty.getHomeRecBean());
+        content.setOnRecommendListener(bean -> mModel.updateRecordFilter(bean));
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
         dialogFragment.setTitle("Recommend Setting");
-        dialogFragment.show(getSupportFragmentManager(), "RecommendFilterFragment");
+        dialogFragment.setContentFragment(content);
+        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
+        dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
     }
 
     private void goToRecord(Record record) {

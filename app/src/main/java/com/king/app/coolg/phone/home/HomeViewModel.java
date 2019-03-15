@@ -5,21 +5,18 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
-import com.king.app.coolg.model.FilterHelper;
-import com.king.app.coolg.model.RecommendModel;
-import com.king.app.coolg.model.bean.RecordFilterModel;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
+import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.UrlUtil;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.Record;
-import com.king.app.gdb.data.param.DataConstants;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -59,8 +56,7 @@ public class HomeViewModel extends BaseViewModel {
     /**
      * 过滤器
      */
-    private RecordFilterModel mRecordFilter;
-    private RecommendModel recommendModel;
+    private RecommendBean mRecommendBean;
 
     private PlayRepository playRepository;
 
@@ -72,14 +68,16 @@ public class HomeViewModel extends BaseViewModel {
         playRepository = new PlayRepository();
         mHomeBean = new HomeBean();
         mHomeBean.setRecordList(new ArrayList<>());
+        mRecommendBean = SettingProperty.getHomeRecBean();
+        if (mRecommendBean == null) {
+            mRecommendBean = new RecommendBean();
+        }
 
-        recommendModel = new RecommendModel();
-        mRecordFilter = new FilterHelper().getFilters();
         loadRecommend();
     }
 
     private void loadRecommend() {
-        recordRepository.getAll()
+        recordRepository.getRecordsBy(mRecommendBean)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<Record>>() {
@@ -136,8 +134,10 @@ public class HomeViewModel extends BaseViewModel {
         }
     }
 
-    public void updateRecordFilter(RecordFilterModel mRecordFilter) {
-        this.mRecordFilter = mRecordFilter;
+    public void updateRecordFilter(RecommendBean bean) {
+        this.mRecommendBean = bean;
+        SettingProperty.setHomeRecBean(bean);
+        loadRecommend();
     }
 
     /**
@@ -149,31 +149,12 @@ public class HomeViewModel extends BaseViewModel {
             return null;
         }
         // 没有设置过滤器的情况，直接随机位置
-        if (mRecordFilter == null) {
+        if (ListUtil.getSize(mRecommendList) > 0) {
             Random random = new Random();
             int index = Math.abs(random.nextInt()) % mRecommendList.size();
             return mRecommendList.get(index);
         }
-        else {// 打乱当前所有记录，选出第一个符合过滤器条件的记录
-            Collections.shuffle(mRecommendList);
-            boolean pass;
-            for (Record record:mRecommendList) {
-                pass = true;
-                // 记录是NR并且过滤器勾选了支持NR才判定为通过
-                if (record.getHdLevel() == DataConstants.RECORD_HD_NR && mRecordFilter.isSupportNR()) {
-                    pass = true;
-                }
-                // 普通记录，以及是NR但是过滤器没有勾选NR，需要检测其他过滤项
-                else {
-                    boolean result = recommendModel.checkItem(record, mRecordFilter);
-                    pass = pass && result;
-                }
-                if (pass) {
-                    return record;
-                }
-            }
-            return null;
-        }
+        return null;
     }
 
     /**

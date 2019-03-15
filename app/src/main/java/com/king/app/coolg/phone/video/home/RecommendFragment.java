@@ -7,7 +7,6 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.FragmentVideoRecommendBinding;
-import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableContentFragment;
 
@@ -23,6 +22,8 @@ public class RecommendFragment extends DraggableContentFragment<FragmentVideoRec
 
     private RecommendBean mBean;
 
+    private boolean isHideOnline;
+
     public void setOnRecommendListener(OnRecommendListener onRecommendListener) {
         this.onRecommendListener = onRecommendListener;
     }
@@ -37,9 +38,12 @@ public class RecommendFragment extends DraggableContentFragment<FragmentVideoRec
         return R.layout.fragment_video_recommend;
     }
 
+    public void setBean(RecommendBean mBean) {
+        this.mBean = mBean;
+    }
+
     @Override
     protected void initView() {
-        mBean = SettingProperty.getVideoRecBean();
         if (mBean == null) {
             mBean = new RecommendBean();
             setAllTypeChecked();
@@ -89,12 +93,17 @@ public class RecommendFragment extends DraggableContentFragment<FragmentVideoRec
             mBean.setType3w(mBinding.cbType3w.isChecked());
             mBean.setTypeMulti(mBinding.cbTypeMulti.isChecked());
             mBean.setTypeTogether(mBinding.cbTypeTogether.isChecked());
+            mBean.setOnline(mBinding.cbOnline.isChecked());
             if (!isTypeChecked()) {
                 setAllTypeChecked();
             }
             onRecommendListener.onSetSql(mBean);
             dismissAllowingStateLoss();
         });
+
+        if (isHideOnline) {
+            mBinding.cbOnline.setVisibility(View.GONE);
+        }
     }
 
     private void setAllTypeChecked() {
@@ -212,6 +221,10 @@ public class RecommendFragment extends DraggableContentFragment<FragmentVideoRec
         }
         mBinding.etSql3w.setText(sql);
         mBinding.etSql3w.setSelection(sql.length());
+    }
+
+    public void setHideOnline(boolean hideOnline) {
+        isHideOnline = hideOnline;
     }
 
     public interface OnRecommendListener {

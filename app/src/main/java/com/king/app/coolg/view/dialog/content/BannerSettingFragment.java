@@ -1,5 +1,7 @@
 package com.king.app.coolg.view.dialog.content;
 
+import android.view.View;
+
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.databinding.FragmentBannerSettingBinding;
@@ -16,6 +18,8 @@ import com.king.lib.banner.BannerFlipStyleProvider;
 public class BannerSettingFragment extends DraggableContentFragment<FragmentBannerSettingBinding> {
 
     private OnAnimSettingListener onAnimSettingListener;
+
+    private boolean isHideAnimType;
 
     @Override
     protected void bindFragmentHolder(IFragmentHolder holder) {
@@ -59,6 +63,15 @@ public class BannerSettingFragment extends DraggableContentFragment<FragmentBann
         mBinding.etTime.setText(String.valueOf(onAnimSettingListener.getAnimTime()));
 
         mBinding.tvOk.setOnClickListener(v -> onSave());
+
+        if (isHideAnimType) {
+            mBinding.groupAnim.setVisibility(View.GONE);
+            mBinding.tvAnimTitle.setVisibility(View.GONE);
+        }
+    }
+
+    public void setHideAnimType(boolean hideAnimType) {
+        isHideAnimType = hideAnimType;
     }
 
     private String formatFixedText(String type) {

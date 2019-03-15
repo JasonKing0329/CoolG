@@ -8,6 +8,7 @@ import java.util.List;
  * Created by Administrator on 2016/12/3 0003.
  */
 
+@Deprecated
 public class RecordFilterModel {
 
     @SerializedName("list")

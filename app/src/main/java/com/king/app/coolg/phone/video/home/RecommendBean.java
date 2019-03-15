@@ -12,7 +12,7 @@ public class RecommendBean extends BaseObservable {
 
     private int number;
 
-    private boolean isTypeAll;
+    private boolean isTypeAll = true;
 
     private boolean isType1v1;
 
@@ -21,6 +21,8 @@ public class RecommendBean extends BaseObservable {
     private boolean isTypeMulti;
 
     private boolean isTypeTogether;
+
+    private boolean isOnline;
 
     public boolean isTypeAll() {
         return isTypeAll;
@@ -100,5 +102,13 @@ public class RecommendBean extends BaseObservable {
 
     public boolean isOnlyType3w() {
         return isType3w && !isTypeAll && !isTypeMulti && !isType1v1 && !isTypeTogether;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
     }
 }

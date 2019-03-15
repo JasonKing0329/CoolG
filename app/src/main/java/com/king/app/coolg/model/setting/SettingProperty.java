@@ -271,7 +271,7 @@ public class SettingProperty {
     }
 
     public static RecommendBean getVideoRecBean() {
-        String sql = getString(PreferenceKey.PREF_VIDEO_REC_SQL);
+        String sql = getString(PreferenceKey.PREF_VIDEO_REC_BEAN);
         try {
             RecommendBean bean = new Gson().fromJson(sql, RecommendBean.class);
             return bean;
@@ -284,7 +284,7 @@ public class SettingProperty {
         try {
             sql = new Gson().toJson(bean);
         } catch (Exception e) {}
-        setString(PreferenceKey.PREF_VIDEO_REC_SQL, sql);
+        setString(PreferenceKey.PREF_VIDEO_REC_BEAN, sql);
     }
 
     public static String getDemoImageVersion() {
@@ -293,6 +293,23 @@ public class SettingProperty {
 
     public static void setDemoImageVersion(String version) {
         setString(PreferenceKey.PREF_DEMO_IMAGE_VERSION, version);
+    }
+
+    public static RecommendBean getHomeRecBean() {
+        String sql = getString(PreferenceKey.PREF_HOME_REC_BEAN);
+        try {
+            RecommendBean bean = new Gson().fromJson(sql, RecommendBean.class);
+            return bean;
+        } catch (Exception e) {}
+        return null;
+    }
+
+    public static void setHomeRecBean(RecommendBean bean) {
+        String sql = null;
+        try {
+            sql = new Gson().toJson(bean);
+        } catch (Exception e) {}
+        setString(PreferenceKey.PREF_HOME_REC_BEAN, sql);
     }
 
 }

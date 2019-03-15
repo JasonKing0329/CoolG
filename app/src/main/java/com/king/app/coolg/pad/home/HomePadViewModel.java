@@ -12,7 +12,10 @@ import com.king.app.coolg.model.bean.RecordFilterModel;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.model.repository.StarRepository;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.phone.home.RecommendProvider;
 import com.king.app.coolg.phone.star.list.StarProxy;
+import com.king.app.coolg.phone.video.home.RecommendBean;
+import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.StarRatingUtil;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordDao;
@@ -49,10 +52,11 @@ public class HomePadViewModel extends BaseViewModel {
     private StarRepository starRepository;
     private RecordRepository recordRepository;
 
-    private RecommendModel recommendModel;
-    private List<Record> recommendList;
-    private List<Record> recommendedList;
-    private RecordFilterModel mRecordFilter;
+    /**
+     * 过滤器
+     */
+    private RecommendBean mRecommendBean;
+    private RecommendProvider recommendProvider;
 
     private List<Object> mRecordList;
     private String mLastDay;
@@ -67,24 +71,69 @@ public class HomePadViewModel extends BaseViewModel {
         super(application);
         starRepository = new StarRepository();
         recordRepository = new RecordRepository();
-        recommendModel = new RecommendModel();
-        mRecordFilter = new FilterHelper().getFilters();
         mRecordList = new ArrayList<>();
+        mRecommendBean = SettingProperty.getHomeRecBean();
+        if (mRecommendBean == null) {
+            mRecommendBean = new RecommendBean();
+        }
+        recommendProvider = new RecommendProvider().setCacheTotal(12).setNewCacheWhenNumber(3);
+        createRecommend();
     }
 
-    public void updateRecordFilter(RecordFilterModel mRecordFilter) {
-        this.mRecordFilter = mRecordFilter;
+    private void createRecommend() {
+        DebugLog.e("");
+        recommendProvider.create(mRecommendBean, new RecommendProvider.ProviderObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                addDisposable(d);
+            }
+
+            @Override
+            public void onCreateComplete() {
+                DebugLog.e("");
+                getRecommends();
+                resetTimer();
+            }
+        });
+    }
+
+    private void getRecommends() {
+        recommendProvider.getRecommends(3)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<Record>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<Record> records) {
+                        recommendsObserver.setValue(records);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void updateRecordFilter(RecommendBean bean) {
+        this.mRecommendBean = bean;
+        SettingProperty.setHomeRecBean(bean);
+        createRecommend();
     }
 
     public void loadHomeData() {
         queryStars()
                 .flatMap(stars -> {
                     starsObserver.postValue(stars);
-                    return queryRecommend();
-                })
-                .flatMap(list -> {
-                    createTimer();
-                    recommendsObserver.postValue(list);
                     return queryRecords();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -141,20 +190,6 @@ public class HomePadViewModel extends BaseViewModel {
         });
     }
 
-    private Observable<List<Record>> queryRecommend() {
-        return Observable.create(e -> {
-            recommendList = getDaoSession().getRecordDao()
-                    .queryBuilder()
-                    .orderDesc(RecordDao.Properties.LastModifyTime)
-                    .build().list();
-            recommendedList = new ArrayList<>();
-            recommendedList.add(newRecord());
-            recommendedList.add(newRecord());
-            recommendedList.add(newRecord());
-            e.onNext(recommendedList);
-        });
-    }
-
     private Observable<List<Object>> queryRecords() {
         return recordRepository.getLatestRecords(mOffset, LOAD_NUM)
                 .flatMap(list -> toViewRecords(list));
@@ -182,7 +217,9 @@ public class HomePadViewModel extends BaseViewModel {
             time = 8000;
         }
         timerDisposable = Observable.interval(time, TimeUnit.MILLISECONDS)
-                .subscribe(aLong -> refreshRec());
+                .subscribe(aLong -> {
+                    getRecommends();
+                });
     }
 
     public void resetTimer() {
@@ -207,57 +244,24 @@ public class HomePadViewModel extends BaseViewModel {
     }
 
     public void onResume() {
-        if (timerDisposable != null) {
-            timerDisposable.dispose();
-        }
-        createTimer();
-    }
-
-    public void refreshRec() {
-        queryRecommend()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<Record>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(List<Record> list) {
-                        recommendsObserver.setValue(list);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        messageObserver.setValue("Load data error: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        resetTimer();
     }
 
     public void refreshRecAndStars() {
+        getRecommends();
+
         queryStars()
-                .flatMap(stars -> {
-                    starsObserver.postValue(stars);
-                    return queryRecommend();
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<Record>>() {
+                .subscribe(new Observer<List<StarProxy>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         addDisposable(d);
                     }
 
                     @Override
-                    public void onNext(List<Record> list) {
-                        recommendsObserver.setValue(list);
+                    public void onNext(List<StarProxy> list) {
+                        starsObserver.postValue(list);
                     }
 
                     @Override
@@ -273,44 +277,8 @@ public class HomePadViewModel extends BaseViewModel {
                 });
     }
 
-    /**
-     * 获得新记录
-     * @return
-     */
-    public Record newRecord() {
-        if (recommendList == null || recommendList.size() == 0) {
-            return null;
-        }
-        // 没有设置过滤器的情况，直接随机位置
-        if (mRecordFilter == null) {
-            Random random = new Random();
-            int index = Math.abs(random.nextInt()) % recommendList.size();
-            return recommendList.get(index);
-        }
-        else {// 打乱当前所有记录，选出第一个符合过滤器条件的记录
-            Collections.shuffle(recommendList);
-            boolean pass;
-            for (Record record: recommendList) {
-                pass = true;
-                // 记录是NR并且过滤器勾选了支持NR才判定为通过
-                if (record.getHdLevel() == DataConstants.RECORD_HD_NR && mRecordFilter.isSupportNR()) {
-                    pass = true;
-                }
-                // 普通记录，以及是NR但是过滤器没有勾选NR，需要检测其他过滤项
-                else {
-                    boolean result = recommendModel.checkItem(record, mRecordFilter);
-                    pass = pass && result;
-                }
-                if (pass) {
-                    return record;
-                }
-            }
-            return null;
-        }
-    }
-
     public Record getRecommendedRecord(int index) {
-        return recommendedList.get(index);
+        return recommendsObserver.getValue().get(index);
     }
 
     public void loadMore() {

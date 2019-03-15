@@ -12,7 +12,7 @@ import com.king.app.gdb.data.param.DataConstants;
  * @auth 景阳
  * @time 2018/2/19 0019 14:25
  */
-
+@Deprecated
 public class RecommendModel {
 
     /**

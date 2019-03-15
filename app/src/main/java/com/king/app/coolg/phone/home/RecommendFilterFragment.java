@@ -20,6 +20,7 @@ import com.king.lib.banner.BannerFlipStyleProvider;
  * @author：Jing Yang
  * @date: 2018/8/8 10:52
  */
+@Deprecated
 public class RecommendFilterFragment extends DraggableContentFragment<FragmentRecommendFilterBinding> {
 
     private OnRecordFilterListener onRecordFilterListener;

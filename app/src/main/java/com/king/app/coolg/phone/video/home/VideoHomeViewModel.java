@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.king.app.coolg.BuildConfig;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.http.AppHttpClient;
@@ -75,11 +74,12 @@ public class VideoHomeViewModel extends BaseViewModel {
         Observable<List<Record>> observable;
         RecommendBean bean = SettingProperty.getVideoRecBean();
         if (bean == null) {
-            observable = recordRepository.getPlayableRecords(5);
+            observable = recordRepository.getRecordsBy(5, true);
         }
         else {
+            bean.setOnline(true);
             bean.setNumber(5);
-            observable = recordRepository.getPlayableRecords(bean);
+            observable = recordRepository.getRecordsBy(bean);
         }
         observable
                 .flatMap(list -> toPlayItems(list))
