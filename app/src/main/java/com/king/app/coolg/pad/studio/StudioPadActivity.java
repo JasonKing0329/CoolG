@@ -10,13 +10,14 @@ import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordStudioPadBinding;
-import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.pad.record.list.RecordListPadFragment;
-import com.king.app.coolg.phone.record.list.FilterDialogContent;
 import com.king.app.coolg.phone.record.list.SortDialogContent;
 import com.king.app.coolg.phone.studio.StudioHolder;
 import com.king.app.coolg.phone.studio.StudioListFragment;
+import com.king.app.coolg.phone.video.home.RecommendBean;
+import com.king.app.coolg.phone.video.home.RecommendFragment;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.jactionbar.JActionbar;
 
@@ -35,7 +36,7 @@ public class StudioPadActivity extends MvvmActivity<ActivityRecordStudioPadBindi
 
     private RecordListPadFragment ftRecord;
 
-    private RecordListFilterBean mFilter;
+    private RecommendBean mFilter;
 
     private String mCurrentOrderName;
 
@@ -119,41 +120,22 @@ public class StudioPadActivity extends MvvmActivity<ActivityRecordStudioPadBindi
     }
 
     public void changeFilter() {
-        FilterDialogContent content = new FilterDialogContent();
-        content.setFilterBean(mFilter);
-        content.setOnFilterListener(bean -> {
+        RecommendFragment content = new RecommendFragment();
+        content.setBean(mFilter);
+        content.setOnRecommendListener(bean -> {
             mFilter = bean;
             ftRecord.onFilterChanged(mFilter);
-            updateFilter(bean);
+            updateFilter();
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setTitle("Recommend Setting");
         dialogFragment.setContentFragment(content);
-        dialogFragment.setTitle("Sort");
-        dialogFragment.show(getSupportFragmentManager(), "SortDialogContent");
+        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
+        dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
     }
 
-    public void updateFilter(RecordListFilterBean bean) {
-        if (bean != null) {
-            StringBuffer buffer = new StringBuffer();
-            if (bean.isBareback()) {
-                buffer.append(", ").append("Bareback");
-            }
-            if (bean.isInnerCum()) {
-                buffer.append(", ").append("Inner cum");
-            }
-            if (bean.isNotDeprecated()) {
-                buffer.append(", ").append("Not deprecated");
-            }
-            String title = buffer.toString();
-            if (title.length() > 2) {
-                title = title.substring(2);
-                mBinding.actionbarRecord.setTitle(mCurrentOrderName + " (" + title + ")");
-            } else {
-                mBinding.actionbarRecord.setTitle(mCurrentOrderName);
-            }
-        } else {
-            mBinding.actionbarRecord.setTitle(mCurrentOrderName);
-        }
+    public void updateFilter() {
+        mBinding.actionbarRecord.setTitle(mCurrentOrderName);
     }
 
     @Override

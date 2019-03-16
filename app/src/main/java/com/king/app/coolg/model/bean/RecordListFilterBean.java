@@ -5,6 +5,7 @@ package com.king.app.coolg.model.bean;
  * <p/>作者：景阳
  * <p/>创建时间: 2018/2/24 15:04
  */
+@Deprecated
 public class RecordListFilterBean {
 
     private boolean isBareback;

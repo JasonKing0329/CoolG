@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.king.app.coolg.model.bean.RecordListFilterBean;
+import com.king.app.coolg.phone.video.home.RecommendBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class RecordListPagerAdapter extends FragmentStatePagerAdapter {
         }
     }
 
-    public void onFilterChanged(RecordListFilterBean filter) {
+    public void onFilterChanged(RecommendBean filter) {
         if (fragmentList != null) {
             for (RecordListFragment ft:fragmentList) {
                 if (ft != null) {
@@ -79,16 +80,6 @@ public class RecordListPagerAdapter extends FragmentStatePagerAdapter {
             for (RecordListFragment ft:fragmentList) {
                 if (ft != null) {
                     ft.onKeywordChanged(keyword);
-                }
-            }
-        }
-    }
-
-    public void showCanPlayList(boolean show) {
-        if (fragmentList != null) {
-            for (RecordListFragment ft:fragmentList) {
-                if (ft != null) {
-                    ft.showCanPlayList(show);
                 }
             }
         }

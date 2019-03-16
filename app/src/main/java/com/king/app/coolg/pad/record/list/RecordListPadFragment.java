@@ -68,7 +68,7 @@ public class RecordListPadFragment extends BaseRecordListFragment<RecordGridPadA
     }
 
     @Override
-    protected void updateRecordCount(int recordType, Integer count) {
+    protected void updateRecordCount(Integer recordType, Integer count) {
 
     }
 

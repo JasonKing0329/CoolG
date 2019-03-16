@@ -10,9 +10,11 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordListPhoneBinding;
-import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.scene.SceneActivity;
+import com.king.app.coolg.phone.video.home.RecommendBean;
+import com.king.app.coolg.phone.video.home.RecommendFragment;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.SimpleDialogs;
 
@@ -26,7 +28,7 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
 
     public static final int REQUEST_SCENE = 501;
 
-    private RecordListFilterBean mFilter;
+    private RecommendBean mFilter;
 
     private RecordListPagerAdapter pagerAdapter;
 
@@ -69,9 +71,6 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
                     break;
                 case R.id.menu_filter:
                     changeFilter();
-                    break;
-                case R.id.menu_play:
-                    pagerAdapter.showCanPlayList(true);
                     break;
                 case R.id.menu_scene:
                     selectScene();
@@ -147,16 +146,18 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
     }
 
     public void changeFilter() {
-        FilterDialogContent content = new FilterDialogContent();
-        content.setFilterBean(mFilter);
-        content.setOnFilterListener(bean -> {
+        RecommendFragment content = new RecommendFragment();
+        content.setBean(mFilter);
+        content.setFixedType(mBinding.viewpager.getCurrentItem());
+        content.setOnRecommendListener(bean -> {
             mFilter = bean;
             pagerAdapter.onFilterChanged(mFilter);
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setTitle("Recommend Setting");
         dialogFragment.setContentFragment(content);
-        dialogFragment.setTitle("Sort");
-        dialogFragment.show(getSupportFragmentManager(), "SortDialogContent");
+        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
+        dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
     }
 
     @Override

@@ -11,9 +11,9 @@ import com.chenenyu.router.Router;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentRecordListBinding;
-import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.pad.record.RecordPadActivity;
 import com.king.app.coolg.phone.record.RecordActivity;
+import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.widget.AutoLoadMoreRecyclerView;
@@ -56,10 +56,7 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
         
         mBinding.rvItems.setEnableLoadMore(true);
         mBinding.rvItems.setOnLoadMoreListener(() -> {
-            // showCanBePlayed情况下已加载全部
-            if (!mModel.isShowCanBePlayed()) {
-                loadMoreRecords();
-            }
+            loadMoreRecords();
         });
 
         mBinding.fabTop.setOnClickListener(v -> mBinding.rvItems.scrollToPosition(0));
@@ -71,7 +68,6 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
     protected void onCreateData() {
 
         mModel.setDefaultLoadNumber(getDefaultLoadNumber());
-        mModel.setRecordType(getArguments().getInt(ARG_RECORD_TYPE));
         mModel.setKeyScene(getArguments().getString(ARG_RECORD_SCENE));
         mModel.setStarId(getArguments().getLong(ARG_STAR_ID));
         mModel.setOrderId(getArguments().getLong(ARG_ORDER_ID));
@@ -118,7 +114,7 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
 
     protected abstract int getDefaultLoadNumber();
 
-    protected abstract void updateRecordCount(int recordType, Integer count);
+    protected abstract void updateRecordCount(Integer recordType, Integer count);
 
     protected abstract void showList(List<RecordProxy> list);
 
@@ -165,11 +161,6 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
         loadNewRecords();
     }
 
-    public void showCanPlayList(boolean canPlay) {
-        mModel.setShowCanBePlayed(canPlay);
-        loadNewRecords();
-    }
-
     public void onSortChanged() {
         mModel.onSortTypeChanged();
         loadNewRecords();
@@ -180,7 +171,7 @@ public abstract class BaseRecordListFragment<T extends RecyclerView.Adapter> ext
         loadNewRecords();
     }
 
-    public void onFilterChanged(RecordListFilterBean filter) {
+    public void onFilterChanged(RecommendBean filter) {
         mModel.setFilter(filter);
         loadNewRecords();
     }

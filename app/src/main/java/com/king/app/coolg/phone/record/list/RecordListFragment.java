@@ -10,8 +10,8 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentRecordListBinding;
-import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.phone.record.RecordActivity;
+import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.gdb.data.entity.Record;
 
 import java.util.List;
@@ -62,10 +62,7 @@ public class RecordListFragment extends MvvmFragment<FragmentRecordListBinding, 
         mBinding.rvItems.setLayoutManager(new LinearLayoutManager(getActivity()));
         mBinding.rvItems.setEnableLoadMore(true);
         mBinding.rvItems.setOnLoadMoreListener(() -> {
-            // showCanBePlayed情况下已加载全部
-            if (!mModel.isShowCanBePlayed()) {
-                loadMoreRecords();
-            }
+            loadMoreRecords();
         });
 
         mBinding.fabTop.setOnClickListener(v -> mBinding.rvItems.scrollToPosition(0));
@@ -135,17 +132,12 @@ public class RecordListFragment extends MvvmFragment<FragmentRecordListBinding, 
         loadNewRecords();
     }
 
-    public void showCanPlayList(boolean canPlay) {
-        mModel.setShowCanBePlayed(canPlay);
-        loadNewRecords();
-    }
-
     public void onSortChanged() {
         mModel.onSortTypeChanged();
         loadNewRecords();
     }
 
-    public void onFilterChanged(RecordListFilterBean filter) {
+    public void onFilterChanged(RecommendBean filter) {
         mModel.setFilter(filter);
         loadNewRecords();
     }

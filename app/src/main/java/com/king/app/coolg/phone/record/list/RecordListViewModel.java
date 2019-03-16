@@ -7,15 +7,14 @@ import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
-import com.king.app.coolg.model.image.ImageProvider;
-import com.king.app.coolg.model.VideoModel;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
-import com.king.app.coolg.model.bean.RecordListFilterBean;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.gdb.data.RecordCursor;
 import com.king.app.gdb.data.entity.FavorRecord;
@@ -57,11 +56,9 @@ public class RecordListViewModel extends BaseViewModel {
 
     private int mSortMode;
     private boolean mSortDesc;
-    private RecordListFilterBean mFilter;
-    private int mRecordType;
+    private Integer mRecordType;
     private String mKeyScene;
     private String mKeyword;
-    private boolean mShowCanBePlayed;
     private long mStarId;
     private long mOrderId;
     /**
@@ -76,6 +73,8 @@ public class RecordListViewModel extends BaseViewModel {
      * record to be added into play order
      */
     private Record mRecordToPlayOrder;
+
+    private RecommendBean mRecommendBean;
 
     public RecordListViewModel(@NonNull Application application) {
         super(application);
@@ -102,15 +101,15 @@ public class RecordListViewModel extends BaseViewModel {
         DEFAULT_LOAD_MORE = defaultLoadNumber;
     }
 
-    public void setFilter(RecordListFilterBean mFilter) {
-        this.mFilter = mFilter;
+    public void setFilter(RecommendBean mFilter) {
+        this.mRecommendBean = mFilter;
     }
 
-    public void setRecordType(int mRecordType) {
+    public void setRecordType(Integer mRecordType) {
         this.mRecordType = mRecordType;
     }
 
-    public int getRecordType() {
+    public Integer getRecordType() {
         return mRecordType;
     }
 
@@ -120,14 +119,6 @@ public class RecordListViewModel extends BaseViewModel {
 
     public void setKeyword(String mKeyword) {
         this.mKeyword = mKeyword;
-    }
-
-    public void setShowCanBePlayed(boolean mShowCanBePlayed) {
-        this.mShowCanBePlayed = mShowCanBePlayed;
-    }
-
-    public boolean isShowCanBePlayed() {
-        return mShowCanBePlayed;
     }
 
     public void setStarId(long starId) {
@@ -157,7 +148,7 @@ public class RecordListViewModel extends BaseViewModel {
         // 统计全部数量
         countRecords();
         // 查询前N条数据
-        queryRecords(mSortMode, mSortDesc, mShowCanBePlayed, mKeyword, mKeyScene, mFilter, mRecordType, mStarId, mOrderId)
+        queryRecords(mSortMode, mSortDesc, mKeyword, mKeyScene, mRecommendBean, mRecordType, mStarId, mOrderId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<RecordProxy>>() {
@@ -186,18 +177,18 @@ public class RecordListViewModel extends BaseViewModel {
     }
 
     private void countRecords() {
-        getComplexFilter(mSortMode, mSortDesc, mShowCanBePlayed, mKeyword, mKeyScene, mFilter, mRecordType, mStarId, mOrderId)
+        getComplexFilter(mSortMode, mSortDesc, mKeyword, mKeyScene, mRecommendBean, mRecordType, mStarId, mOrderId)
                 .flatMap(filter -> repository.getRecordCount(filter))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<Long>() {
+                .subscribe(new Observer<Integer>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         addDisposable(d);
                     }
 
                     @Override
-                    public void onNext(Long count) {
+                    public void onNext(Integer count) {
                         countObserver.setValue(count.intValue());
                     }
 
@@ -219,7 +210,7 @@ public class RecordListViewModel extends BaseViewModel {
 
     public void loadMoreRecords(Integer scrollPosition) {
         int originSize = mRecordList == null ? 0:mRecordList.size();
-        queryRecords(mSortMode, mSortDesc, mShowCanBePlayed, mKeyword, mKeyScene, mFilter, mRecordType, mStarId, mOrderId)
+        queryRecords(mSortMode, mSortDesc, mKeyword, mKeyScene, mRecommendBean, mRecordType, mStarId, mOrderId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<RecordProxy>>() {
@@ -255,34 +246,27 @@ public class RecordListViewModel extends BaseViewModel {
      *
      * @param sortMode sort type
      * @param desc sort desc
-     * @param showCanBePlayed records can be played in device(has video resource in specific path)
      * @param nameLike record name contains nameLike
      * @param whereScene the scene of record
      * @param filterBean bareback, inner c, NR params of record
      * @param mRecordType record type, 0 stands for all
      * @return
      */
-    private Observable<List<RecordProxy>> queryRecords(int sortMode, boolean desc, boolean showCanBePlayed
-            , String nameLike, String whereScene, RecordListFilterBean filterBean, int mRecordType, long starId, long orderId) {
-        return getComplexFilter(sortMode, desc, showCanBePlayed, nameLike, whereScene, filterBean, mRecordType, starId, orderId)
+    private Observable<List<RecordProxy>> queryRecords(int sortMode, boolean desc
+            , String nameLike, String whereScene, RecommendBean filterBean, Integer mRecordType, long starId, long orderId) {
+        return getComplexFilter(sortMode, desc, nameLike, whereScene, filterBean, mRecordType, starId, orderId)
                 .flatMap(filter -> repository.getRecords(filter))
                 .flatMap(list -> {
                     moreCursor.offset += list.size();
-                    return pickCanBePlayedRecord(showCanBePlayed, list);
+                    return pickStarTypeRecord(list);
                 })
-                .flatMap(list -> pickStarTypeRecord(list))
                 .flatMap(list -> toViewItems(list));
     }
     
     private Observable<RecordComplexFilter> getComplexFilter(int sortMode, boolean desc
-            , boolean showCanBePlayed, String like, String whereScene, RecordListFilterBean filterBean, int mRecordType, long starId, long orderId) {
+            , String like, String whereScene, RecommendBean filterBean, Integer mRecordType, long starId, long orderId) {
         return Observable.create(e -> {
             RecordComplexFilter filter = new RecordComplexFilter();
-            // 加载可播放的需要从全部记录里通过对比video目录文件信息来挑选
-            if (showCanBePlayed) {
-                moreCursor.offset = -1;
-                moreCursor.number = -1;
-            }
 
             String scene = whereScene;
             if (AppConstants.KEY_SCENE_ALL.equals(whereScene)) {
@@ -300,23 +284,6 @@ public class RecordListViewModel extends BaseViewModel {
 
             e.onNext(filter);
         });
-    }
-
-    private ObservableSource<List<Record>> pickCanBePlayedRecord(boolean showCanBePlayed, List<Record> list) {
-        return observer -> {
-            if (showCanBePlayed) {
-                List<Record> rList = new ArrayList<>();
-                for (Record record:list) {
-                    if (VideoModel.getVideoPath(record.getName()) != null) {
-                        rList.add(record);
-                    }
-                }
-                observer.onNext(rList);
-            }
-            else {
-                observer.onNext(list);
-            }
-        };
     }
 
     private ObservableSource<List<Record>> pickStarTypeRecord(List<Record> list) {
@@ -373,18 +340,15 @@ public class RecordListViewModel extends BaseViewModel {
         if (!TextUtils.isEmpty(mKeyword)) {
             buffer.append(", ").append("Keyword[").append(mKeyword).append("]");
         }
-        if (mShowCanBePlayed) {
-            buffer.append(", ").append("Playable");
-        }
-        if (mFilter != null) {
-            if (mFilter.isBareback()) {
-                buffer.append(", ").append("Bareback");
+        if (mRecommendBean != null) {
+            if (!TextUtils.isEmpty(mRecommendBean.getSql())) {
+                buffer.append(", ").append(mRecommendBean.getSql());
             }
-            if (mFilter.isInnerCum()) {
-                buffer.append(", ").append("Inner cum");
+            if (mRecommendBean.isOnlyType1v1() && !TextUtils.isEmpty(mRecommendBean.getSql1v1())) {
+                buffer.append(", ").append(mRecommendBean.getSql1v1());
             }
-            if (mFilter.isNotDeprecated()) {
-                buffer.append(", ").append("Not Deprecated");
+            if (mRecommendBean.isOnlyType3w() && !TextUtils.isEmpty(mRecommendBean.getSql3w())) {
+                buffer.append(", ").append(mRecommendBean.getSql3w());
             }
         }
         String text = buffer.toString();

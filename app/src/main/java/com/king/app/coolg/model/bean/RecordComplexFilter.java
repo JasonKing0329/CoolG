@@ -1,5 +1,6 @@
 package com.king.app.coolg.model.bean;
 
+import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.gdb.data.RecordCursor;
 
 /**
@@ -9,12 +10,13 @@ import com.king.app.gdb.data.RecordCursor;
 public class RecordComplexFilter {
 
     private int sortType;
-    private int recordType;
+    // 固定recordType
+    private Integer recordType;
     private boolean desc;
     private String nameLike;
     private String scene;
     private RecordCursor cursor;
-    private RecordListFilterBean filter;
+    private RecommendBean filter;
     private long starId;
     private long studioId;
 
@@ -26,11 +28,11 @@ public class RecordComplexFilter {
         this.sortType = sortType;
     }
 
-    public int getRecordType() {
+    public Integer getRecordType() {
         return recordType;
     }
 
-    public void setRecordType(int recordType) {
+    public void setRecordType(Integer recordType) {
         this.recordType = recordType;
     }
 
@@ -66,11 +68,11 @@ public class RecordComplexFilter {
         this.cursor = cursor;
     }
 
-    public RecordListFilterBean getFilter() {
+    public RecommendBean getFilter() {
         return filter;
     }
 
-    public void setFilter(RecordListFilterBean filter) {
+    public void setFilter(RecommendBean filter) {
         this.filter = filter;
     }
 

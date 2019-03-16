@@ -9,6 +9,7 @@ import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.FragmentVideoRecommendBinding;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableContentFragment;
+import com.king.app.gdb.data.param.DataConstants;
 
 /**
  * Desc:
@@ -23,6 +24,8 @@ public class RecommendFragment extends DraggableContentFragment<FragmentVideoRec
     private RecommendBean mBean;
 
     private boolean isHideOnline;
+
+    private Integer mFixedType;
 
     public void setOnRecommendListener(OnRecommendListener onRecommendListener) {
         this.onRecommendListener = onRecommendListener;
@@ -46,8 +49,41 @@ public class RecommendFragment extends DraggableContentFragment<FragmentVideoRec
     protected void initView() {
         if (mBean == null) {
             mBean = new RecommendBean();
-            setAllTypeChecked();
         }
+        if (mFixedType != null) {
+            mBean.setTypeAll(false);
+            mBean.setTypeTogether(false);
+            mBean.setTypeMulti(false);
+            mBean.setType3w(false);
+            mBean.setType1v1(false);
+            switch (mFixedType) {
+                case DataConstants.VALUE_RECORD_TYPE_1V1:
+                    mBean.setType1v1(true);
+                    break;
+                case DataConstants.VALUE_RECORD_TYPE_3W:
+                    mBean.setType3w(true);
+                    break;
+                case DataConstants.VALUE_RECORD_TYPE_MULTI:
+                    mBean.setTypeMulti(true);
+                    break;
+                case DataConstants.VALUE_RECORD_TYPE_LONG:
+                    mBean.setTypeTogether(true);
+                    break;
+                default:
+                    mBean.setTypeAll(true);
+                    mBean.setTypeTogether(true);
+                    mBean.setTypeMulti(true);
+                    mBean.setType3w(true);
+                    mBean.setType1v1(true);
+                    break;
+            }
+            mBinding.cbTypeAll.setEnabled(false);
+            mBinding.cbType1v1.setEnabled(false);
+            mBinding.cbTypeTogether.setEnabled(false);
+            mBinding.cbTypeMulti.setEnabled(false);
+            mBinding.cbType3w.setEnabled(false);
+        }
+
         mBinding.setBean(mBean);
 
         mBinding.cbTypeAll.setOnCheckedChangeListener(typeListener);
@@ -225,6 +261,10 @@ public class RecommendFragment extends DraggableContentFragment<FragmentVideoRec
 
     public void setHideOnline(boolean hideOnline) {
         isHideOnline = hideOnline;
+    }
+
+    public void setFixedType(Integer type) {
+        mFixedType = type;
     }
 
     public interface OnRecommendListener {

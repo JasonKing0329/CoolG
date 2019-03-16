@@ -14,13 +14,13 @@ public class RecommendBean extends BaseObservable {
 
     private boolean isTypeAll = true;
 
-    private boolean isType1v1;
+    private boolean isType1v1 = true;
 
-    private boolean isType3w;
+    private boolean isType3w = true;
 
-    private boolean isTypeMulti;
+    private boolean isTypeMulti = true;
 
-    private boolean isTypeTogether;
+    private boolean isTypeTogether = true;
 
     private boolean isOnline;
 

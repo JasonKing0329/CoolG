@@ -16,9 +16,10 @@ import com.king.app.coolg.databinding.ActivityStarPhoneBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.RecordActivity;
-import com.king.app.coolg.phone.record.list.FilterDialogContent;
 import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.coolg.phone.record.list.SortDialogContent;
+import com.king.app.coolg.phone.video.home.RecommendBean;
+import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
@@ -37,6 +38,8 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
     private final int REQUEST_ADD_ORDER = 1602;
 
     private StarAdapter adapter;
+
+    private RecommendBean mFilter;
 
     @Override
     protected int getContentView() {
@@ -239,16 +242,18 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
     }
 
     public void changeFilter() {
-        FilterDialogContent content = new FilterDialogContent();
-        content.setFilterBean(mModel.getRecordFilter());
-        content.setOnFilterListener(bean -> {
+        RecommendFragment content = new RecommendFragment();
+        content.setBean(mFilter);
+        content.setOnRecommendListener(bean -> {
+            mFilter = bean;
             mModel.setRecordFilter(bean);
             mModel.loadStarRecords();
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setTitle("Recommend Setting");
         dialogFragment.setContentFragment(content);
-        dialogFragment.setTitle("Sort");
-        dialogFragment.show(getSupportFragmentManager(), "SortDialogContent");
+        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
+        dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
     }
 
     private void goToRecordPage(long recordId) {

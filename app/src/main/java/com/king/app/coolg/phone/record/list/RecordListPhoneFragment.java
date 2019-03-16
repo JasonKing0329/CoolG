@@ -44,7 +44,7 @@ public class RecordListPhoneFragment extends BaseRecordListFragment<RecordListAd
     }
 
     @Override
-    protected void updateRecordCount(int recordType, Integer count) {
+    protected void updateRecordCount(Integer recordType, Integer count) {
         holder.updateCount(recordType, count);
     }
 

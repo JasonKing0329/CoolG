@@ -14,16 +14,16 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityStarPadBinding;
-import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.pad.record.list.RecordListPadFragment;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
-import com.king.app.coolg.phone.record.list.FilterDialogContent;
 import com.king.app.coolg.phone.record.list.SortDialogContent;
 import com.king.app.coolg.phone.star.StarOrdersAdapter;
 import com.king.app.coolg.phone.star.StarRatingDialog;
 import com.king.app.coolg.phone.star.StarRelationship;
 import com.king.app.coolg.phone.star.StarRelationshipAdapter;
+import com.king.app.coolg.phone.video.home.RecommendBean;
+import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.utils.StarRatingUtil;
@@ -48,7 +48,7 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
     private final int REQUEST_ADD_ORDER = 1602;
 
     private RecordListPadFragment ftRecord;
-    private RecordListFilterBean mFilter;
+    private RecommendBean mFilter;
 
     @Override
     protected int getContentView() {
@@ -144,16 +144,17 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
     }
 
     public void changeFilter() {
-        FilterDialogContent content = new FilterDialogContent();
-        content.setFilterBean(mFilter);
-        content.setOnFilterListener(bean -> {
+        RecommendFragment content = new RecommendFragment();
+        content.setBean(mFilter);
+        content.setOnRecommendListener(bean -> {
             mFilter = bean;
             ftRecord.onFilterChanged(mFilter);
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setTitle("Recommend Setting");
         dialogFragment.setContentFragment(content);
-        dialogFragment.setTitle("Sort");
-        dialogFragment.show(getSupportFragmentManager(), "SortDialogContent");
+        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
+        dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
     }
 
     @Override

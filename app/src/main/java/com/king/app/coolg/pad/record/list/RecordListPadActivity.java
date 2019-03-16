@@ -17,12 +17,13 @@ import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordListPadBinding;
 import com.king.app.coolg.model.bean.HsvColorBean;
-import com.king.app.coolg.model.bean.RecordListFilterBean;
 import com.king.app.coolg.model.setting.SettingProperty;
-import com.king.app.coolg.phone.record.list.FilterDialogContent;
 import com.king.app.coolg.phone.record.list.SortDialogContent;
 import com.king.app.coolg.phone.record.scene.HsvColorDialogContent;
 import com.king.app.coolg.phone.record.scene.SceneFragment;
+import com.king.app.coolg.phone.video.home.RecommendBean;
+import com.king.app.coolg.phone.video.home.RecommendFragment;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.gdb.data.param.DataConstants;
 
@@ -43,7 +44,7 @@ public class RecordListPadActivity extends MvvmActivity<ActivityRecordListPadBin
 
     private String mTitle;
 
-    private RecordListFilterBean mFilter;
+    private RecommendBean mFilter;
 
     @Override
     protected int getContentView() {
@@ -256,42 +257,42 @@ public class RecordListPadActivity extends MvvmActivity<ActivityRecordListPadBin
         dialogFragment.show(getSupportFragmentManager(), "SortDialogContent");
     }
 
-    public void changeFilter() {
-        FilterDialogContent content = new FilterDialogContent();
-        content.setFilterBean(mFilter);
-        content.setOnFilterListener(bean -> {
-            mFilter = bean;
-            ftRecords.onFilterChanged(mFilter);
-            updateFilter(bean);
-        });
-        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
-        dialogFragment.setContentFragment(content);
-        dialogFragment.setTitle("Sort");
-        dialogFragment.show(getSupportFragmentManager(), "SortDialogContent");
+    private int getCurrentType() {
+        if (mBinding.rbTag1v1.isChecked()) {
+            return DataConstants.VALUE_RECORD_TYPE_1V1;
+        }
+        else if (mBinding.rbTag3w.isChecked()) {
+            return DataConstants.VALUE_RECORD_TYPE_3W;
+        }
+        else if (mBinding.rbTagMulti.isChecked()) {
+            return DataConstants.VALUE_RECORD_TYPE_MULTI;
+        }
+        else if (mBinding.rbTagTogether.isChecked()) {
+            return DataConstants.VALUE_RECORD_TYPE_LONG;
+        }
+        else {
+            return 0;
+        }
     }
 
-    public void updateFilter(RecordListFilterBean bean) {
-        if (bean != null) {
-            StringBuffer buffer = new StringBuffer();
-            if (bean.isBareback()) {
-                buffer.append(", ").append("Bareback");
-            }
-            if (bean.isInnerCum()) {
-                buffer.append(", ").append("Inner cum");
-            }
-            if (bean.isNotDeprecated()) {
-                buffer.append(", ").append("Not deprecated");
-            }
-            String title = buffer.toString();
-            if (title.length() > 2) {
-                title = title.substring(2);
-                mBinding.tvScene.setText(mTitle + " (" + title + ")");
-            } else {
-                mBinding.tvScene.setText(mTitle);
-            }
-        } else {
-            mBinding.tvScene.setText(mTitle);
-        }
+    public void changeFilter() {
+        RecommendFragment content = new RecommendFragment();
+        content.setBean(mFilter);
+        content.setFixedType(getCurrentType());
+        content.setOnRecommendListener(bean -> {
+            mFilter = bean;
+            ftRecords.onFilterChanged(bean);
+            updateFilter();
+        });
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setTitle("Recommend Setting");
+        dialogFragment.setContentFragment(content);
+        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
+        dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
+    }
+
+    public void updateFilter() {
+        mBinding.tvScene.setText(mTitle);
     }
     public void showSortPopup(View anchor) {
         PopupMenu menu = new PopupMenu(this, anchor);
