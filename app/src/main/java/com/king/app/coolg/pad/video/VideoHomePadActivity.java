@@ -10,7 +10,9 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPadBinding;
+import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.phone.video.home.VideoGuy;
@@ -21,7 +23,10 @@ import com.king.app.coolg.phone.video.list.PlayListActivity;
 import com.king.app.coolg.phone.video.list.PlayStarListActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
+import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.lib.banner.BannerFlipStyleProvider;
 
 import java.util.ArrayList;
@@ -48,7 +53,7 @@ public class VideoHomePadActivity extends MvvmActivity<ActivityVideoPadBinding, 
 
     @Override
     protected void initView() {
-        BannerFlipStyleProvider.setPagerAnim(mBinding.banner, 3);
+        BannerHelper.setBannerParams(mBinding.banner, ViewProperty.getVideoHomeBannerParams());
 
         mBinding.ivRefresh.setOnClickListener(v -> mModel.loadRecommend());
 
@@ -81,16 +86,50 @@ public class VideoHomePadActivity extends MvvmActivity<ActivityVideoPadBinding, 
         mBinding.ivList3.setOnClickListener(v -> onClickPlayList(mModel.getPlayList(3)));
 
         mBinding.ivSetting.setOnClickListener(v -> {
-            RecommendFragment content = new RecommendFragment();
-            content.setHideOnline(true);
-            content.setBean(SettingProperty.getVideoRecBean());
-            content.setOnRecommendListener(bean -> mModel.updateRecommend(bean));
-            DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
-            dialogFragment.setTitle("Recommend Setting");
-            dialogFragment.setContentFragment(content);
-            dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
-            dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
+            new AlertDialogFragment()
+                    .setItems(new String[]{"Set banner anim", "Set recommend"}
+                            , (dialogInterface, i) -> {
+                                if (i == 0) {
+                                    showBannerSetting();
+                                }
+                                else {
+                                    showRecommendSetting();
+                                }
+                            }).show(getSupportFragmentManager(), "AlertDialogFragment");
         });
+    }
+
+    private void showBannerSetting() {
+        BannerSettingFragment bannerSettingDialog = new BannerSettingFragment();
+        bannerSettingDialog.setParams(ViewProperty.getVideoHomeBannerParams());
+        bannerSettingDialog.setOnAnimSettingListener(new BannerSettingFragment.OnAnimSettingListener() {
+            @Override
+            public void onParamsUpdated(BannerParams params) {
+
+            }
+
+            @Override
+            public void onParamsSaved(BannerParams params) {
+                ViewProperty.setVideoHomeBannerParams(params);
+                BannerHelper.setBannerParams(mBinding.banner, params);
+            }
+        });
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setContentFragment(bannerSettingDialog);
+        dialogFragment.setTitle("Banner Setting");
+        dialogFragment.show(getSupportFragmentManager(), "BannerSettingFragment");
+    }
+
+    private void showRecommendSetting() {
+        RecommendFragment content = new RecommendFragment();
+        content.setHideOnline(true);
+        content.setBean(SettingProperty.getVideoRecBean());
+        content.setOnRecommendListener(bean -> mModel.updateRecommend(bean));
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setTitle("Recommend Setting");
+        dialogFragment.setContentFragment(content);
+        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
+        dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
     }
 
     private void onClickGuy(VideoGuy guy) {

@@ -14,19 +14,19 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityStarListPhoneBinding;
+import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.image.ImageProvider;
-import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.param.DataConstants;
-import com.king.lib.banner.BannerFlipStyleProvider;
 import com.king.lib.banner.CoolBannerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -59,7 +59,7 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
     @Override
     protected void initView() {
         initActionbar();
-        initBanner();
+        BannerHelper.setBannerParams(mBinding.banner, ViewProperty.getStarBannerParams());
         initRecommend();
         // 默认只缓存另外2个，在切换时处理view mode及sort type有很多弊端，改成缓存全部另外3个可以规避问题
         mBinding.viewpager.setOffscreenPageLimit(3);
@@ -85,41 +85,17 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
 
     private void showSettings() {
         BannerSettingFragment content = new BannerSettingFragment();
+        content.setParams(ViewProperty.getRecordBannerParams());
         content.setOnAnimSettingListener(new BannerSettingFragment.OnAnimSettingListener() {
-
             @Override
-            public void onRandomAnim(boolean random) {
-                SettingProperty.setStarRandomRecommend(random);
+            public void onParamsUpdated(BannerParams params) {
+
             }
 
             @Override
-            public boolean isRandomAnim() {
-                return SettingProperty.isStarRandomRecommend();
-            }
-
-            @Override
-            public int getAnimType() {
-                return SettingProperty.getStarRecommendAnimType();
-            }
-
-            @Override
-            public void onSaveAnimType(int type) {
-                SettingProperty.setStarRecommendAnimType(type);
-            }
-
-            @Override
-            public int getAnimTime() {
-                return SettingProperty.getStarRecommendAnimTime();
-            }
-
-            @Override
-            public void onSaveAnimTime(int time) {
-                SettingProperty.setStarRecommendAnimTime(time);
-            }
-
-            @Override
-            public void onParamsSaved() {
-                initBanner();
+            public void onParamsSaved(BannerParams params) {
+                ViewProperty.setRecordBannerParams(params);
+                BannerHelper.setBannerParams(mBinding.banner, params);
             }
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
@@ -209,18 +185,6 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
     private void changeSideBarVisible() {
         getCurrentPage().toggleSidebar();
     }
-
-    private void initBanner() {
-        mBinding.banner.setDuration(SettingProperty.getStarRecommendAnimTime());
-        if (SettingProperty.isStarRandomRecommend()) {
-            Random random = new Random();
-            int type = Math.abs(random.nextInt()) % BannerFlipStyleProvider.ANIM_TYPES.length;
-            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, type);
-        }
-        else {
-            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, SettingProperty.getStarRecommendAnimType());
-        }
-}
 
     private void initRecommend() {
 

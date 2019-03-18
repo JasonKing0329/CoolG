@@ -5,29 +5,23 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
-import com.king.app.coolg.model.FilterHelper;
 import com.king.app.coolg.model.image.ImageProvider;
-import com.king.app.coolg.model.RecommendModel;
-import com.king.app.coolg.model.bean.RecordFilterModel;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.model.repository.StarRepository;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.phone.home.RecommendProvider;
 import com.king.app.coolg.phone.star.list.StarProxy;
 import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.StarRatingUtil;
 import com.king.app.gdb.data.entity.Record;
-import com.king.app.gdb.data.entity.RecordDao;
 import com.king.app.gdb.data.entity.Star;
-import com.king.app.gdb.data.param.DataConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -212,7 +206,7 @@ public class HomePadViewModel extends BaseViewModel {
     }
 
     private void createTimer() {
-        int time = SettingProperty.getRecommendAnimTime();
+        int time = ViewProperty.getHomeBannerParams().getDuration();
         if (time < 3000) {
             time = 8000;
         }

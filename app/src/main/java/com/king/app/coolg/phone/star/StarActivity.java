@@ -13,7 +13,9 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityStarPhoneBinding;
+import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.record.list.RecordProxy;
@@ -179,40 +181,16 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
 
     private void showSettings() {
         BannerSettingFragment content = new BannerSettingFragment();
+        content.setParams(ViewProperty.getStarBannerParams());
         content.setOnAnimSettingListener(new BannerSettingFragment.OnAnimSettingListener() {
-
             @Override
-            public void onRandomAnim(boolean random) {
-                SettingProperty.setStarRandomRecommend(random);
+            public void onParamsUpdated(BannerParams params) {
+
             }
 
             @Override
-            public boolean isRandomAnim() {
-                return SettingProperty.isStarRandomRecommend();
-            }
-
-            @Override
-            public int getAnimType() {
-                return SettingProperty.getStarRecommendAnimType();
-            }
-
-            @Override
-            public void onSaveAnimType(int type) {
-                SettingProperty.setStarRecommendAnimType(type);
-            }
-
-            @Override
-            public int getAnimTime() {
-                return SettingProperty.getStarRecommendAnimTime();
-            }
-
-            @Override
-            public void onSaveAnimTime(int time) {
-                SettingProperty.setStarRecommendAnimTime(time);
-            }
-
-            @Override
-            public void onParamsSaved() {
+            public void onParamsSaved(BannerParams params) {
+                ViewProperty.setStarBannerParams(params);
                 // 只刷新头部
                 adapter.notifyItemChanged(0);
             }

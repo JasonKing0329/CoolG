@@ -17,8 +17,10 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentHomePadBinding;
+import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.pad.record.RecordPadActivity;
 import com.king.app.coolg.pad.star.StarPadActivity;
 import com.king.app.coolg.phone.star.list.StarProxy;
@@ -123,39 +125,16 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
     private void showBannerSetting() {
         BannerSettingFragment bannerSettingDialog = new BannerSettingFragment();
         bannerSettingDialog.setHideAnimType(true);
+        bannerSettingDialog.setParams(ViewProperty.getHomeBannerParams());
         bannerSettingDialog.setOnAnimSettingListener(new BannerSettingFragment.OnAnimSettingListener() {
             @Override
-            public void onRandomAnim(boolean random) {
+            public void onParamsUpdated(BannerParams params) {
 
             }
 
             @Override
-            public boolean isRandomAnim() {
-                return false;
-            }
-
-            @Override
-            public int getAnimType() {
-                return 0;
-            }
-
-            @Override
-            public void onSaveAnimType(int type) {
-
-            }
-
-            @Override
-            public int getAnimTime() {
-                return SettingProperty.getRecommendAnimTime();
-            }
-
-            @Override
-            public void onSaveAnimTime(int time) {
-                SettingProperty.setRecommendAnimTime(time);
-            }
-
-            @Override
-            public void onParamsSaved() {
+            public void onParamsSaved(BannerParams params) {
+                ViewProperty.setHomeBannerParams(params);
                 mModel.resetTimer();
             }
         });

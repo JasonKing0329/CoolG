@@ -14,13 +14,16 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityHomeBinding;
+import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.app.gdb.data.entity.Record;
 import com.king.lib.banner.BannerFlipStyleProvider;
 
@@ -76,26 +79,7 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
         });
 
         mBinding.fabTop.setOnClickListener(v -> mBinding.rvItems.scrollToPosition(0));
-
-        setBannerParams();
-    }
-
-    private void setBannerParams() {
-        int time = SettingProperty.getRecommendAnimTime();
-        if (time < 3000) {
-            time = 3000;
-        }
-        // 轮播切换时间
-        mBinding.banner.setDuration(time);
-
-        if (SettingProperty.isRandomRecommend()) {
-            Random random = new Random();
-            int type = Math.abs(random.nextInt()) % BannerFlipStyleProvider.ANIM_TYPES.length;
-            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, type);
-        }
-        else {
-            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, SettingProperty.getRecommendAnimType());
-        }
+        BannerHelper.setBannerParams(mBinding.banner, ViewProperty.getHomeBannerParams());
     }
 
     @Override
@@ -200,40 +184,17 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
 
     private void showAnimSetting() {
         BannerSettingFragment bannerSettingDialog = new BannerSettingFragment();
+        bannerSettingDialog.setParams(ViewProperty.getHomeBannerParams());
         bannerSettingDialog.setOnAnimSettingListener(new BannerSettingFragment.OnAnimSettingListener() {
             @Override
-            public void onRandomAnim(boolean random) {
-                SettingProperty.setRandomRecommend(random);
+            public void onParamsUpdated(BannerParams params) {
+
             }
 
             @Override
-            public boolean isRandomAnim() {
-                return SettingProperty.isRandomRecommend();
-            }
-
-            @Override
-            public int getAnimType() {
-                return SettingProperty.getRecommendAnimType();
-            }
-
-            @Override
-            public void onSaveAnimType(int type) {
-                SettingProperty.setRecommendAnimType(type);
-            }
-
-            @Override
-            public int getAnimTime() {
-                return SettingProperty.getRecommendAnimTime();
-            }
-
-            @Override
-            public void onSaveAnimTime(int time) {
-                SettingProperty.setRecommendAnimTime(time);
-            }
-
-            @Override
-            public void onParamsSaved() {
-                setBannerParams();
+            public void onParamsSaved(BannerParams params) {
+                ViewProperty.setHomeBannerParams(params);
+                BannerHelper.setBannerParams(mBinding.banner, params);
             }
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();

@@ -8,4 +8,7 @@
     <item android:id="@+id/menu_recommend_setting"
         android:title="Recommend Setting"
         app:showAsAction="never"/>
+    <item android:id="@+id/menu_anim_setting"
+        android:title="Anim Setting"
+        app:showAsAction="never"/>
 </menu>

@@ -26,8 +26,10 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordPadBinding;
+import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.palette.PaletteUtil;
 import com.king.app.coolg.model.palette.ViewColorBound;
+import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.pad.star.StarPadActivity;
 import com.king.app.coolg.pad.studio.StudioPadActivity;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
@@ -42,6 +44,9 @@ import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
+import com.king.app.coolg.view.dialog.DraggableDialogFragment;
+import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
@@ -88,6 +93,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         ColorUtil.updateIconColor(mBinding.ivOrder, getResources().getColor(R.color.colorPrimary));
         ColorUtil.updateIconColor(mBinding.ivSetCover, getResources().getColor(R.color.colorPrimary));
         ColorUtil.updateIconColor(mBinding.ivDelete, getResources().getColor(R.color.colorPrimary));
+        ColorUtil.updateIconColor(mBinding.ivSetting, getResources().getColor(R.color.colorPrimary));
 
         initRecyclerViews();
         initBanner();
@@ -96,6 +102,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         mBinding.ivOrder.setOnClickListener(v -> toggleOrders());
         mBinding.ivSetCover.setOnClickListener(v -> onApplyImage(mModel.getCurrentImage(mBinding.banner.getCurrentItem())));
         mBinding.ivDelete.setOnClickListener(v -> mModel.deleteImage(mModel.getCurrentImage(mBinding.banner.getCurrentItem())));
+        mBinding.ivSetting.setOnClickListener(v -> showBannerSetting());
         mBinding.tvStudio.setOnClickListener(v -> selectStudio());
         mBinding.tvOrders.setOnClickListener(v -> selectOrderToAddRecord());
         mBinding.tvPlayOrders.setOnClickListener(v -> onAddToPlayOrder());
@@ -117,6 +124,27 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         mBinding.rvPlayOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
 
+    private void showBannerSetting() {
+        BannerSettingFragment bannerSettingDialog = new BannerSettingFragment();
+        bannerSettingDialog.setParams(ViewProperty.getRecordBannerParams());
+        bannerSettingDialog.setOnAnimSettingListener(new BannerSettingFragment.OnAnimSettingListener() {
+            @Override
+            public void onParamsUpdated(BannerParams params) {
+
+            }
+
+            @Override
+            public void onParamsSaved(BannerParams params) {
+                ViewProperty.setRecordBannerParams(params);
+                BannerHelper.setBannerParams(mBinding.banner, params);
+            }
+        });
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setContentFragment(bannerSettingDialog);
+        dialogFragment.setTitle("Banner Setting");
+        dialogFragment.show(getSupportFragmentManager(), "BannerSettingFragment");
+    }
+
     private void initGallery() {
         recordGallery = new RecordGallery();
         if (pagerAdapter != null) {
@@ -127,7 +155,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
     }
 
     private void initBanner() {
-        BannerFlipStyleProvider.setPagerAnim(mBinding.banner, 3);
+        BannerHelper.setBannerParams(mBinding.banner, ViewProperty.getRecordBannerParams());
     }
 
     private void initRecyclerViews() {
@@ -379,6 +407,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         viewList.add(mBinding.ivOrder);
         viewList.add(mBinding.ivSetCover);
         viewList.add(mBinding.ivDelete);
+        viewList.add(mBinding.ivSetting);
         pagerAdapter = new RecordPagerAdapter(getLifecycle());
         pagerAdapter.setViewList(viewList);
         pagerAdapter.setList(list);

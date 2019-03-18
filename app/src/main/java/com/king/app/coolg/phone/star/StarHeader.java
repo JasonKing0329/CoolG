@@ -15,18 +15,17 @@ import com.bumptech.glide.request.RequestOptions;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseTagAdapter;
 import com.king.app.coolg.databinding.AdapterStarPhoneHeaderBinding;
-import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.utils.StarRatingUtil;
+import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.app.coolg.view.widget.StarRatingView;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarRating;
-import com.king.lib.banner.BannerFlipStyleProvider;
 import com.king.lib.banner.CoolBanner;
 import com.king.lib.banner.CoolBannerAdapter;
-import com.king.lib.banner.OnBannerPageListener;
 import com.king.lib.banner.guide.GuideView;
 
 import java.util.ArrayList;
@@ -342,14 +341,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
     }
 
     private void setBannerParams(CoolBanner banner) {
-        banner.setDuration(SettingProperty.getStarRecommendAnimTime());
-        if (SettingProperty.isStarRandomRecommend()) {
-            Random random = new Random();
-            int type = Math.abs(random.nextInt()) % BannerFlipStyleProvider.ANIM_TYPES.length;
-            BannerFlipStyleProvider.setPagerAnim(banner, type);
-        } else {
-            BannerFlipStyleProvider.setPagerAnim(banner, SettingProperty.getStarRecommendAnimType());
-        }
+        BannerHelper.setBannerParams(banner, ViewProperty.getStarBannerParams());
     }
 
     @Override

@@ -19,8 +19,10 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordPhoneBinding;
+import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.studio.StudioActivity;
@@ -29,6 +31,7 @@ import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.app.coolg.view.widget.video.OnVideoListener;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
@@ -295,7 +298,8 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     }
 
     private void showBanner(List<String> list) {
-        setBannerParams();
+        BannerHelper.setBannerParams(mBinding.banner, ViewProperty.getRecordBannerParams());
+
         HeadBannerAdapter adapter = new HeadBannerAdapter();
         adapter.setList(list);
 
@@ -305,18 +309,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
         mBinding.banner.setAdapter(adapter);
         mBinding.banner.startAutoPlay();
-    }
-
-    private void setBannerParams() {
-        // 轮播切换时间
-        mBinding.banner.setDuration(SettingProperty.getRecommendAnimTime());
-        if (SettingProperty.isRandomRecommend()) {
-            Random random = new Random();
-            int type = Math.abs(random.nextInt()) % BannerFlipStyleProvider.ANIM_TYPES.length;
-            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, type);
-        } else {
-            BannerFlipStyleProvider.setPagerAnim(mBinding.banner, SettingProperty.getRecommendAnimType());
-        }
     }
 
     private void showStars(List<RecordStar> list) {
@@ -412,40 +404,17 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
     private void showSettingDialog() {
         BannerSettingFragment bannerSettingDialog = new BannerSettingFragment();
+        bannerSettingDialog.setParams(ViewProperty.getRecordBannerParams());
         bannerSettingDialog.setOnAnimSettingListener(new BannerSettingFragment.OnAnimSettingListener() {
             @Override
-            public void onRandomAnim(boolean random) {
-                SettingProperty.setRandomRecommend(random);
+            public void onParamsUpdated(BannerParams params) {
+
             }
 
             @Override
-            public boolean isRandomAnim() {
-                return SettingProperty.isRandomRecommend();
-            }
-
-            @Override
-            public int getAnimType() {
-                return SettingProperty.getRecommendAnimType();
-            }
-
-            @Override
-            public void onSaveAnimType(int type) {
-                SettingProperty.setRecommendAnimType(type);
-            }
-
-            @Override
-            public int getAnimTime() {
-                return SettingProperty.getRecommendAnimTime();
-            }
-
-            @Override
-            public void onSaveAnimTime(int time) {
-                SettingProperty.setRecommendAnimTime(time);
-            }
-
-            @Override
-            public void onParamsSaved() {
-                setBannerParams();
+            public void onParamsSaved(BannerParams params) {
+                ViewProperty.setRecordBannerParams(params);
+                BannerHelper.setBannerParams(mBinding.banner, params);
             }
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();

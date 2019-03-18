@@ -13,7 +13,9 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPhoneBinding;
+import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.phone.video.list.PlayListActivity;
@@ -21,6 +23,8 @@ import com.king.app.coolg.phone.video.list.PlayStarListActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
+import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.lib.banner.BannerFlipStyleProvider;
 
 import java.util.ArrayList;
@@ -78,6 +82,9 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
                     dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
                     dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
                     break;
+                case R.id.menu_anim_setting:
+                    showBannerSetting();
+                    break;
             }
         });
 
@@ -96,7 +103,7 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
 //        mBinding.rvItems.setOnLoadMoreListener(() -> mModel.loadMore());
 
         // viewpager切换效果
-        BannerFlipStyleProvider.setPagerAnim(mBinding.banner, 3);
+        BannerHelper.setBannerParams(mBinding.banner, ViewProperty.getVideoHomeBannerParams());
     }
 
     @Override
@@ -240,6 +247,27 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
             mBinding.banner.startAutoPlay();
         });
         mModel.buildPage();
+    }
+
+    private void showBannerSetting() {
+        BannerSettingFragment bannerSettingDialog = new BannerSettingFragment();
+        bannerSettingDialog.setParams(ViewProperty.getVideoHomeBannerParams());
+        bannerSettingDialog.setOnAnimSettingListener(new BannerSettingFragment.OnAnimSettingListener() {
+            @Override
+            public void onParamsUpdated(BannerParams params) {
+
+            }
+
+            @Override
+            public void onParamsSaved(BannerParams params) {
+                ViewProperty.setVideoHomeBannerParams(params);
+                BannerHelper.setBannerParams(mBinding.banner, params);
+            }
+        });
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setContentFragment(bannerSettingDialog);
+        dialogFragment.setTitle("Banner Setting");
+        dialogFragment.show(getSupportFragmentManager(), "BannerSettingFragment");
     }
 
     @Override
