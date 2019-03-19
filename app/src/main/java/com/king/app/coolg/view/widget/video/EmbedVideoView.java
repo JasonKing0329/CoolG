@@ -46,6 +46,8 @@ public class EmbedVideoView extends VideoView {
 
     private OnPlayEmptyUrlListener onPlayEmptyUrlListener;
 
+    private OnClickListener interceptFullScreenListener;
+
     public EmbedVideoView(@NonNull Context context) {
         super(context);
         expandParent();
@@ -66,6 +68,10 @@ public class EmbedVideoView extends VideoView {
 
     public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
         this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
+    }
+
+    public void interceptFullScreenListener(OnClickListener interceptFullScreenListener) {
+        this.interceptFullScreenListener = interceptFullScreenListener;
     }
 
     private void expandParent() {
@@ -93,20 +99,32 @@ public class EmbedVideoView extends VideoView {
         findViewById(R.id.app_video_fullscreen).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getVideoInfo().getUri() == null) {
-                    if (onPlayEmptyUrlListener != null) {
-                        onPlayEmptyUrlListener.onPlayEmptyUrl(getVideoInfo().getFingerprint(), new UrlCallback() {
-                            @Override
-                            public void onReceiveUrl(String url) {
-                                setVideoPath(url);
-                                prepare();
-                                onClickFullScreen();
-                            }
-                        });
-                        return;
+                // full screen
+                if (interceptFullScreenListener == null) {
+                    if (getVideoInfo().getUri() == null) {
+                        if (onPlayEmptyUrlListener != null) {
+                            onPlayEmptyUrlListener.onPlayEmptyUrl(getVideoInfo().getFingerprint(), new UrlCallback() {
+                                @Override
+                                public void onReceiveUrl(String url) {
+                                    setVideoPath(url);
+                                    prepare();
+                                    onClickFullScreen();
+                                }
+                            });
+                            return;
+                        }
                     }
+                    onClickFullScreen();
                 }
-                onClickFullScreen();
+                // 截获full screen按钮事件
+                else {
+                    // 如果已经启动了，先pause
+                    try {
+                        pause();
+                    } catch (Exception e) {}
+
+                    interceptFullScreenListener.onClick(v);
+                }
             }
         });
     }

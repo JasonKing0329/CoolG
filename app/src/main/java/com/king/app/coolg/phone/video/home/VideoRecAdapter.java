@@ -26,6 +26,11 @@ public class VideoRecAdapter extends CoolBannerAdapter<PlayItemViewBean> {
 
     private OnPlayListener onPlayListener;
 
+    /**
+     * 是否截获全屏事件
+     */
+    private boolean interceptFullScreen;
+
     public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
         this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
     }
@@ -37,6 +42,10 @@ public class VideoRecAdapter extends CoolBannerAdapter<PlayItemViewBean> {
     @Override
     protected int getLayoutRes() {
         return R.layout.adapter_video_recommend;
+    }
+
+    public void setInterceptFullScreen(boolean interceptFullScreen) {
+        this.interceptFullScreen = interceptFullScreen;
     }
 
     @Override
@@ -60,6 +69,9 @@ public class VideoRecAdapter extends CoolBannerAdapter<PlayItemViewBean> {
             videoView.prepare();
         }
         videoView.setOnPlayEmptyUrlListener(onPlayEmptyUrlListener);
+        if (interceptFullScreen) {
+            videoView.interceptFullScreenListener(v -> onPlayListener.onInterceptFullScreen(bean));
+        }
         videoView.setOnVideoListener(new OnVideoListener() {
             @Override
             public int getStartSeek() {
@@ -100,6 +112,7 @@ public class VideoRecAdapter extends CoolBannerAdapter<PlayItemViewBean> {
         void onStartPlay();
         void onPausePlay();
         void onClickPlayItem(PlayItemViewBean item);
+        void onInterceptFullScreen(PlayItemViewBean item);
     }
 
 }

@@ -2,6 +2,7 @@ package com.king.app.coolg.model.repository;
 
 import android.text.TextUtils;
 
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
@@ -69,6 +70,35 @@ public class PlayRepository extends BaseRepository {
         return Observable.create(e -> {
             getDaoSession().getPlayItemDao().insertOrReplace(item);
             getDaoSession().getPlayItemDao().detachAll();
+            e.onNext(item);
+        });
+    }
+
+    /**
+     * 添加到临时播放列表，如果已存在则将其移至末尾
+     * @param recordId
+     * @param playUrl
+     * @return
+     */
+    public Observable<PlayItem> insertToTempList(long recordId, String playUrl) {
+        return Observable.create(e -> {
+            long orderId = AppConstants.PLAY_ORDER_TEMP_ID;
+            PlayItemDao dao = getDaoSession().getPlayItemDao();
+            // 已存在的删除掉重新加入（加载视频列表是按照添加顺序加入的）
+            if (isItemExist(orderId, recordId)) {
+                dao.queryBuilder()
+                        .where(PlayItemDao.Properties.OrderId.eq(orderId))
+                        .where(PlayItemDao.Properties.RecordId.eq(recordId))
+                        .buildDelete()
+                        .executeDeleteWithoutDetachingEntities();
+                dao.detachAll();
+            }
+            PlayItem item = new PlayItem();
+            item.setUrl(playUrl);
+            item.setOrderId(orderId);
+            item.setRecordId(recordId);
+            dao.insert(item);
+            dao.detachAll();
             e.onNext(item);
         });
     }

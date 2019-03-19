@@ -13,6 +13,7 @@ import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.utils.UrlUtil;
 import com.king.app.coolg.view.widget.video.UrlCallback;
+import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.Star;
 
 import java.util.List;
@@ -42,6 +43,8 @@ public class PlayStarListViewModel extends BaseViewModel {
     private PlayRepository repository;
 
     private long mStarId;
+
+    public MutableLiveData<Boolean> videoPlayOnReadyObserver = new MutableLiveData<>();
 
     public PlayStarListViewModel(@NonNull Application application) {
         super(application);
@@ -126,6 +129,35 @@ public class PlayStarListViewModel extends BaseViewModel {
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void playItem(PlayItemViewBean item) {
+        // 将视频url添加到临时播放列表的末尾
+        repository.insertToTempList(item.getRecord().getId(), item.getPlayUrl())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<PlayItem>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(PlayItem item) {
+                        videoPlayOnReadyObserver.setValue(true);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
                         messageObserver.setValue(e.getMessage());
                     }
 

@@ -2,6 +2,7 @@ package com.king.app.coolg.pad.home;
 
 import android.animation.Animator;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -95,7 +96,18 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
         mBinding.groupStar.setOnClickListener(v -> goToStarListPage());
         mBinding.groupOrders.setOnClickListener(v -> goToOrderPage());
         mBinding.groupStudios.setOnClickListener(v -> goToStudioPage());
-        mBinding.groupVideo.setOnClickListener(v -> goToVideoPage());
+        mBinding.groupVideo.setOnClickListener(v -> {
+            new AlertDialogFragment()
+                    .setMessage("Close current page?")
+                    .setPositiveText(getString(R.string.yes))
+                    .setPositiveListener((dialogInterface, i) -> {
+                        goToVideoPage();
+                        getActivity().finish();
+                    })
+                    .setNegativeText(getString(R.string.no))
+                    .setNegativeListener((dialogInterface, i) -> goToVideoPage())
+                    .show(getChildFragmentManager(), "AlertDialogFragment");
+        });
         mBinding.fabSetting.setOnClickListener(v -> {
             new AlertDialogFragment()
                     .setItems(new String[]{"Set switch time", "Set recommend"}

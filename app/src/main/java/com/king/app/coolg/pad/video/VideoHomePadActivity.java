@@ -9,6 +9,7 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityVideoPadBinding;
 import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.setting.SettingProperty;
@@ -22,6 +23,7 @@ import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.phone.video.list.PlayListActivity;
 import com.king.app.coolg.phone.video.list.PlayStarListActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
+import com.king.app.coolg.phone.video.player.PlayerActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -175,6 +177,7 @@ public class VideoHomePadActivity extends MvvmActivity<ActivityVideoPadBinding, 
             }
 
             recAdapter = new VideoRecAdapter();
+            recAdapter.setInterceptFullScreen(true);
             recAdapter.setList(list);
             // 只要按下播放键就停止轮播
             // url尚未获取，需要先获取url
@@ -204,12 +207,26 @@ public class VideoHomePadActivity extends MvvmActivity<ActivityVideoPadBinding, 
                             .with(RecordActivity.EXTRA_RECORD_ID, item.getRecord().getId())
                             .go(getContext());
                 }
+
+                @Override
+                public void onInterceptFullScreen(PlayItemViewBean item) {
+                    mModel.playItem(item);
+                }
             });
             mBinding.banner.setAdapter(recAdapter);
 
             mBinding.banner.startAutoPlay();
         });
+        mModel.videoPlayOnReadyObserver.observe(this, result -> playList());
         mModel.buildPage();
+    }
+
+    private void playList() {
+        Router.build("Player")
+                .with(PlayerActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
+                .with(PlayerActivity.EXTRA_PLAY_RANDOM, false)
+                .with(PlayerActivity.EXTRA_PLAY_LAST, true)
+                .go(this);
     }
 
     @Override

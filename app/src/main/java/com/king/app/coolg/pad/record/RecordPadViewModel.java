@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 
-import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.VideoModel;
 import com.king.app.coolg.model.palette.ViewColorBound;
@@ -14,7 +13,6 @@ import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.phone.record.PassionPoint;
 import com.king.app.coolg.phone.record.RecordViewModel;
 import com.king.app.gdb.data.entity.PlayItem;
-import com.king.app.gdb.data.entity.PlayItemDao;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordType1v1;
@@ -255,7 +253,7 @@ public class RecordPadViewModel extends RecordViewModel {
 
     public void playVideo() {
         // 将视频url添加到临时播放列表的末尾
-        insertOrSwitchToRear(AppConstants.PLAY_ORDER_TEMP_ID, mRecord.getId())
+        playRepository.insertToTempList(mRecord.getId(), mPlayUrl)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<PlayItem>() {
@@ -281,25 +279,4 @@ public class RecordPadViewModel extends RecordViewModel {
                 });
     }
 
-    private Observable<PlayItem> insertOrSwitchToRear(long orderId, long recordId) {
-        return Observable.create(e -> {
-            PlayItemDao dao = getDaoSession().getPlayItemDao();
-            // 已存在的删除掉重新加入（加载视频列表是按照添加顺序加入的）
-            if (playRepository.isItemExist(orderId, recordId)) {
-                dao.queryBuilder()
-                        .where(PlayItemDao.Properties.OrderId.eq(orderId))
-                        .where(PlayItemDao.Properties.RecordId.eq(recordId))
-                        .buildDelete()
-                        .executeDeleteWithoutDetachingEntities();
-                dao.detachAll();
-            }
-            PlayItem item = new PlayItem();
-            item.setUrl(mPlayUrl);
-            item.setOrderId(orderId);
-            item.setRecordId(recordId);
-            dao.insert(item);
-            dao.detachAll();
-            e.onNext(item);
-        });
-    }
 }

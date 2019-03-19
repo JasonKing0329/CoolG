@@ -127,7 +127,7 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
 
         mModel.closeListObserver.observe(this, close -> mBinding.ftList.startAnimation(listDisappear()));
         mModel.videoObserver.observe(this, bean -> playItem(bean));
-        mModel.stopVideoObserver.observe(this, stop -> mBinding.videoView.getPlayer().stop());
+        mModel.stopVideoObserver.observe(this, stop -> mBinding.videoView.pause());
 
         mModel.loadPlayItems(getOrderId(), getStarId(), isRandom(), isPlayLast());
     }

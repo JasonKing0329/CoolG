@@ -48,7 +48,9 @@ public class VideoHomeViewModel extends BaseViewModel {
 
     public MutableLiveData<Boolean> getPlayUrlFailed = new MutableLiveData<>();
 
-    private PlayRepository playRepository;
+    public MutableLiveData<Boolean> videoPlayOnReadyObserver = new MutableLiveData<>();
+
+    protected PlayRepository playRepository;
 
     private RecordRepository recordRepository;
 
@@ -450,5 +452,35 @@ public class VideoHomeViewModel extends BaseViewModel {
     public void updateRecommend(RecommendBean bean) {
         SettingProperty.setVideoRecBean(bean);
         loadRecommend();
+    }
+
+
+    public void playItem(PlayItemViewBean item) {
+        // 将视频url添加到临时播放列表的末尾
+        playRepository.insertToTempList(item.getRecord().getId(), item.getPlayUrl())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<PlayItem>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(PlayItem item) {
+                        videoPlayOnReadyObserver.setValue(true);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

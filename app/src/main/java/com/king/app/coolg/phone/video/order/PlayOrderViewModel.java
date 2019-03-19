@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.image.ImageProvider;
-import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.video.home.VideoPlayList;
 import com.king.app.gdb.data.entity.PlayItemDao;
 import com.king.app.gdb.data.entity.PlayOrder;
@@ -19,8 +18,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -29,17 +26,10 @@ import io.reactivex.schedulers.Schedulers;
 
 public class PlayOrderViewModel extends BaseViewModel {
 
-    private final int SORT_BY_ID = 0;
-
-    private final int SORT_BY_NAME = 1;
-
-    private int mSortType;
-
     public MutableLiveData<List<VideoPlayList>> dataObserver = new MutableLiveData<>();
 
     public PlayOrderViewModel(@NonNull Application application) {
         super(application);
-        mSortType = SettingProperty.getVideoPlayOrderViewType();
     }
 
     public void loadOrders() {
@@ -150,76 +140,9 @@ public class PlayOrderViewModel extends BaseViewModel {
 
     private Observable<List<VideoPlayList>> sort(List<VideoPlayList> list) {
         return Observable.create(e -> {
-            if (mSortType == SORT_BY_NAME) {
-                Collections.sort(list, new NameComparator());
-            }
-            else {
-                Collections.sort(list, new IdComparator());
-            }
+            Collections.sort(list, new NameComparator());
             e.onNext(list);
         });
-    }
-
-    public void sortById() {
-        if (mSortType != SORT_BY_ID) {
-            mSortType = SORT_BY_ID;
-            sort();
-        }
-    }
-
-    public void sortByName() {
-        if (mSortType != SORT_BY_NAME) {
-            mSortType = SORT_BY_NAME;
-            sort();
-        }
-    }
-
-    private void sort() {
-        loadingObserver.setValue(true);
-        sort(dataObserver.getValue())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<VideoPlayList>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(List<VideoPlayList> list) {
-                        dataObserver.setValue(list);
-                        loadingObserver.setValue(false);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        messageObserver.setValue(e.getMessage());
-                        loadingObserver.setValue(false);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    private class IdComparator implements Comparator<VideoPlayList> {
-
-        @Override
-        public int compare(VideoPlayList left, VideoPlayList right) {
-            long result = left.getPlayOrder().getId() - right.getPlayOrder().getId();
-            if (result < 0) {
-                return -1;
-            }
-            else if (result > 0) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
-        }
     }
 
     private class NameComparator implements Comparator<VideoPlayList> {

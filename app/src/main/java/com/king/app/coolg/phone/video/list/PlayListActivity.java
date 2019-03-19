@@ -13,6 +13,7 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityVideoOrderPlayListBinding;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.video.player.PlayerActivity;
@@ -93,9 +94,11 @@ public class PlayListActivity extends MvvmActivity<ActivityVideoOrderPlayListBin
             switch (menuId) {
                 case R.id.menu_play_sequence:
                     playList(false);
+                    finish();
                     break;
                 case R.id.menu_play_random:
                     playList(true);
+                    finish();
                     break;
                 case R.id.menu_clear:
                     showConfirmCancelMessage("Clear all play items?"
@@ -122,16 +125,33 @@ public class PlayListActivity extends MvvmActivity<ActivityVideoOrderPlayListBin
     protected void initData() {
         mModel.orderObserver.observe(this, order -> mBinding.actionbar.setTitle(order.getName()));
         mModel.itemsObserver.observe(this, list -> showItems(list));
+        mModel.videoPlayOnReadyObserver.observe(this, play -> playList());
 
         mModel.loadPlayItems(getOrderId());
+    }
+
+    private void playList() {
+        Router.build("Player")
+                .with(PlayerActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
+                .with(PlayerActivity.EXTRA_PLAY_RANDOM, false)
+                .with(PlayerActivity.EXTRA_PLAY_LAST, true)
+                .go(this);
     }
 
     private void showItems(List<PlayItemViewBean> list) {
         if (adapter == null) {
             adapter = new PlayerItemAdapter();
-            adapter.setOnPlayItemListener((position, bean) -> {
-                mModel.deleteItem(position);
-                setResultChanged();
+            adapter.setOnPlayItemListener(new PlayerItemAdapter.OnPlayItemListener() {
+                @Override
+                public void onPlayItem(int position, PlayItemViewBean bean) {
+                    mModel.playItem(bean);
+                }
+
+                @Override
+                public void onDeleteItem(int position, PlayItemViewBean bean) {
+                    mModel.deleteItem(position);
+                    setResultChanged();
+                }
             });
             adapter.setOnPlayEmptyUrlListener((fingerprint, callback) -> {
                 int position = Integer.parseInt(fingerprint);

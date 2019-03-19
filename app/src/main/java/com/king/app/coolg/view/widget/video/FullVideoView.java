@@ -127,22 +127,30 @@ public class FullVideoView extends VideoView {
     }
 
     public void play() {
-        GiraffePlayer player = getPlayer();
-        if (onVideoListener == null) {
-            player.start();
-        }
-        else {
-            if (isInitVideo && onVideoListener.getStartSeek() > 0) {
-                restartOrRestore(player);
-            }
-            else {
+        try {
+            GiraffePlayer player = getPlayer();
+            if (onVideoListener == null) {
                 player.start();
             }
+            else {
+                if (isInitVideo && onVideoListener.getStartSeek() > 0) {
+                    restartOrRestore(player);
+                }
+                else {
+                    player.start();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private void pause() {
-        getPlayer().pause();
+    public void pause() {
+        try {
+            getPlayer().pause();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void restartOrRestore(GiraffePlayer player) {

@@ -47,6 +47,8 @@ public class PlayListViewModel extends BaseViewModel {
 
     private long mOrderId;
 
+    public MutableLiveData<Boolean> videoPlayOnReadyObserver = new MutableLiveData<>();
+
     public PlayListViewModel(@NonNull Application application) {
         super(application);
         repository = new PlayRepository();
@@ -211,6 +213,35 @@ public class PlayListViewModel extends BaseViewModel {
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void playItem(PlayItemViewBean item) {
+        // 将视频url添加到临时播放列表的末尾
+        repository.insertToTempList(item.getRecord().getId(), item.getPlayUrl())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<PlayItem>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(PlayItem item) {
+                        videoPlayOnReadyObserver.setValue(true);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
                         messageObserver.setValue(e.getMessage());
                     }
 

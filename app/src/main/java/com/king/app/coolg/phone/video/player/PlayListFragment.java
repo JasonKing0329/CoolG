@@ -63,7 +63,7 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
     }
 
     private void showList(List<PlayItemViewBean> list) {
-        mBinding.tvTitle.setText("Play List (" + list.size() + ")");
+        updateTitle(list.size());
         if (adapter == null) {
             adapter = new PlayListAdapter();
             adapter.setList(list);
@@ -73,6 +73,7 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
             adapter.setOnDeleteListener((position, bean) -> {
                 playerViewModel.deletePlayItem(position, bean.getPlayItem());
                 adapter.notifyItemRemoved(position);
+                updateTitle(adapter.getItemCount());
             });
             mBinding.rvList.setAdapter(adapter);
         }
@@ -80,5 +81,9 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
             adapter.setList(list);
             adapter.notifyDataSetChanged();
         }
+    }
+
+    private void updateTitle(int size) {
+        mBinding.tvTitle.setText("Play List (" + size + ")");
     }
 }

@@ -1,7 +1,6 @@
 package com.king.app.coolg.phone.video.order;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
@@ -20,7 +19,6 @@ import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.video.home.VideoPlayList;
 import com.king.app.coolg.phone.video.list.PlayListActivity;
 import com.king.app.coolg.utils.ScreenUtils;
-import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.SimpleDialogs;
 import com.king.app.jactionbar.OnConfirmListener;
 
@@ -74,18 +72,6 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
                 case R.id.menu_delete:
                     mBinding.actionbar.showConfirmStatus(menuId);
                     adapter.setMultiSelect(true);
-                    break;
-                case R.id.menu_sort:
-                    new AlertDialogFragment()
-                            .setItems(getResources().getStringArray(R.array.sort_play_order), (dialog, which) -> {
-                                if (which == 0) {
-                                    mModel.sortById();
-                                }
-                                else if (which == 1) {
-                                    mModel.sortByName();
-                                }
-                            })
-                            .show(getSupportFragmentManager(), "AlertDialogFragment");
                     break;
                 case R.id.menu_list_view_type:
                     int type = SettingProperty.getVideoPlayOrderViewType();

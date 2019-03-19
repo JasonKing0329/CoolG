@@ -61,6 +61,7 @@ public class PlayerItemAdapter extends BaseBindingAdapter<AdapterPlayItemBinding
         }
         binding.videoView.setOnPlayEmptyUrlListener(onPlayEmptyUrlListener);
         binding.ivDelete.setOnClickListener(v -> onPlayItemListener.onDeleteItem(position, bean));
+        binding.ivPlay.setOnClickListener(v -> onPlayItemListener.onPlayItem(position, bean));
     }
 
     public void setEnableDelete(boolean enableDelete) {
@@ -71,6 +72,7 @@ public class PlayerItemAdapter extends BaseBindingAdapter<AdapterPlayItemBinding
     }
 
     public interface OnPlayItemListener {
+        void onPlayItem(int position, PlayItemViewBean bean);
         void onDeleteItem(int position, PlayItemViewBean bean);
     }
 }
