@@ -8,8 +8,8 @@ android {
         applicationId "com.king.app.coolg"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 95
-        versionName "5.2.2"
+        versionCode 96
+        versionName "5.2.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -23,7 +23,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.releaseConfig
-            buildConfigField("boolean", "checkUser", "false")
+            buildConfigField("boolean", "checkUser", "true")
         }
         release {
             minifyEnabled false

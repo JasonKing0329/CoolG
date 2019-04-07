@@ -78,8 +78,19 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
                 case R.id.menu_offset:
                     showSetOffset();
                     break;
+                case R.id.menu_count:
+                    showCount();
+                    break;
             }
         });
+    }
+
+    private void showCount() {
+        RecordCountDialog content = new RecordCountDialog();
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setContentFragment(content);
+        dialogFragment.setTitle("Statistics");
+        dialogFragment.show(getSupportFragmentManager(), "RecordCountDialog");
     }
 
     private void showSetOffset() {

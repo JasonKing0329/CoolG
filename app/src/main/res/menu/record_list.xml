@@ -17,4 +17,7 @@
     <item android:id="@+id/menu_offset"
         android:title="Set offset"
         app:showAsAction="never"/>
+    <item android:id="@+id/menu_count"
+        android:title="Statistics"
+        app:showAsAction="never"/>
 </menu>

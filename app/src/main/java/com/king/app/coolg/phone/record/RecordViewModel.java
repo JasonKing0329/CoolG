@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
+import com.king.app.coolg.model.bean.TitleValueBean;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
@@ -63,6 +64,8 @@ public class RecordViewModel extends BaseViewModel {
 
     public MutableLiveData<List<VideoPlayList>> playOrdersObserver = new MutableLiveData<>();
 
+    public MutableLiveData<List<TitleValueBean>> scoresObserver = new MutableLiveData<>();
+
     public MutableLiveData<String> studioObserver = new MutableLiveData<>();
 
     public MutableLiveData<String> videoUrlObserver = new MutableLiveData<>();
@@ -105,6 +108,7 @@ public class RecordViewModel extends BaseViewModel {
                         mRecord = record;
                         recordObserver.setValue(record);
 
+                        loadScoreItems();
                         checkPlayable();
                     }
 
@@ -118,6 +122,93 @@ public class RecordViewModel extends BaseViewModel {
 
                     }
                 });
+    }
+
+    private void loadScoreItems() {
+        createScoreItems()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<TitleValueBean>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<TitleValueBean> scoreItems) {
+                        scoresObserver.setValue(scoreItems);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private Observable<List<TitleValueBean>> createScoreItems() {
+        return Observable.create(e -> {
+            List<TitleValueBean> list = new ArrayList<>();
+            switch (mRecord.getType()) {
+                case DataConstants.VALUE_RECORD_TYPE_1V1:
+                    getScoreItems(mRecord.getRecordType1v1(), list);
+                    break;
+                case DataConstants.VALUE_RECORD_TYPE_3W:
+                case DataConstants.VALUE_RECORD_TYPE_MULTI:
+                case DataConstants.VALUE_RECORD_TYPE_LONG:
+                    getScoreItems(mRecord.getRecordType3w(), list);
+                    break;
+            }
+            e.onNext(list);
+        });
+    }
+
+    private void getScoreItems(RecordType3w record, List<TitleValueBean> list) {
+        if (record.getScoreBjob() > 0) {
+            list.add(new TitleValueBean("Bjob", String.valueOf(record.getScoreBjob())));
+        }
+        if (record.getScoreCshow() > 0) {
+            list.add(new TitleValueBean("CShow", String.valueOf(record.getScoreCshow())));
+        }
+        if (record.getScoreForePlay() > 0) {
+            list.add(new TitleValueBean("Foreplay", String.valueOf(record.getScoreForePlay())));
+        }
+        if (record.getScoreRhythm() > 0) {
+            list.add(new TitleValueBean("Rhythm", String.valueOf(record.getScoreRhythm())));
+        }
+        if (record.getScoreRim() > 0) {
+            list.add(new TitleValueBean("Rim", String.valueOf(record.getScoreRim())));
+        }
+        if (record.getScoreStory() > 0) {
+            list.add(new TitleValueBean("Story", String.valueOf(record.getScoreStory())));
+        }
+    }
+
+    private void getScoreItems(RecordType1v1 record, List<TitleValueBean> list) {
+        if (record.getScoreBjob() > 0) {
+            list.add(new TitleValueBean("Bjob", String.valueOf(record.getScoreBjob())));
+        }
+        if (record.getScoreCshow() > 0) {
+            list.add(new TitleValueBean("CShow", String.valueOf(record.getScoreCshow())));
+        }
+        if (record.getScoreForePlay() > 0) {
+            list.add(new TitleValueBean("Foreplay", String.valueOf(record.getScoreForePlay())));
+        }
+        if (record.getScoreRhythm() > 0) {
+            list.add(new TitleValueBean("Rhythm", String.valueOf(record.getScoreRhythm())));
+        }
+        if (record.getScoreRim() > 0) {
+            list.add(new TitleValueBean("Rim", String.valueOf(record.getScoreRim())));
+        }
+        if (record.getScoreStory() > 0) {
+            list.add(new TitleValueBean("Story", String.valueOf(record.getScoreStory())));
+        }
     }
 
     protected void checkPlayable() {

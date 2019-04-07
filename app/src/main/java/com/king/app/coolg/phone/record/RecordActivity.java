@@ -20,13 +20,14 @@ import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordPhoneBinding;
 import com.king.app.coolg.model.bean.BannerParams;
+import com.king.app.coolg.model.bean.TitleValueBean;
 import com.king.app.coolg.model.image.ImageProvider;
-import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.studio.StudioActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
+import com.king.app.coolg.utils.FormatUtil;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
@@ -35,15 +36,10 @@ import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.app.coolg.view.widget.video.OnVideoListener;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
-import com.king.app.gdb.data.entity.RecordType1v1;
-import com.king.app.gdb.data.entity.RecordType3w;
-import com.king.app.gdb.data.param.DataConstants;
-import com.king.lib.banner.BannerFlipStyleProvider;
 import com.king.lib.banner.CoolBannerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import tcking.github.com.giraffeplayer2.GiraffePlayer;
 import tcking.github.com.giraffeplayer2.Option;
@@ -73,6 +69,8 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     private RecordOrdersAdapter orderAdapter;
     private RecordPlayOrdersAdapter playOrdersAdapter;
 
+    private ScoreItemAdapter scoreAdapter;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_record_phone;
@@ -83,9 +81,9 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         //set global configuration: turn on multiple_requests
         PlayerManager.getInstance().getDefaultVideoInfo().addOption(Option.create(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "multiple_requests", 1L));
 
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        mBinding.rvStars.setLayoutManager(manager);
+        mBinding.rvStars.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        mBinding.rvScores.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         mBinding.actionbar.setOnBackListener(() -> onBackPressed());
         mBinding.actionbar.setOnMenuItemListener(menuId -> {
@@ -251,6 +249,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             mModel.loadRecordOrders();
             mModel.loadRecordPlayOrders();
         });
+        mModel.scoresObserver.observe(this, list -> showScores(list));
         mModel.ordersObserver.observe(this, list -> {
             mBinding.tvOrder.setText(String.valueOf(list.size()));
             if (orderAdapter == null) {
@@ -291,6 +290,18 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
     }
 
+    private void showScores(List<TitleValueBean> list) {
+        if (scoreAdapter == null) {
+            scoreAdapter = new ScoreItemAdapter();
+            scoreAdapter.setList(list);
+            mBinding.rvScores.setAdapter(scoreAdapter);
+        }
+        else {
+            scoreAdapter.setList(list);
+            scoreAdapter.notifyDataSetChanged();
+        }
+    }
+
     private void showPassionPoints(List<PassionPoint> list) {
         PassionPointAdapter adapter = new PassionPointAdapter();
         adapter.setList(list);
@@ -325,19 +336,8 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     }
 
     private void showRecord(Record record) {
-        // RecordOneVOne和RecordThree都是继承于RecordSingleScene
-        switch (record.getType()) {
-            case DataConstants.VALUE_RECORD_TYPE_1V1:
-                initRecordOneVOne(record.getRecordType1v1());
-                break;
-            case DataConstants.VALUE_RECORD_TYPE_3W:
-            case DataConstants.VALUE_RECORD_TYPE_MULTI:
-            case DataConstants.VALUE_RECORD_TYPE_LONG:
-                initRecordThree(record.getRecordType3w());
-                break;
-        }
-
         // Record公共部分
+        mBinding.tvDate.setText(FormatUtil.formatDate(record.getLastModifyTime()));
         mBinding.tvScene.setText(record.getScene());
         mBinding.tvPath.setText(record.getDirectory() + "/" + record.getName());
         mBinding.tvHd.setText("" + record.getHdLevel());
@@ -378,28 +378,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                     .load(cuPath)
                     .into(mBinding.ivCum);
         }
-    }
-
-    private void initRecordOneVOne(RecordType1v1 record) {
-        mBinding.tvStory.setText("" + record.getScoreStory());
-        mBinding.tvSceneScore.setText("" + record.getScoreScene());
-        mBinding.tvBjob.setText("" + record.getScoreBjob());
-        mBinding.tvRhythm.setText("" + record.getScoreRhythm());
-        mBinding.tvForeplay.setText("" + record.getScoreForePlay());
-        mBinding.tvRim.setText("" + record.getScoreRim());
-        mBinding.tvCshow.setText("" + record.getScoreCshow());
-    }
-
-    private void initRecordThree(RecordType3w record) {
-        mBinding.tvStory.setText("" + record.getScoreStory());
-        mBinding.tvSceneScore.setText("" + record.getScoreScene());
-        mBinding.tvStory.setText("" + record.getScoreStory());
-        mBinding.tvSceneScore.setText("" + record.getScoreScene());
-        mBinding.tvBjob.setText("" + record.getScoreBjob());
-        mBinding.tvRhythm.setText("" + record.getScoreRhythm());
-        mBinding.tvForeplay.setText("" + record.getScoreForePlay());
-        mBinding.tvRim.setText("" + record.getScoreRim());
-        mBinding.tvCshow.setText("" + record.getScoreCshow());
     }
 
     private void showSettingDialog() {

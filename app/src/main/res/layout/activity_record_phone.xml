@@ -118,35 +118,50 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"/>
 
-                <RelativeLayout
+                <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
 
                     <TextView
                         android:id="@+id/tv_score_total"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="15dp"
                         android:text="518"
                         android:textColor="@color/colorPrimary"
                         android:textSize="46dp"
                         android:textStyle="bold"
-                        android:transitionName="@string/anim_record_page_score" />
+                        android:transitionName="@string/anim_record_page_score"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
                     <TextView
                         android:id="@+id/tv_deprecated"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignBottom="@id/tv_score_total"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="8dp"
                         android:text="Deprecated"
                         android:textColor="@color/darkgrey"
                         android:textSize="26dp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_score_total"/>
+
+                    <TextView
+                        android:id="@+id/tv_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="Date"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16dp"
+                        app:layout_constraintStart_toEndOf="@id/tv_score_total"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_score_total"/>
+                </android.support.constraint.ConstraintLayout>
 
                 <LinearLayout style="@style/GroupWhiteSecOnBg">
 
@@ -510,217 +525,12 @@
                     app:resizeWhenOver="true"
                     app:pointMargin="10dp"/>
 
-                <LinearLayout
-                    style="@style/GroupWhiteSecOnBg"
-                    android:layout_marginTop="15dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/gdb_record_line_height">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="basic" />
-
-                        <TextView
-                            android:id="@+id/tv_basic"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/vertical_divider"
-                            android:background="@color/divider" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/gdb_record_line_height">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="starC" />
-
-                        <TextView
-                            android:id="@+id/tv_starc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/vertical_divider"
-                            android:background="@color/divider" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/gdb_record_line_height">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="bjob" />
-
-                        <TextView
-                            android:id="@+id/tv_bjob"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/vertical_divider"
-                            android:background="@color/divider" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/gdb_record_line_height">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="rhythm" />
-
-                        <TextView
-                            android:id="@+id/tv_rhythm"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/vertical_divider"
-                            android:background="@color/divider" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/gdb_record_line_height">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="foreplay" />
-
-                        <TextView
-                            android:id="@+id/tv_foreplay"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/vertical_divider"
-                            android:background="@color/divider" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/gdb_record_line_height">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="story" />
-
-                        <TextView
-                            android:id="@+id/tv_story"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/vertical_divider"
-                            android:background="@color/divider" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/gdb_record_line_height">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="Extra(bareback+cShow+rim)" />
-
-                        <TextView
-                            android:id="@+id/tv_extra"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/vertical_divider"
-                            android:background="@color/divider" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/gdb_record_line_height">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="rim" />
-
-                        <TextView
-                            android:id="@+id/tv_rim"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/vertical_divider"
-                            android:background="@color/divider" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/gdb_record_line_height">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="cShow" />
-
-                        <TextView
-                            android:id="@+id/tv_cshow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/vertical_divider"
-                            android:background="@color/divider" />
-                    </RelativeLayout>
-                </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_scores"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="50dp"
+                    android:layout_marginTop="15dp"/>
 
             </LinearLayout>
 
