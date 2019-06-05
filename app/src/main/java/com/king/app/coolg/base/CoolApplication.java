@@ -2,6 +2,7 @@ package com.king.app.coolg.base;
 
 import android.app.Application;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.king.app.coolg.conf.AppConfig;
@@ -18,6 +19,7 @@ import com.king.app.gdb.data.entity.PlayDurationDao;
 import com.king.app.gdb.data.entity.PlayItemDao;
 import com.king.app.gdb.data.entity.PlayOrder;
 import com.king.app.gdb.data.entity.PlayOrderDao;
+import com.king.app.gdb.data.entity.RecordDao;
 import com.king.app.gdb.data.entity.StarRatingDao;
 import com.king.app.gdb.data.entity.TopStarCategoryDao;
 import com.king.app.gdb.data.entity.TopStarDao;
@@ -147,6 +149,19 @@ public class CoolApplication extends Application {
                         db.execSQL("ALTER TABLE " + PlayOrderDao.TABLENAME + " ADD COLUMN "
                                 + PlayOrderDao.Properties.CoverUrl.columnName + " TEXT");
                     }
+                case 7:
+                    if (!isFieldExist(db, RecordDao.TABLENAME, RecordDao.Properties.ScoreBody.columnName)) {
+                        db.execSQL("ALTER TABLE " + RecordDao.TABLENAME + " ADD COLUMN "
+                                + RecordDao.Properties.ScoreBody.columnName + " INTEGER DEFAULT 0");
+                    }
+                    if (!isFieldExist(db, RecordDao.TABLENAME, RecordDao.Properties.ScoreCock.columnName)) {
+                        db.execSQL("ALTER TABLE " + RecordDao.TABLENAME + " ADD COLUMN "
+                                + RecordDao.Properties.ScoreCock.columnName + " INTEGER DEFAULT 0");
+                    }
+                    if (!isFieldExist(db, RecordDao.TABLENAME, RecordDao.Properties.ScoreAss.columnName)) {
+                        db.execSQL("ALTER TABLE " + RecordDao.TABLENAME + " ADD COLUMN "
+                                + RecordDao.Properties.ScoreAss.columnName + " INTEGER DEFAULT 0");
+                    }
                     break;
             }
         }
@@ -163,6 +178,31 @@ public class CoolApplication extends Application {
             }
         }
 
+        /**
+         * 判断某表里某字段是否存在
+         *
+         * @param db
+         * @param tableName
+         * @param fieldName
+         * @return
+         */
+        private boolean isFieldExist(Database db, String tableName, String fieldName) {
+            String queryStr = "select sql from sqlite_master where type = 'table' and name = '%s'";
+            queryStr = String.format(queryStr, tableName);
+            Cursor c = db.rawQuery(queryStr, null);
+            String tableCreateSql = null;
+            try {
+                if (c != null && c.moveToFirst()) {
+                    tableCreateSql = c.getString(c.getColumnIndex("sql"));
+                }
+            } finally {
+                if (c != null)
+                    c.close();
+            }
+            if (tableCreateSql != null && tableCreateSql.contains(fieldName))
+                return true;
+            return false;
+        }
     }
 
 }

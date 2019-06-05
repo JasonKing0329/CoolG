@@ -46,6 +46,9 @@ public class PreferenceValue {
     public static final int GDB_SR_ORDERBY_STARC =30;
     public static final int GDB_SR_ORDERBY_TIME =31;
     public static final int GDB_SR_ORDERBY_SIZE =32;
+    public static final int GDB_SR_ORDERBY_BODY =33;
+    public static final int GDB_SR_ORDERBY_COCK =34;
+    public static final int GDB_SR_ORDERBY_ASS =35;
 
     public static final int STAR_LIST_VIEW_LIST =0;
     public static final int STAR_LIST_VIEW_GRID =1;
@@ -60,9 +63,13 @@ public class PreferenceValue {
     public static final String SORT_COLUMN_KEY_FEEL = "ScoreFeel";
     public static final String SORT_COLUMN_KEY_SPECIAL = "Special";
     public static final String SORT_COLUMN_KEY_STAR = "Star";
+    public static final String SORT_COLUMN_KEY_BODY = "Body";
+    public static final String SORT_COLUMN_KEY_COCK = "Cock";
+    public static final String SORT_COLUMN_KEY_ASS = "Ass";
     public static final String[] RECORD_SORT_ARRAY = new String[] {
             "None", SORT_COLUMN_KEY_NAME, SORT_COLUMN_KEY_DATE, SORT_COLUMN_KEY_SCORE, SORT_COLUMN_KEY_PASSION,
-            SORT_COLUMN_KEY_CUM, SORT_COLUMN_KEY_FEEL, SORT_COLUMN_KEY_SPECIAL, SORT_COLUMN_KEY_STAR
+            SORT_COLUMN_KEY_CUM, SORT_COLUMN_KEY_FEEL, SORT_COLUMN_KEY_SPECIAL, SORT_COLUMN_KEY_STAR,
+            SORT_COLUMN_KEY_BODY, SORT_COLUMN_KEY_COCK, SORT_COLUMN_KEY_ASS
     };
 
     /**

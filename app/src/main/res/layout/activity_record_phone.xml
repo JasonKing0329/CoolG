@@ -451,6 +451,75 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
+                            android:text="Body" />
+
+                        <TextView
+                            android:id="@+id/tv_body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/vertical_divider"
+                            android:background="@color/divider" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/gdb_record_line_height">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="Cock" />
+
+                        <TextView
+                            android:id="@+id/tv_cock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/vertical_divider"
+                            android:background="@color/divider" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/gdb_record_line_height">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="Ass" />
+
+                        <TextView
+                            android:id="@+id/tv_ass"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/vertical_divider"
+                            android:background="@color/divider" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/gdb_record_line_height">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:text="HD level" />
 
                         <TextView

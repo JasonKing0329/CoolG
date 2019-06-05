@@ -30,6 +30,9 @@ public class Record {
     private int scoreFeel;
     private int scoreStar;
     private int scorePassion;
+    private int scoreBody;
+    private int scoreCock;
+    private int scoreAss;
     private int scoreCum;
     private int scoreSpecial;
     private int scoreBareback;
@@ -64,11 +67,11 @@ public class Record {
     @Generated(hash = 765166123)
     private transient RecordDao myDao;
 
-    @Generated(hash = 1313977001)
-    public Record(Long id, String scene, String directory, String name, int hdLevel,
-            int score, int scoreFeel, int scoreStar, int scorePassion, int scoreCum,
-            int scoreSpecial, int scoreBareback, int deprecated, String specialDesc,
-            long lastModifyTime, int type, long recordDetailId) {
+    @Generated(hash = 1470605814)
+    public Record(Long id, String scene, String directory, String name, int hdLevel, int score, int scoreFeel,
+            int scoreStar, int scorePassion, int scoreBody, int scoreCock, int scoreAss, int scoreCum,
+            int scoreSpecial, int scoreBareback, int deprecated, String specialDesc, long lastModifyTime,
+            int type, long recordDetailId) {
         this.id = id;
         this.scene = scene;
         this.directory = directory;
@@ -78,6 +81,9 @@ public class Record {
         this.scoreFeel = scoreFeel;
         this.scoreStar = scoreStar;
         this.scorePassion = scorePassion;
+        this.scoreBody = scoreBody;
+        this.scoreCock = scoreCock;
+        this.scoreAss = scoreAss;
         this.scoreCum = scoreCum;
         this.scoreSpecial = scoreSpecial;
         this.scoreBareback = scoreBareback;
@@ -393,6 +399,30 @@ public class Record {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    public int getScoreBody() {
+        return this.scoreBody;
+    }
+
+    public void setScoreBody(int scoreBody) {
+        this.scoreBody = scoreBody;
+    }
+
+    public int getScoreCock() {
+        return this.scoreCock;
+    }
+
+    public void setScoreCock(int scoreCock) {
+        this.scoreCock = scoreCock;
+    }
+
+    public int getScoreAss() {
+        return this.scoreAss;
+    }
+
+    public void setScoreAss(int scoreAss) {
+        this.scoreAss = scoreAss;
     }
 
     /** called by internal mechanisms, do not call yourself. */

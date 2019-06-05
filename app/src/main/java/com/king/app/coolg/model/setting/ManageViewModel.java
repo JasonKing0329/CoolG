@@ -617,9 +617,11 @@ public class ManageViewModel extends BaseViewModel {
 
     private void updateCategory() {
         if (!ListUtil.isEmpty(mLocalData.categoryList)) {
+            getDaoSession().getTopStarCategoryDao().deleteAll();
             getDaoSession().getTopStarCategoryDao().insertInTx(mLocalData.categoryList);
         }
         if (!ListUtil.isEmpty(mLocalData.categoryStarList)) {
+            getDaoSession().getTopStarDao().deleteAll();
             getDaoSession().getTopStarDao().insertInTx(mLocalData.categoryStarList);
         }
     }
@@ -641,15 +643,19 @@ public class ManageViewModel extends BaseViewModel {
 
     private void updateFavorTables() {
         if (!ListUtil.isEmpty(mLocalData.favorRecordList)) {
+            getDaoSession().getFavorRecordDao().deleteAll();
             getDaoSession().getFavorRecordDao().insertInTx(mLocalData.favorRecordList);
         }
         if (!ListUtil.isEmpty(mLocalData.favorRecordOrderList)) {
+            getDaoSession().getFavorRecordOrderDao().deleteAll();
             getDaoSession().getFavorRecordOrderDao().insertInTx(mLocalData.favorRecordOrderList);
         }
         if (!ListUtil.isEmpty(mLocalData.favorStarList)) {
+            getDaoSession().getFavorStarDao().deleteAll();
             getDaoSession().getFavorStarDao().insertInTx(mLocalData.favorStarList);
         }
         if (!ListUtil.isEmpty(mLocalData.favorStarOrderList)) {
+            getDaoSession().getFavorStarOrderDao().deleteAll();
             getDaoSession().getFavorStarOrderDao().insertInTx(mLocalData.favorStarOrderList);
         }
     }
@@ -659,6 +665,7 @@ public class ManageViewModel extends BaseViewModel {
      */
     private void updateStarRatings() {
         if (!ListUtil.isEmpty(mLocalData.starRatingList)) {
+            getDaoSession().getStarRatingDao().deleteAll();
             getDaoSession().getStarRatingDao().insertInTx(mLocalData.starRatingList);
         }
     }
@@ -668,6 +675,7 @@ public class ManageViewModel extends BaseViewModel {
      */
     private void updatePlayList() {
         if (!ListUtil.isEmpty(mLocalData.playItemList)) {
+            getDaoSession().getPlayItemDao().deleteAll();
             getDaoSession().getPlayItemDao().insertInTx(mLocalData.playItemList);
         }
         if (!ListUtil.isEmpty(mLocalData.playOrderList)) {
@@ -679,13 +687,16 @@ public class ManageViewModel extends BaseViewModel {
                 }
             }
             if (!ListUtil.isEmpty(mLocalData.playOrderList)) {
+                getDaoSession().getPlayOrderDao().deleteAll();
                 getDaoSession().getPlayOrderDao().insertInTx(mLocalData.playOrderList);
             }
         }
         if (!ListUtil.isEmpty(mLocalData.videoCoverPlayOrders)) {
+            getDaoSession().getVideoCoverPlayOrderDao().deleteAll();
             getDaoSession().getVideoCoverPlayOrderDao().insertInTx(mLocalData.videoCoverPlayOrders);
         }
         if (!ListUtil.isEmpty(mLocalData.videoCoverStars)) {
+            getDaoSession().getVideoCoverStarDao().deleteAll();
             getDaoSession().getVideoCoverStarDao().insertInTx(mLocalData.videoCoverStars);
         }
     }

@@ -153,6 +153,15 @@ public class RecordRepository extends BaseRepository {
         else if (sortValue == PreferenceValue.GDB_SR_ORDERBY_STAR) {
             buffer.append(" ORDER BY T.").append(RecordDao.Properties.ScoreStar.columnName).append(desc ? " DESC":" ASC");
         }
+        else if (sortValue == PreferenceValue.GDB_SR_ORDERBY_BODY) {
+            buffer.append(" ORDER BY T.").append(RecordDao.Properties.ScoreBody.columnName).append(desc ? " DESC":" ASC");
+        }
+        else if (sortValue == PreferenceValue.GDB_SR_ORDERBY_COCK) {
+            buffer.append(" ORDER BY T.").append(RecordDao.Properties.ScoreCock.columnName).append(desc ? " DESC":" ASC");
+        }
+        else if (sortValue == PreferenceValue.GDB_SR_ORDERBY_ASS) {
+            buffer.append(" ORDER BY T.").append(RecordDao.Properties.ScoreAss.columnName).append(desc ? " DESC":" ASC");
+        }
         else if (sortValue == PreferenceValue.GDB_SR_ORDERBY_SCOREFEEL) {
             buffer.append(" ORDER BY T.").append(RecordDao.Properties.ScoreFeel.columnName).append(desc ? " DESC":" ASC");
         }

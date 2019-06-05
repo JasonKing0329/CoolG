@@ -37,6 +37,9 @@ public class SortDialogContent extends DraggableContentFragment<FragmentDialogSo
             , new SortItem(PreferenceValue.SORT_COLUMN_KEY_FEEL, PreferenceValue.GDB_SR_ORDERBY_SCOREFEEL)
             , new SortItem(PreferenceValue.SORT_COLUMN_KEY_SPECIAL, PreferenceValue.GDB_SR_ORDERBY_SPECIAL)
             , new SortItem(PreferenceValue.SORT_COLUMN_KEY_STAR, PreferenceValue.GDB_SR_ORDERBY_STAR)
+            , new SortItem(PreferenceValue.SORT_COLUMN_KEY_BODY, PreferenceValue.GDB_SR_ORDERBY_BODY)
+            , new SortItem(PreferenceValue.SORT_COLUMN_KEY_COCK, PreferenceValue.GDB_SR_ORDERBY_COCK)
+            , new SortItem(PreferenceValue.SORT_COLUMN_KEY_ASS, PreferenceValue.GDB_SR_ORDERBY_ASS)
     };
 
     private int textPadding;

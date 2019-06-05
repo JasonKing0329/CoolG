@@ -246,6 +246,18 @@ public class RecordItemBinder {
                 break;
             case PreferenceValue.GDB_SR_ORDERBY_STARC:
                 break;
+            case PreferenceValue.GDB_SR_ORDERBY_BODY:
+                binding.tvSort.setVisibility(View.VISIBLE);
+                binding.tvSort.setText("" + item.getScoreBody());
+                break;
+            case PreferenceValue.GDB_SR_ORDERBY_COCK:
+                binding.tvSort.setVisibility(View.VISIBLE);
+                binding.tvSort.setText("" + item.getScoreCock());
+                break;
+            case PreferenceValue.GDB_SR_ORDERBY_ASS:
+                binding.tvSort.setVisibility(View.VISIBLE);
+                binding.tvSort.setText("" + item.getScoreAss());
+                break;
             default:
                 binding.tvSort.setText(String.valueOf(item.getScore()));
                 break;

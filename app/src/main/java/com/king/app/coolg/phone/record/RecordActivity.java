@@ -358,6 +358,9 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         }
         mBinding.tvFk.setText("Passion(" + record.getScorePassion() + ")");
         mBinding.tvStar.setText("" + record.getScoreStar());
+        mBinding.tvBody.setText("" + record.getScoreBody());
+        mBinding.tvCock.setText("" + record.getScoreCock());
+        mBinding.tvAss.setText("" + record.getScoreAss());
 
         mBinding.tvDeprecated.setVisibility(record.getDeprecated() == 1 ? View.VISIBLE : View.GONE);
 
