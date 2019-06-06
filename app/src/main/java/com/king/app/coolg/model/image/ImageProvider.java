@@ -254,6 +254,9 @@ public class ImageProvider {
         if (SettingProperty.isNoImageMode()) {
             return "";
         }
+        if (SettingProperty.isDemoImageMode()) {
+            return getRandomDemoImage(-1, null);
+        }
         String path = AppConfig.GDB_IMG_RECORD + "/" + name + "/cu";
         File folder = new File(path);
         if (folder.exists()) {
