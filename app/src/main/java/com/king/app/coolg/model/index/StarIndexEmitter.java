@@ -1,5 +1,7 @@
 package com.king.app.coolg.model.index;
 
+import android.text.TextUtils;
+
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.phone.star.list.StarProxy;
 import com.king.app.coolg.utils.StarRatingUtil;
@@ -146,7 +148,13 @@ public class StarIndexEmitter {
         // player list查询出来已经是有序的
         for (int i = 0; i < mList.size(); i ++) {
             String targetText = mList.get(i).getStar().getName();
-            String first = String.valueOf(targetText.charAt(0));
+            String first;
+            if (TextUtils.isEmpty(targetText)) {
+                first = "#";
+            }
+            else {
+                first = String.valueOf(targetText.charAt(0));
+            }
             addIndex(e, first, i);
         }
         endCreate(mList.size() - 1);

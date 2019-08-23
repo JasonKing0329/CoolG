@@ -71,30 +71,11 @@ public class StarSelectorActivity extends MvvmActivity<ActivityStarSelectorBindi
         }
 
         mBinding.actionbar.setOnBackListener(() -> onBackPressed());
-        mBinding.actionbar.showConfirmStatus(0);
-        mBinding.actionbar.setOnConfirmListener(new OnConfirmListener() {
-            @Override
-            public boolean disableInstantDismissConfirm() {
-                return false;
-            }
-
-            @Override
-            public boolean disableInstantDismissCancel() {
-                return false;
-            }
-
-            @Override
-            public boolean onConfirm(int actionId) {
-                setSelectResult();
-                finish();
-                return true;
-            }
-
-            @Override
-            public boolean onCancel(int actionId) {
-                finish();
-                return true;
-            }
+        mBinding.actionbar.showConfirmStatus(0, true, "Ok");
+        mBinding.actionbar.setOnConfirmListener(actionId -> {
+            setSelectResult();
+            finish();
+            return true;
         });
 
         mBinding.sidebar.setOnSidebarStatusListener(new FitSideBar.OnSidebarStatusListener() {

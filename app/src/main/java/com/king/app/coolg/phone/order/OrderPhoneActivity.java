@@ -100,32 +100,17 @@ public class OrderPhoneActivity extends MvvmActivity<ActivityOrderPhoneBinding, 
                     break;
             }
         });
-        mBinding.actionbar.setOnConfirmListener(new OnConfirmListener() {
-            @Override
-            public boolean disableInstantDismissConfirm() {
-                return true;
+        mBinding.actionbar.setOnConfirmListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    ftCurrent.delete();
+                    break;
             }
-
-            @Override
-            public boolean disableInstantDismissCancel() {
-                return false;
-            }
-
-            @Override
-            public boolean onConfirm(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        ftCurrent.delete();
-                        break;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onCancel(int actionId) {
-                ftCurrent.setSelectionMode(false);
-                return true;
-            }
+            return false;
+        });
+        mBinding.actionbar.setOnCancelListener(actionId -> {
+            ftCurrent.setSelectionMode(false);
+            return true;
         });
         mBinding.actionbar.registerPopupMenu(R.id.menu_sort);
         mBinding.actionbar.setPopupMenuProvider((iconMenuId, anchorView) -> {

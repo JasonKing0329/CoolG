@@ -53,33 +53,18 @@ public class CategoryDetailActivity extends MvvmActivity<ActivityCategoryDetailB
                     break;
             }
         });
-        mBinding.actionbar.setOnConfirmListener(new OnConfirmListener() {
-            @Override
-            public boolean disableInstantDismissConfirm() {
-                return true;
-            }
-
-            @Override
-            public boolean disableInstantDismissCancel() {
-                return true;
-            }
-
-            @Override
-            public boolean onConfirm(int actionId) {
-                mModel.saveCategoryDetail();
-                return false;
-            }
-
-            @Override
-            public boolean onCancel(int actionId) {
-                showConfirmCancelMessage("Modification will not be saved, continue?"
-                        , (dialogInterface, i) -> {
-                            mModel.setEditMode(false);
-                            mModel.cancelEdit();
-                            reload();
-                        }, null);
-                return true;
-            }
+        mBinding.actionbar.setOnConfirmListener(actionId -> {
+            mModel.saveCategoryDetail();
+            return false;
+        });
+        mBinding.actionbar.setOnCancelListener(actionId -> {
+            showConfirmCancelMessage("Modification will not be saved, continue?"
+                    , (dialogInterface, i) -> {
+                        mModel.setEditMode(false);
+                        mModel.cancelEdit();
+                        reload();
+                    }, null);
+            return true;
         });
 
         mBinding.rvCandidate.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));

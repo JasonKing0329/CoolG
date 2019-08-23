@@ -66,7 +66,7 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
                     });
                     break;
                 case R.id.menu_edit:
-                    mBinding.actionbar.showConfirmStatus(menuId);
+                    mBinding.actionbar.showConfirmStatus(menuId, true, "Cancel");
                     isEditMode = true;
                     break;
                 case R.id.menu_delete:
@@ -86,59 +86,41 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
                     break;
             }
         });
-        mBinding.actionbar.setOnConfirmListener(new OnConfirmListener() {
-            @Override
-            public boolean disableInstantDismissConfirm() {
-                return false;
+        mBinding.actionbar.setOnConfirmListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    new SimpleDialogs().showWarningActionDialog(PlayOrderActivity.this
+                            , "Delete order will delete related items, continue?"
+                            , "Yes", null
+                            , (dialogInterface, i) -> {
+                                mModel.executeDelete();
+                                adapter.setMultiSelect(false);
+                                mBinding.actionbar.cancelConfirmStatus();
+                                setResultChanged();
+                            });
+                    break;
+                case R.id.menu_edit:
+                    isEditMode = false;
+                    return true;
+                case ACTION_MULTI_SELECT:
+                    Intent intent = new Intent();
+                    intent.putCharSequenceArrayListExtra(RESP_SELECT_RESULT, mModel.getSelectedItems());
+                    setResult(RESULT_OK, intent);
+                    finish();
+                    break;
             }
-
-            @Override
-            public boolean disableInstantDismissCancel() {
-                return false;
+            return false;
+        });
+        mBinding.actionbar.setOnCancelListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    adapter.setMultiSelect(false);
+                    break;
+                case ACTION_MULTI_SELECT:
+                    finish();
+                    break;
             }
-
-            @Override
-            public boolean onConfirm(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        new SimpleDialogs().showWarningActionDialog(PlayOrderActivity.this
-                                , "Delete order will delete related items, continue?"
-                                , "Yes", null
-                                , (dialogInterface, i) -> {
-                                    mModel.executeDelete();
-                                    adapter.setMultiSelect(false);
-                                    mBinding.actionbar.cancelConfirmStatus();
-                                    setResultChanged();
-                                });
-                        break;
-                    case R.id.menu_edit:
-                        isEditMode = false;
-                        return true;
-                    case ACTION_MULTI_SELECT:
-                        Intent intent = new Intent();
-                        intent.putCharSequenceArrayListExtra(RESP_SELECT_RESULT, mModel.getSelectedItems());
-                        setResult(RESULT_OK, intent);
-                        finish();
-                        break;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onCancel(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        adapter.setMultiSelect(false);
-                        break;
-                    case R.id.menu_edit:
-                        isEditMode = false;
-                        break;
-                    case ACTION_MULTI_SELECT:
-                        finish();
-                        break;
-                }
-                return true;
-            }
+            return true;
         });
 
         if (isMultiSelect()) {

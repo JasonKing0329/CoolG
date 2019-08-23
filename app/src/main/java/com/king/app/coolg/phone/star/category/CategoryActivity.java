@@ -49,44 +49,29 @@ public class CategoryActivity extends MvvmActivity<ActivityCategoryBinding, Cate
                     break;
             }
         });
-        mBinding.actionbar.setOnConfirmListener(new OnConfirmListener() {
-            @Override
-            public boolean disableInstantDismissConfirm() {
-                return true;
+        mBinding.actionbar.setOnConfirmListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    showConfirmCancelMessage("Are you sure to delete?"
+                            , (dialogInterface, i) -> mModel.deleteSelected(), null);
+                    break;
+                case R.id.menu_edit:
+                    mBinding.actionbar.cancelConfirmStatus();
+                    mModel.setEditMode(false);
+                    break;
             }
-
-            @Override
-            public boolean disableInstantDismissCancel() {
-                return false;
+            return false;
+        });
+        mBinding.actionbar.setOnCancelListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    adapter.setSelectMode(false);
+                    break;
+                case R.id.menu_edit:
+                    mModel.setEditMode(false);
+                    break;
             }
-
-            @Override
-            public boolean onConfirm(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        showConfirmCancelMessage("Are you sure to delete?"
-                                , (dialogInterface, i) -> mModel.deleteSelected(), null);
-                        break;
-                    case R.id.menu_edit:
-                        mBinding.actionbar.cancelConfirmStatus();
-                        mModel.setEditMode(false);
-                        break;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onCancel(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        adapter.setSelectMode(false);
-                        break;
-                    case R.id.menu_edit:
-                        mModel.setEditMode(false);
-                        break;
-                }
-                return true;
-            }
+            return true;
         });
     }
 

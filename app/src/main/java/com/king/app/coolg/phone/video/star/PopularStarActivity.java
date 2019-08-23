@@ -94,45 +94,29 @@ public class PopularStarActivity extends MvvmActivity<ActivityVideoStarListBindi
                     break;
             }
         });
-        mBinding.actionbar.setOnConfirmListener(new OnConfirmListener() {
-            @Override
-            public boolean disableInstantDismissConfirm() {
-                return false;
+        mBinding.actionbar.setOnConfirmListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    new SimpleDialogs().showWarningActionDialog(PopularStarActivity.this
+                            , "Delete order will delete related items, continue?"
+                            , "Yes", null
+                            , (dialogInterface, i) -> {
+                                mModel.executeDelete();
+                                adapter.setMultiSelect(false);
+                                mBinding.actionbar.cancelConfirmStatus();
+                            });
+                    break;
             }
-
-            @Override
-            public boolean disableInstantDismissCancel() {
-                return false;
-            }
-
-            @Override
-            public boolean onConfirm(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        new SimpleDialogs().showWarningActionDialog(PopularStarActivity.this
-                                , "Delete order will delete related items, continue?"
-                                , "Yes", null
-                                , (dialogInterface, i) -> {
-                                    mModel.executeDelete();
-                                    adapter.setMultiSelect(false);
-                                    mBinding.actionbar.cancelConfirmStatus();
-                                });
-                        break;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onCancel(int actionId) {
-                switch (actionId) {
-                    case R.id.menu_delete:
-                        adapter.setMultiSelect(false);
-                        break;
-                }
-                return true;
-            }
+            return false;
         });
-
+        mBinding.actionbar.setOnCancelListener(actionId -> {
+            switch (actionId) {
+                case R.id.menu_delete:
+                    adapter.setMultiSelect(false);
+                    break;
+            }
+            return true;
+        });
     }
 
     private RecyclerView.ItemDecoration linearDecoration = new RecyclerView.ItemDecoration() {

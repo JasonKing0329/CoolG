@@ -8,8 +8,8 @@ android {
         applicationId "com.king.app.coolg"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 98
-        versionName "5.3.1"
+        versionCode 99
+        versionName "5.3.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -85,7 +85,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
 
-    implementation 'com.king.lib:jactionbar:1.0.8'
+    implementation 'com.king.lib:jactionbar:1.1.0'
     implementation 'com.king.lib:banner:1.0.5'
     implementation 'cn.com.tcsl.screenhelper:screenhelper:0.0.2'
 
