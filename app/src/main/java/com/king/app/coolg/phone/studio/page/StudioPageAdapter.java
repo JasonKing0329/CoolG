@@ -63,6 +63,10 @@ public class StudioPageAdapter extends RecyclerAdapter {
         registerBinder(recordAdapter);
     }
 
+    public void setOnSeeAllListener(HeaderAdapter.OnSeeAllListener onSeeAllListener) {
+        headerAdapter.setOnSeeAllListener(onSeeAllListener);
+    }
+
     public void setOnClickStarListener(StarNumAdapter.OnClickStarListener onClickStarListener) {
         starNumAdapter.setOnClickStarListener(onClickStarListener);
     }

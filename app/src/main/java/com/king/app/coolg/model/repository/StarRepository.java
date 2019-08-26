@@ -1,5 +1,10 @@
 package com.king.app.coolg.model.repository;
 
+import com.king.app.coolg.phone.studio.page.StarNumberItem;
+import com.king.app.gdb.data.entity.FavorRecordOrder;
+import com.king.app.gdb.data.entity.FavorRecordOrderDao;
+import com.king.app.gdb.data.entity.Record;
+import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarDao;
 import com.king.app.gdb.data.entity.StarRating;
@@ -9,7 +14,10 @@ import com.king.app.gdb.data.param.DataConstants;
 import org.greenrobot.greendao.query.Join;
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -48,6 +56,45 @@ public class StarRepository extends BaseRepository {
                         , StarDao.Properties.Betop.gt(0));
             }
             e.onNext(builder.build().list());
+            e.onComplete();
+        });
+    }
+
+    public Observable<List<Star>> queryStudioStars(long studioId, String starType) {
+        return Observable.create(e -> {
+            List<Star> stars = new ArrayList<>();
+            FavorRecordOrder order = getDaoSession().getFavorRecordOrderDao().load(studioId);
+            if (order != null) {
+                List<Record> records = order.getRecordList();
+                Map<Long, RecordStar> starMap = new HashMap<>();
+                for (Record record:records) {
+                    List<RecordStar> recordStars = record.getRelationList();
+                    for (RecordStar rs:recordStars) {
+                        if (starMap.get(rs.getStarId()) == null) {
+                            if (DataConstants.STAR_MODE_TOP.equals(starType)) {
+                                if (rs.getType() == DataConstants.VALUE_RELATION_TOP) {
+                                    stars.add(rs.getStar());
+                                }
+                            }
+                            else if (DataConstants.STAR_MODE_BOTTOM.equals(starType)) {
+                                if (rs.getType() == DataConstants.VALUE_RELATION_BOTTOM) {
+                                    stars.add(rs.getStar());
+                                }
+                            }
+                            else if (DataConstants.STAR_MODE_HALF.equals(starType)) {
+                                if (rs.getType() == DataConstants.VALUE_RELATION_MIX) {
+                                    stars.add(rs.getStar());
+                                }
+                            }
+                            else {
+                                stars.add(rs.getStar());
+                            }
+                            starMap.put(rs.getStarId(), rs);
+                        }
+                    }
+                }
+            }
+            e.onNext(stars);
             e.onComplete();
         });
     }

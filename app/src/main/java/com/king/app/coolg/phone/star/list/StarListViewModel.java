@@ -49,6 +49,8 @@ public class StarListViewModel extends BaseViewModel {
     // see GDBProperties.STAR_MODE_XXX
     private String mStarType;
 
+    private long mStudioId;
+
     private List<StarProxy> mFullList;
 
     private List<StarProxy> mList;
@@ -95,6 +97,10 @@ public class StarListViewModel extends BaseViewModel {
         this.mStarType = mStarType;
     }
 
+    public void setStudioId(long studioId) {
+        mStudioId = studioId;
+    }
+
     public String getStarType() {
         return mStarType;
     }
@@ -115,7 +121,7 @@ public class StarListViewModel extends BaseViewModel {
         isLoading = true;
         currentViewMode = SettingProperty.getStarListViewMode();
         loadingObserver.setValue(true);
-        repository.queryStar(mStarType)
+        queryStars()
                 .flatMap(list -> toViewItems(list))
                 .flatMap(list -> {
                     mFullList = list;
@@ -169,6 +175,15 @@ public class StarListViewModel extends BaseViewModel {
                         }
                     }
                 });
+    }
+
+    private Observable<List<Star>> queryStars() {
+        if (mStudioId == 0) {
+            return repository.queryStar(mStarType);
+        }
+        else {
+            return repository.queryStudioStars(mStudioId, mStarType);
+        }
     }
 
     private Observable<List<StarProxy>> toViewItems(List<Star> list) {
@@ -394,5 +409,4 @@ public class StarListViewModel extends BaseViewModel {
     private boolean isMatchForKeyword(StarProxy starProxy, String text) {
         return starProxy.getStar().getName().toLowerCase().contains(text.toLowerCase());
     }
-
 }

@@ -17,4 +17,6 @@ public interface IStarListHolder extends IFragmentHolder {
     void updateDetailIndex(String name);
 
     boolean dispatchOnLongClickStar(Star star);
+
+    void updateTabTitle(String starType, String title);
 }

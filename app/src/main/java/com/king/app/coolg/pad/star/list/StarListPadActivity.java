@@ -81,8 +81,9 @@ public class StarListPadActivity extends MvvmActivity<ActivityStarListPadBinding
     protected void initData() {
         mModel.menuViewModeObserver.observe(this, title -> mBinding.actionbar.updateMenuText(R.id.menu_gdb_view_mode, title));
         mModel.sortTypeObserver.observe(this, type -> getCurrentPage().updateSortType(type));
-        mModel.titlesObserver.observe(this, list -> showTitles(list));
-        mModel.loadTitles();
+//        mModel.titlesObserver.observe(this, list -> showTitles(list));
+//        mModel.loadTitles();
+        showTitles();
     }
 
     private void initActionbar() {
@@ -160,18 +161,18 @@ public class StarListPadActivity extends MvvmActivity<ActivityStarListPadBinding
         return pagerAdapter.getItem(mBinding.viewpager.getCurrentItem());
     }
 
-    private void showTitles(List<Integer> list) {
+    private void showTitles() {
         String[] titles = AppConstants.STAR_LIST_TITLES;
         if (pagerAdapter == null) {
             pagerAdapter = new StarListPagerAdapter(getSupportFragmentManager());
             StarListFragment fragmentAll = StarListFragment.newInstance(DataConstants.STAR_MODE_ALL);
-            pagerAdapter.addFragment(fragmentAll, titles[0] + "(" + list.get(0) + ")");
+            pagerAdapter.addFragment(fragmentAll, titles[0]);
             StarListFragment fragment1 = StarListFragment.newInstance(DataConstants.STAR_MODE_TOP);
-            pagerAdapter.addFragment(fragment1, titles[1] + "(" + list.get(1) + ")");
+            pagerAdapter.addFragment(fragment1, titles[1]);
             StarListFragment fragment0 = StarListFragment.newInstance(DataConstants.STAR_MODE_BOTTOM);
-            pagerAdapter.addFragment(fragment0, titles[2] + "(" + list.get(2) + ")");
+            pagerAdapter.addFragment(fragment0, titles[2]);
             StarListFragment fragment05 = StarListFragment.newInstance(DataConstants.STAR_MODE_HALF);
-            pagerAdapter.addFragment(fragment05, titles[3] + "(" + list.get(3) + ")");
+            pagerAdapter.addFragment(fragment05, titles[3]);
             mBinding.viewpager.setAdapter(pagerAdapter);
             mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText(titles[0]));
             mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText(titles[1]));
@@ -182,7 +183,7 @@ public class StarListPadActivity extends MvvmActivity<ActivityStarListPadBinding
         else {
             mBinding.tabLayout.removeAllTabs();
             for (int i = 0; i < titles.length; i ++) {
-                mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText(titles[i] + "(" + list.get(i) + ")"));
+                mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText(titles[i]));
             }
         }
     }
@@ -258,5 +259,25 @@ public class StarListPadActivity extends MvvmActivity<ActivityStarListPadBinding
         dialogFragment.setContentFragment(content);
         dialogFragment.setTitle("Sort");
         dialogFragment.show(getSupportFragmentManager(), "SortDialogContent");
+    }
+
+    @Override
+    public void updateTabTitle(String starType, String title) {
+        if (starType.equals(DataConstants.STAR_MODE_ALL)) {
+            pagerAdapter.updateTitle(0, title);
+            mBinding.tabLayout.getTabAt(0).setText(title);
+        }
+        else if (starType.equals(DataConstants.STAR_MODE_TOP)) {
+            pagerAdapter.updateTitle(1, title);
+            mBinding.tabLayout.getTabAt(1).setText(title);
+        }
+        else if (starType.equals(DataConstants.STAR_MODE_BOTTOM)) {
+            pagerAdapter.updateTitle(2, title);
+            mBinding.tabLayout.getTabAt(2).setText(title);
+        }
+        else if (starType.equals(DataConstants.STAR_MODE_HALF)) {
+            pagerAdapter.updateTitle(3, title);
+            mBinding.tabLayout.getTabAt(3).setText(title);
+        }
     }
 }

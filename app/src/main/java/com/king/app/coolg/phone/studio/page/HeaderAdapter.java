@@ -15,9 +15,17 @@ import com.king.app.coolg.databinding.AdapterStudioPageHeadBinding;
  * @date: 2018/9/18 17:00
  */
 public class HeaderAdapter extends ItemDataBinder<String, AdapterStudioPageHeadBinding> {
+
+    private OnSeeAllListener onSeeAllListener;
+
+    public void setOnSeeAllListener(OnSeeAllListener onSeeAllListener) {
+        this.onSeeAllListener = onSeeAllListener;
+    }
+
     @Override
     protected void bindModel(String item, AdapterStudioPageHeadBinding binding) {
         binding.tvHead.setText(item);
+        binding.tvAll.setOnClickListener(v -> onSeeAllListener.onSeeAll());
     }
 
     @Override
@@ -33,5 +41,9 @@ public class HeaderAdapter extends ItemDataBinder<String, AdapterStudioPageHeadB
     @Override
     public int getSpanSize(int maxSpanCount) {
         return maxSpanCount;
+    }
+
+    public interface OnSeeAllListener {
+        void onSeeAll();
     }
 }

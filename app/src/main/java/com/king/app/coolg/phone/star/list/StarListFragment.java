@@ -20,6 +20,7 @@ import com.king.app.coolg.phone.star.StarRatingDialog;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.widget.FitSideBar;
+import com.king.app.gdb.data.param.DataConstants;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class StarListFragment extends MvvmFragment<FragmentStarRichBinding, Star
     implements OnStarRatingListener {
 
     private static final String ARG_STAR_TYPE = "star_type";
+    private static final String ARG_STUDIO_ID = "studio_id";
 
     private StarCircleAdapter mCircleAdapter;
     private StarRichAdapter mRichAdapter;
@@ -42,6 +44,15 @@ public class StarListFragment extends MvvmFragment<FragmentStarRichBinding, Star
         StarListFragment fragment = new StarListFragment();
         Bundle bundle = new Bundle();
         bundle.putString(ARG_STAR_TYPE, type);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    public static StarListFragment newInstance(String type, long studioId) {
+        StarListFragment fragment = new StarListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(ARG_STAR_TYPE, type);
+        bundle.putLong(ARG_STUDIO_ID, studioId);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -169,24 +180,57 @@ public class StarListFragment extends MvvmFragment<FragmentStarRichBinding, Star
         mModel.indexBarObserver.observe(this, result -> {
             mBinding.sidebar.build();
         });
-        mModel.circleListObserver.observe(this, list -> showCircleList(list));
-        mModel.richListObserver.observe(this, list -> showRichList(list));
+        mModel.circleListObserver.observe(this, list -> {
+            updateTabTitle(list.size());
+            showCircleList(list);
+        });
+        mModel.richListObserver.observe(this, list -> {
+            updateTabTitle(list.size());
+            showRichList(list);
+        });
         mModel.circleUpdateObserver.observe(this, result -> {
             if (mCircleAdapter != null) {
                 mCircleAdapter.notifyDataSetChanged();
             }
         });
-        mModel.richListObserver.observe(this, list -> showRichList(list));
         mModel.richUpdateObserver.observe(this, result -> {
             if (mRichAdapter != null) {
                 mRichAdapter.notifyDataSetChanged();
             }
         });
 
-        DebugLog.e(getArguments().getString(ARG_STAR_TYPE));
+        DebugLog.e(getStarType());
         mBinding.sidebar.clear();
-        mModel.setStarType(getArguments().getString(ARG_STAR_TYPE));
+        mModel.setStarType(getStarType());
+        mModel.setStudioId(getStudioId());
         mModel.loadStarList();
+    }
+
+    private void updateTabTitle(int size) {
+        String[] titles = AppConstants.STAR_LIST_TITLES;
+        String starMode = getStarType();
+        String title = null;
+        if (starMode.equals(DataConstants.STAR_MODE_ALL)) {
+            title = titles[0] + "(" + size + ")";
+        }
+        else if (starMode.equals(DataConstants.STAR_MODE_TOP)) {
+            title = titles[1] + "(" + size + ")";
+        }
+        else if (starMode.equals(DataConstants.STAR_MODE_BOTTOM)) {
+            title = titles[2] + "(" + size + ")";
+        }
+        else if (starMode.equals(DataConstants.STAR_MODE_HALF)) {
+            title = titles[3] + "(" + size + ")";
+        }
+        holder.updateTabTitle(getStarType(), title);
+    }
+
+    private String getStarType() {
+        return getArguments().getString(ARG_STAR_TYPE);
+    }
+
+    private long getStudioId() {
+        return getArguments().getLong(ARG_STUDIO_ID);
     }
 
     private RecyclerView.ItemDecoration richDecoration = new RecyclerView.ItemDecoration() {

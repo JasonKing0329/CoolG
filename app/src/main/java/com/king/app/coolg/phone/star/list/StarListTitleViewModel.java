@@ -12,6 +12,7 @@ import com.king.app.coolg.model.repository.StarRepository;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.utils.StarRatingUtil;
+import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarDao;
 import com.king.app.gdb.data.param.DataConstants;
@@ -79,6 +80,7 @@ public class StarListTitleViewModel extends BaseViewModel {
         return mSortMode;
     }
 
+    @Deprecated
     public void loadTitles() {
         Observable.create((ObservableOnSubscribe<List<Integer>>) e -> {
             List<Integer> countList = new ArrayList<>();
@@ -120,4 +122,11 @@ public class StarListTitleViewModel extends BaseViewModel {
         return null;
     }
 
+    public String getStudioName(long studioId) {
+        FavorRecordOrder studio = getDaoSession().getFavorRecordOrderDao().load(studioId);
+        if (studio != null) {
+            return studio.getName();
+        }
+        return "Unknown Studio";
+    }
 }

@@ -13,6 +13,7 @@ import com.king.app.coolg.databinding.FragmentStudioPageBinding;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.coolg.phone.star.StarActivity;
+import com.king.app.coolg.phone.star.list.StarListPhoneActivity;
 import com.king.app.coolg.phone.studio.StudioHolder;
 import com.king.app.coolg.phone.studio.StudioViewModel;
 
@@ -61,12 +62,19 @@ public class StudioPageFragment extends MvvmFragment<FragmentStudioPageBinding, 
 
         GridLayoutManager glm = new GridLayoutManager(getContext(), 3);
         adapter = new StudioPageAdapter();
+        adapter.setOnSeeAllListener(() -> showAllStudioStars());
         adapter.setOnClickStarListener(star -> showStar(star));
         adapter.setOnClickRecordListener(record -> showRecord(record));
         adapter.setSpanCount(3);
         glm.setSpanSizeLookup(adapter.getSpanSizeLookup());
         mBinding.rvPage.addItemDecoration(adapter.getItemDecorator());
         mBinding.rvPage.setLayoutManager(glm);
+    }
+
+    private void showAllStudioStars() {
+        Router.build("StarListPhone")
+                .with(StarListPhoneActivity.EXTRA_STUDIO_ID, getStudioId())
+                .go(this);
     }
 
     private void showStar(StarNumberItem star) {
@@ -85,7 +93,11 @@ public class StudioPageFragment extends MvvmFragment<FragmentStudioPageBinding, 
     protected void onCreateData() {
         mModel.pageObserver.observe(this, pageItem -> showPageItem(pageItem));
 
-        mModel.loadPageData(getArguments().getLong(ARG_STUDIO_ID));
+        mModel.loadPageData(getStudioId());
+    }
+
+    private long getStudioId() {
+        return getArguments().getLong(ARG_STUDIO_ID);
     }
 
     private void showPageItem(StudioPageItem pageItem) {
