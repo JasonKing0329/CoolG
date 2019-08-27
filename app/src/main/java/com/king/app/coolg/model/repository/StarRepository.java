@@ -72,17 +72,17 @@ public class StarRepository extends BaseRepository {
                     for (RecordStar rs:recordStars) {
                         if (starMap.get(rs.getStarId()) == null) {
                             if (DataConstants.STAR_MODE_TOP.equals(starType)) {
-                                if (rs.getType() == DataConstants.VALUE_RELATION_TOP) {
+                                if (rs.getStar().getBetop() > 0 && rs.getStar().getBebottom() == 0) {
                                     stars.add(rs.getStar());
                                 }
                             }
                             else if (DataConstants.STAR_MODE_BOTTOM.equals(starType)) {
-                                if (rs.getType() == DataConstants.VALUE_RELATION_BOTTOM) {
+                                if (rs.getStar().getBebottom() > 0 && rs.getStar().getBetop() == 0) {
                                     stars.add(rs.getStar());
                                 }
                             }
                             else if (DataConstants.STAR_MODE_HALF.equals(starType)) {
-                                if (rs.getType() == DataConstants.VALUE_RELATION_MIX) {
+                                if (rs.getStar().getBebottom() > 0 && rs.getStar().getBetop() > 0) {
                                     stars.add(rs.getStar());
                                 }
                             }
