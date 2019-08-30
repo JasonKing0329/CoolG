@@ -1,6 +1,7 @@
 package com.king.app.coolg.phone.star.list;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,18 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
     protected void initView() {
         initActionbar();
         BannerHelper.setBannerParams(mBinding.banner, ViewProperty.getStarBannerParams());
-        initRecommend();
+        // hide head banner when it's studio star page
+        if (isStudioStarPage()) {
+            mBinding.rlBanner.setVisibility(View.GONE);
+            // disable scroll
+            AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mBinding.ctlToolbar.getLayoutParams();
+            params.setScrollFlags(0);
+            mBinding.ctlToolbar.setLayoutParams(params);
+        }
+        else {
+            initRecommend();
+        }
+
         // 默认只缓存另外2个，在切换时处理view mode及sort type有很多弊端，改成缓存全部另外3个可以规避问题
         mBinding.viewpager.setOffscreenPageLimit(3);
         mBinding.viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -225,6 +237,10 @@ public class StarListPhoneActivity extends MvvmActivity<ActivityStarListPhoneBin
 
     private long getStudioId() {
         return getIntent().getLongExtra(EXTRA_STUDIO_ID, 0);
+    }
+
+    private boolean isStudioStarPage() {
+        return getStudioId() != 0;
     }
 
     @Override

@@ -6,6 +6,7 @@
         android:layout_height="match_parent">
 
         <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="0dp"
@@ -21,6 +22,7 @@
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <RelativeLayout
+                    android:id="@+id/rl_banner"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/gdb_star_header_height">
 
