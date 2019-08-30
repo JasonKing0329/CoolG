@@ -195,4 +195,12 @@ public class SettingProperty extends BaseProperty {
         setString(PreferenceKey.PREF_HOME_REC_BEAN, sql);
     }
 
+    public static int getSceneSortType() {
+        return getInt(PreferenceKey.PREF_SCENE_SORT, 0);
+    }
+
+    public static void setSceneSortType(int random) {
+        setInt(PreferenceKey.PREF_SCENE_SORT, random);
+    }
+
 }

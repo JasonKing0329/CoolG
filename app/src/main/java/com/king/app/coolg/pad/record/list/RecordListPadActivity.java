@@ -56,7 +56,7 @@ public class RecordListPadActivity extends MvvmActivity<ActivityRecordListPadBin
         String scene = getIntent().getStringExtra(KEY_SCENE_NAME);
         mBinding.groupSearch.setVisibility(View.INVISIBLE);
 
-        ftScene = new SceneFragment();
+        ftScene = SceneFragment.newInstance(false);
         ftScene.setOnSceneSelectedListener(scene1 -> onSceneChanged(scene1));
         if (!TextUtils.isEmpty(scene)) {
             mBinding.tvScene.setText(scene);

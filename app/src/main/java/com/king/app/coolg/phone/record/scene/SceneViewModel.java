@@ -9,8 +9,10 @@ import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.bean.HsvColorBean;
 import com.king.app.coolg.model.repository.RecordRepository;
+import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.utils.ColorUtil;
+import com.king.app.coolg.utils.ListUtil;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,6 +36,8 @@ public class SceneViewModel extends BaseViewModel {
 
     public MutableLiveData<List<SceneBean>> sceneObserver = new MutableLiveData<>();
 
+    public MutableLiveData<String> focusSceneObserver = new MutableLiveData<>();
+
     private int mSortType;
 
     private int mRecordType;
@@ -43,14 +47,22 @@ public class SceneViewModel extends BaseViewModel {
     public SceneViewModel(@NonNull Application application) {
         super(application);
         repository = new RecordRepository();
-        mSortType = AppConstants.SCENE_SORT_NAME;
+        loadSortType();
     }
 
     public void setRecordType(int mRecordType) {
         this.mRecordType = mRecordType;
     }
 
+    public void loadSortType() {
+        mSortType = SettingProperty.getSceneSortType();
+    }
+
     public void loadScenes() {
+        loadScenes(null);
+    }
+
+    public void loadScenes(String initScene) {
         repository.getScenes(mRecordType)
                 .flatMap(list -> {
                     // add 'All'
@@ -73,6 +85,9 @@ public class SceneViewModel extends BaseViewModel {
                     public void onNext(List<SceneBean> list) {
                         mSceneList = list;
                         sceneObserver.setValue(list);
+                        if (initScene != null) {
+                            focusSceneObserver.setValue(initScene);
+                        }
                     }
 
                     @Override
@@ -144,6 +159,7 @@ public class SceneViewModel extends BaseViewModel {
 
                     @Override
                     public void onNext(List<SceneBean> list) {
+                        SettingProperty.setSceneSortType(mSortType);
                         mSceneList = list;
                         sceneObserver.setValue(list);
                     }
@@ -186,6 +202,18 @@ public class SceneViewModel extends BaseViewModel {
 
                     }
                 });
+    }
+
+    public int setFocusScene(String scene) {
+        int position = 0;
+        int count = ListUtil.getSize(sceneObserver.getValue());
+        for (int i = 0; i < count; i ++) {
+            if (scene.equals(sceneObserver.getValue().get(i).getScene())) {
+                position = i;
+                break;
+            }
+        }
+        return position;
     }
 
     public class SceneNameComparator implements Comparator<SceneBean> {

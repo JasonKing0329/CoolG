@@ -25,8 +25,10 @@ public class SceneActivity extends MvvmActivity<ActivityScenePhoneBinding, BaseV
 
     public static final String EXTRA_SCENE = "scene";
     public static final String RESP_SCENE = "resp_scene";
+    public static final String RESP_SORT_CHANGED = "resp_sort_changed";
 
     private SceneFragment ftScene;
+    private boolean isSortChanged;
 
     @Override
     protected int getContentView() {
@@ -62,12 +64,9 @@ public class SceneActivity extends MvvmActivity<ActivityScenePhoneBinding, BaseV
     @Override
     protected void initData() {
 
-        ftScene = new SceneFragment();
+        ftScene = SceneFragment.newInstance(false);
         ftScene.setOnSceneSelectedListener(scene -> {
-            Intent intent = new Intent();
-            intent.putExtra(RESP_SCENE, scene);
-            setResult(RESULT_OK, intent);
-            finish();
+
         });
         ftScene.setScene(getIntent().getStringExtra(EXTRA_SCENE));
         getSupportFragmentManager().beginTransaction()
@@ -94,6 +93,7 @@ public class SceneActivity extends MvvmActivity<ActivityScenePhoneBinding, BaseV
                     ftScene.sortScene(AppConstants.SCENE_SORT_NUMBER);
                     break;
             }
+            isSortChanged = true;
             return true;
         });
         return menu;
@@ -120,4 +120,13 @@ public class SceneActivity extends MvvmActivity<ActivityScenePhoneBinding, BaseV
         dialogFragment.show(getSupportFragmentManager(), "HsvColorDialogContent");
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra(RESP_SCENE, ftScene.getFocusScene());
+        intent.putExtra(RESP_SORT_CHANGED, isSortChanged);
+        setResult(RESULT_OK, intent);
+        finish();
+        super.onBackPressed();
+    }
 }

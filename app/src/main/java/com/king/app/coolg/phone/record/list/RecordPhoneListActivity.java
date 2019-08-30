@@ -1,36 +1,35 @@
 package com.king.app.coolg.phone.record.list;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
+import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.base.MvvmActivity;
-import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordListPhoneBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.scene.SceneActivity;
+import com.king.app.coolg.phone.record.scene.SceneFragment;
 import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
-import com.king.app.coolg.view.dialog.SimpleDialogs;
-
-import java.util.List;
 
 /**
  * Created by Administrator on 2018/8/11 0011.
  */
 @Route("RecordListPhone")
-public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhoneBinding, RecordPhoneViewModel> implements IRecordListHolder {
+public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhoneBinding, BaseViewModel> {
 
     public static final int REQUEST_SCENE = 501;
 
     private RecommendBean mFilter;
 
-    private RecordListPagerAdapter pagerAdapter;
+    private RecordListTabFragment ftRecords;
+
+    private SceneFragment ftScene;
 
     @Override
     protected int getContentView() {
@@ -40,29 +39,24 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
     @Override
     protected void initView() {
         initActionbar();
-        // 默认只缓存另外2个，在切换时处理view mode及sort type有很多弊端，改成缓存全部另外4个可以规避问题
-        mBinding.viewpager.setOffscreenPageLimit(4);
-        mBinding.viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-            }
+        mBinding.tvSceneAll.setOnClickListener(v -> selectScene());
 
-            @Override
-            public void onPageSelected(int position) {
+        ftRecords = new RecordListTabFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.ft_page, ftRecords, "RecordListTabFragment")
+                .commit();
 
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        ftScene = SceneFragment.newInstance(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.ft_scene, ftScene, "SceneFragment")
+                .commit();
+        ftScene.setOnSceneSelectedListener(scene -> ftRecords.onSceneChanged(scene));
     }
 
     private void initActionbar() {
         mBinding.actionbar.setOnBackListener(() -> onBackPressed());
-        mBinding.actionbar.setOnSearchListener(words -> pagerAdapter.onKeywordChanged(words));
+        mBinding.actionbar.setOnSearchListener(words -> ftRecords.onKeywordChanged(words));
         mBinding.actionbar.registerPopupMenu(R.id.menu_sort);
         mBinding.actionbar.setOnMenuItemListener(menuId -> {
             switch (menuId) {
@@ -73,10 +67,15 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
                     changeFilter();
                     break;
                 case R.id.menu_scene:
-                    selectScene();
+                    if (mBinding.ftScene.getVisibility() == View.VISIBLE) {
+                        mBinding.ftScene.setVisibility(View.GONE);
+                    }
+                    else {
+                        mBinding.ftScene.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case R.id.menu_offset:
-                    showSetOffset();
+                    ftRecords.showSetOffset();
                     break;
                 case R.id.menu_count:
                     showCount();
@@ -93,52 +92,13 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
         dialogFragment.show(getSupportFragmentManager(), "RecordCountDialog");
     }
 
-    private void showSetOffset() {
-        new SimpleDialogs().openInputDialog(this, "set offset", name -> {
-            try {
-                getCurrentPage().setOffset(Integer.parseInt(name));
-            } catch (Exception e) {}
-        });
-    }
-
-    private RecordListFragment getCurrentPage() {
-        return pagerAdapter.getItem(mBinding.viewpager.getCurrentItem());
-    }
-
     @Override
-    protected RecordPhoneViewModel createViewModel() {
-        return ViewModelProviders.of(this).get(RecordPhoneViewModel.class);
+    protected BaseViewModel createViewModel() {
+        return null;
     }
 
     @Override
     protected void initData() {
-        mModel.titlesObserver.observe(this, list -> showTitles(list));
-        mModel.loadTitles();
-    }
-
-    private void showTitles(List<Integer> list) {
-        String[] titles = AppConstants.RECORD_LIST_TITLES;
-        if (pagerAdapter == null) {
-            pagerAdapter = new RecordListPagerAdapter(getSupportFragmentManager());
-            for (int i = 0; i < titles.length; i ++) {
-                RecordListFragment fragmentAll = RecordListFragment.newInstance(i, mModel.getScene());
-                pagerAdapter.addFragment(fragmentAll, titles[i] + "\n(" + list.get(i) + ")");
-                mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText(titles[i]));
-            }
-            mBinding.viewpager.setAdapter(pagerAdapter);
-            mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText(titles[0]));
-            mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText(titles[1]));
-            mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText(titles[2]));
-            mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText(titles[3]));
-            mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText(titles[4]));
-            mBinding.tabLayout.setupWithViewPager(mBinding.viewpager);
-        }
-        else {
-            mBinding.tabLayout.removeAllTabs();
-            for (int i = 0; i < titles.length; i ++) {
-                mBinding.tabLayout.addTab(mBinding.tabLayout.newTab().setText(titles[i] + "\n(" + list.get(i) + ")"));
-            }
-        }
     }
 
     public void changeSortType() {
@@ -148,7 +108,7 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
         content.setOnSortListener((desc, sortMode) -> {
             SettingProperty.setRecordSortType(sortMode);
             SettingProperty.setRecordSortDesc(desc);
-            pagerAdapter.onSortChanged();
+            ftRecords.onSortChanged();
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
         dialogFragment.setContentFragment(content);
@@ -159,10 +119,10 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
     public void changeFilter() {
         RecommendFragment content = new RecommendFragment();
         content.setBean(mFilter);
-        content.setFixedType(mBinding.viewpager.getCurrentItem());
+        content.setFixedType(ftRecords.getCurrentItem());
         content.setOnRecommendListener(bean -> {
             mFilter = bean;
-            pagerAdapter.onFilterChanged(mFilter);
+            ftRecords.onFilterChanged(mFilter);
         });
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
         dialogFragment.setTitle("Recommend Setting");
@@ -171,15 +131,9 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
         dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
     }
 
-    @Override
-    public void updateCount(int recordType, int count) {
-        String[] titles = AppConstants.RECORD_LIST_TITLES;
-        mBinding.tabLayout.getTabAt(recordType).setText(titles[recordType] + "\n(" + count + ")");
-    }
-
     private void selectScene() {
         Router.build("ScenePhone")
-                .with(SceneActivity.EXTRA_SCENE, mModel.getScene())
+                .with(SceneActivity.EXTRA_SCENE, ftScene.getFocusScene())
                 .requestCode(REQUEST_SCENE)
                 .go(this);
     }
@@ -188,8 +142,15 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SCENE) {
             if (resultCode == RESULT_OK) {
-                mModel.setScene(data.getStringExtra(SceneActivity.RESP_SCENE));
-                pagerAdapter.onSceneChanged(mModel.getScene());
+                String scene = data.getStringExtra(SceneActivity.RESP_SCENE);
+                boolean isSortChanged = data.getBooleanExtra(SceneActivity.RESP_SORT_CHANGED, false);
+                if (isSortChanged) {
+                    ftScene.onSortChanged(scene);
+                }
+                else {
+                    ftScene.focusToScene(scene);
+                }
+                ftRecords.onSceneChanged(scene);
             }
         }
     }

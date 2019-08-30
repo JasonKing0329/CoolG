@@ -21,27 +21,34 @@
             app:iconColor="@color/actionbar_element"
             app:titleColor="@color/actionbar_element"
             app:actionTextColor="@color/actionbar_element"/>
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabLayout"
+        <TextView
+            android:id="@+id/tv_scene_all"
             android:layout_width="0dp"
-            android:layout_height="@dimen/actionbar_height"
-            android:background="@color/actionbar_bg"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/actionbar"
-            app:tabGravity="fill"
-            app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/colorAccent"
-            app:tabTextColor="@color/actionbar_element"
-            app:tabIndicatorColor="@color/colorAccent"/>
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager"
-            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="View all"
+            android:drawableLeft="@drawable/ic_movie_filter_purple_24dp"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintStart_toStartOf="@+id/ft_scene"
+            app:layout_constraintEnd_toEndOf="@+id/ft_scene"
+            app:layout_constraintBottom_toBottomOf="parent" />
+        <FrameLayout
+            android:id="@+id/ft_scene"
+            android:layout_width="100dp"
             android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/actionbar"
+            app:layout_constraintBottom_toTopOf="@+id/tv_scene_all"/>
+        <FrameLayout
+            android:id="@+id/ft_page"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toEndOf="@id/ft_scene"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tabLayout"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/actionbar"/>
 
     </android.support.constraint.ConstraintLayout>
 </layout>

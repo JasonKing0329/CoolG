@@ -57,6 +57,7 @@
     <color name="gdb_record_text_normal_light_dim">#909090</color>
     <color name="record_deprecated_bg">#c3c3c3</color>
     <color name="gdb_record_text_bareback_light">#00a5c4</color>
+    <color name="text_record_sort">#f2fa11</color>
 
     <color name="gdb_float_infor_bg">#66000000</color>
 
