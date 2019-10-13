@@ -143,14 +143,16 @@ public class RecordPhoneListActivity extends MvvmActivity<ActivityRecordListPhon
         if (requestCode == REQUEST_SCENE) {
             if (resultCode == RESULT_OK) {
                 String scene = data.getStringExtra(SceneActivity.RESP_SCENE);
-                boolean isSortChanged = data.getBooleanExtra(SceneActivity.RESP_SORT_CHANGED, false);
-                if (isSortChanged) {
-                    ftScene.onSortChanged(scene);
+                if (scene != null) {
+                    boolean isSortChanged = data.getBooleanExtra(SceneActivity.RESP_SORT_CHANGED, false);
+                    if (isSortChanged) {
+                        ftScene.onSortChanged(scene);
+                    }
+                    else {
+                        ftScene.focusToScene(scene);
+                    }
+                    ftRecords.onSceneChanged(scene);
                 }
-                else {
-                    ftScene.focusToScene(scene);
-                }
-                ftRecords.onSceneChanged(scene);
             }
         }
     }
