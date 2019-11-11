@@ -71,6 +71,15 @@
             app:layout_constraintStart_toEndOf="@id/iv_play"
             app:layout_constraintTop_toTopOf="parent"/>
 
+        <ImageView
+            android:id="@+id/iv_desktop"
+            style="@style/IvPadActionIcon"
+            android:src="@drawable/ic_desktop_windows_white_36dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toEndOf="@id/iv_setting"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_stars"
             android:layout_width="wrap_content"

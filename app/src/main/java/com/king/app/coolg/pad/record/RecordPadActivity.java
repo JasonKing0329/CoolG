@@ -94,6 +94,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         ColorUtil.updateIconColor(mBinding.ivSetCover, getResources().getColor(R.color.colorPrimary));
         ColorUtil.updateIconColor(mBinding.ivDelete, getResources().getColor(R.color.colorPrimary));
         ColorUtil.updateIconColor(mBinding.ivSetting, getResources().getColor(R.color.colorPrimary));
+        ColorUtil.updateIconColor(mBinding.ivDesktop, getResources().getColor(R.color.colorPrimary));
 
         initRecyclerViews();
         initBanner();
@@ -122,6 +123,12 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         });
         mBinding.rvOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mBinding.rvPlayOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        mBinding.ivDesktop.setOnClickListener(v -> {
+            showConfirmCancelMessage("即将在电脑上打开视频，是否继续？"
+                    , (dialog, which) -> mModel.openOnServer()
+                    , null);
+        });
     }
 
     private void showBannerSetting() {
@@ -408,6 +415,7 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         viewList.add(mBinding.ivSetCover);
         viewList.add(mBinding.ivDelete);
         viewList.add(mBinding.ivSetting);
+        viewList.add(mBinding.ivDesktop);
         pagerAdapter = new RecordPagerAdapter(getLifecycle());
         pagerAdapter.setViewList(viewList);
         pagerAdapter.setList(list);
