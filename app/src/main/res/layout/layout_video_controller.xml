@@ -224,6 +224,7 @@
             android:id="@+id/app_video_seekBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:thumb="@drawable/video_seek_thumb"
             android:layout_marginStart="@dimen/video_player_side_margin"
             android:layout_marginEnd="@dimen/video_player_side_margin"
             app:layout_constraintStart_toEndOf="@id/app_video_currentTime"
