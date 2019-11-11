@@ -19,6 +19,8 @@ public class FileBean {
      */
     private FileBean parentBean;
 
+    private String sourceUrl;
+
     public String getName() {
         return name;
     }
@@ -73,5 +75,13 @@ public class FileBean {
 
     public void setSize(long size) {
         this.size = size;
+    }
+
+    public String getSourceUrl() {
+        return sourceUrl;
+    }
+
+    public void setSourceUrl(String sourceUrl) {
+        this.sourceUrl = sourceUrl;
     }
 }

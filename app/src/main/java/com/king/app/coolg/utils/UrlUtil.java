@@ -7,6 +7,11 @@ import io.reactivex.Observable;
 
 public class UrlUtil {
 
+    public static String toVideoUrl(String subPath) {
+        String baseUrl = BaseHttpClient.formatUrl(BaseHttpClient.getBaseUrl());
+        return baseUrl + subPath.replaceAll(" ", "%20");
+    }
+
     public static Observable<String> toVideoUrl(PathResponse response) {
         return Observable.create(e -> {
             if (response.isAvailable()) {

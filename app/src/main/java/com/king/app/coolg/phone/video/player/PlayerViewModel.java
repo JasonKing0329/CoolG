@@ -2,6 +2,7 @@ package com.king.app.coolg.phone.video.player;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
+import android.net.rtp.RtpStream;
 import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
@@ -66,6 +67,8 @@ public class PlayerViewModel extends BaseViewModel {
 
     private Random random;
 
+    private String mSinglePlayUrl;
+
     public PlayerViewModel(@NonNull Application application) {
         super(application);
         repository = new PlayRepository();
@@ -74,20 +77,37 @@ public class PlayerViewModel extends BaseViewModel {
     }
 
     private Observable<List<PlayItemViewBean>> getObservable() {
-        if (mOrderId != 0) {
-            return repository.getPlayItems(mOrderId)
-                    .flatMap(list -> toViewItems(list));
+        if (mSinglePlayUrl == null) {
+            if (mOrderId != 0) {
+                return repository.getPlayItems(mOrderId)
+                        .flatMap(list -> toViewItems(list));
+            }
+            else {
+                return repository.getStarPlayItems(mStarId);
+            }
         }
         else {
-            return repository.getStarPlayItems(mStarId);
+            return getSinglePlay();
         }
     }
 
-    public void loadPlayItems(long orderId, long starId, boolean random, boolean playLast) {
+    private Observable<List<PlayItemViewBean>> getSinglePlay() {
+        return Observable.create(e -> {
+            List<PlayItemViewBean> list = new ArrayList<>();
+            PlayItemViewBean bean = new PlayItemViewBean();
+            bean.setName(mSinglePlayUrl);
+            bean.setPlayUrl(mSinglePlayUrl);
+            list.add(bean);
+            e.onNext(list);
+        });
+    }
+
+    public void loadPlayItems(long orderId, long starId, boolean random, boolean playLast, String singlePlayUrl) {
         mOrderId = orderId;
         mStarId = starId;
         isRandomPlay = random;
         loadingObserver.setValue(true);
+        mSinglePlayUrl = singlePlayUrl;
         getObservable()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -134,6 +154,19 @@ public class PlayerViewModel extends BaseViewModel {
 
     public Boolean isPlayOrder() {
         return mOrderId != 0;
+    }
+
+    public String getVideoName(PlayItemViewBean bean) {
+        if (bean.getRecord() == null) {
+            if (mSinglePlayUrl != null) {
+                String[] arr = mSinglePlayUrl.split("/");
+                return arr[arr.length - 1];
+            }
+            return null;
+        }
+        else {
+            return bean.getRecord().getName();
+        }
     }
 
     /**
@@ -251,7 +284,12 @@ public class PlayerViewModel extends BaseViewModel {
         mPlayIndex = position;
         mPlayBean = mPlayList.get(mPlayIndex);
         loadPlayDuration(mPlayBean);
-        DebugLog.e("play " + mPlayBean.getRecord().getName());
+        if (mSinglePlayUrl == null) {
+            DebugLog.e("play " + mPlayBean.getRecord().getName());
+        }
+        else {
+            DebugLog.e("play " + mSinglePlayUrl);
+        }
 
         // 播放star列表，url均未加载过
         if (mPlayBean.getPlayUrl() == null) {
@@ -333,7 +371,9 @@ public class PlayerViewModel extends BaseViewModel {
     }
     
     private void loadPlayDuration(PlayItemViewBean bean) {
-        mPlayDuration = repository.getDurationInstance(bean.getRecord().getId());
+        if (bean.getRecord() != null) {
+            mPlayDuration = repository.getDurationInstance(bean.getRecord().getId());
+        }
     }
 
     public void updatePlayPosition(int currentPosition) {

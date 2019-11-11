@@ -124,6 +124,12 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
         adapter = new HomeAdapter();
         adapter.setOnHeadActionListener(new HomeAdapter.OnHeadActionListener() {
             @Override
+            public void onServer() {
+                Router.build("VideoServer")
+                        .go(VideoHomePhoneActivity.this);
+            }
+
+            @Override
             public void onSetPlayList() {
                 Router.build("PlayOrder")
                         .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)

@@ -110,6 +110,9 @@
         <activity
             android:name=".phone.video.star.PopularStarActivity"
             android:screenOrientation="user" />
+        <activity
+            android:name=".phone.video.server.VideoServerActivity"
+            android:screenOrientation="user" />
 
         <activity
             android:name=".pad.home.HomePadActivity"

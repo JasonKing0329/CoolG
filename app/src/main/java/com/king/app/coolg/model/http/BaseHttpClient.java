@@ -42,11 +42,16 @@ public abstract class BaseHttpClient {
         if (getHeaderInterceptors() != null) {
             builder.addInterceptor(getHeaderInterceptors());
         }
+        if (getLogInterceptors() != null) {
+            builder.addInterceptor(getLogInterceptors());
+        }
         builder.connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                 .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                 .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS);
         client = builder.build();
     }
+
+    protected abstract Interceptor getLogInterceptors();
 
     public void createRetrofit() throws Exception {
         createRetrofit(getBaseUrl());
@@ -90,16 +95,7 @@ public abstract class BaseHttpClient {
 
     HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(message -> {
         if (isDebug) {
-            if (message != null && message.startsWith("{")) {
-                try {
-                    Logger.json(message);
-                } catch (Exception e) {
-                    Logger.d(message);
-                }
-            } else {
-                // 不打印其他类信息
-                Logger.d(message);
-            }
+            DebugLog.e(message);
         } else {
 //                ReleaseLogger.log(context, "AppHttpClient", message);
         }
