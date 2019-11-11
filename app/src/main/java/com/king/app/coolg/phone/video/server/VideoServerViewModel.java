@@ -112,7 +112,6 @@ public class VideoServerViewModel extends BaseViewModel {
                             // 将popFolder重新入栈
                             mFolderStack.push(popFolder);
                         }
-                        updateUpperVisibility();
                     }
 
                     @Override
