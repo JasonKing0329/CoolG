@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.bean.TitleValueBean;
+import com.king.app.coolg.model.http.bean.response.OpenFileResponse;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
@@ -211,6 +212,13 @@ public class RecordViewModel extends BaseViewModel {
         }
     }
 
+    private PathRequest getPathRequest() {
+        PathRequest request = new PathRequest();
+        request.setPath(mRecord.getDirectory());
+        request.setName(mRecord.getName());
+        return request;
+    }
+
     protected void checkPlayable() {
         Observable<String> observable;
         boolean isTest = false;
@@ -222,12 +230,7 @@ public class RecordViewModel extends BaseViewModel {
         else {
             observable = AppHttpClient.getInstance().getAppService().isServerOnline()
                     .flatMap(bean -> isOnline(bean))
-                    .flatMap(result -> {
-                        PathRequest request = new PathRequest();
-                        request.setPath(mRecord.getDirectory());
-                        request.setName(mRecord.getName());
-                        return AppHttpClient.getInstance().getAppService().getVideoPath(request);
-                    })
+                    .flatMap(result -> AppHttpClient.getInstance().getAppService().getVideoPath(getPathRequest()))
                     .flatMap(response -> UrlUtil.toVideoUrl(response));
         }
         observable
@@ -706,5 +709,41 @@ public class RecordViewModel extends BaseViewModel {
             }
             e.onNext(true);
         });
+    }
+
+    public void openOnServer() {
+        loadingObserver.setValue(true);
+        AppHttpClient.getInstance().getAppService().openFileOnServer(getPathRequest())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<OpenFileResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(OpenFileResponse response) {
+                        loadingObserver.setValue(false);
+                        if (response.isSuccess()) {
+                            messageObserver.setValue("打开成功");
+                        }
+                        else {
+                            messageObserver.setValue(response.getErrorMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

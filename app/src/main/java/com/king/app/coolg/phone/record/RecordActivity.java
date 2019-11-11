@@ -1,6 +1,7 @@
 package com.king.app.coolg.phone.record;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.widget.NestedScrollView;
@@ -166,6 +167,11 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             }
         });
 
+        mBinding.ivDesktop.setOnClickListener(v -> {
+            showConfirmCancelMessage("即将在电脑上打开视频，是否继续？"
+                    , (dialog, which) -> mModel.openOnServer()
+                    , null);
+        });
     }
 
     private void floatOrEmbedVideo(int oldScrollY, int scrollY, int edge) {

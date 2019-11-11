@@ -110,6 +110,18 @@
                         android:layout_height="@dimen/gdb_star_header_height"
                         android:visibility="gone"/>
 
+                    <ImageView
+                        android:id="@+id/iv_desktop"
+                        android:layout_width="@dimen/gdb_record_icon_size"
+                        android:layout_height="@dimen/gdb_record_icon_size"
+                        android:padding="@dimen/gdb_record_icon_padding"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ic_desktop_windows_white_24dp"
+                        android:background="@drawable/shape_oval_transgrey"
+                        android:scaleType="fitCenter"/>
+
                 </RelativeLayout>
 
                 <android.support.v7.widget.RecyclerView

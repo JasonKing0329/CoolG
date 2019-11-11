@@ -12,6 +12,7 @@ import com.king.app.coolg.model.http.bean.response.FolderResponse;
 import com.king.app.coolg.model.http.bean.response.GdbMoveResponse;
 import com.king.app.coolg.model.http.bean.response.GdbRespBean;
 import com.king.app.coolg.model.http.bean.response.GetStarRatingResponse;
+import com.king.app.coolg.model.http.bean.response.OpenFileResponse;
 import com.king.app.coolg.model.http.bean.response.PathResponse;
 
 import io.reactivex.Observable;
@@ -50,4 +51,7 @@ public interface AppService {
 
     @POST("videoPath")
     Observable<PathResponse> getVideoPath(@Body PathRequest data);
+
+    @POST("openFile")
+    Observable<OpenFileResponse> openFileOnServer(@Body PathRequest data);
 }
