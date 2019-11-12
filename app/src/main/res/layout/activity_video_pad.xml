@@ -142,11 +142,20 @@
         <ImageView
             android:id="@+id/iv_refresh"
             style="@style/VideoHomeIconPad"
-            app:layout_constraintBottom_toTopOf="@+id/iv_play_list"
+            app:layout_constraintBottom_toTopOf="@+id/iv_desktop"
             app:layout_constraintEnd_toStartOf="@+id/tv_guys"
             app:layout_constraintStart_toEndOf="@id/banner"
             app:layout_constraintTop_toBottomOf="@id/iv_setting"
             app:srcCompat="@drawable/ic_refresh_grey_700_48dp" />
+
+        <ImageView
+            android:id="@+id/iv_desktop"
+            style="@style/VideoHomeIconPad"
+            app:layout_constraintBottom_toTopOf="@+id/iv_play_list"
+            app:layout_constraintEnd_toStartOf="@+id/tv_guys"
+            app:layout_constraintStart_toEndOf="@id/banner"
+            app:layout_constraintTop_toBottomOf="@id/iv_refresh"
+            app:srcCompat="@drawable/ic_desktop_windows_grey_700_48dp" />
 
         <ImageView
             android:id="@+id/iv_play_list"
@@ -154,7 +163,7 @@
             app:layout_constraintBottom_toTopOf="@+id/iv_guys"
             app:layout_constraintEnd_toStartOf="@+id/tv_guys"
             app:layout_constraintStart_toEndOf="@id/banner"
-            app:layout_constraintTop_toBottomOf="@id/iv_refresh"
+            app:layout_constraintTop_toBottomOf="@id/iv_desktop"
             app:srcCompat="@drawable/ic_dashboard_grey_700_48dp" />
 
         <ImageView

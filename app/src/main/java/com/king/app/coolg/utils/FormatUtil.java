@@ -18,6 +18,12 @@ public class FormatUtil {
         return dateFormat.format(new Date(data));
     }
 
+    public static String formatWholeDate(long data) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        return dateFormat.format(new Date(data));
+    }
+
     /**
      * 保留n位小数
      * @param score

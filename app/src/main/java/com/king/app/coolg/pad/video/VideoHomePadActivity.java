@@ -29,7 +29,6 @@ import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
 import com.king.app.coolg.view.helper.BannerHelper;
-import com.king.lib.banner.BannerFlipStyleProvider;
 
 import java.util.ArrayList;
 
@@ -81,6 +80,10 @@ public class VideoHomePadActivity extends MvvmActivity<ActivityVideoPadBinding, 
                     .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
                     .requestCode(REQUEST_SET_PLAY_ORDER)
                     .go(getContext());
+        });
+        mBinding.ivDesktop.setOnClickListener(v -> {
+            Router.build("VideoServer")
+                    .go(VideoHomePadActivity.this);
         });
         mBinding.ivList0.setOnClickListener(v -> onClickPlayList(mModel.getPlayList(0)));
         mBinding.ivList1.setOnClickListener(v -> onClickPlayList(mModel.getPlayList(1)));

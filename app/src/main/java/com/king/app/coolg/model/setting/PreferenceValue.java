@@ -94,4 +94,8 @@ public class PreferenceValue {
     public static final int VIEW_TYPE_LIST =0;
     public static final int VIEW_TYPE_GRID =1;
     public static final int VIEW_TYPE_GRID_TAB =2;
+
+    public static final int VIDEO_SERVER_SORT_NAME = 0;
+    public static final int VIDEO_SERVER_SORT_DATE = 1;
+    public static final int VIDEO_SERVER_SORT_SIZE = 2;
 }

@@ -203,4 +203,12 @@ public class SettingProperty extends BaseProperty {
         setInt(PreferenceKey.PREF_SCENE_SORT, random);
     }
 
+    public static int getVideoServerSortType() {
+        return getInt(PreferenceKey.PREF_VIDEO_SERVER_SORT, 0);
+    }
+
+    public static void setVideoServerSortType(int type) {
+        setInt(PreferenceKey.PREF_VIDEO_SERVER_SORT, type);
+    }
+
 }

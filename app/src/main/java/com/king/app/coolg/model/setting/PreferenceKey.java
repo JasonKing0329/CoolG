@@ -55,6 +55,7 @@ public class PreferenceKey {
     public static final String PREF_HOME_REC_BEAN = "pref_home_rec_sql";
 
     public static final String PREF_SCENE_SORT = "pref_scene_sort";
+    public static final String PREF_VIDEO_SERVER_SORT = "pref_video_server_sort";
     /**
      * http
      */

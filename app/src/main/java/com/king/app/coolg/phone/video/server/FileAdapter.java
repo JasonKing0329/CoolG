@@ -4,6 +4,7 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
 import com.king.app.coolg.databinding.AdapterServerFilesBinding;
 import com.king.app.coolg.model.http.bean.data.FileBean;
+import com.king.app.coolg.utils.ScreenUtils;
 
 /**
  * Desc:
@@ -13,10 +14,13 @@ import com.king.app.coolg.model.http.bean.data.FileBean;
  */
 public class FileAdapter extends BaseBindingAdapter<AdapterServerFilesBinding, FileBean> {
 
+    private boolean isTablet;
+
     private OnActionListener onActionListener;
 
     public void setOnActionListener(OnActionListener onActionListener) {
         this.onActionListener = onActionListener;
+        isTablet = ScreenUtils.isTablet();
     }
 
     @Override
@@ -27,6 +31,7 @@ public class FileAdapter extends BaseBindingAdapter<AdapterServerFilesBinding, F
     @Override
     protected void onBindItem(AdapterServerFilesBinding binding, int position, FileBean bean) {
         binding.setBean(bean);
+        binding.setIsTablet(isTablet);
         if (bean.isFolder()) {
             binding.ivFolder.setImageResource(R.drawable.ic_folder_yellow_700_36dp);
         }

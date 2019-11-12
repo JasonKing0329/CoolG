@@ -3,15 +3,14 @@ package com.king.app.coolg.phone.video.server;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
+import android.widget.PopupMenu;
 
 import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
-import com.king.app.coolg.base.adapter.BaseRecyclerAdapter;
-import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityVideoServerBinding;
-import com.king.app.coolg.model.http.bean.data.FileBean;
+import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.phone.video.player.PlayerActivity;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.UrlUtil;
@@ -36,6 +35,9 @@ public class VideoServerActivity extends MvvmActivity<ActivityVideoServerBinding
     protected void initView() {
         mBinding.setModel(mModel);
         mBinding.tvUpper.setOnClickListener(v -> mModel.goUpper());
+
+        mBinding.actionbar.setOnBackListener(() -> super.onBackPressed());
+        mBinding.actionbar.setOnSearchListener(text -> mModel.onFilterChanged(text));
         mBinding.actionbar.setOnMenuItemListener(menuId -> {
             switch (menuId) {
                 case R.id.menu_refresh:
@@ -43,10 +45,36 @@ public class VideoServerActivity extends MvvmActivity<ActivityVideoServerBinding
                     break;
             }
         });
-        mBinding.actionbar.setOnBackListener(() -> super.onBackPressed());
-        mBinding.actionbar.setOnSearchListener(text -> mModel.onFilterChanged(text));
+        mBinding.actionbar.registerPopupMenu(R.id.menu_sort);
+        mBinding.actionbar.setPopupMenuProvider((iconMenuId, anchorView) -> {
+            switch (iconMenuId) {
+                case R.id.menu_sort:
+                    return getSortPopup(anchorView);
+            }
+            return null;
+        });
 
         mBinding.rvList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+    }
+
+    private PopupMenu getSortPopup(View anchorView) {
+        PopupMenu menu = new PopupMenu(this, anchorView);
+        menu.getMenuInflater().inflate(R.menu.sort_video_server, menu.getMenu());
+        menu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_sort_by_name:
+                    mModel.onSortTypeChanged(PreferenceValue.VIDEO_SERVER_SORT_NAME);
+                    break;
+                case R.id.menu_sort_by_date:
+                    mModel.onSortTypeChanged(PreferenceValue.VIDEO_SERVER_SORT_DATE);
+                    break;
+                case R.id.menu_sort_by_size:
+                    mModel.onSortTypeChanged(PreferenceValue.VIDEO_SERVER_SORT_SIZE);
+                    break;
+            }
+            return true;
+        });
+        return menu;
     }
 
     @Override

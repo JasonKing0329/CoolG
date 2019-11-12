@@ -37,24 +37,36 @@ public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBindi
 
     @Override
     protected void onBindItem(AdapterPlaylistItemBinding binding, int position, PlayItemViewBean bean) {
-        GlideApp.with(binding.ivThumb.getContext())
-                .load(bean.getCover())
-                .error(R.drawable.def_small)
-                .into(binding.ivThumb);
+        // 只播放地址
         if (bean.getRecord() == null) {
-            binding.tvName.setText("");
-        }
-        else {
-            binding.tvName.setText(bean.getRecord().getName());
-        }
-        if (position == mPlayIndex) {
+            binding.ivThumb.setVisibility(View.GONE);
+            binding.ivDelete.setVisibility(View.INVISIBLE);
+            binding.tvName.setText(bean.getPlayUrl());
             binding.getRoot().setBackgroundColor(binding.getRoot().getContext().getResources().getColor(R.color.playlist_bg_focus));
         }
+        // 播放record item
         else {
-            binding.getRoot().setBackgroundColor(Color.TRANSPARENT);
+            binding.ivThumb.setVisibility(View.VISIBLE);
+
+            GlideApp.with(binding.ivThumb.getContext())
+                    .load(bean.getCover())
+                    .error(R.drawable.def_small)
+                    .into(binding.ivThumb);
+            if (bean.getRecord() == null) {
+                binding.tvName.setText("");
+            }
+            else {
+                binding.tvName.setText(bean.getRecord().getName());
+            }
+            if (position == mPlayIndex) {
+                binding.getRoot().setBackgroundColor(binding.getRoot().getContext().getResources().getColor(R.color.playlist_bg_focus));
+            }
+            else {
+                binding.getRoot().setBackgroundColor(Color.TRANSPARENT);
+            }
+            binding.ivDelete.setVisibility(enableDelete ? View.VISIBLE:View.GONE);
+            binding.ivDelete.setOnClickListener(v -> onDeleteListener.onDelete(position, bean));
         }
-        binding.ivDelete.setVisibility(enableDelete ? View.VISIBLE:View.GONE);
-        binding.ivDelete.setOnClickListener(v -> onDeleteListener.onDelete(position, bean));
     }
 
     public void enableDelete(boolean enableDelete) {

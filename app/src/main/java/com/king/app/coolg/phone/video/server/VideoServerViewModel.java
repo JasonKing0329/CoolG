@@ -14,12 +14,17 @@ import com.king.app.coolg.model.http.bean.data.FileBean;
 import com.king.app.coolg.model.http.bean.request.FolderRequest;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.http.bean.response.OpenFileResponse;
+import com.king.app.coolg.model.setting.PreferenceValue;
+import com.king.app.coolg.model.setting.SettingProperty;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -43,9 +48,12 @@ public class VideoServerViewModel extends BaseViewModel {
 
     private String mFilterText;
 
+    private int mSortType;
+
     public VideoServerViewModel(@NonNull Application application) {
         super(application);
         mFolderStack = new Stack<>();
+        mSortType = SettingProperty.getVideoServerSortType();
     }
 
     private FileBean getCurrentFolder() {
@@ -84,6 +92,7 @@ public class VideoServerViewModel extends BaseViewModel {
                     }
                     return filterFiles();
                 })
+                .flatMap(list -> sortFiles(list))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<FileBean>>() {
@@ -133,7 +142,7 @@ public class VideoServerViewModel extends BaseViewModel {
     }
 
     public boolean backFolder() {
-        if (getCurrentFolder() == null) {
+        if (mFolderStack.empty() || getCurrentFolder() == null) {
             return false;
         }
         goUpper();
@@ -157,9 +166,28 @@ public class VideoServerViewModel extends BaseViewModel {
         });
     }
 
+    private ObservableSource<List<FileBean>> sortFiles(List<FileBean> list) {
+        return observer -> {
+            switch (mSortType) {
+                case PreferenceValue.VIDEO_SERVER_SORT_DATE:
+                    Collections.sort(list, new DateComparator());
+                    break;
+                case PreferenceValue.VIDEO_SERVER_SORT_SIZE:
+                    Collections.sort(list, new SizeComparator());
+                    break;
+                case PreferenceValue.VIDEO_SERVER_SORT_NAME:
+                default:
+                    Collections.sort(list, new NameComparator());
+                    break;
+            }
+            observer.onNext(list);
+        };
+    }
+
     public void onFilterChanged(String text) {
         mFilterText = text;
         filterFiles()
+                .flatMap(list -> sortFiles(list))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<FileBean>>() {
@@ -232,4 +260,55 @@ public class VideoServerViewModel extends BaseViewModel {
                     }
                 });
     }
+
+    public void onSortTypeChanged(int sortType) {
+        mSortType = sortType;
+        SettingProperty.setVideoServerSortType(sortType);
+        onFilterChanged(mFilterText);
+    }
+
+    private class NameComparator implements Comparator<FileBean> {
+
+        @Override
+        public int compare(FileBean o1, FileBean o2) {
+            String name1 = o1.getName() == null ? "":o1.getName();
+            String name2 = o2.getName() == null ? "":o2.getName();
+            return name1.compareTo(name2);
+        }
+    }
+
+    private class DateComparator implements Comparator<FileBean> {
+
+        @Override
+        public int compare(FileBean o1, FileBean o2) {
+            long result = o2.getLastModifyTime() - o1.getLastModifyTime();
+            if (result > 0) {
+                return 1;
+            }
+            else if (result < 0) {
+                return -1;
+            }
+            else {
+                return 0;
+            }
+        }
+    }
+
+    private class SizeComparator implements Comparator<FileBean> {
+
+        @Override
+        public int compare(FileBean o1, FileBean o2) {
+            long result = o2.getSize() - o1.getSize();
+            if (result > 0) {
+                return 1;
+            }
+            else if (result < 0) {
+                return -1;
+            }
+            else {
+                return 0;
+            }
+        }
+    }
+
 }
