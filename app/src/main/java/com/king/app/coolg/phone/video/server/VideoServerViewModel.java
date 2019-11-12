@@ -12,6 +12,8 @@ import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.HttpConstants;
 import com.king.app.coolg.model.http.bean.data.FileBean;
 import com.king.app.coolg.model.http.bean.request.FolderRequest;
+import com.king.app.coolg.model.http.bean.request.PathRequest;
+import com.king.app.coolg.model.http.bean.response.OpenFileResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -187,5 +189,47 @@ public class VideoServerViewModel extends BaseViewModel {
 
     public void clearFilter() {
         mFilterText = null;
+    }
+
+    public void openFile(FileBean bean) {
+        PathRequest request = new PathRequest();
+        request.setPath(bean.getPath());
+        openServerFile(request);
+    }
+
+    private void openServerFile(PathRequest request) {
+        loadingObserver.setValue(true);
+        AppHttpClient.getInstance().getAppService().openFileOnServer(request)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<OpenFileResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(OpenFileResponse response) {
+                        loadingObserver.setValue(false);
+                        if (response.isSuccess()) {
+                            messageObserver.setValue("打开成功");
+                        }
+                        else {
+                            messageObserver.setValue(response.getErrorMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

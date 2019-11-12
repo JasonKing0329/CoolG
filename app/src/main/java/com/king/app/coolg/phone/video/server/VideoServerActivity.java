@@ -82,6 +82,7 @@ public class VideoServerActivity extends MvvmActivity<ActivityVideoServerBinding
                         }
                     }
                 });
+                adapter.setOnActionListener(bean -> mModel.openFile(bean));
                 mBinding.rvList.setAdapter(adapter);
             }
             else {

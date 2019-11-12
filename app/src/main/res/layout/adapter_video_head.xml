@@ -16,20 +16,12 @@
         android:background="@color/white">
 
         <TextView
-            android:id="@+id/tv_server"
-            style="@style/TvSectionTitle"
-            android:text="Videos on server"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
             android:id="@+id/tv_play_list"
             style="@style/TvSectionTitle"
             android:text="Play Lists"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_server" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/iv_set_play_list"

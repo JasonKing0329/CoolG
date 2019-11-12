@@ -13,6 +13,12 @@ import com.king.app.coolg.model.http.bean.data.FileBean;
  */
 public class FileAdapter extends BaseBindingAdapter<AdapterServerFilesBinding, FileBean> {
 
+    private OnActionListener onActionListener;
+
+    public void setOnActionListener(OnActionListener onActionListener) {
+        this.onActionListener = onActionListener;
+    }
+
     @Override
     protected int getItemLayoutRes() {
         return R.layout.adapter_server_files;
@@ -27,5 +33,10 @@ public class FileAdapter extends BaseBindingAdapter<AdapterServerFilesBinding, F
         else {
             binding.ivFolder.setImageResource(R.drawable.ic_play_circle_outline_3f51b5_36dp);
         }
+        binding.ivOpen.setOnClickListener(v -> onActionListener.onOpenServer(bean));
+    }
+
+    public interface OnActionListener {
+        void onOpenServer(FileBean bean);
     }
 }

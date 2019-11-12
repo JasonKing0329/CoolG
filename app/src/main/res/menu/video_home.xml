@@ -5,6 +5,10 @@
         android:title="Refresh"
         android:icon="@drawable/ic_refresh_updatable"
         app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_desktop"
+        android:title="Desktop"
+        android:icon="@drawable/ic_desktop_windows_white_24dp"
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/menu_recommend_setting"
         android:title="Recommend Setting"
         app:showAsAction="never"/>

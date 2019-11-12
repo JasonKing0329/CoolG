@@ -72,6 +72,10 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
                         showMessageShort("Please stop video first!");
                     }
                     break;
+                case R.id.menu_desktop:
+                    Router.build("VideoServer")
+                            .go(VideoHomePhoneActivity.this);
+                    break;
                 case R.id.menu_recommend_setting:
                     RecommendFragment content = new RecommendFragment();
                     content.setHideOnline(true);
@@ -123,11 +127,6 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
     protected void initData() {
         adapter = new HomeAdapter();
         adapter.setOnHeadActionListener(new HomeAdapter.OnHeadActionListener() {
-            @Override
-            public void onServer() {
-                Router.build("VideoServer")
-                        .go(VideoHomePhoneActivity.this);
-            }
 
             @Override
             public void onSetPlayList() {
