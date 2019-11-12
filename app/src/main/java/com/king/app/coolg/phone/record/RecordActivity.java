@@ -28,6 +28,7 @@ import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.studio.StudioActivity;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
+import com.king.app.coolg.phone.video.player.PlayerActivity;
 import com.king.app.coolg.utils.FormatUtil;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
@@ -45,6 +46,7 @@ import java.util.List;
 import tcking.github.com.giraffeplayer2.GiraffePlayer;
 import tcking.github.com.giraffeplayer2.Option;
 import tcking.github.com.giraffeplayer2.PlayerManager;
+import tcking.github.com.giraffeplayer2.VideoInfo;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
@@ -172,12 +174,20 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                     , (dialog, which) -> mModel.openOnServer()
                     , null);
         });
+
+        mBinding.videoView.interceptFullScreenListener(v -> {
+            showConfirmCancelMessage("是否在临时列表中打开，若是，视频将从上一次记录的位置开始播放？"
+                    , getString(R.string.yes), (dialog, which) -> mModel.playInPlayer()
+                    , getString(R.string.no), (dialog, which) -> mBinding.videoView.executeFullScreen());
+        });
     }
 
     private void floatOrEmbedVideo(int oldScrollY, int scrollY, int edge) {
         // 上滑且超出边界
         if (scrollY > edge && scrollY > oldScrollY
                 && mBinding.videoView.getPlayer().getDisplayModel() != GiraffePlayer.DISPLAY_FLOAT) {
+            VideoInfo.floatView_width = getResources().getDimensionPixelSize(R.dimen.float_video_width);
+            VideoInfo.floatView_width = getResources().getDimensionPixelSize(R.dimen.float_video_height);
             mBinding.videoView.getPlayer().setDisplayModel(GiraffePlayer.DISPLAY_FLOAT);
         }
         // 下滑且超出边界
@@ -293,7 +303,17 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
         mModel.videoUrlObserver.observe(this, url -> previewVideo(url));
 
+        mModel.playVideoInPlayer.observe(this, item -> playList());
+
         mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
+    }
+
+    private void playList() {
+        Router.build("Player")
+                .with(PlayerActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
+                .with(PlayerActivity.EXTRA_PLAY_RANDOM, false)
+                .with(PlayerActivity.EXTRA_PLAY_LAST, true)
+                .go(this);
     }
 
     private void showScores(List<TitleValueBean> list) {

@@ -101,20 +101,7 @@ public class EmbedVideoView extends VideoView {
             public void onClick(View v) {
                 // full screen
                 if (interceptFullScreenListener == null) {
-                    if (getVideoInfo().getUri() == null) {
-                        if (onPlayEmptyUrlListener != null) {
-                            onPlayEmptyUrlListener.onPlayEmptyUrl(getVideoInfo().getFingerprint(), new UrlCallback() {
-                                @Override
-                                public void onReceiveUrl(String url) {
-                                    setVideoPath(url);
-                                    prepare();
-                                    onClickFullScreen();
-                                }
-                            });
-                            return;
-                        }
-                    }
-                    onClickFullScreen();
+                    executeFullScreen();
                 }
                 // 截获full screen按钮事件
                 else {
@@ -127,6 +114,23 @@ public class EmbedVideoView extends VideoView {
                 }
             }
         });
+    }
+
+    public void executeFullScreen() {
+        if (getVideoInfo().getUri() == null) {
+            if (onPlayEmptyUrlListener != null) {
+                onPlayEmptyUrlListener.onPlayEmptyUrl(getVideoInfo().getFingerprint(), new UrlCallback() {
+                    @Override
+                    public void onReceiveUrl(String url) {
+                        setVideoPath(url);
+                        prepare();
+                        onClickFullScreen();
+                    }
+                });
+                return;
+            }
+        }
+        onClickFullScreen();
     }
 
     private void onClickFullScreen() {

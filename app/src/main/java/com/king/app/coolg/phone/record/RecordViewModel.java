@@ -71,6 +71,8 @@ public class RecordViewModel extends BaseViewModel {
 
     public MutableLiveData<String> videoUrlObserver = new MutableLiveData<>();
 
+    public MutableLiveData<PlayItem> playVideoInPlayer = new MutableLiveData<>();
+
     private RecordRepository repository;
     private OrderRepository orderRepository;
     protected PlayRepository playRepository;
@@ -216,6 +218,8 @@ public class RecordViewModel extends BaseViewModel {
         PathRequest request = new PathRequest();
         request.setPath(mRecord.getDirectory());
         request.setName(mRecord.getName());
+//        request.setPath("E:\\temp\\coolg\\server_root\\f_3");
+//        request.setName("large");
         return request;
     }
 
@@ -737,6 +741,38 @@ public class RecordViewModel extends BaseViewModel {
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    /**
+     * 将视频url添加到临时播放列表的末尾
+     */
+    public void playInPlayer() {
+        // 将视频url添加到临时播放列表的末尾
+        playRepository.insertToTempList(recordObserver.getValue().getId(), mPlayUrl)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<PlayItem>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(PlayItem item) {
+                        playVideoInPlayer.setValue(item);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
                         messageObserver.setValue(e.getMessage());
                     }
 

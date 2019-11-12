@@ -207,4 +207,6 @@
     <dimen name="video_item_width">400dp</dimen>
     <dimen name="video_item_height">225dp</dimen>
     <dimen name="video_seek_thumb_size">30dp</dimen>
+    <dimen name="float_video_width">480dp</dimen>
+    <dimen name="float_video_height">360dp</dimen>
 </resources>
