@@ -43,6 +43,7 @@ public class AppConfig {
     public static final String APP_DIR_CONF_APP = APP_DIR_CONF + "/app";
     // 采用自动更新替代gdata.db的方法，因为jornal的存在，会使重新使用这个db出现问题
     public static String GDB_DB_JOURNAL = APP_DIR_CONF + "/gdata.db-journal";
+    public static String GDB_DB_FULL_PATH = APP_DIR_CONF + "/" + DB_NAME;
 
     public static String PREF_NAME="com.jing.app.jjgallery_preferences";
 

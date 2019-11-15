@@ -6,6 +6,7 @@ import com.king.app.coolg.model.http.bean.request.GdbRequestMoveBean;
 import com.king.app.coolg.model.http.bean.request.GetStarRatingsRequest;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.http.bean.request.UploadStarRatingRequest;
+import com.king.app.coolg.model.http.bean.request.VersionRequest;
 import com.king.app.coolg.model.http.bean.response.AppCheckBean;
 import com.king.app.coolg.model.http.bean.response.BaseResponse;
 import com.king.app.coolg.model.http.bean.response.FolderResponse;
@@ -14,6 +15,7 @@ import com.king.app.coolg.model.http.bean.response.GdbRespBean;
 import com.king.app.coolg.model.http.bean.response.GetStarRatingResponse;
 import com.king.app.coolg.model.http.bean.response.OpenFileResponse;
 import com.king.app.coolg.model.http.bean.response.PathResponse;
+import com.king.app.coolg.model.http.bean.response.VersionResponse;
 
 import io.reactivex.Observable;
 import retrofit2.http.Body;
@@ -54,4 +56,7 @@ public interface AppService {
 
     @POST("openFile")
     Observable<OpenFileResponse> openFileOnServer(@Body PathRequest data);
+
+    @POST("version")
+    Observable<BaseResponse<VersionResponse>> getVersion(@Body VersionRequest data);
 }

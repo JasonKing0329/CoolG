@@ -1,4 +1,4 @@
-package com.king.app.coolg.model.http;
+package com.king.app.coolg.model.http.upload;
 
 import java.util.Map;
 

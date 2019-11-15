@@ -14,15 +14,18 @@ import com.king.app.coolg.model.bean.CheckDownloadBean;
 import com.king.app.coolg.model.bean.DownloadDialogBean;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.Command;
+import com.king.app.coolg.model.http.HttpConstants;
 import com.king.app.coolg.model.http.bean.data.DownloadItem;
 import com.king.app.coolg.model.http.bean.request.GdbCheckNewFileBean;
 import com.king.app.coolg.model.http.bean.request.GdbRequestMoveBean;
-import com.king.app.coolg.model.http.bean.request.GetStarRatingsRequest;
-import com.king.app.coolg.model.http.bean.request.UploadStarRatingRequest;
+import com.king.app.coolg.model.http.bean.request.VersionRequest;
 import com.king.app.coolg.model.http.bean.response.AppCheckBean;
-import com.king.app.coolg.model.http.bean.response.BaseFlatMap;
 import com.king.app.coolg.model.http.bean.response.GdbMoveResponse;
 import com.king.app.coolg.model.http.bean.response.GdbRespBean;
+import com.king.app.coolg.model.http.bean.response.UploadResponse;
+import com.king.app.coolg.model.http.bean.response.VersionResponse;
+import com.king.app.coolg.model.http.normal.BaseResponseFlatMap;
+import com.king.app.coolg.model.http.upload.UploadRespGsonClient;
 import com.king.app.coolg.model.repository.PropertyRepository;
 import com.king.app.coolg.utils.FileUtil;
 import com.king.app.coolg.utils.ListUtil;
@@ -35,7 +38,6 @@ import com.king.app.gdb.data.entity.PlayOrder;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarDao;
 import com.king.app.gdb.data.entity.StarRating;
-import com.king.app.gdb.data.entity.StarRatingDao;
 import com.king.app.gdb.data.entity.TopStar;
 import com.king.app.gdb.data.entity.TopStarCategory;
 import com.king.app.gdb.data.entity.VideoCoverPlayOrder;
@@ -50,10 +52,13 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 /**
  * Desc:
@@ -67,8 +72,10 @@ public class ManageViewModel extends BaseViewModel {
 
     public MutableLiveData<DownloadDialogBean> imagesObserver = new MutableLiveData<>();
     public MutableLiveData<AppCheckBean> gdbCheckObserver = new MutableLiveData<>();
-    public MutableLiveData<AppCheckBean> readyToDownloadObserver = new MutableLiveData<>();
+    public MutableLiveData<Long> readyToDownloadObserver = new MutableLiveData<>();
 
+    public MutableLiveData<Boolean> warningSync = new MutableLiveData<>();
+    public MutableLiveData<String> warningUpload = new MutableLiveData<>();
     private LocalData mLocalData;
     
     public ManageViewModel(@NonNull Application application) {
@@ -265,11 +272,11 @@ public class ManageViewModel extends BaseViewModel {
         return list;
     }
 
-    public void onMoveStar(View view) {
+    public void moveStar() {
         requestServeMoveImages(Command.TYPE_STAR);
     }
 
-    public void onMoveRecord(View view) {
+    public void moveRecord() {
         requestServeMoveImages(Command.TYPE_RECORD);
     }
 
@@ -390,27 +397,72 @@ public class ManageViewModel extends BaseViewModel {
                 });
     }
 
-    public void onUploadRatings(View view) {
+    public void prepareUpload() {
         loadingObserver.setValue(true);
-        getStarRatings()
-                .flatMap(starRatings -> {
-                    UploadStarRatingRequest request = new UploadStarRatingRequest();
-                    request.setRatingList(starRatings);
-                    return AppHttpClient.getInstance().getAppService().uploadStarRatings(request);
-                })
-                .flatMap(baseResponse -> BaseFlatMap.resultIncludeNull(baseResponse))
+        VersionRequest request = new VersionRequest();
+        request.setType(HttpConstants.UPLOAD_TYPE_DB);
+        AppHttpClient.getInstance().getAppService().getVersion(request)
+                .flatMap(response -> BaseResponseFlatMap.result(response))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<Object>() {
+                .subscribe(new Observer<VersionResponse>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         addDisposable(d);
                     }
 
                     @Override
-                    public void onNext(Object o) {
+                    public void onNext(VersionResponse response) {
                         loadingObserver.setValue(false);
-                        messageObserver.setValue("Upload successfully");
+                        // 没有上传过，或服务器版本与本地保存的版本号一致，直接提示将上传覆盖
+                        if (response.getVersionCode() == null || response.getVersionCode().equals(SettingProperty.getUploadVersion())) {
+                            warningUpload.setValue("本地database将覆盖服务端database，是否继续？");
+                        }
+                        // 如果服务器版本比本地版本不一致，提醒
+                        else {
+                            warningUpload.setValue("服务器database版本与本地上一次更新不一致，操作将执行本地database覆盖服务端database，是否继续？");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void uploadDatabase() {
+        loadingObserver.setValue(true);
+        //组装partMap对象
+        Map<String, RequestBody> partMap = new HashMap<>();
+
+        // gdb database
+        File file = new File(AppConfig.GDB_DB_FULL_PATH);
+        RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        partMap.put("file\"; filename=\""+file.getName(), fileBody);
+
+        UploadRespGsonClient.getInstance().getService().uploadDb(partMap)
+                .flatMap(response -> BaseResponseFlatMap.result(response))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<UploadResponse>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(UploadResponse uploadResponse) {
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue("上传成功");
+                        SettingProperty.setUploadVersion(uploadResponse.getTimeStamp());
                     }
 
                     @Override
@@ -431,55 +483,21 @@ public class ManageViewModel extends BaseViewModel {
         return Observable.create(e -> e.onNext(getDaoSession().getStarRatingDao().loadAll()));
     }
 
-    public void syncRatings() {
-        loadingObserver.setValue(true);
-        GetStarRatingsRequest request = new GetStarRatingsRequest();
-        AppHttpClient.getInstance().getAppService().getStarRatings(request)
-                .flatMap(response -> BaseFlatMap.result(response))
-                .flatMap(response -> observer -> {
-                    if (!ListUtil.isEmpty(response.getRatingList())) {
-                        StarRatingDao dao = getDaoSession().getStarRatingDao();
-                        dao.deleteAll();
-                        dao.insertInTx(response.getRatingList());
-                    }
-                    observer.onNext(new Object());
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<Object>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(Object o) {
-                        loadingObserver.setValue(false);
-                        messageObserver.setValue("Sync successfully");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        loadingObserver.setValue(false);
-                        messageObserver.setValue("Sync failed: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public DownloadDialogBean getDownloadDatabaseBean(AppCheckBean appCheckBean) {
+    public DownloadDialogBean getDownloadDatabaseBean(long size, boolean isUploadedDb) {
         DownloadDialogBean bean = new DownloadDialogBean();
         bean.setShowPreview(false);
         bean.setSavePath(AppConfig.APP_DIR_CONF);
         DownloadItem item = new DownloadItem();
-        item.setFlag(Command.TYPE_GDB_DATABASE);
-        item.setSize(appCheckBean.getGdbDabaseSize());
-        item.setName(appCheckBean.getGdbDabaseName());
+        if (isUploadedDb) {
+            item.setFlag(Command.TYPE_GDB_DATABASE_UPLOAD);
+        }
+        else {
+            item.setFlag(Command.TYPE_GDB_DATABASE);
+        }
+        if (size != 0) {
+            item.setSize(size);
+        }
+        item.setName(AppConfig.DB_NAME);
         List<DownloadItem> list = new ArrayList<>();
         list.add(item);
         bean.setDownloadList(list);
@@ -505,7 +523,7 @@ public class ManageViewModel extends BaseViewModel {
                     public void onNext(LocalData data) {
                         loadingObserver.setValue(false);
                         mLocalData = data;
-                        readyToDownloadObserver.setValue(bean);
+                        readyToDownloadObserver.setValue(bean.getAppSize());
                     }
 
                     @Override
@@ -570,9 +588,9 @@ public class ManageViewModel extends BaseViewModel {
         });
     }
 
-    public void databaseDownloaded() {
+    public void databaseDownloaded(boolean isUploadedDb) {
         loadingObserver.setValue(true);
-        updateLocalData()
+        updateLocalData(isUploadedDb)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<Object>() {
@@ -600,17 +618,23 @@ public class ManageViewModel extends BaseViewModel {
                     }
                 });
     }
-    
-    private Observable<Object> updateLocalData() {
+
+    /**
+     * 如果是更新的upload数据库，直接替换后就完成了；下载的是默认database，保存本地的其他表单
+     * @param isUploadedDb
+     * @return
+     */
+    private Observable<Object> updateLocalData(boolean isUploadedDb) {
         return Observable.create(e -> {
             new File(AppConfig.GDB_DB_JOURNAL).delete();
             CoolApplication.getInstance().reCreateGreenDao();
-
-            updateStarFavorFiled();
-            updateFavorTables();
-            updateStarRatings();
-            updatePlayList();
-            updateCategory();
+            if (!isUploadedDb) {
+                updateStarFavorFiled();
+                updateFavorTables();
+                updateStarRatings();
+                updatePlayList();
+                updateCategory();
+            }
             e.onNext(new Object());
         });
     }
@@ -699,6 +723,57 @@ public class ManageViewModel extends BaseViewModel {
             getDaoSession().getVideoCoverStarDao().deleteAll();
             getDaoSession().getVideoCoverStarDao().insertInTx(mLocalData.videoCoverStars);
         }
+    }
+
+    private ObservableSource<Boolean> isDifferentVersion(String serverVersion) {
+        return observer -> {
+            boolean result = false;
+            String localVersion = SettingProperty.getUploadVersion();
+            if (serverVersion != null) {
+                result = !localVersion.equals(serverVersion);
+            }
+            observer.onNext(result);
+        };
+    }
+
+    public void checkSyncVersion() {
+        loadingObserver.setValue(true);
+        VersionRequest request = new VersionRequest();
+        request.setType(HttpConstants.UPLOAD_TYPE_DB);
+        AppHttpClient.getInstance().getAppService().getVersion(request)
+                .flatMap(response -> BaseResponseFlatMap.result(response))
+                .flatMap(response -> isDifferentVersion(response.getVersionCode()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(Boolean isHigher) {
+                        loadingObserver.setValue(false);
+                        if (isHigher) {
+                            warningSync.setValue(true);
+                        }
+                        else {
+                            messageObserver.setValue("The local database is already the latest version");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        loadingObserver.setValue(false);
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private class LocalData {

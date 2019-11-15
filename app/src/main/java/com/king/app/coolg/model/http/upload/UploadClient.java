@@ -1,11 +1,14 @@
-package com.king.app.coolg.model.http;
+package com.king.app.coolg.model.http.upload;
+
+import com.king.app.coolg.model.http.BaseHttpClient;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 /**
- * 文件下载
+ * 文件上传
+ * 不指定converter factory，只实现文件上传，service的Observable用<ResponseBody>
  */
 public class UploadClient {
 
@@ -16,7 +19,7 @@ public class UploadClient {
         OkHttpClient client = new OkHttpClient.Builder().build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BaseHttpClient.getBaseUrl())
+                .baseUrl(BaseHttpClient.formatUrl(BaseHttpClient.getBaseUrl()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(client)
                 .build();

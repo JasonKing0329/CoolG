@@ -125,4 +125,5 @@ public class PreferenceKey {
     public static final String PAD_ORDER_ITEM_RECORD_SORT = "pad_order_item_record_sort";
     public static final String PAD_ORDER_ITEM_RECORD_DESC = "pad_order_item_record_desc";
 
+    public static final String PREF_UPLOAD_VERSION = "upload_version";
 }

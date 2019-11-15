@@ -95,11 +95,11 @@
                     android:layout_height="160dp"
                     app:cardCornerRadius="15dp">
                     <LinearLayout
+                        android:id="@+id/group_move_stars"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:background="?android:attr/selectableItemBackground"
-                        android:onClick="@{model.onMoveStar}"
                         android:gravity="center">
                         <ImageView
                             android:layout_width="40dp"
@@ -125,11 +125,11 @@
                     android:layout_marginLeft="16dp"
                     app:cardCornerRadius="15dp">
                     <LinearLayout
+                        android:id="@+id/group_move_records"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:background="?android:attr/selectableItemBackground"
-                        android:onClick="@{model.onMoveRecord}"
                         android:gravity="center">
                         <ImageView
                             android:layout_width="40dp"
@@ -252,11 +252,11 @@
                 android:layout_marginTop="20dp"
                 app:cardCornerRadius="15dp">
                 <LinearLayout
+                    android:id="@+id/group_upload"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:background="?android:attr/selectableItemBackground"
-                    android:onClick="@{model.onUploadRatings}"
                     android:gravity="center_vertical">
                     <ImageView
                         android:layout_width="40dp"
@@ -271,7 +271,7 @@
                         android:layout_marginLeft="20dp"
                         android:textColor="@color/colorPrimary"
                         android:textSize="20dp"
-                        android:text="Upload star ratings"/>
+                        android:text="Upload local database"/>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
             <android.support.v7.widget.CardView
@@ -280,7 +280,7 @@
                 android:layout_marginTop="20dp"
                 app:cardCornerRadius="15dp">
                 <LinearLayout
-                    android:id="@+id/group_sync_rating"
+                    android:id="@+id/group_sync_upload"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
@@ -299,7 +299,7 @@
                         android:layout_marginLeft="20dp"
                         android:textColor="@color/colorPrimary"
                         android:textSize="20dp"
-                        android:text="Synchronize star ratings"/>
+                        android:text="Synchronize uploaded database"/>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 

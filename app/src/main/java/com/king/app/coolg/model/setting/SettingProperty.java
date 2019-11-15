@@ -211,4 +211,19 @@ public class SettingProperty extends BaseProperty {
         setInt(PreferenceKey.PREF_VIDEO_SERVER_SORT, type);
     }
 
+    /**
+     *
+     */
+    public static String getUploadVersion() {
+        return getString(PreferenceKey.PREF_UPLOAD_VERSION);
+    }
+
+    /**
+     *
+     * @param version version name
+     */
+    public static void setUploadVersion(String version) {
+        setString(PreferenceKey.PREF_UPLOAD_VERSION, version);
+    }
+
 }
