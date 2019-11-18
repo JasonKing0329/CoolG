@@ -90,7 +90,6 @@ public class StudioPageViewModel extends BaseViewModel {
                 RecordProxy proxy = new RecordProxy();
                 proxy.setRecord(record);
                 proxy.setImagePath(ImageProvider.getRecordRandomPath(record.getName(), null));
-                proxy.setOffsetIndex(i);
                 pageItem.getRecordList().add(proxy);
 
                 List<RecordStar> stars = record.getRelationList();
@@ -107,14 +106,14 @@ public class StudioPageViewModel extends BaseViewModel {
                     }
                     item.setNumber(item.getNumber() + 1);
                 }
-                if (record.getScore() >= 400) {
+                if (record.getScore() >= 600) {
                     highCount ++;
                 }
             }
 
             pageItem.setStrCount(pageItem.getRecordList().size() + " Videos, " + starCount + " Stars");
             if (highCount > 0) {
-                pageItem.setStrHighCount(highCount + " 400+ Videos");
+                pageItem.setStrHighCount("600+ Videos: " + highCount);
             }
             pageItem.setUpdateTime(new SimpleDateFormat("yyyy-MM-dd").format(order.getUpdateTime()));
 
@@ -126,6 +125,10 @@ public class StudioPageViewModel extends BaseViewModel {
             }
             // sort records by score, desc
             Collections.sort(pageItem.getRecordList(), new RecordComparator());
+            // set index after sort
+            for (int i = 0; i < pageItem.getRecordList().size(); i ++) {
+                pageItem.getRecordList().get(i).setOffsetIndex(i + 1);
+            }
             observer.onNext(pageItem);
         };
     }

@@ -3,11 +3,16 @@ package com.king.app.coolg.model.repository;
 import android.database.Cursor;
 import android.text.TextUtils;
 
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.phone.record.scene.SceneBean;
 import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.utils.DebugLog;
+import com.king.app.gdb.data.entity.FavorRecord;
+import com.king.app.gdb.data.entity.FavorRecordDao;
+import com.king.app.gdb.data.entity.FavorRecordOrder;
+import com.king.app.gdb.data.entity.FavorRecordOrderDao;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordDao;
 import com.king.app.gdb.data.param.DataConstants;
@@ -331,5 +336,26 @@ public class RecordRepository extends BaseRepository {
 
     private void buildQueryJoinStudio(long studioId, StringBuffer buffer) {
         buffer.append(" JOIN favor_record FR ON FR.RECORD_ID=T._id AND FR.ORDER_ID=").append(studioId);
+    }
+
+    public Observable<List<Record>> getRecordsWithoutStudio() {
+        return Observable.create(e -> {
+            List<Record> result = new ArrayList<>();
+            FavorRecordOrder studioParent = getDaoSession().getFavorRecordOrderDao().queryBuilder()
+                    .where(FavorRecordOrderDao.Properties.Name.eq(AppConstants.ORDER_STUDIO_NAME))
+                    .build().uniqueOrThrow();
+            long parentId = studioParent.getId();
+            List<Record> list = getDaoSession().getRecordDao().loadAll();
+            FavorRecordDao dao = getDaoSession().getFavorRecordDao();
+            for (Record record:list) {
+                List<FavorRecord> items = dao.queryRaw(
+                        "JOIN favor_order_record fo ON T.ORDER_ID=fo._id AND fo.PARENT_ID=? " +
+                        "WHERE T.RECORD_ID=?", new String[]{String.valueOf(parentId), String.valueOf(record.getId())});
+                if (items.size() == 0) {
+                    result.add(record);
+                }
+            }
+            e.onNext(result);
+        });
     }
 }
