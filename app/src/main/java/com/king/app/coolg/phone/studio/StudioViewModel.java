@@ -208,7 +208,7 @@ public class StudioViewModel extends BaseViewModel {
         int countHigh = 0;
         TreeSet<Long> starIdList = new TreeSet<>();
         for (Record record:order.getRecordList()) {
-            if (record.getScore() >= 400) {
+            if (record.getScore() >= 600) {
                 countHigh ++;
             }
             List<RecordStar> stars = record.getRelationList();
@@ -224,7 +224,7 @@ public class StudioViewModel extends BaseViewModel {
         item.setCount(buffer.toString());
 
         if (countHigh > 0) {
-            item.setHigh(countHigh + " 400+ Videos");
+            item.setHigh("600+ Videos: " + countHigh);
         }
     }
 

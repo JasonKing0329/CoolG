@@ -18,6 +18,7 @@ import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
+import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.ScreenUtils;
@@ -69,6 +70,9 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
 
         mBinding.actionbar.setOnMenuItemListener(menuId -> {
             switch (menuId) {
+                case R.id.menu_no_studio:
+                    showNoStudio();
+                    break;
                 case R.id.menu_recommend_setting:
                     showRecommendSetting();
                     break;
@@ -80,6 +84,11 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
 
         mBinding.fabTop.setOnClickListener(v -> mBinding.rvItems.scrollToPosition(0));
         BannerHelper.setBannerParams(mBinding.banner, ViewProperty.getHomeBannerParams());
+    }
+
+    private void showNoStudio() {
+        Router.build("RecordNoStudio")
+                .go(this);
     }
 
     @Override
