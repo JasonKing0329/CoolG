@@ -165,13 +165,24 @@ public class StudioViewModel extends BaseViewModel {
     private ObservableSource<List<StudioSimpleItem>> toSimpleItems(List<FavorRecordOrder> list) {
         return observer -> {
             List<StudioSimpleItem> result = new ArrayList<>();
+            List<FavorRecordOrder> correctList = new ArrayList<>();
             for (FavorRecordOrder order:list) {
                 StudioSimpleItem item = new StudioSimpleItem();
                 item.setOrder(order);
                 item.setFirstChar(String.valueOf(order.getName().charAt(0)));
                 item.setName(order.getName());
-                item.setNumber(String.valueOf(order.getRecordList().size()));
+                int size = order.getRecordList().size();
+                if (size != order.getNumber()) {
+                    order.setNumber(size);
+                    correctList.add(order);
+                }
+                item.setNumber(String.valueOf(size));
                 result.add(item);
+            }
+            // 修正实际数量
+            if (correctList.size() > 0) {
+                getDaoSession().getFavorRecordOrderDao().updateInTx(correctList);
+                getDaoSession().getFavorRecordOrderDao().detachAll();
             }
             observer.onNext(result);
         };
