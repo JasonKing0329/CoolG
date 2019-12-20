@@ -305,6 +305,16 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
         mModel.playVideoInPlayer.observe(this, item -> playList());
 
+        mModel.bitmapObserver.observe(this, bitmap -> {
+            mBinding.banner.setVisibility(View.GONE);
+            mBinding.videoView.setVisibility(View.VISIBLE);
+            mBinding.videoView.getCoverView().setScaleType(ImageView.ScaleType.CENTER_CROP);
+            Glide.with(this)
+                    .load(bitmap)
+                    .apply(recordOptions)
+                    .into(mBinding.videoView.getCoverView());
+        });
+
         mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
     }
 
@@ -442,6 +452,10 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                 .load(mModel.getVideoCover())
                 .apply(recordOptions)
                 .into(mBinding.videoView.getCoverView());
+        // 本地没有图片，从网络视频获取帧图片
+        if (mModel.getVideoCover() == null) {
+            mModel.loadVideoBitmap();
+        }
         mBinding.videoView.setVideoPath(url);
 
         mBinding.videoView.setOnVideoListener(new OnVideoListener() {

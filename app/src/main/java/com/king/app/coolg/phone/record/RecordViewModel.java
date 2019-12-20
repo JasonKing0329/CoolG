@@ -2,6 +2,8 @@ package com.king.app.coolg.phone.record;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -35,6 +37,7 @@ import com.king.app.gdb.data.param.DataConstants;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -87,6 +90,8 @@ public class RecordViewModel extends BaseViewModel {
 
     private PlayDuration mPlayDuration;
     private String mUrlToSetCover;
+
+    public MutableLiveData<Bitmap> bitmapObserver = new MutableLiveData<>();
 
     public RecordViewModel(@NonNull Application application) {
         super(application);
@@ -216,28 +221,55 @@ public class RecordViewModel extends BaseViewModel {
 
     private PathRequest getPathRequest() {
         PathRequest request = new PathRequest();
-        request.setPath(mRecord.getDirectory());
-        request.setName(mRecord.getName());
-//        request.setPath("E:\\temp\\coolg\\server_root\\f_3");
-//        request.setName("large");
+//        request.setPath(mRecord.getDirectory());
+//        request.setName(mRecord.getName());
+        request.setPath("E:\\temp\\coolg\\server_root\\f_3");
+        request.setName("large");
         return request;
     }
 
+    private Observable<Bitmap> getVideoBitmap(String url) {
+        return Observable.create(e -> {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(url, new HashMap<>());
+            Bitmap bitmap = retriever.getFrameAtTime();
+            e.onNext(bitmap);
+            e.onComplete();
+        });
+    }
+
+    public void loadVideoBitmap() {
+        getVideoBitmap(mPlayUrl)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Bitmap>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(Bitmap bitmap) {
+                        bitmapObserver.setValue(bitmap);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     protected void checkPlayable() {
-        Observable<String> observable;
-        boolean isTest = false;
-        if (isTest) {
-            observable = Observable.create(e -> {
-                e.onNext("http://192.168.11.206:8080/videos/GOTS07E05.mkv");
-            });
-        }
-        else {
-            observable = AppHttpClient.getInstance().getAppService().isServerOnline()
-                    .flatMap(bean -> isOnline(bean))
-                    .flatMap(result -> AppHttpClient.getInstance().getAppService().getVideoPath(getPathRequest()))
-                    .flatMap(response -> UrlUtil.toVideoUrl(response));
-        }
-        observable
+        AppHttpClient.getInstance().getAppService().isServerOnline()
+                .flatMap(bean -> isOnline(bean))
+                .flatMap(result -> AppHttpClient.getInstance().getAppService().getVideoPath(getPathRequest()))
+                .flatMap(response -> UrlUtil.toVideoUrl(response))
                 .flatMap(url -> {
                     DebugLog.e(url);
                     mPlayUrl = url;
