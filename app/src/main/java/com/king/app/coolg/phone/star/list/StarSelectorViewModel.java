@@ -92,6 +92,9 @@ public class StarSelectorViewModel extends BaseViewModel {
         return observer -> {
             List<StarProxy> starProxies = new ArrayList<>();
             for (Star star:list) {
+                if (star.getName() == null) {
+                    continue;
+                }
                 StarProxy proxy = new StarProxy();
                 proxy.setStar(star);
                 proxy.setImagePath(ImageProvider.getStarRandomPath(star.getName(), null));
