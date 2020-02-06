@@ -93,12 +93,7 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
                 showList();
             }
         });
-        mBinding.videoView.setOnPlayEmptyUrlListener(new OnPlayEmptyUrlListener() {
-            @Override
-            public void onPlayEmptyUrl(String fingerprint, UrlCallback callback) {
-                mModel.loadPlayUrl(callback);
-            }
-        });
+        mBinding.videoView.setOnPlayEmptyUrlListener((fingerprint, callback) -> mModel.loadPlayUrl(callback));
         mBinding.videoView.prepare();
     }
 
