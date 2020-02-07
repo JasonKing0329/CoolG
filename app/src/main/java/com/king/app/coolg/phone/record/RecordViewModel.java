@@ -221,10 +221,11 @@ public class RecordViewModel extends BaseViewModel {
 
     private PathRequest getPathRequest() {
         PathRequest request = new PathRequest();
-//        request.setPath(mRecord.getDirectory());
-//        request.setName(mRecord.getName());
-        request.setPath("E:\\temp\\coolg\\server_root\\f_3");
-        request.setName("large");
+        request.setPath(mRecord.getDirectory());
+        request.setName(mRecord.getName());
+        // test code
+//        request.setPath("E:\\temp\\coolg\\server_root\\f_3");
+//        request.setName("large");
         return request;
     }
 
