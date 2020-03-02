@@ -21,6 +21,9 @@ import com.king.app.gdb.data.entity.PlayOrder;
 import com.king.app.gdb.data.entity.PlayOrderDao;
 import com.king.app.gdb.data.entity.RecordDao;
 import com.king.app.gdb.data.entity.StarRatingDao;
+import com.king.app.gdb.data.entity.TagDao;
+import com.king.app.gdb.data.entity.TagRecordDao;
+import com.king.app.gdb.data.entity.TagStarDao;
 import com.king.app.gdb.data.entity.TopStarCategoryDao;
 import com.king.app.gdb.data.entity.TopStarDao;
 import com.king.app.gdb.data.entity.VideoCoverPlayOrderDao;
@@ -162,6 +165,10 @@ public class CoolApplication extends Application {
                         db.execSQL("ALTER TABLE " + RecordDao.TABLENAME + " ADD COLUMN "
                                 + RecordDao.Properties.ScoreAss.columnName + " INTEGER DEFAULT 0");
                     }
+                case 8:
+                    TagDao.createTable(db, true);
+                    TagRecordDao.createTable(db, true);
+                    TagStarDao.createTable(db, true);
                     break;
             }
         }

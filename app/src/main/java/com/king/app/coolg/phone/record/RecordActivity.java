@@ -4,8 +4,11 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -18,6 +21,7 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.base.adapter.BaseRecyclerAdapter;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordPhoneBinding;
 import com.king.app.coolg.model.bean.BannerParams;
@@ -31,13 +35,18 @@ import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.phone.video.player.PlayerActivity;
 import com.king.app.coolg.utils.FormatUtil;
 import com.king.app.coolg.utils.GlideUtil;
+import com.king.app.coolg.utils.ListUtil;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.coolg.view.dialog.content.TagFragment;
 import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.app.coolg.view.widget.video.OnVideoListener;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
+import com.king.app.gdb.data.entity.Tag;
+import com.king.app.gdb.data.param.DataConstants;
 import com.king.lib.banner.CoolBannerAdapter;
 
 import java.util.ArrayList;
@@ -73,6 +82,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     private RecordPlayOrdersAdapter playOrdersAdapter;
 
     private ScoreItemAdapter scoreAdapter;
+    private TagAdapter tagAdapter;
 
     @Override
     protected int getContentView() {
@@ -180,6 +190,33 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                     , getString(R.string.yes), (dialog, which) -> mModel.playInPlayer()
                     , getString(R.string.no), (dialog, which) -> mBinding.videoView.executeFullScreen());
         });
+
+        mBinding.rvTags.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mBinding.rvTags.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                int position = parent.getChildLayoutPosition(view);
+                if (position > 0) {
+                    outRect.left = ScreenUtils.dp2px(10);
+                }
+            }
+        });
+        mBinding.ivTagAdd.setOnClickListener(v -> addTag());
+        mBinding.ivTagDelete.setOnClickListener(v -> {
+            tagAdapter.toggleDelete();
+            tagAdapter.notifyDataSetChanged();
+        });
+    }
+
+    private void addTag() {
+        TagFragment fragment = new TagFragment();
+        fragment.setOnTagSelectListener(tag -> mModel.addTag(tag));
+        fragment.setTagType(DataConstants.TAG_TYPE_RECORD);
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setContentFragment(fragment);
+        dialogFragment.setTitle("Select tag");
+        dialogFragment.setOnDismissListener(v -> mModel.refreshTags());
+        dialogFragment.show(getSupportFragmentManager(), "TagFragment");
     }
 
     private void floatOrEmbedVideo(int oldScrollY, int scrollY, int edge) {
@@ -315,7 +352,37 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                     .into(mBinding.videoView.getCoverView());
         });
 
+        mModel.tagsObserver.observe(this, tags -> showTags(tags));
+
         mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
+    }
+
+    private void showTags(List<Tag> tags) {
+        if (ListUtil.isEmpty(tags)) {
+            mBinding.ivTagDelete.setVisibility(View.GONE);
+            mBinding.tvTagsTitle.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.ivTagDelete.setVisibility(View.VISIBLE);
+            mBinding.tvTagsTitle.setVisibility(View.GONE);
+        }
+        if (tagAdapter == null) {
+            tagAdapter = new TagAdapter();
+            tagAdapter.setList(tags);
+            tagAdapter.setOnItemLongClickListener((view, position, data) -> {
+                tagAdapter.toggleDelete();
+                tagAdapter.notifyDataSetChanged();
+            });
+            tagAdapter.setOnDeleteListener((position, bean) -> mModel.deleteTag(bean));
+            mBinding.rvTags.setAdapter(tagAdapter);
+        }
+        else {
+            tagAdapter.setList(tags);
+            if (ListUtil.isEmpty(tags)) {
+                tagAdapter.setShowDelete(false);
+            }
+            tagAdapter.notifyDataSetChanged();
+        }
     }
 
     private void playList() {

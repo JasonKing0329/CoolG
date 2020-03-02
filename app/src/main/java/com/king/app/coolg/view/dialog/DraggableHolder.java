@@ -1,5 +1,7 @@
 package com.king.app.coolg.view.dialog;
 
+import android.view.View;
+
 import com.king.app.coolg.base.IFragmentHolder;
 
 /**
@@ -11,4 +13,5 @@ import com.king.app.coolg.base.IFragmentHolder;
 public interface DraggableHolder extends IFragmentHolder {
     void dismiss();
     void dismissAllowingStateLoss();
+    View inflateToolbar(int layout);
 }

@@ -9,7 +9,6 @@
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:minWidth="80dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:textColor="@drawable/selector_studio_tag_text"

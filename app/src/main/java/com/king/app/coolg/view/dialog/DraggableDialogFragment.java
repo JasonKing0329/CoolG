@@ -29,13 +29,9 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
 
     private boolean hideClose;
 
-    private boolean showDelete;
-
     private DraggableContentFragment contentFragment;
 
     private int maxHeight;
-
-    private View.OnClickListener onDeleteListener;
 
     private DialogBaseBinding binding;
 
@@ -60,10 +56,6 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
         if (hideClose) {
             binding.ivClose.setVisibility(View.GONE);
         }
-        if (showDelete) {
-            binding.ivDelete.setVisibility(View.VISIBLE);
-            binding.ivDelete.setOnClickListener(onDeleteListener);
-        }
 
         initDragParams();
 
@@ -72,8 +64,8 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
             replaceContentFragment(contentFragment, "ContentView");
         }
 
-        binding.groupFtContainer.post(() -> {
-            DebugLog.e("groupFtContent height=" + binding.groupFtContainer.getHeight());
+        binding.flFt.post(() -> {
+            DebugLog.e("groupFtContent height=" + binding.flFt.getHeight());
             limitMaxHeight();
         });
 
@@ -83,7 +75,7 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
     protected void replaceContentFragment(DraggableContentFragment target, String tag) {
         if (target != null) {
             FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-            ft.replace(R.id.group_ft_container, target, tag);
+            ft.replace(R.id.fl_ft, target, tag);
             ft.commit();
         }
     }
@@ -102,10 +94,10 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
 
     private void limitMaxHeight() {
         int maxContentHeight = getMaxHeight();
-        if (binding.groupFtContainer.getHeight() > maxContentHeight) {
-            ViewGroup.LayoutParams params = binding.groupFtContainer.getLayoutParams();
+        if (binding.flFt.getHeight() > maxContentHeight) {
+            ViewGroup.LayoutParams params = binding.flFt.getLayoutParams();
             params.height = maxContentHeight;
-            binding.groupFtContainer.setLayoutParams(params);
+            binding.flFt.setLayoutParams(params);
         }
     }
 
@@ -144,16 +136,15 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
         this.contentFragment = contentFragment;
     }
 
-    public void setShowDelete(boolean showDelete) {
-        this.showDelete = showDelete;
-    }
-
     public void setMaxHeight(int maxHeight) {
         this.maxHeight = maxHeight;
     }
 
-    public void setOnDeleteListener(View.OnClickListener onDeleteListener) {
-        this.onDeleteListener = onDeleteListener;
+    @Override
+    public View inflateToolbar(int layout) {
+        View view = getLayoutInflater().inflate(layout, null);
+        binding.flToolbar.addView(view);
+        return view;
     }
 
     private class Point {
@@ -200,75 +191,4 @@ public class DraggableDialogFragment extends BaseDialogFragment implements Dragg
         }
     }
 
-    public static class Builder {
-
-        private String title;
-
-        private int backgroundColor;
-
-        private boolean hideClose;
-
-        private int maxHeight;
-
-        private boolean showDelete;
-
-        private View.OnClickListener onDeleteListener;
-
-        private DraggableContentFragment contentFragment;
-
-        public Builder setTitle(String title) {
-            this.title = title;
-            return this;
-        }
-
-        public Builder setBackgroundColor(int backgroundColor) {
-            this.backgroundColor = backgroundColor;
-            return this;
-        }
-
-        public Builder setHideClose(boolean hideClose) {
-            this.hideClose = hideClose;
-            return this;
-        }
-
-        public Builder setShowDelete(boolean showDelete) {
-            this.showDelete = showDelete;
-            return this;
-        }
-
-        public Builder setContentFragment(DraggableContentFragment contentFragment) {
-            this.contentFragment = contentFragment;
-            return this;
-        }
-
-        public Builder setMaxHeight(int maxHeight) {
-            this.maxHeight = maxHeight;
-            return this;
-        }
-
-        public Builder setOnDeleteListener(View.OnClickListener onDeleteListener) {
-            this.onDeleteListener = onDeleteListener;
-            return this;
-        }
-
-        public DraggableDialogFragment build() {
-            DraggableDialogFragment fragment = new DraggableDialogFragment();
-            fragment.setHideClose(hideClose);
-            fragment.setShowDelete(showDelete);
-            fragment.setOnDeleteListener(onDeleteListener);
-            if (title != null) {
-                fragment.setTitle(title);
-            }
-            if (backgroundColor != 0) {
-                fragment.setBackgroundColor(backgroundColor);
-            }
-            if (contentFragment != null) {
-                fragment.setContentFragment(contentFragment);
-            }
-            if (maxHeight != 0) {
-                fragment.setMaxHeight(maxHeight);
-            }
-            return fragment;
-        }
-    }
 }

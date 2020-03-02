@@ -54,21 +54,15 @@ public class LoginActivity extends MvvmActivity<ActivityLoginBinding, LoginViewM
             }
         });
         mModel.extendObserver.observe(this, hasExtendPref -> {
-            new SimpleDialogs().showWarningActionDialog(LoginActivity.this
+            new SimpleDialogs().showConfirmCancelDialog(LoginActivity.this
                     , getResources().getString(R.string.login_extend_pref_exist)
-                    , getResources().getString(R.string.yes)
-                    , null
+                    , (dialog, which) -> mModel.loadExtendPref()
                     , (dialog, which) -> {
-                        if (which == DialogInterface.BUTTON_POSITIVE) {
-                            mModel.loadExtendPref();
+                        if (SettingProperty.isEnableFingerPrint()) {
+                            checkFingerprint();
                         }
                         else {
-                            if (SettingProperty.isEnableFingerPrint()) {
-                                checkFingerprint();
-                            }
-                            else {
-                                mBinding.groupLogin.setVisibility(View.VISIBLE);
-                            }
+                            mBinding.groupLogin.setVisibility(View.VISIBLE);
                         }
                     });
         });

@@ -25,4 +25,8 @@ public abstract class DraggableContentFragment<T extends ViewDataBinding> extend
     protected void dismissAllowingStateLoss() {
         dialogHolder.dismissAllowingStateLoss();
     }
+
+    public DraggableHolder getDialogHolder() {
+        return dialogHolder;
+    }
 }

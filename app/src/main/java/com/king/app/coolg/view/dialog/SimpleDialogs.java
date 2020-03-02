@@ -58,29 +58,34 @@ public class SimpleDialogs {
         dialog.show();
     }
 
-    public void showWarningActionDialog(Context context, String msg, String okText, String neutralText,
-                                        final DialogInterface.OnClickListener listener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.warning);
-        builder.setMessage(msg);
-        builder.setPositiveButton(okText, listener);
-        if (neutralText != null) {
-            builder.setNeutralButton(neutralText, listener);
-        }
-        builder.setNegativeButton(R.string.cancel, listener);
-        builder.show();
+    public void showConfirmDialog(Context context, String msg, DialogInterface.OnClickListener listener) {
+        showWarningActionDialog(context, msg
+                , context.getResources().getString(R.string.ok), listener
+                , null, null
+                , null, null);
     }
 
-    public void showWarningActionDialog(Context context, String msg, String positiveText, String neutralText, String negativeText,
-                                        final DialogInterface.OnClickListener listener) {
+    public void showConfirmCancelDialog(Context context, String msg, DialogInterface.OnClickListener okListener, DialogInterface.OnClickListener cancelListener) {
+        showWarningActionDialog(context, msg
+                , context.getResources().getString(R.string.ok), okListener
+                , context.getResources().getString(R.string.cancel), okListener
+                , null, null);
+    }
+
+    public void showWarningActionDialog(Context context, String msg
+            , String positiveText, DialogInterface.OnClickListener positiveListener
+            , String neutralText, DialogInterface.OnClickListener neutralListener
+            , String negativeText , DialogInterface.OnClickListener negativeListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.warning);
         builder.setMessage(msg);
-        builder.setPositiveButton(positiveText, listener);
+        builder.setPositiveButton(positiveText, positiveListener);
         if (neutralText != null) {
-            builder.setNeutralButton(neutralText, listener);
+            builder.setNeutralButton(neutralText, neutralListener);
         }
-        builder.setNegativeButton(negativeText, listener);
+        if (negativeText != null) {
+            builder.setNegativeButton(negativeText, negativeListener);
+        }
         builder.show();
     }
 

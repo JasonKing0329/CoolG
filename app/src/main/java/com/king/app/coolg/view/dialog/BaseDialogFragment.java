@@ -42,6 +42,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         windowParams = getDialog().getWindow().getAttributes();
+        windowParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         return onSubCreateView(inflater, container, savedInstanceState);
     }
 

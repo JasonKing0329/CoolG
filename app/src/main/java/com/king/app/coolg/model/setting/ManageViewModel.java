@@ -38,6 +38,9 @@ import com.king.app.gdb.data.entity.PlayOrder;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarDao;
 import com.king.app.gdb.data.entity.StarRating;
+import com.king.app.gdb.data.entity.Tag;
+import com.king.app.gdb.data.entity.TagRecord;
+import com.king.app.gdb.data.entity.TagStar;
 import com.king.app.gdb.data.entity.TopStar;
 import com.king.app.gdb.data.entity.TopStarCategory;
 import com.king.app.gdb.data.entity.VideoCoverPlayOrder;
@@ -580,6 +583,11 @@ public class ManageViewModel extends BaseViewModel {
                 // 保存star_category, star_category_details表数据
                 data.categoryList = getDaoSession().getTopStarCategoryDao().loadAll();
                 data.categoryStarList = getDaoSession().getTopStarDao().loadAll();
+
+                // 保存tag, tag_star, tag_record
+                data.tagList = getDaoSession().getTagDao().loadAll();
+                data.tagStarList = getDaoSession().getTagStarDao().loadAll();
+                data.tagRecordList = getDaoSession().getTagRecordDao().loadAll();
             } catch (Exception ee) {
                 ee.printStackTrace();
             }
@@ -634,9 +642,25 @@ public class ManageViewModel extends BaseViewModel {
                 updateStarRatings();
                 updatePlayList();
                 updateCategory();
+                updateTags();
             }
             e.onNext(new Object());
         });
+    }
+
+    private void updateTags() {
+        if (!ListUtil.isEmpty(mLocalData.tagList)) {
+            getDaoSession().getTagDao().deleteAll();
+            getDaoSession().getTagDao().insertInTx(mLocalData.tagList);
+        }
+        if (!ListUtil.isEmpty(mLocalData.tagRecordList)) {
+            getDaoSession().getTagRecordDao().deleteAll();
+            getDaoSession().getTagRecordDao().insertInTx(mLocalData.tagRecordList);
+        }
+        if (!ListUtil.isEmpty(mLocalData.tagStarList)) {
+            getDaoSession().getTagStarDao().deleteAll();
+            getDaoSession().getTagStarDao().insertInTx(mLocalData.tagStarList);
+        }
     }
 
     private void updateCategory() {
@@ -737,43 +761,45 @@ public class ManageViewModel extends BaseViewModel {
     }
 
     public void checkSyncVersion() {
-        loadingObserver.setValue(true);
-        VersionRequest request = new VersionRequest();
-        request.setType(HttpConstants.UPLOAD_TYPE_DB);
-        AppHttpClient.getInstance().getAppService().getVersion(request)
-                .flatMap(response -> BaseResponseFlatMap.result(response))
-                .flatMap(response -> isDifferentVersion(response.getVersionCode()))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<Boolean>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(Boolean isHigher) {
-                        loadingObserver.setValue(false);
-                        if (isHigher) {
-                            warningSync.setValue(true);
-                        }
-                        else {
-                            messageObserver.setValue("The local database is already the latest version");
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        loadingObserver.setValue(false);
-                        messageObserver.setValue(e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        // sync无视版本信息
+        warningSync.setValue(true);
+//        loadingObserver.setValue(true);
+//        VersionRequest request = new VersionRequest();
+//        request.setType(HttpConstants.UPLOAD_TYPE_DB);
+//        AppHttpClient.getInstance().getAppService().getVersion(request)
+//                .flatMap(response -> BaseResponseFlatMap.result(response))
+//                .flatMap(response -> isDifferentVersion(response.getVersionCode()))
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.io())
+//                .subscribe(new Observer<Boolean>() {
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//                        addDisposable(d);
+//                    }
+//
+//                    @Override
+//                    public void onNext(Boolean isHigher) {
+//                        loadingObserver.setValue(false);
+//                        if (isHigher) {
+//                            warningSync.setValue(true);
+//                        }
+//                        else {
+//                            messageObserver.setValue("The local database is already the latest version");
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        e.printStackTrace();
+//                        loadingObserver.setValue(false);
+//                        messageObserver.setValue(e.getMessage());
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
     }
 
     private class LocalData {
@@ -800,5 +826,11 @@ public class ManageViewModel extends BaseViewModel {
         List<TopStarCategory> categoryList;
 
         List<TopStar> categoryStarList;
+
+        List<Tag> tagList;
+
+        List<TagRecord> tagRecordList;
+
+        List<TagStar> tagStarList;
     }
 }

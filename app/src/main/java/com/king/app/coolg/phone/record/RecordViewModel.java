@@ -33,6 +33,9 @@ import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordType1v1;
 import com.king.app.gdb.data.entity.RecordType3w;
+import com.king.app.gdb.data.entity.Tag;
+import com.king.app.gdb.data.entity.TagRecord;
+import com.king.app.gdb.data.entity.TagRecordDao;
 import com.king.app.gdb.data.param.DataConstants;
 
 import java.io.File;
@@ -69,6 +72,8 @@ public class RecordViewModel extends BaseViewModel {
     public MutableLiveData<List<VideoPlayList>> playOrdersObserver = new MutableLiveData<>();
 
     public MutableLiveData<List<TitleValueBean>> scoresObserver = new MutableLiveData<>();
+
+    public MutableLiveData<List<Tag>> tagsObserver = new MutableLiveData<>();
 
     public MutableLiveData<String> studioObserver = new MutableLiveData<>();
 
@@ -414,8 +419,24 @@ public class RecordViewModel extends BaseViewModel {
             // passion point
             passionsObserver.postValue(getPassions(record));
 
+            // tags
+            tagsObserver.postValue(getTags(record));
+
             observer.onNext(record);
         };
+    }
+
+    private List<Tag> getTags(Record record) {
+        List<TagRecord> list = getDaoSession().getTagRecordDao().queryBuilder()
+                .where(TagRecordDao.Properties.RecordId.eq(record.getId()))
+                .build().list();
+        List<Tag> result = new ArrayList<>();
+        for (TagRecord tr:list) {
+            if (tr.getTag() != null) {
+                result.add(tr.getTag());
+            }
+        }
+        return result;
     }
 
     protected List<PassionPoint> getPassions(Record record) {
@@ -814,5 +835,37 @@ public class RecordViewModel extends BaseViewModel {
 
                     }
                 });
+    }
+
+    public void refreshTags() {
+        tagsObserver.postValue(getTags(mRecord));
+    }
+
+    public void addTag(Tag tag) {
+        TagRecord tr = null;
+        try {
+            tr = getDaoSession().getTagRecordDao().queryBuilder()
+                    .where(TagRecordDao.Properties.RecordId.eq(mRecord.getId()))
+                    .where(TagRecordDao.Properties.TagId.eq(tag.getId()))
+                    .build().unique();
+        } catch (Exception e) {}
+        if (tr == null) {
+            tr = new TagRecord();
+            tr.setRecordId(mRecord.getId());
+            tr.setTagId(tag.getId());
+            getDaoSession().getTagRecordDao().insert(tr);
+            getDaoSession().getTagRecordDao().detachAll();
+            refreshTags();
+        }
+    }
+
+    public void deleteTag(Tag bean) {
+        getDaoSession().getTagRecordDao().queryBuilder()
+                .where(TagRecordDao.Properties.RecordId.eq(mRecord.getId()))
+                .where(TagRecordDao.Properties.TagId.eq(bean.getId()))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
+        getDaoSession().getTagRecordDao().detachAll();
+        refreshTags();
     }
 }

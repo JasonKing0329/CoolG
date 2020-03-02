@@ -50,7 +50,9 @@ public abstract class BaseTagAdapter<T> extends BaseFlowAdapter<T> implements Vi
      */
     private int selection = -1;
 
-    private OnItemSelectListener onItemSelectListener;
+    private OnItemSelectListener<T> onItemSelectListener;
+
+    private OnItemLongCickListener<T> onItemLongClickListener;
 
     public BaseTagAdapter() {
         mCheckMap = new HashMap<>();
@@ -62,6 +64,12 @@ public abstract class BaseTagAdapter<T> extends BaseFlowAdapter<T> implements Vi
         TextView textView = view.findViewById(R.id.tv_name);
         textView.setText(getText(data.get(position)));
         textView.setOnClickListener(this);
+        textView.setOnLongClickListener(view1 -> {
+            if (onItemLongClickListener != null) {
+                onItemLongClickListener.onLongClickItem(data.get(position));
+            }
+            return true;
+        });
         textView.setTag(position);
         // 不可选
         if (isDisabled(data.get(position))) {
@@ -208,8 +216,12 @@ public abstract class BaseTagAdapter<T> extends BaseFlowAdapter<T> implements Vi
         }
     }
 
-    public void setOnItemSelectListener(OnItemSelectListener onItemSelectListener) {
+    public void setOnItemSelectListener(OnItemSelectListener<T> onItemSelectListener) {
         this.onItemSelectListener = onItemSelectListener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongCickListener<T> onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
     }
 
     /**
@@ -244,5 +256,9 @@ public abstract class BaseTagAdapter<T> extends BaseFlowAdapter<T> implements Vi
         void onSelectItem(T data);
 
         void onUnSelectItem(T t);
+    }
+
+    public interface OnItemLongCickListener<T> {
+        void onLongClickItem(T data);
     }
 }

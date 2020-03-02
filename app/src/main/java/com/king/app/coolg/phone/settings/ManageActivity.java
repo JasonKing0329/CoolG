@@ -125,14 +125,13 @@ public class ManageActivity extends MvvmActivity<ActivityManageBinding, ManageVi
     private void gdbFound(AppCheckBean bean) {
         String msg = String.format(getString(R.string.gdb_update_found), bean.getGdbDabaseVersion());
         new SimpleDialogs().showWarningActionDialog(this, msg
-                , getResources().getString(R.string.yes)
-                , null
-                , getResources().getString(R.string.no)
-                , (dialog, which) -> {
+                , getResources().getString(R.string.yes), (dialog, which) -> {
                     if (which == DialogInterface.BUTTON_POSITIVE) {
                         mModel.saveDataFromLocal(bean);
                     }
-                });
+                }
+                , getResources().getString(R.string.no), null
+                , null, null);
     }
 
     private void downloadDatabase(long size, boolean isUploadedDb) {

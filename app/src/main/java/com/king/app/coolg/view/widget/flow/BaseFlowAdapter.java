@@ -18,6 +18,7 @@ public abstract class BaseFlowAdapter<T> {
 
     public void bindFlowLayout(@NonNull FlowLayout layout) {
         flowLayout = layout;
+        flowLayout.removeAllViews();
         for (int i = 0; i < getCount(); i ++) {
             flowLayout.addView(getView(i, flowLayout));
         }

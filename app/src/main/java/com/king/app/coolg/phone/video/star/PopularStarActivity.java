@@ -97,14 +97,13 @@ public class PopularStarActivity extends MvvmActivity<ActivityVideoStarListBindi
         mBinding.actionbar.setOnConfirmListener(actionId -> {
             switch (actionId) {
                 case R.id.menu_delete:
-                    new SimpleDialogs().showWarningActionDialog(PopularStarActivity.this
+                    new SimpleDialogs().showConfirmCancelDialog(PopularStarActivity.this
                             , "Delete order will delete related items, continue?"
-                            , "Yes", null
                             , (dialogInterface, i) -> {
                                 mModel.executeDelete();
                                 adapter.setMultiSelect(false);
                                 mBinding.actionbar.cancelConfirmStatus();
-                            });
+                            }, null);
                     break;
             }
             return false;

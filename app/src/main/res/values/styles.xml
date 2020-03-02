@@ -36,8 +36,8 @@
         <item name="colorControlActivated">@color/actionbar_element</item>
     </style>
 
-    <!--透明Dialog-->
-    <style name="BaseDialogFragment" parent="Theme.AppCompat.Dialog">
+    <!--.Dialog.MinWidth才有match_parent的效果，普通的.Dialog会根据content实际宽度缩短-->
+    <style name="BaseDialogFragment" parent="Theme.AppCompat.DayNight.Dialog.MinWidth">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -264,6 +264,21 @@
         <item name="android:layout_height">80dp</item>
         <item name="android:padding">16dp</item>
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="IvDialogIcon">
+        <item name="android:layout_width">45dp</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="IvRecordLineIcon">
+        <item name="android:layout_width">@dimen/record_line_icon_size</item>
+        <item name="android:layout_height">@dimen/record_line_icon_size</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
     </style>
 
 </resources>

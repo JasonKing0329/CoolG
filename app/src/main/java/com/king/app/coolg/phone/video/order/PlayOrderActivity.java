@@ -89,15 +89,14 @@ public class PlayOrderActivity extends MvvmActivity<ActivityPlayOrderBinding, Pl
         mBinding.actionbar.setOnConfirmListener(actionId -> {
             switch (actionId) {
                 case R.id.menu_delete:
-                    new SimpleDialogs().showWarningActionDialog(PlayOrderActivity.this
+                    new SimpleDialogs().showConfirmCancelDialog(PlayOrderActivity.this
                             , "Delete order will delete related items, continue?"
-                            , "Yes", null
                             , (dialogInterface, i) -> {
                                 mModel.executeDelete();
                                 adapter.setMultiSelect(false);
                                 mBinding.actionbar.cancelConfirmStatus();
                                 setResultChanged();
-                            });
+                            }, null);
                     break;
                 case R.id.menu_edit:
                     isEditMode = false;
