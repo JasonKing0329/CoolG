@@ -25,7 +25,10 @@ import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.coolg.view.dialog.content.TagFragment;
 import com.king.app.gdb.data.entity.Star;
+import com.king.app.gdb.data.entity.Tag;
+import com.king.app.gdb.data.param.DataConstants;
 
 import java.util.List;
 
@@ -111,6 +114,12 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
                 }
             }
         });
+        mModel.tagsObserver.observe(this, tags -> {
+            if (adapter != null) {
+                adapter.setTagList(tags);
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         mModel.loadStar(getIntent().getLongExtra(EXTRA_STAR_ID, -1));
     }
@@ -126,6 +135,7 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
             adapter.setStarImageList(mModel.getStarImageList());
             adapter.setRelationships(mModel.getRelationList());
             adapter.setStudioList(mModel.getStudioList());
+            adapter.setTagList(mModel.getTagList());
             adapter.setList(list);
             adapter.setSortMode(SettingProperty.getStarRecordsSortType());
             adapter.setOnListListener((view, record) -> goToRecordPage(record.getRecord().getId()));
@@ -167,6 +177,16 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
                     mModel.setStudioId(0);
                     mModel.loadStarRecords();
                 }
+
+                @Override
+                public void onAddTag() {
+                    addTag();
+                }
+
+                @Override
+                public void onDeleteTag(Tag bean) {
+
+                }
             });
             mBinding.rvList.setAdapter(adapter);
         }
@@ -177,6 +197,17 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
             adapter.setList(list);
             adapter.notifyDataSetChanged();
         }
+    }
+
+    private void addTag() {
+        TagFragment fragment = new TagFragment();
+        fragment.setOnTagSelectListener(tag -> mModel.addTag(tag));
+        fragment.setTagType(DataConstants.TAG_TYPE_STAR);
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setContentFragment(fragment);
+        dialogFragment.setTitle("Select tag");
+        dialogFragment.setOnDismissListener(v -> mModel.refreshTags());
+        dialogFragment.show(getSupportFragmentManager(), "TagFragment");
     }
 
     private void showSettings() {

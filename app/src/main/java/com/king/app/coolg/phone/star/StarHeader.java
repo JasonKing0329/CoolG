@@ -3,6 +3,7 @@ package com.king.app.coolg.phone.star;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseTagAdapter;
 import com.king.app.coolg.databinding.AdapterStarPhoneHeaderBinding;
 import com.king.app.coolg.model.setting.ViewProperty;
+import com.king.app.coolg.phone.record.TagAdapter;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
@@ -24,6 +26,7 @@ import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.app.coolg.view.widget.StarRatingView;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarRating;
+import com.king.app.gdb.data.entity.Tag;
 import com.king.lib.banner.CoolBanner;
 import com.king.lib.banner.CoolBannerAdapter;
 import com.king.lib.banner.guide.GuideView;
@@ -56,6 +59,8 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
 
     private Integer mTotalRecordNumber;
 
+    private TagAdapter tagAdapter;
+
     public StarHeader() {
         starOptions = GlideUtil.getStarWideOptions();
     }
@@ -65,7 +70,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
     }
 
     public void bind(AdapterStarPhoneHeaderBinding binding, Star star, List<String> starImageList
-            , int recordNumber, List<StarRelationship> relationships, List<StarStudioTag> studioList) {
+            , int recordNumber, List<StarRelationship> relationships, List<StarStudioTag> studioList, List<Tag> tagList) {
 
         mBinding = binding;
 
@@ -82,6 +87,46 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         bindRatings(binding, star);
         bindOrders(binding, star);
         bindStudios(binding, studioList);
+        bindTags(binding, tagList);
+    }
+
+    private void bindTags(AdapterStarPhoneHeaderBinding binding, List<Tag> tagList) {
+        if (ListUtil.isEmpty(tagList)) {
+            binding.tvTagsTitle.setVisibility(View.VISIBLE);
+            binding.ivTagDelete.setVisibility(View.GONE);
+            binding.rvTags.setVisibility(View.GONE);
+        }
+        else {
+            binding.tvTagsTitle.setVisibility(View.GONE);
+            binding.ivTagDelete.setVisibility(View.VISIBLE);
+            binding.rvTags.setVisibility(View.VISIBLE);
+            binding.ivTagDelete.setOnClickListener(v -> {
+                if (tagAdapter != null) {
+                    tagAdapter.toggleDelete();
+                }
+            });
+            if (tagAdapter == null) {
+                binding.rvTags.setLayoutManager(new LinearLayoutManager(binding.rvTags.getContext(), LinearLayoutManager.HORIZONTAL, false));
+                binding.rvTags.addItemDecoration(new RecyclerView.ItemDecoration() {
+                    @Override
+                    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                        int position = parent.getChildLayoutPosition(view);
+                        if (position > 0) {
+                            outRect.left = ScreenUtils.dp2px(10);
+                        }
+                    }
+                });
+                tagAdapter = new TagAdapter();
+                tagAdapter.setOnDeleteListener((position, bean) -> onHeadActionListener.onDeleteTag(bean));
+                tagAdapter.setList(tagList);
+                binding.rvTags.setAdapter(tagAdapter);
+            }
+            else {
+                tagAdapter.setList(tagList);
+                tagAdapter.notifyDataSetChanged();
+            }
+        }
+        binding.ivTagAdd.setOnClickListener(v -> onHeadActionListener.onAddTag());
     }
 
     private void bindStudios(AdapterStarPhoneHeaderBinding binding, List<StarStudioTag> studioList) {
@@ -416,6 +461,8 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         void addStarToOrder(Star star);
         void onFilterStudio(long studioId);
         void onCancelFilterStudio(long studioId);
+        void onAddTag();
+        void onDeleteTag(Tag bean);
     }
 
 }

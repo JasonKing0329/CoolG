@@ -19,6 +19,11 @@ import com.king.app.gdb.data.entity.FavorStarDao;
 import com.king.app.gdb.data.entity.FavorStarOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
+import com.king.app.gdb.data.entity.Tag;
+import com.king.app.gdb.data.entity.TagRecord;
+import com.king.app.gdb.data.entity.TagRecordDao;
+import com.king.app.gdb.data.entity.TagStar;
+import com.king.app.gdb.data.entity.TagStarDao;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,11 +51,13 @@ public class StarViewModel extends BaseViewModel {
     public MutableLiveData<List<RecordProxy>> onlyRecordsObserver = new MutableLiveData<>();
     public MutableLiveData<List<FavorStarOrder>> ordersObserver = new MutableLiveData<>();
     public MutableLiveData<FavorStar> addOrderObserver = new MutableLiveData<>();
+    public MutableLiveData<List<Tag>> tagsObserver = new MutableLiveData<>();
 
     protected Star mStar;
     private List<String> starImageList;
     private List<StarRelationship> relationList;
     private List<StarStudioTag> studioList;
+    private List<Tag> tagList;
 
     protected StarRepository starRepository;
     private OrderRepository orderRepository;
@@ -100,6 +107,10 @@ public class StarViewModel extends BaseViewModel {
                 })
                 .flatMap(list -> {
                     studioList = list;
+                    return getStarTags(mStar);
+                })
+                .flatMap(list -> {
+                    tagList = list;
                     return getComplexFilter();
                 })
                 .flatMap(filter -> recordRepository.getRecords(filter))
@@ -147,8 +158,18 @@ public class StarViewModel extends BaseViewModel {
         return studioList;
     }
 
+    public List<Tag> getTagList() {
+        return tagList;
+    }
+
     protected ObservableSource<List<String>> getStarImages(Star star) {
         return observer -> observer.onNext(loadStarImages(star));
+    }
+
+    protected ObservableSource<List<Tag>> getStarTags(Star star) {
+        return observer -> {
+            observer.onNext(getTags(star));
+        };
     }
 
     protected ObservableSource<List<StarRelationship>> getRelationships(Star star) {
@@ -333,6 +354,50 @@ public class StarViewModel extends BaseViewModel {
         getDaoSession().getFavorStarDao().detachAll();
     }
 
+    public void addTag(Tag tag) {
+        TagStar ts = null;
+        try {
+            ts = getDaoSession().getTagStarDao().queryBuilder()
+                    .where(TagStarDao.Properties.StarId.eq(mStar.getId()))
+                    .where(TagStarDao.Properties.TagId.eq(tag.getId()))
+                    .build().unique();
+        } catch (Exception e) {}
+        if (ts == null) {
+            ts = new TagStar();
+            ts.setStarId(mStar.getId());
+            ts.setTagId(tag.getId());
+            getDaoSession().getTagStarDao().insert(ts);
+            getDaoSession().getTagStarDao().detachAll();
+            refreshTags();
+        }
+    }
+
+    public void refreshTags() {
+        tagsObserver.postValue(getTags(mStar));
+    }
+
+    private List<Tag> getTags(Star star) {
+        List<TagStar> list = getDaoSession().getTagStarDao().queryBuilder()
+                .where(TagStarDao.Properties.StarId.eq(star.getId()))
+                .build().list();
+        List<Tag> result = new ArrayList<>();
+        for (TagStar tr:list) {
+            if (tr.getTag() != null) {
+                result.add(tr.getTag());
+            }
+        }
+        return result;
+    }
+
+    public void deleteTag(Tag bean) {
+        getDaoSession().getTagStarDao().queryBuilder()
+                .where(TagStarDao.Properties.StarId.eq(mStar.getId()))
+                .where(TagStarDao.Properties.TagId.eq(bean.getId()))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
+        getDaoSession().getTagRecordDao().detachAll();
+        refreshTags();
+    }
     private class RelationComparator implements Comparator<StarRelationship> {
 
         @Override

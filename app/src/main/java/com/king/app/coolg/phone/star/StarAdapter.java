@@ -10,6 +10,7 @@ import com.king.app.coolg.databinding.AdapterStarPhoneHeaderBinding;
 import com.king.app.coolg.phone.record.list.RecordItemBinder;
 import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.gdb.data.entity.Star;
+import com.king.app.gdb.data.entity.Tag;
 import com.king.lib.banner.CoolBanner;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
     private Star star;
     private List<StarRelationship> mRelationships;
     private List<StarStudioTag> mStudioList;
+    private List<Tag> mTagList;
 
     private CoolBanner banner;
 
@@ -84,7 +86,7 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
         header.setOnHeadActionListener(onHeadActionListener);
         binding.banner.stopAutoPlay();
         this.banner = binding.banner;
-        header.bind(binding, star, starImageList, list == null ? 0:list.size(), mRelationships, mStudioList);
+        header.bind(binding, star, starImageList, list == null ? 0:list.size(), mRelationships, mStudioList, mTagList);
     }
 
     @Override
@@ -109,6 +111,10 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
 
     public void setStudioList(List<StarStudioTag> studioList) {
         this.mStudioList = studioList;
+    }
+
+    public void setTagList(List<Tag> mTagList) {
+        this.mTagList = mTagList;
     }
 
     public void onResume() {
