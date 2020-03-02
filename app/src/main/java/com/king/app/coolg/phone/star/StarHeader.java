@@ -103,6 +103,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
             binding.ivTagDelete.setOnClickListener(v -> {
                 if (tagAdapter != null) {
                     tagAdapter.toggleDelete();
+                    tagAdapter.notifyDataSetChanged();
                 }
             });
             if (tagAdapter == null) {
@@ -118,6 +119,10 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
                 });
                 tagAdapter = new TagAdapter();
                 tagAdapter.setOnDeleteListener((position, bean) -> onHeadActionListener.onDeleteTag(bean));
+                tagAdapter.setOnItemLongClickListener((view, position, data) -> {
+                    tagAdapter.toggleDelete();
+                    tagAdapter.notifyDataSetChanged();
+                });
                 tagAdapter.setList(tagList);
                 binding.rvTags.setAdapter(tagAdapter);
             }

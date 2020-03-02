@@ -185,7 +185,7 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
 
                 @Override
                 public void onDeleteTag(Tag bean) {
-
+                    mModel.deleteTag(bean);
                 }
             });
             mBinding.rvList.setAdapter(adapter);
