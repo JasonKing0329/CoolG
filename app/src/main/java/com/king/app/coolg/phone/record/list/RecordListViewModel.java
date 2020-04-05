@@ -41,11 +41,11 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class RecordListViewModel extends BaseViewModel {
 
-    private RecordRepository repository;
+    protected RecordRepository repository;
 
     protected int DEFAULT_LOAD_MORE = 20;
 
-    private RecordCursor moreCursor;
+    protected RecordCursor moreCursor;
 
     public MutableLiveData<List<RecordProxy>> recordsObserver = new MutableLiveData<>();
     public MutableLiveData<Integer> moreObserver = new MutableLiveData<>();
@@ -54,8 +54,8 @@ public class RecordListViewModel extends BaseViewModel {
 
     private List<RecordProxy> mRecordList;
 
-    private int mSortMode;
-    private boolean mSortDesc;
+    protected int mSortMode;
+    protected boolean mSortDesc;
     private Integer mRecordType;
     private String mKeyScene;
     private String mKeyword;
@@ -72,9 +72,9 @@ public class RecordListViewModel extends BaseViewModel {
     /**
      * record to be added into play order
      */
-    private Record mRecordToPlayOrder;
+    protected Record mRecordToPlayOrder;
 
-    private RecommendBean mRecommendBean;
+    protected RecommendBean mRecommendBean;
 
     public RecordListViewModel(@NonNull Application application) {
         super(application);
@@ -103,6 +103,10 @@ public class RecordListViewModel extends BaseViewModel {
 
     public void setFilter(RecommendBean mFilter) {
         this.mRecommendBean = mFilter;
+    }
+
+    public RecommendBean getFilter() {
+        return mRecommendBean;
     }
 
     public void setRecordType(Integer mRecordType) {

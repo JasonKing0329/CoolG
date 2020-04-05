@@ -116,6 +116,9 @@
         <activity
             android:name=".phone.record.manage.NoStudioActivity"
             android:screenOrientation="user" />
+        <activity
+            android:name=".phone.record.tag.TagRecordActivity"
+            android:screenOrientation="user" />
 
         <activity
             android:name=".pad.home.HomePadActivity"

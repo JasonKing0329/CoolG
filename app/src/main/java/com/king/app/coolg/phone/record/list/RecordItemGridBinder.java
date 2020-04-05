@@ -1,12 +1,10 @@
-package com.king.app.coolg.pad.record.list;
+package com.king.app.coolg.phone.record.list;
 
 import android.view.View;
 
-import com.king.app.coolg.databinding.AdapterRecordItemGridPadBinding;
+import com.king.app.coolg.databinding.AdapterRecordItemGridBinding;
 import com.king.app.coolg.model.VideoModel;
 import com.king.app.coolg.model.image.ImageProvider;
-import com.king.app.coolg.phone.record.list.BaseItemBinder;
-import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
@@ -17,7 +15,7 @@ import java.util.List;
  * Created by Administrator on 2018/8/12 0012.
  */
 
-public class RecordItemBinder extends BaseItemBinder {
+public class RecordItemGridBinder extends BaseItemBinder {
 
     private OnPopupListener popupListener;
 
@@ -25,7 +23,7 @@ public class RecordItemBinder extends BaseItemBinder {
         this.popupListener = popupListener;
     }
 
-    public void bind(AdapterRecordItemGridPadBinding binding, int position, RecordProxy item) {
+    public void bind(AdapterRecordItemGridBinding binding, int position, RecordProxy item) {
 
         if (selectionMode) {
             binding.tvSeq.setVisibility(View.GONE);
@@ -49,7 +47,7 @@ public class RecordItemBinder extends BaseItemBinder {
         StringBuffer starBuffer = new StringBuffer();
         if (!ListUtil.isEmpty(starList)) {
             for (Star star:starList) {
-                starBuffer.append("&").append(star.getName());
+                starBuffer.append(", ").append(star.getName());
             }
         }
         String starText = starBuffer.toString();
@@ -68,7 +66,7 @@ public class RecordItemBinder extends BaseItemBinder {
 
         binding.tvPics.setText("(" + ImageProvider.getRecordPicNumber(item.getRecord().getName()) + " pics)");
 
-        bindImage(binding.ivImage, item);
+        bindImage(binding.ivRecord, item);
 
         showSortScore(binding.tvSort, item.getRecord(), mSortMode);
     }

@@ -108,6 +108,9 @@ public class RecordRepository extends BaseRepository {
         if (filter.getStudioId() != 0) {
             buildQueryJoinStudio(filter.getStudioId(), buffer);
         }
+        if (filter.getTagId() != 0) {
+            buildQueryJoinTag(filter.getTagId(), buffer);
+        }
         // 再处理WHERE
         if (recommendBean != null) {
             if (recommendBean.isOnline()) {
@@ -339,6 +342,10 @@ public class RecordRepository extends BaseRepository {
 
     private void buildQueryJoinStudio(long studioId, StringBuffer buffer) {
         buffer.append(" JOIN favor_record FR ON FR.RECORD_ID=T._id AND FR.ORDER_ID=").append(studioId);
+    }
+
+    private void buildQueryJoinTag(long tagId, StringBuffer buffer) {
+        buffer.append(" JOIN tag_record TR ON TR.RECORD_ID=T._id AND TR.TAG_ID=").append(tagId);
     }
 
     public Observable<List<Record>> getRecordsWithoutStudio() {

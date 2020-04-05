@@ -18,7 +18,6 @@ import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.model.setting.ViewProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
-import com.king.app.coolg.phone.record.list.RecordProxy;
 import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.ScreenUtils;
@@ -26,11 +25,9 @@ import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
 import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.app.gdb.data.entity.Record;
-import com.king.lib.banner.BannerFlipStyleProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Desc:
@@ -239,7 +236,7 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     }
 
     private void goToRecordPage() {
-        Router.build("RecordListPhone")
+        Router.build("TagRecord")
                 .go(this);
     }
 

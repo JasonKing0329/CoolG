@@ -15,6 +15,7 @@ public class RecordComplexFilter {
     private boolean desc;
     private String nameLike;
     private String scene;
+    private long tagId;
     private RecordCursor cursor;
     private RecommendBean filter;
     private long starId;
@@ -90,5 +91,13 @@ public class RecordComplexFilter {
 
     public void setStudioId(long studioId) {
         this.studioId = studioId;
+    }
+
+    public long getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(long tagId) {
+        this.tagId = tagId;
     }
 }

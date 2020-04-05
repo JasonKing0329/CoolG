@@ -13,12 +13,18 @@ public class TagAdapter extends BaseBindingAdapter<AdapterTagItemBinding, Tag> {
 
     private OnDeleteListener onDeleteListener;
 
+    private int selection = -1;
+
     public void setShowDelete(boolean showDelete) {
         this.showDelete = showDelete;
     }
 
     public void toggleDelete() {
         showDelete = !showDelete;
+    }
+
+    public void setSelection(int selection) {
+        this.selection = selection;
     }
 
     public void setOnDeleteListener(OnDeleteListener onDeleteListener) {
@@ -35,6 +41,16 @@ public class TagAdapter extends BaseBindingAdapter<AdapterTagItemBinding, Tag> {
         binding.tvName.setText(bean.getName());
         binding.ivRemove.setVisibility(showDelete ? View.VISIBLE:View.GONE);
         binding.ivRemove.setOnClickListener(v -> onDeleteListener.onDelete(position, bean));
+        binding.tvName.setSelected(position == selection);
+    }
+
+    @Override
+    protected void onClickItem(View v, int position) {
+        if (position != selection) {
+            super.onClickItem(v, position);
+        }
+        selection = position;
+        notifyDataSetChanged();
     }
 
     public interface OnDeleteListener {

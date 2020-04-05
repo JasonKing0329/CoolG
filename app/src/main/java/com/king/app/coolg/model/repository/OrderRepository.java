@@ -97,7 +97,9 @@ public class OrderRepository extends BaseRepository {
                     .build().list();
             List<FavorRecordOrder> results = new ArrayList<>();
             for (FavorRecord fs:list) {
-                results.add(fs.getOrder());
+                if (fs.getOrder() != null) {
+                    results.add(fs.getOrder());
+                }
             }
             e.onNext(results);
         });
