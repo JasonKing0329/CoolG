@@ -208,6 +208,9 @@ public class RecordRepository extends BaseRepository {
     private SceneBean parseSceneBean(Cursor cursor) {
         SceneBean bean = new SceneBean();
         bean.setScene(cursor.getString(0));
+        if (bean.getScene() == null) {
+            bean.setScene("Unknown");
+        }
         bean.setNumber(cursor.getInt(1));
         bean.setAverage(cursor.getDouble(2));
         bean.setMax(cursor.getInt(3));

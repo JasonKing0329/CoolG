@@ -223,8 +223,16 @@ public class SceneViewModel extends BaseViewModel {
             if (l == null || r == null) {
                 return 0;
             }
+            String left = l.getScene();
+            if (left == null) {
+                left = "";
+            }
+            String right = r.getScene();
+            if (right == null) {
+                right = "";
+            }
 
-            return l.getScene().toLowerCase().compareTo(r.getScene().toLowerCase());
+            return left.toLowerCase().compareTo(right.toLowerCase());
         }
     }
 
