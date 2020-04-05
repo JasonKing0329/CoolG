@@ -7,7 +7,7 @@
         android:layout_height="wrap_content">
         <ScrollView
             android:layout_width="0dp"
-            android:layout_height="600dp"
+            android:layout_height="400dp"
             android:scrollbars="none"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

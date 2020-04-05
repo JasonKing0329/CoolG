@@ -1,7 +1,6 @@
 package com.king.app.coolg.phone.record;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Rect;
@@ -21,7 +20,6 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
-import com.king.app.coolg.base.adapter.BaseRecyclerAdapter;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordPhoneBinding;
 import com.king.app.coolg.model.bean.BannerParams;
@@ -215,6 +213,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
         dialogFragment.setContentFragment(fragment);
         dialogFragment.setTitle("Select tag");
+        dialogFragment.setMaxHeight(ScreenUtils.dp2px(450));
         dialogFragment.setOnDismissListener(v -> mModel.refreshTags());
         dialogFragment.show(getSupportFragmentManager(), "TagFragment");
     }
