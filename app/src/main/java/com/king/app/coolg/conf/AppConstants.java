@@ -106,4 +106,13 @@ public class AppConstants {
             "RT.score_bjob > "
     };
 
+    public static final int TAG_SORT_NONE = 0;
+    public static final int TAG_SORT_RANDOM = 1;
+    public static final int TAG_SORT_NAME = 2;
+    public static final String[] TAG_SORT_MODE_TEXT = new String[]{
+            "No order",
+            "By Random",
+            "By Name"
+    };
+
 }

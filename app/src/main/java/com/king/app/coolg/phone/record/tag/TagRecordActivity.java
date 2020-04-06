@@ -15,6 +15,7 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityRecordTagBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.record.RecordActivity;
@@ -25,6 +26,7 @@ import com.king.app.coolg.phone.record.list.SortDialogContent;
 import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.SimpleDialogs;
 import com.king.app.gdb.data.entity.Record;
@@ -88,10 +90,23 @@ public class TagRecordActivity extends MvvmActivity<ActivityRecordTagBinding, Ta
                 case R.id.menu_offset:
                     showSetOffset();
                     break;
+                case R.id.menu_tag_sort_mode:
+                    setTagSortMode();
+                    break;
             }
         });
 
         mBinding.fabTop.setOnClickListener(v -> mBinding.rvRecords.scrollToPosition(0));
+    }
+
+    private void setTagSortMode() {
+        new AlertDialogFragment()
+                .setTitle(null)
+                .setItems(AppConstants.TAG_SORT_MODE_TEXT, (dialog, which) -> {
+                    SettingProperty.setTagSortType(which);
+                    mModel.onTagSortChanged();
+                    mModel.startSortTag(false);
+                }).show(getSupportFragmentManager(), "AlertDialogFragment");
     }
 
     private void goToClassicPage() {
@@ -105,16 +120,26 @@ public class TagRecordActivity extends MvvmActivity<ActivityRecordTagBinding, Ta
         mModel.recordsObserver.observe(this, list -> showRecords(list));
         mModel.moreObserver.observe(this, offset -> showMoreList(offset));
         mModel.scrollPositionObserver.observe(this, offset -> mBinding.rvRecords.scrollToPosition(offset));
+        mModel.focusTagPosition.observe(this, position -> {
+            tagAdapter.setSelection(position);
+            tagAdapter.notifyDataSetChanged();
+        });
 
         mModel.loadTags();
     }
 
     private void showTags(List<Tag> tags) {
-        tagAdapter = new TagAdapter();
-        tagAdapter.setList(tags);
-        tagAdapter.setSelection(0);
-        tagAdapter.setOnItemClickListener((view, position, data) -> mModel.loadTagRecords(data.getId()));
-        mBinding.rvTags.setAdapter(tagAdapter);
+        if (tagAdapter == null) {
+            tagAdapter = new TagAdapter();
+            tagAdapter.setList(tags);
+            tagAdapter.setSelection(0);
+            tagAdapter.setOnItemClickListener((view, position, data) -> mModel.loadTagRecords(data.getId()));
+            mBinding.rvTags.setAdapter(tagAdapter);
+        }
+        else {
+            tagAdapter.setList(tags);
+            tagAdapter.notifyDataSetChanged();
+        }
     }
 
     private void showRecords(List<RecordProxy> list) {

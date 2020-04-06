@@ -226,4 +226,12 @@ public class SettingProperty extends BaseProperty {
         setString(PreferenceKey.PREF_UPLOAD_VERSION, version);
     }
 
+    public static int getTagSortType() {
+        return getInt(PreferenceKey.PREF_TAG_SORT, 0);
+    }
+
+    public static void setTagSortType(int random) {
+        setInt(PreferenceKey.PREF_TAG_SORT, random);
+    }
+
 }

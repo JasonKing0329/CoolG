@@ -12,9 +12,12 @@
         app:showAsAction="ifRoom"/>
     <item android:id="@+id/menu_classic"
         android:title="Classic page"
-        android:icon="@drawable/ic_visibility_purple_36dp"
-        app:showAsAction="never"/>
+        android:icon="@drawable/ic_home_purple_36dp"
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/menu_offset"
         android:title="Set offset"
+        app:showAsAction="never"/>
+    <item android:id="@+id/menu_tag_sort_mode"
+        android:title="Set tag sort mode"
         app:showAsAction="never"/>
 </menu>

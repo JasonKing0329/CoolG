@@ -8,15 +8,22 @@ import com.king.app.coolg.base.CoolApplication;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.adapter.BaseTagAdapter;
 import com.king.app.coolg.databinding.FragmentTagBinding;
+import com.king.app.coolg.model.repository.TagRepository;
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.view.dialog.DraggableContentFragment;
 import com.king.app.coolg.view.dialog.SimpleDialogs;
 import com.king.app.gdb.data.entity.Tag;
-import com.king.app.gdb.data.entity.TagDao;
 import com.king.app.gdb.data.entity.TagRecordDao;
 import com.king.app.gdb.data.entity.TagStarDao;
 import com.king.app.gdb.data.param.DataConstants;
 
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class TagFragment extends DraggableContentFragment<FragmentTagBinding> {
 
@@ -24,6 +31,7 @@ public class TagFragment extends DraggableContentFragment<FragmentTagBinding> {
     private List<Tag> tagList;
 
     private int tagType;
+    private TagRepository repository;
 
     private OnTagSelectListener onTagSelectListener;
 
@@ -47,6 +55,9 @@ public class TagFragment extends DraggableContentFragment<FragmentTagBinding> {
 
     @Override
     protected void initView() {
+
+        repository = new TagRepository();
+
         View view = getDialogHolder().inflateToolbar(R.layout.layout_toolbar_tag);
         view.findViewById(R.id.iv_add).setOnClickListener(v -> addTag());
         view.findViewById(R.id.iv_edit).setOnClickListener(v -> editMode());
@@ -105,7 +116,7 @@ public class TagFragment extends DraggableContentFragment<FragmentTagBinding> {
         if (count > 0) {
             msg = "'" + data.getName() + "' is related to items, delete all related items too?";
             okListener = (dialog, which) -> {
-                deleteTagAndRelations(data);
+                repository.deleteTagAndRelations(data);
                 refreshTags();
                 showMessageShort("success");
             };
@@ -113,7 +124,7 @@ public class TagFragment extends DraggableContentFragment<FragmentTagBinding> {
         else {
             msg = "'" + data.getName() + "' will be deleted by this operation, continue?";
             okListener = (dialog, which) -> {
-                deleteTag(data);
+                repository.deleteTag(data);
                 refreshTags();
                 showMessageShort("success");
             };
@@ -122,38 +133,9 @@ public class TagFragment extends DraggableContentFragment<FragmentTagBinding> {
                 , okListener, null);
     }
 
-    private void deleteTagAndRelations(Tag data) {
-        // delete items
-        if (data.getType() == DataConstants.TAG_TYPE_RECORD) {
-            getTagRecordDao().queryBuilder()
-                    .where(TagRecordDao.Properties.TagId.eq(data.getId()))
-                    .buildDelete()
-                    .executeDeleteWithoutDetachingEntities();
-            getTagRecordDao().detachAll();
-            
-        }
-        else if (data.getType() == DataConstants.TAG_TYPE_STAR) {
-            getTagStarDao().queryBuilder()
-                    .where(TagStarDao.Properties.TagId.eq(data.getId()))
-                    .buildDelete()
-                    .executeDeleteWithoutDetachingEntities();
-            getTagStarDao().detachAll();
-        }
-        // delete tag
-        deleteTag(data);
-    }
-
-    private void deleteTag(Tag data) {
-        getTagDao().delete(data);
-        getTagDao().detachAll();
-    }
-
-    private void loadTags() {
-        tagList = getTagDao().queryBuilder().where(TagDao.Properties.Type.eq(tagType)).build().list();
-    }
-
-    private TagDao getTagDao() {
-        return CoolApplication.getInstance().getDaoSession().getTagDao();
+    private Observable<List<Tag>> loadTags() {
+        tagList = repository.loadTags(tagType);
+        return repository.sortTags(SettingProperty.getTagSortType(), tagList);
     }
 
     private TagRecordDao getTagRecordDao() {
@@ -166,23 +148,39 @@ public class TagFragment extends DraggableContentFragment<FragmentTagBinding> {
 
     private void addTag() {
         new SimpleDialogs().openInputDialog(getContext(), "Tag name", name -> {
-            long count = getTagDao().queryBuilder().where(TagDao.Properties.Name.eq(name)).buildCount().count();
-            if (count == 0) {
-                Tag tag = new Tag();
-                tag.setName(name);
-                tag.setType(tagType);
-                getTagDao().insert(tag);
-                getTagDao().detachAll();
-
+            if (repository.addTag(name, tagType)) {
                 refreshTags();
             }
         });
     }
 
     private void refreshTags() {
-        loadTags();
-        adapter.setData(tagList);
-        adapter.bindFlowLayout(mBinding.flowTags);
+        loadTags()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<Tag>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Tag> tagList) {
+                        adapter.setData(tagList);
+                        adapter.bindFlowLayout(mBinding.flowTags);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        showMessageShort(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     public interface OnTagSelectListener {
