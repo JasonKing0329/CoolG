@@ -794,6 +794,7 @@ public class ManageViewModel extends BaseViewModel {
                                 e.printStackTrace();
                                 messageObserver.setValue("Url error");
                             }
+                            messageObserver.setValue("已更新server地址 " + fullIp);
                         }
 
                         @Override
@@ -811,7 +812,7 @@ public class ManageViewModel extends BaseViewModel {
 
     private ObservableSource<String> formatServerUrl(ServerBody serverBody) {
         return observer -> {
-            observer.onNext(serverBody.getIp() + ":" + serverBody.getPort() + "/JJGalleryServer");
+            observer.onNext(serverBody.getIp() + ":" + serverBody.getPort() + "/" + serverBody.getExtraUrl());
             observer.onComplete();
         };
     }

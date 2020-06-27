@@ -10,6 +10,7 @@ public class ServerBody {
 
     private String identity;
     private int port;
+    private String extraUrl;
 
     private String ip;
 
@@ -35,5 +36,13 @@ public class ServerBody {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public String getExtraUrl() {
+        return extraUrl;
+    }
+
+    public void setExtraUrl(String extraUrl) {
+        this.extraUrl = extraUrl;
     }
 }

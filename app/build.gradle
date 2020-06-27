@@ -104,7 +104,7 @@ dependencies {
     implementation 'com.github.devahamed:multi-view-adapter-databinding:1.2.3'
 
     /*giraffe player*/
-    implementation 'com.github.tcking:giraffeplayer2:0.1.19-lazyLoad'
+    implementation 'com.github.tcking:giraffeplayer2:0.1.25'
     implementation project(':data')
     implementation project(':libresmanager')
     implementation project(':jindicator')
