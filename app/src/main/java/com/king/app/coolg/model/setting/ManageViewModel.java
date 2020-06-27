@@ -27,6 +27,9 @@ import com.king.app.coolg.model.http.bean.response.VersionResponse;
 import com.king.app.coolg.model.http.normal.BaseResponseFlatMap;
 import com.king.app.coolg.model.http.upload.UploadRespGsonClient;
 import com.king.app.coolg.model.repository.PropertyRepository;
+import com.king.app.coolg.model.udp.ServerBody;
+import com.king.app.coolg.model.udp.UdpReceiver;
+import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.FileUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.gdb.data.entity.FavorRecord;
@@ -80,6 +83,8 @@ public class ManageViewModel extends BaseViewModel {
     public MutableLiveData<Boolean> warningSync = new MutableLiveData<>();
     public MutableLiveData<String> warningUpload = new MutableLiveData<>();
     private LocalData mLocalData;
+
+    private UdpReceiver udpReceiver;
     
     public ManageViewModel(@NonNull Application application) {
         super(application);
@@ -763,43 +768,52 @@ public class ManageViewModel extends BaseViewModel {
     public void checkSyncVersion() {
         // sync无视版本信息
         warningSync.setValue(true);
-//        loadingObserver.setValue(true);
-//        VersionRequest request = new VersionRequest();
-//        request.setType(HttpConstants.UPLOAD_TYPE_DB);
-//        AppHttpClient.getInstance().getAppService().getVersion(request)
-//                .flatMap(response -> BaseResponseFlatMap.result(response))
-//                .flatMap(response -> isDifferentVersion(response.getVersionCode()))
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeOn(Schedulers.io())
-//                .subscribe(new Observer<Boolean>() {
-//                    @Override
-//                    public void onSubscribe(Disposable d) {
-//                        addDisposable(d);
-//                    }
-//
-//                    @Override
-//                    public void onNext(Boolean isHigher) {
-//                        loadingObserver.setValue(false);
-//                        if (isHigher) {
-//                            warningSync.setValue(true);
-//                        }
-//                        else {
-//                            messageObserver.setValue("The local database is already the latest version");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        e.printStackTrace();
-//                        loadingObserver.setValue(false);
-//                        messageObserver.setValue(e.getMessage());
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//
-//                    }
-//                });
+    }
+
+    public void onReceiveIp(View view) {
+        if (udpReceiver == null) {
+            messageObserver.setValue("UDP端口已打开");
+            udpReceiver = new UdpReceiver();
+            udpReceiver.observeServer()
+                    .flatMap(body -> formatServerUrl(body))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Observer<String>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            addDisposable(d);
+                        }
+
+                        @Override
+                        public void onNext(String fullIp) {
+                            DebugLog.e("onReceiveIp fullIp=" + fullIp);
+                            SettingProperty.setServerUrl(fullIp);
+                            try {
+                                AppHttpClient.getInstance().createRetrofit(fullIp);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                messageObserver.setValue("Url error");
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+        }
+    }
+
+    private ObservableSource<String> formatServerUrl(ServerBody serverBody) {
+        return observer -> {
+            observer.onNext(serverBody.getIp() + ":" + serverBody.getPort() + "/JJGalleryServer");
+            observer.onComplete();
+        };
     }
 
     private class LocalData {

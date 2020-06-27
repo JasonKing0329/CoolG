@@ -50,6 +50,10 @@ public class SettingProperty extends BaseProperty {
         return getString(PreferenceKey.PREF_HTTP_SERVER);
     }
 
+    public static void setServerUrl(String url) {
+        setString(PreferenceKey.PREF_HTTP_SERVER, url);
+    }
+
     public static String getRecordFilterModel() {
         return getString(PreferenceKey.PREF_GDB_FILTER_MODEL);
     }

@@ -6,6 +6,8 @@ package com.king.app.coolg.conf;
 
 public class AppConstants {
 
+    public static final int PORT_RECEIVE = 9002;
+
     public static final String KEY_SCENE_ALL = "All";
 
     public static final String KEY_REQEUST_CODE = "request_code";
