@@ -65,18 +65,20 @@ public class StarRichAdapter extends BaseBindingAdapter<AdapterStarRichBinding, 
             binding.tvRating.setText(StarRatingUtil.getRatingValue(rating.getComplex()));
             StarRatingUtil.updateRatingColor(binding.tvRating, rating);
 
-            binding.tvFace.setText("Face " + StarRatingUtil.getRatingValue(rating.getFace()));
-            binding.tvFace.setTextColor(StarRatingUtil.getRatingColor(rating.getFace(), binding.tvFace.getResources()));
-            binding.tvBody.setText("Body " + StarRatingUtil.getRatingValue(rating.getBody()));
-            binding.tvBody.setTextColor(StarRatingUtil.getRatingColor(rating.getBody(), binding.tvFace.getResources()));
-            binding.tvSex.setText("Sexuality " + StarRatingUtil.getRatingValue(rating.getSexuality()));
-            binding.tvSex.setTextColor(StarRatingUtil.getRatingColor(rating.getSexuality(), binding.tvFace.getResources()));
-            binding.tvDk.setText("Dk " + StarRatingUtil.getRatingValue(rating.getDk()));
-            binding.tvDk.setTextColor(StarRatingUtil.getRatingColor(rating.getDk(), binding.tvFace.getResources()));
-            binding.tvPassion.setText("Passion " + StarRatingUtil.getRatingValue(rating.getPassion()));
-            binding.tvPassion.setTextColor(StarRatingUtil.getRatingColor(rating.getPassion(), binding.tvFace.getResources()));
-            binding.tvVideo.setText("Video " + StarRatingUtil.getRatingValue(rating.getVideo()));
-            binding.tvVideo.setTextColor(StarRatingUtil.getRatingColor(rating.getVideo(), binding.tvFace.getResources()));
+            binding.tvFace.setText("Face " + StarRatingUtil.getSubRatingValue(rating.getFace()));
+            binding.tvFace.setTextColor(StarRatingUtil.getSubRatingColor(rating.getFace(), binding.tvFace.getResources()));
+            binding.tvBody.setText("Body " + StarRatingUtil.getSubRatingValue(rating.getBody()));
+            binding.tvBody.setTextColor(StarRatingUtil.getSubRatingColor(rating.getBody(), binding.tvFace.getResources()));
+            binding.tvSex.setText("Sexuality " + StarRatingUtil.getSubRatingValue(rating.getSexuality()));
+            binding.tvSex.setTextColor(StarRatingUtil.getSubRatingColor(rating.getSexuality(), binding.tvFace.getResources()));
+            binding.tvDk.setText("Dk/Butt " + StarRatingUtil.getSubRatingValue(rating.getDk()));
+            binding.tvDk.setTextColor(StarRatingUtil.getSubRatingColor(rating.getDk(), binding.tvFace.getResources()));
+            binding.tvPassion.setText("Passion " + StarRatingUtil.getSubRatingValue(rating.getPassion()));
+            binding.tvPassion.setTextColor(StarRatingUtil.getSubRatingColor(rating.getPassion(), binding.tvFace.getResources()));
+            binding.tvVideo.setText("Video " + StarRatingUtil.getSubRatingValue(rating.getVideo()));
+            binding.tvVideo.setTextColor(StarRatingUtil.getSubRatingColor(rating.getVideo(), binding.tvFace.getResources()));
+            binding.tvPrefer.setText("Prefer " + StarRatingUtil.getSubRatingValue(rating.getPrefer()));
+            binding.tvPrefer.setTextColor(StarRatingUtil.getSubRatingColor(rating.getPrefer(), binding.tvPrefer.getResources()));
             binding.groupRating.setVisibility(View.VISIBLE);
         }
         else {

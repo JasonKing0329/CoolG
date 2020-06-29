@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CoolG.iml" filepath="$PROJECT_DIR$/CoolG.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jindicator/jindicator.iml" filepath="$PROJECT_DIR$/jindicator/jindicator.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libresmanager/libresmanager.iml" filepath="$PROJECT_DIR$/libresmanager/libresmanager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CoolG.iml" filepath="$PROJECT_DIR$/CoolG.iml" group="CoolG" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="CoolG/app" />
+      <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" group="CoolG/data" />
+      <module fileurl="file://$PROJECT_DIR$/jindicator/jindicator.iml" filepath="$PROJECT_DIR$/jindicator/jindicator.iml" group="CoolG/jindicator" />
+      <module fileurl="file://$PROJECT_DIR$/libresmanager/libresmanager.iml" filepath="$PROJECT_DIR$/libresmanager/libresmanager.iml" group="CoolG/libresmanager" />
     </modules>
   </component>
 </project>

@@ -35,9 +35,11 @@ public class StarRating {
 
     private float complex;
 
-    @Generated(hash = 365035643)
+    private float prefer;
+
+    @Generated(hash = 981441856)
     public StarRating(Long id, long starId, float face, float body, float sexuality,
-            float dk, float passion, float video, float complex) {
+            float dk, float passion, float video, float complex, float prefer) {
         this.id = id;
         this.starId = starId;
         this.face = face;
@@ -47,6 +49,7 @@ public class StarRating {
         this.passion = passion;
         this.video = video;
         this.complex = complex;
+        this.prefer = prefer;
     }
 
     @Generated(hash = 2089122788)
@@ -123,6 +126,14 @@ public class StarRating {
 
     public void setComplex(float complex) {
         this.complex = complex;
+    }
+
+    public float getPrefer() {
+        return this.prefer;
+    }
+
+    public void setPrefer(float prefer) {
+        this.prefer = prefer;
     }
 
 }

@@ -36,6 +36,12 @@ public class StarRatingDialog extends BindingDialogFragment<FragmentDialogStarRa
     }
 
     @Override
+    public void onStart() {
+        setWidth(getResources().getDimensionPixelSize(R.dimen.dlg_rating_width));
+        super.onStart();
+    }
+
+    @Override
     protected void initView(View view) {
 
         mModel = ViewModelProviders.of(this).get(StarRatingViewModel.class);
@@ -46,6 +52,7 @@ public class StarRatingDialog extends BindingDialogFragment<FragmentDialogStarRa
         mBinding.starPassion.setOnStarChangeListener(this);
         mBinding.starVideo.setOnStarChangeListener(this);
         mBinding.starSex.setOnStarChangeListener(this);
+        mBinding.starPrefer.setOnStarChangeListener(this);
 
         mBinding.ivClose.setOnClickListener(v -> dismissAllowingStateLoss());
 
@@ -97,17 +104,19 @@ public class StarRatingDialog extends BindingDialogFragment<FragmentDialogStarRa
         mBinding.tvRating.setText(mModel.getComplex());
 
         mBinding.starFace.setCheckNumber(rating.getFace());
-        mBinding.tvFace.setText(StarRatingUtil.getRatingValue(rating.getFace()));
+        mBinding.tvFace.setText(StarRatingUtil.getSubRatingValue(rating.getFace()));
         mBinding.starBody.setCheckNumber(rating.getBody());
-        mBinding.tvBody.setText(StarRatingUtil.getRatingValue(rating.getBody()));
+        mBinding.tvBody.setText(StarRatingUtil.getSubRatingValue(rating.getBody()));
         mBinding.starDk.setCheckNumber(rating.getDk());
-        mBinding.tvDk.setText(StarRatingUtil.getRatingValue(rating.getDk()));
+        mBinding.tvDk.setText(StarRatingUtil.getSubRatingValue(rating.getDk()));
         mBinding.starSex.setCheckNumber(rating.getSexuality());
-        mBinding.tvSex.setText(StarRatingUtil.getRatingValue(rating.getSexuality()));
+        mBinding.tvSex.setText(StarRatingUtil.getSubRatingValue(rating.getSexuality()));
         mBinding.starPassion.setCheckNumber(rating.getPassion());
-        mBinding.tvPassion.setText(StarRatingUtil.getRatingValue(rating.getPassion()));
+        mBinding.tvPassion.setText(StarRatingUtil.getSubRatingValue(rating.getPassion()));
         mBinding.starVideo.setCheckNumber(rating.getVideo());
-        mBinding.tvVideo.setText(StarRatingUtil.getRatingValue(rating.getVideo()));
+        mBinding.tvVideo.setText(StarRatingUtil.getSubRatingValue(rating.getVideo()));
+        mBinding.starPrefer.setCheckNumber(rating.getPrefer());
+        mBinding.tvPrefer.setText(StarRatingUtil.getSubRatingValue(rating.getPrefer()));
     }
 
     public void setStarColor(int color) {
@@ -117,11 +126,12 @@ public class StarRatingDialog extends BindingDialogFragment<FragmentDialogStarRa
         mBinding.starDk.setStarColor(color);
         mBinding.starFace.setStarColor(color);
         mBinding.starBody.setStarColor(color);
+        mBinding.starPrefer.setStarColor(color);
     }
 
     @Override
     public void onStarChanged(StarRatingView view, float checkedStar) {
-        String rateValue = StarRatingUtil.getRatingValue(checkedStar);
+        String rateValue = StarRatingUtil.getSubRatingValue(checkedStar);
         switch (view.getId()) {
             case R.id.star_face:
                 mModel.getRating().setFace(checkedStar);
@@ -146,6 +156,10 @@ public class StarRatingDialog extends BindingDialogFragment<FragmentDialogStarRa
             case R.id.star_sex:
                 mModel.getRating().setSexuality(checkedStar);
                 mBinding.tvSex.setText(rateValue);
+                break;
+            case R.id.star_prefer:
+                mModel.getRating().setPrefer(checkedStar);
+                mBinding.tvPrefer.setText(rateValue);
                 break;
         }
         mBinding.tvRating.setText(mModel.getComplex());

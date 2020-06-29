@@ -80,6 +80,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         binding.starPassion.setOnStarChangeListener(this);
         binding.starVideo.setOnStarChangeListener(this);
         binding.starSex.setOnStarChangeListener(this);
+        binding.starPrefer.setOnStarChangeListener(this);
 
         bindBasicInfo(binding, star, recordNumber);
         bindImages(binding, starImageList);
@@ -364,17 +365,19 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         binding.tvRating.setText(mRatingModel.getComplex());
 
         binding.starFace.setCheckNumber(rating.getFace());
-        binding.tvFace.setText(StarRatingUtil.getRatingValue(rating.getFace()));
+        binding.tvFace.setText(StarRatingUtil.getSubRatingValue(rating.getFace()));
         binding.starBody.setCheckNumber(rating.getBody());
-        binding.tvBody.setText(StarRatingUtil.getRatingValue(rating.getBody()));
+        binding.tvBody.setText(StarRatingUtil.getSubRatingValue(rating.getBody()));
         binding.starDk.setCheckNumber(rating.getDk());
-        binding.tvDk.setText(StarRatingUtil.getRatingValue(rating.getDk()));
+        binding.tvDk.setText(StarRatingUtil.getSubRatingValue(rating.getDk()));
         binding.starSex.setCheckNumber(rating.getSexuality());
-        binding.tvSex.setText(StarRatingUtil.getRatingValue(rating.getSexuality()));
+        binding.tvSex.setText(StarRatingUtil.getSubRatingValue(rating.getSexuality()));
         binding.starPassion.setCheckNumber(rating.getPassion());
-        binding.tvPassion.setText(StarRatingUtil.getRatingValue(rating.getPassion()));
+        binding.tvPassion.setText(StarRatingUtil.getSubRatingValue(rating.getPassion()));
         binding.starVideo.setCheckNumber(rating.getVideo());
-        binding.tvVideo.setText(StarRatingUtil.getRatingValue(rating.getVideo()));
+        binding.tvVideo.setText(StarRatingUtil.getSubRatingValue(rating.getVideo()));
+        binding.starPrefer.setCheckNumber(rating.getPrefer());
+        binding.tvPrefer.setText(StarRatingUtil.getSubRatingValue(rating.getPrefer()));
     }
 
     private void showBanner(CoolBanner banner, GuideView guideView, List<String> list) {
@@ -396,7 +399,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
 
     @Override
     public void onStarChanged(StarRatingView view, float checkedStar) {
-        String rateValue = StarRatingUtil.getRatingValue(checkedStar);
+        String rateValue = StarRatingUtil.getSubRatingValue(checkedStar);
         switch (view.getId()) {
             case R.id.star_face:
                 mRatingModel.getRating().setFace(checkedStar);
@@ -421,6 +424,10 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
             case R.id.star_sex:
                 mRatingModel.getRating().setSexuality(checkedStar);
                 mBinding.tvSex.setText(rateValue);
+                break;
+            case R.id.star_prefer:
+                mRatingModel.getRating().setPrefer(checkedStar);
+                mBinding.tvPrefer.setText(rateValue);
                 break;
         }
         mBinding.tvRating.setText(mRatingModel.getComplex());

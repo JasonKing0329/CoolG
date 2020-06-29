@@ -200,7 +200,7 @@
                 </LinearLayout>
                 <LinearLayout style="@style/GroupStarSecSubItem">
                     <TextView
-                        android:text="Dk"
+                        android:text="Dk/Butt"
                         style="@style/TvPlayerStarValueStarPage" />
                     <com.king.app.coolg.view.widget.StarRatingView
                         android:id="@+id/star_dk"
@@ -287,6 +287,29 @@
                         android:layout_height="wrap_content"/>
                     <TextView
                         android:id="@+id/tv_video"
+                        android:text="NR"
+                        style="@style/TvPlayerValueStarPage" />
+                </LinearLayout>
+                <LinearLayout style="@style/GroupStarSecSubItem">
+                    <TextView
+                        android:text="Prefer"
+                        style="@style/TvPlayerStarValueStarPage" />
+                    <com.king.app.coolg.view.widget.StarRatingView
+                        android:id="@+id/star_prefer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:starNumber="5"
+                        app:starSize="@dimen/rating_star_size"
+                        app:starSpace="@dimen/rating_star_space"
+                        app:checkNumber="0"
+                        app:starColor="@color/colorAccent"
+                        app:supportHalf="true"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_prefer"
                         android:text="NR"
                         style="@style/TvPlayerValueStarPage" />
                 </LinearLayout>

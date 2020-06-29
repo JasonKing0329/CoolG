@@ -133,23 +133,27 @@
                             android:layout_weight="1"
                             android:text="Body  B+"/>
                         <TextView
-                            android:id="@+id/tv_sex"
+                            android:id="@+id/tv_video"
                             android:layout_weight="1"
-                            android:text="Sexuality  B+"/>
+                            android:text="Video  B+"/>
+                        <TextView
+                            android:id="@+id/tv_prefer"
+                            android:layout_weight="1"
+                            android:text="Prefer  B+"/>
                     </TableRow>
                     <TableRow android:layout_marginTop="5dp">
                         <TextView
+                            android:id="@+id/tv_sex"
+                            android:layout_weight="1"
+                            android:text="Sexuality  B+"/>
+                        <TextView
                             android:id="@+id/tv_dk"
                             android:layout_weight="1"
-                            android:text="Dk  B+"/>
+                            android:text="Dk/Butt  B+"/>
                         <TextView
                             android:id="@+id/tv_passion"
                             android:layout_weight="1"
                             android:text="Passion  B+"/>
-                        <TextView
-                            android:id="@+id/tv_video"
-                            android:layout_weight="1"
-                            android:text="Video  B+"/>
                     </TableRow>
                 </TableLayout>
             </LinearLayout>

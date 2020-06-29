@@ -103,12 +103,13 @@ public class StarRatingViewModel extends BaseViewModel {
     }
 
     private float calculateComplex(StarRating mRating) {
-        return mRating.getBody() * 0.2f
-                + mRating.getFace() * 0.18f
-                + mRating.getDk() * 0.1f
-                + mRating.getSexuality() * 0.25f
-                + mRating.getPassion() * 0.17f
-                + mRating.getVideo() * 0.1f;
+        return mRating.getBody() * 0.15f
+                + mRating.getDk() * 0.08f
+                + mRating.getVideo() * 0.07f
+                + mRating.getFace() * 0.15f
+                + mRating.getPassion() * 0.15f
+                + mRating.getSexuality() * 0.2f
+                + mRating.getPrefer() * 0.2f;
     }
 
     public int generateStarColor(Resources resources, Palette palette) {

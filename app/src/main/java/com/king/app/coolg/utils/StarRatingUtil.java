@@ -17,7 +17,6 @@ public class StarRatingUtil {
 
     public static final String NON_RATING = "NR";
     public static final String RATING_E = "E";
-    public static final String RATING_EP = "E+";
     public static final String RATING_D = "D";
     public static final String RATING_DP = "D+";
     public static final String RATING_C = "C";
@@ -26,23 +25,36 @@ public class StarRatingUtil {
     public static final String RATING_BP = "B+";
     public static final String RATING_A = "A";
     public static final String RATING_AP = "A+";
+    public static final String RATING_S = "S";
 
     public static final float RATING_VALUE_CP = 2.6f;
 
     private static String[] rateValues = new String[] {
-            NON_RATING, RATING_E, RATING_EP, RATING_D, RATING_DP, RATING_C, RATING_CP, RATING_B, RATING_BP, RATING_A, RATING_AP
+            NON_RATING, RATING_E, RATING_D, RATING_DP, RATING_C, RATING_CP, RATING_B, RATING_BP, RATING_A, RATING_AP, RATING_S
     };
 
     private static float[] rateFactors = new float[] {
-            0, 0.6f, 1.1f, 1.6f, 2.1f, RATING_VALUE_CP, 3.1f, 3.6f, 4.1f, 4.6f
+            0, 1.1f, 1.6f, 2.1f, RATING_VALUE_CP, 3.1f, 3.6f, 4.0f, 4.3f, 4.6f
+    };
+
+    private static float[] subRateFactors = new float[] {
+            0, 0.5f, 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 4.5f
     };
 
     public static String getRatingValue(float rating) {
+        return getRatingValueBy(rating, rateFactors);
+    }
+
+    public static String getSubRatingValue(float rating) {
+        return getRatingValueBy(rating, subRateFactors);
+    }
+
+    private static String getRatingValueBy(float rating, float[] factors) {
         if (rating == 0) {
             return NON_RATING;
         }
-        for (int i = 0; i < rateFactors.length; i ++) {
-            if (rating <= rateFactors[i]) {
+        for (int i = 0; i < factors.length; i ++) {
+            if (rating <= factors[i]) {
                 return rateValues[i];
             }
         }
@@ -61,18 +73,27 @@ public class StarRatingUtil {
         return resources.getColor(getRatingColorRes(rating));
     }
 
+    public static int getSubRatingColor(float rating, Resources resources) {
+        return resources.getColor(getSubRatingColorRes(rating));
+    }
+
     public static int getRatingColorRes(float rating) {
+        return getRatingColorRes(rating, getRatingValue(rating));
+    }
+
+    public static int getSubRatingColorRes(float rating) {
+        return getRatingColorRes(rating, getSubRatingValue(rating));
+    }
+
+    public static int getRatingColorRes(float rating, String ratingText) {
         int colorId;
         if (rating == 0) {
             colorId = R.color.rating_nr;
         }
         else {
-            switch (getRatingValue(rating)) {
+            switch (ratingText) {
                 case RATING_E:
                     colorId = R.color.rating_e;
-                    break;
-                case RATING_EP:
-                    colorId = R.color.rating_ep;
                     break;
                 case RATING_D:
                     colorId = R.color.rating_d;
@@ -97,6 +118,9 @@ public class StarRatingUtil {
                     break;
                 case RATING_AP:
                     colorId = R.color.rating_ap;
+                    break;
+                case RATING_S:
+                    colorId = R.color.rating_s;
                     break;
                 default:
                     colorId = R.color.rating_nr;

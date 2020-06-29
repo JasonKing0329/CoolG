@@ -74,6 +74,7 @@
     <color name="rating_bp">#cc6600</color>
     <color name="rating_a">#A03437</color>
     <color name="rating_ap">#C93437</color>
+    <color name="rating_s">#FF0005</color>
 
     <color name="home_section_phone_star">#f6879a</color>
     <color name="home_section_phone_record">#b0dc3d</color>
