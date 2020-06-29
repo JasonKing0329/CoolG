@@ -58,6 +58,7 @@ public class StarGridAdapter extends BaseBindingAdapter<AdapterStarGridBinding, 
 
         binding.tvName.setText(item.getStar().getName());
         binding.tvVideos.setText(item.getStar().getRecords() + " Videos");
+        binding.tvSeq.setText(String.valueOf(position + 1));
 
         String headPath = item.getImagePath();
         Glide.with(binding.ivStar.getContext())
