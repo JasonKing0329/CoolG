@@ -282,7 +282,7 @@ public class StarListFragment extends MvvmFragment<FragmentStarRichBinding, Star
     }
 
     @Override
-    public void onUpdateRating(Long starId) {
+    public void onUpdateRating(int position, Long starId) {
         StarRatingDialog dialog = new StarRatingDialog();
         dialog.setStarId(starId);
         dialog.setOnDismissListener(dialog1 -> {

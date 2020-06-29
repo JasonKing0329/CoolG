@@ -132,7 +132,7 @@ public class StarListViewModel extends BaseViewModel {
                     }
                     // 默认收起
                     setExpandAll(false);
-                    return sortStars();
+                    return repository.sortStars(mList, mSortType);
                 })
                 .flatMap(list -> createIndexes())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -202,44 +202,6 @@ public class StarListViewModel extends BaseViewModel {
         });
     }
 
-    private Observable<List<StarProxy>> sortStars() {
-        return Observable.create(e -> {
-            if (mSortType == AppConstants.STAR_SORT_RANDOM) {// order by records number
-                Collections.shuffle(mList);
-            }
-            else if (mSortType == AppConstants.STAR_SORT_RECORDS) {// order by records number
-                Collections.sort(mList, new StarRecordsNumberComparator());
-            }
-            else if (mSortType == AppConstants.STAR_SORT_RATING) {// order by rating
-                Collections.sort(mList, new StarRatingComparator(RatingType.COMPLEX));
-            }
-            else if (mSortType == AppConstants.STAR_SORT_RATING_FACE) {// order by rating
-                Collections.sort(mList, new StarRatingComparator(RatingType.FACE));
-            }
-            else if (mSortType == AppConstants.STAR_SORT_RATING_BODY) {// order by rating
-                Collections.sort(mList, new StarRatingComparator(RatingType.BODY));
-            }
-            else if (mSortType == AppConstants.STAR_SORT_RATING_DK) {// order by rating
-                Collections.sort(mList, new StarRatingComparator(RatingType.DK));
-            }
-            else if (mSortType == AppConstants.STAR_SORT_RATING_SEXUALITY) {// order by rating
-                Collections.sort(mList, new StarRatingComparator(RatingType.SEXUALITY));
-            }
-            else if (mSortType == AppConstants.STAR_SORT_RATING_PASSION) {// order by rating
-                Collections.sort(mList, new StarRatingComparator(RatingType.PASSION));
-            }
-            else if (mSortType == AppConstants.STAR_SORT_RATING_VIDEO) {// order by rating
-                Collections.sort(mList, new StarRatingComparator(RatingType.VIDEO));
-            }
-            else {
-                // order by name
-                Collections.sort(mList, new StarNameComparator());
-            }
-            e.onNext(mList);
-            e.onComplete();
-        });
-    }
-
     private Observable<String> createIndexes() {
         return Observable.create(e -> {
             indexEmitter.clear();
@@ -283,7 +245,7 @@ public class StarListViewModel extends BaseViewModel {
     public void sortStarList(final int sortType) {
         loadingObserver.setValue(true);
         setSortType(sortType);
-        sortStars()
+        repository.sortStars(mList, mSortType)
                 .flatMap(list -> createIndexes())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -342,7 +304,7 @@ public class StarListViewModel extends BaseViewModel {
             loadingObserver.setValue(true);
         }
         observable
-                .flatMap(filtered -> sortStars())
+                .flatMap(filtered -> repository.sortStars(mList, mSortType))
                 .flatMap(aBoolean -> createIndexes())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())

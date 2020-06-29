@@ -1,5 +1,6 @@
 package com.king.app.coolg.base;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -46,6 +47,10 @@ public abstract class MvvmActivity<T extends ViewDataBinding, VM extends BaseVie
     }
 
     protected abstract VM createViewModel();
+
+    protected VM generateViewModel(Class<VM> vm) {
+        return ViewModelProviders.of(this).get(vm);
+    }
 
     protected abstract void initData();
 

@@ -6,7 +6,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
-import com.king.app.coolg.databinding.AdapterStarCircleBinding;
+import com.king.app.coolg.databinding.AdapterStarGridBinding;
 import com.king.app.coolg.utils.GlideUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.StarRatingUtil;
@@ -19,8 +19,8 @@ import java.util.Map;
  * @author：Jing Yang
  * @date: 2018/8/9 15:01
  */
-public class StarCircleAdapter extends BaseBindingAdapter<AdapterStarCircleBinding, StarProxy> {
-    
+public class StarGridAdapter extends BaseBindingAdapter<AdapterStarGridBinding, StarProxy> {
+
     private OnStarRatingListener onStarRatingListener;
 
     private RequestOptions requestOptions;
@@ -29,7 +29,7 @@ public class StarCircleAdapter extends BaseBindingAdapter<AdapterStarCircleBindi
 
     private Map<Long, Boolean> mCheckMap;
 
-    public StarCircleAdapter() {
+    public StarGridAdapter() {
         requestOptions = GlideUtil.getStarWideOptions();
     }
 
@@ -50,20 +50,20 @@ public class StarCircleAdapter extends BaseBindingAdapter<AdapterStarCircleBindi
 
     @Override
     protected int getItemLayoutRes() {
-        return R.layout.adapter_star_circle;
+        return R.layout.adapter_star_grid;
     }
 
     @Override
-    protected void onBindItem(AdapterStarCircleBinding binding, int position, StarProxy item) {
+    protected void onBindItem(AdapterStarGridBinding binding, int position, StarProxy item) {
 
-        binding.tvName.setText(item.getStar().getName() + " (" + item.getStar().getRecords() + ")");
+        binding.tvName.setText(item.getStar().getName());
+        binding.tvVideos.setText(item.getStar().getRecords() + " Videos");
 
         String headPath = item.getImagePath();
-        binding.ivHead.setVisibility(View.VISIBLE);
-        Glide.with(binding.ivHead.getContext())
+        Glide.with(binding.ivStar.getContext())
                 .load(headPath)
                 .apply(requestOptions)
-                .into(binding.ivHead);
+                .into(binding.ivStar);
 
         if (ListUtil.isEmpty(item.getStar().getRatings())) {
             binding.tvRating.setText(StarRatingUtil.NON_RATING);

@@ -5,5 +5,5 @@ package com.king.app.coolg.phone.star.list;
  */
 
 public interface OnStarRatingListener {
-    void onUpdateRating(Long id);
+    void onUpdateRating(int position, Long id);
 }

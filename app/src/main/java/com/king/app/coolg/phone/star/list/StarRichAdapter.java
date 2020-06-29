@@ -115,7 +115,7 @@ public class StarRichAdapter extends BaseBindingAdapter<AdapterStarRichBinding, 
         public void onClick(View view) {
             int position = (int) view.getTag();
             if (onStarRatingListener != null) {
-                onStarRatingListener.onUpdateRating(list.get(position).getStar().getId());
+                onStarRatingListener.onUpdateRating(position, list.get(position).getStar().getId());
             }
         }
     };

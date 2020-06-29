@@ -231,7 +231,7 @@ public class HomeActivity extends MvvmActivity<ActivityHomeBinding, HomeViewMode
     }
 
     private void goToStarPage() {
-        Router.build("StarListPhone")
+        Router.build("TagStar")
                 .go(this);
     }
 
