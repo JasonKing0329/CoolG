@@ -146,6 +146,9 @@
         <activity
             android:name=".pad.video.VideoHomePadActivity"
             android:screenOrientation="landscape" />
+        <activity
+            android:name=".pad.star.tag.TagStarPadActivity"
+            android:screenOrientation="landscape" />
 
         <service android:name=".phone.login.BackgroundService" />
 

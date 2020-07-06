@@ -272,7 +272,7 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
     }
 
     private void goToStarListPage() {
-        Router.build("StarListPad")
+        Router.build("TagStarPad")
                 .go(this);
     }
 
