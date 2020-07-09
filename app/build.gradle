@@ -100,7 +100,7 @@ dependencies {
     implementation 'com.nightonke:boommenu:2.1.1'
 
     /*shape-imageview*/
-    implementation 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
+    implementation 'com.github.siyamed:android-shape-imageview:0.9.3'
     implementation 'com.github.devahamed:multi-view-adapter-databinding:1.2.3'
 
     /*giraffe player*/
