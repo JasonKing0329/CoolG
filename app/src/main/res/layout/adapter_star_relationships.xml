@@ -6,7 +6,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.github.siyamed.shapeimageview.CircularImageView
+        <com.king.lib.frame_utils.widget.shape.CircleImageView
             android:id="@+id/iv_head"
             android:layout_width="80dp"
             android:layout_height="80dp"

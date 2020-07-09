@@ -54,13 +54,30 @@ public abstract class BaseTagAdapter<T> extends BaseFlowAdapter<T> implements Vi
 
     private OnItemLongCickListener<T> onItemLongClickListener;
 
+    private int layoutResource = -1;
+
     public BaseTagAdapter() {
         mCheckMap = new HashMap<>();
     }
 
+    public void setLayoutResource(int layoutResource) {
+        this.layoutResource = layoutResource;
+    }
+
+    private int getInflateResource() {
+        int layout;
+        if (layoutResource == -1) {
+            layout = R.layout.adapter_star_tag_item_pad;
+        }
+        else {
+            layout = layoutResource;
+        }
+        return layout;
+    }
+
     @Override
     public View getView(int position, ViewGroup group) {
-        View view = LayoutInflater.from(group.getContext()).inflate(R.layout.adapter_method_item, null);
+        View view = LayoutInflater.from(group.getContext()).inflate(getInflateResource(), null);
         TextView textView = view.findViewById(R.id.tv_name);
         textView.setText(getText(data.get(position)));
         textView.setOnClickListener(this);

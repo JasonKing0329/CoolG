@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.github.siyamed.shapeimageview.CircularImageView
+        <com.king.lib.frame_utils.widget.shape.CircleImageView
             android:id="@+id/iv_head"
             android:layout_width="@dimen/starlist_pad_circle_size"
             android:layout_height="@dimen/starlist_pad_circle_size"

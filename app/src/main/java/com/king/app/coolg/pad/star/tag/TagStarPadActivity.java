@@ -1,5 +1,6 @@
 package com.king.app.coolg.pad.star.tag;
 
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.chenenyu.router.Router;
@@ -33,6 +34,8 @@ public class TagStarPadActivity extends AbsTagStarActivity<ActivityStarTagPadBin
     protected void initView() {
         super.initActionBar(mBinding.actionbar);
 
+        mBinding.rvStars.setLayoutManager(new GridLayoutManager(this, 4));
+
         tagAdapter = new BaseTagAdapter<Tag>() {
             @Override
             protected String getText(Tag data) {
@@ -41,7 +44,7 @@ public class TagStarPadActivity extends AbsTagStarActivity<ActivityStarTagPadBin
 
             @Override
             protected long getId(Tag data) {
-                return data.getId();
+                return data.getId() == null ? 0:data.getId();
             }
 
             @Override
@@ -60,6 +63,7 @@ public class TagStarPadActivity extends AbsTagStarActivity<ActivityStarTagPadBin
 
             }
         });
+        tagAdapter.setLayoutResource(R.layout.adapter_star_tag_item_pad);
 
         mBinding.fabTop.setOnClickListener(v -> mBinding.rvStars.scrollToPosition(0));
     }

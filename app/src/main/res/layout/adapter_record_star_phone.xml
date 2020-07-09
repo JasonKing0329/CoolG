@@ -7,14 +7,13 @@
         android:gravity="center"
         android:paddingLeft="10dp"
         android:id="@+id/group_star">
-        <com.github.siyamed.shapeimageview.RoundedImageView
+        <com.king.app.coolg.view.widget.rc.RCImageView
             android:id="@+id/iv_star"
             android:layout_width="110dp"
             android:layout_height="150dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_def_person"
-            app:siRadius="10dp"
-            app:siBorderColor="@color/white"/>
+            app:round_corner="10dp"/>
 
         <TextView
             android:id="@+id/tv_flag"

@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/category_star_height">
 
-        <com.github.siyamed.shapeimageview.CircularImageView
+        <com.king.lib.frame_utils.widget.shape.CircleImageView
             android:id="@+id/iv_head"
             android:layout_width="@dimen/category_star_size"
             android:layout_height="@dimen/category_star_size"
