@@ -57,7 +57,7 @@ public class StarViewModel extends BaseViewModel {
     private List<String> starImageList;
     private List<StarRelationship> relationList;
     private List<StarStudioTag> studioList;
-    private List<Tag> tagList;
+    protected List<Tag> tagList;
 
     protected StarRepository starRepository;
     private OrderRepository orderRepository;

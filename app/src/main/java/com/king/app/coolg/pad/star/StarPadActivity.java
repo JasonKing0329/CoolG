@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 import com.chenenyu.router.Router;
@@ -17,20 +18,20 @@ import com.king.app.coolg.databinding.ActivityStarPadBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.pad.record.list.RecordListPadFragment;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
+import com.king.app.coolg.phone.record.TagAdapter;
 import com.king.app.coolg.phone.record.list.SortDialogContent;
-import com.king.app.coolg.phone.star.StarOrdersAdapter;
 import com.king.app.coolg.phone.star.StarRatingDialog;
 import com.king.app.coolg.phone.star.StarRelationship;
 import com.king.app.coolg.phone.star.StarRelationshipAdapter;
 import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.phone.video.home.RecommendFragment;
-import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.utils.StarRatingUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
-import com.king.app.gdb.data.entity.FavorStarOrder;
+import com.king.app.coolg.view.dialog.content.TagFragment;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarRating;
+import com.king.app.gdb.data.entity.Tag;
 import com.king.app.gdb.data.param.DataConstants;
 
 import java.util.List;
@@ -47,8 +48,13 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
     public static final String EXTRA_STAR_ID = "key_star_id";
     private final int REQUEST_ADD_ORDER = 1602;
 
+    private TagAdapter tagAdapter;
+
     private RecordListPadFragment ftRecord;
     private RecommendBean mFilter;
+
+    private StarImagesDecoration imagesDecoration;
+    private StarImageAdapter starImageAdapter;
 
     @Override
     protected int getContentView() {
@@ -68,21 +74,13 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
     @Override
     protected void initView() {
 
-        mBinding.rvStar.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mBinding.rvStar.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                outRect.top = ScreenUtils.dp2px(10);
-                outRect.bottom = ScreenUtils.dp2px(10);
-            }
-        });
-        mBinding.rvOrder.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        mBinding.rvOrder.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                outRect.left = ScreenUtils.dp2px(10);
-            }
-        });
+//        mBinding.rvOrder.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+//        mBinding.rvOrder.addItemDecoration(new RecyclerView.ItemDecoration() {
+//            @Override
+//            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+//                outRect.left = ScreenUtils.dp2px(10);
+//            }
+//        });
         mBinding.rvRelation.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mBinding.rvRelation.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
@@ -90,11 +88,22 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
                 outRect.left = ScreenUtils.dp2px(10);
             }
         });
+        StaggeredGridLayoutManager tagManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL);
+        mBinding.rvTags.setLayoutManager(tagManager);
+        mBinding.rvTags.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                outRect.right = ScreenUtils.dp2px(10);
+                outRect.top = ScreenUtils.dp2px(5);
+                outRect.bottom = ScreenUtils.dp2px(5);
+            }
+        });
         mBinding.tvRating.setOnClickListener(v -> showRatingDialog());
         mBinding.ivIconBack.setOnClickListener(v -> finish());
         mBinding.ivIconSort.setOnClickListener(v -> changeSortType());
         mBinding.ivIconFilter.setOnClickListener(v -> changeFilter());
-        mBinding.tvAddOrder.setOnClickListener(v -> selectOrderToAddStar());
+        mBinding.ivAddTag.setOnClickListener(v -> addTag());
+//        mBinding.ivAddOrder.setOnClickListener(v -> selectOrderToAddStar());
         mBinding.tvTagVideo.setOnClickListener(v -> {
             if (!mBinding.tvTagVideo.isSelected()) {
                 mBinding.tvTagVideo.setSelected(true);
@@ -119,6 +128,17 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
                 ftRecord.filterByStarType(DataConstants.VALUE_RELATION_BOTTOM);
             }
         });
+    }
+
+    private void addTag() {
+        TagFragment fragment = new TagFragment();
+        fragment.setOnTagSelectListener(tag -> mModel.addTag(tag));
+        fragment.setTagType(DataConstants.TAG_TYPE_STAR);
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setContentFragment(fragment);
+        dialogFragment.setTitle("Select tag");
+        dialogFragment.setOnDismissListener(v -> mModel.refreshTags());
+        dialogFragment.show(getSupportFragmentManager(), "TagFragment");
     }
 
     private void showRatingDialog() {
@@ -174,11 +194,37 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
         mModel.ratingObserver.observe(this, rating -> showRating(rating));
         mModel.imagesObserver.observe(this, list -> showImages(list));
         mModel.relationshipsObserver.observe(this, list -> showRelationships(list));
-        mModel.ordersObserver.observe(this, list -> showOrders(list));
+//        mModel.ordersObserver.observe(this, list -> showOrders(list));
         mModel.addOrderObserver.observe(this, star -> mModel.loadStarOrders(mModel.getStar().getId()));
+        mModel.tagsObserver.observe(this, list -> showTags(list));
 
         mModel.loadStar(starId);
-        mModel.loadStarOrders(starId);
+//        mModel.loadStarOrders(starId);
+    }
+
+    private void showTags(List<Tag> list) {
+        if (list.size() == 0) {
+            mBinding.rvTags.setVisibility(View.GONE);
+            mBinding.tvNoTag.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.rvTags.setVisibility(View.VISIBLE);
+            mBinding.tvNoTag.setVisibility(View.GONE);
+        }
+        if (tagAdapter == null) {
+            tagAdapter = new TagAdapter();
+            tagAdapter.setOnDeleteListener((position, bean) -> mModel.deleteTag(bean));
+            tagAdapter.setOnItemLongClickListener((view, position, data) -> {
+                tagAdapter.toggleDelete();
+                tagAdapter.notifyDataSetChanged();
+            });
+            tagAdapter.setList(list);
+            mBinding.rvTags.setAdapter(tagAdapter);
+        }
+        else {
+            tagAdapter.setList(list);
+            tagAdapter.notifyDataSetChanged();
+        }
     }
 
     private void showStar(Star star) {
@@ -210,11 +256,75 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
         }
     }
 
+    private class StarImagesDecoration extends RecyclerView.ItemDecoration {
+
+        private int spanCount;
+
+        private StarImagesDecoration(int spanCount) {
+            this.spanCount = spanCount;
+        }
+
+        public int getSpanCount() {
+            return spanCount;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildLayoutPosition(view);
+            // 1列，设置上间距
+            if (spanCount == 1) {
+                if (position < 1) {
+                    outRect.top = 0;
+                }
+                else {
+                    outRect.top = ScreenUtils.dp2px(8);
+                }
+            }
+            // 2列，设置上间距、左右间距
+            else {
+                if (position < 2) {
+                    outRect.top = 0;
+                }
+                else {
+                    outRect.top = ScreenUtils.dp2px(8);
+                }
+                if (position % 2 == 0) {
+                    outRect.right = ScreenUtils.dp2px(4);
+                    outRect.left = 0;
+                }
+                else {
+                    outRect.left = ScreenUtils.dp2px(4);
+                    outRect.right = 0;
+                }
+            }
+        }
+    };
+
     private void showImages(List<String> list) {
-        StarImageAdapter adapter = new StarImageAdapter();
-        adapter.setList(list);
-        adapter.setOnItemClickListener((view, position, data) -> showEditPopup(view, data));
-        mBinding.rvStar.setAdapter(adapter);
+        int spanCount;
+        if (list.size() < 3) {
+            spanCount = 1;
+        }
+        else {
+            spanCount = 2;
+        }
+        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
+        mBinding.rvStar.setLayoutManager(manager);
+        if (imagesDecoration == null || spanCount != imagesDecoration.getSpanCount()) {
+            mBinding.rvStar.removeItemDecoration(imagesDecoration);
+            imagesDecoration = new StarImagesDecoration(spanCount);
+            mBinding.rvStar.addItemDecoration(imagesDecoration);
+        }
+        if (starImageAdapter == null) {
+            starImageAdapter = new StarImageAdapter();
+            starImageAdapter.setList(list);
+            starImageAdapter.setOnItemClickListener((view, position, data) -> showEditPopup(view, data));
+            mBinding.rvStar.setAdapter(starImageAdapter);
+        }
+        else {
+            starImageAdapter.setList(list);
+            starImageAdapter.notifyDataSetChanged();
+        }
     }
 
     private void showEditPopup(View view, String path) {
@@ -245,23 +355,23 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
         mBinding.rvRelation.setAdapter(adapter);
     }
 
-    private void showOrders(List<FavorStarOrder> list) {
-        if (ListUtil.isEmpty(list)) {
-            mBinding.tvAddOrder.setText("Orders");
-            mBinding.rvOrder.setVisibility(View.GONE);
-        }
-        else {
-            mBinding.tvAddOrder.setText("Orders\n" + list.size());
-            mBinding.rvOrder.setVisibility(View.VISIBLE);
-            StarOrdersAdapter adapter = new StarOrdersAdapter();
-            adapter.setList(list);
-            adapter.setOnDeleteListener(order -> {
-                mModel.deleteOrderOfStar(order.getId(), mModel.getStar().getId());
-                mModel.loadStarOrders(mModel.getStar().getId());
-            });
-            mBinding.rvOrder.setAdapter(adapter);
-        }
-    }
+//    private void showOrders(List<FavorStarOrder> list) {
+//        if (ListUtil.isEmpty(list)) {
+//            mBinding.tvOrderTitle.setText("Orders");
+//            mBinding.rvOrder.setVisibility(View.GONE);
+//        }
+//        else {
+//            mBinding.tvOrderTitle.setText("Orders(" + list.size() + ")");
+//            mBinding.rvOrder.setVisibility(View.VISIBLE);
+//            StarOrdersAdapter adapter = new StarOrdersAdapter();
+//            adapter.setList(list);
+//            adapter.setOnDeleteListener(order -> {
+//                mModel.deleteOrderOfStar(order.getId(), mModel.getStar().getId());
+//                mModel.loadStarOrders(mModel.getStar().getId());
+//            });
+//            mBinding.rvOrder.setAdapter(adapter);
+//        }
+//    }
 
     private void goToStarPage(long starId) {
         Router.build("StarPad")

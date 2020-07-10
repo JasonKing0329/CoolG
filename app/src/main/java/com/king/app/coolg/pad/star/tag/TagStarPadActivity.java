@@ -88,6 +88,7 @@ public class TagStarPadActivity extends AbsTagStarActivity<ActivityStarTagPadBin
     protected void goToClassicPage() {
         Router.build("StarListPad")
                 .go(this);
+        finish();
     }
 
     @Override

@@ -43,6 +43,11 @@ public class StarPadViewModel extends StarViewModel {
                 })
                 .flatMap(list -> {
                     imagesObserver.postValue(list);
+                    return getStarTags(mStar);
+                })
+                .flatMap(list -> {
+                    tagList = list;
+                    tagsObserver.postValue(list);
                     return getRelationships(mStar);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
