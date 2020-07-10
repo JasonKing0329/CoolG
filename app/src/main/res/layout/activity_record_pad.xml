@@ -235,52 +235,88 @@
             app:layout_constraintTop_toBottomOf="@id/iv_order">
             <TextView
                 android:id="@+id/tv_orders"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
+                style="@style/TvRecordPadAddTitle"
                 android:text="Orders"
-                android:textColor="@color/white"
-                android:textSize="18dp"
-                android:padding="10dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:gravity="center"
-                android:drawableBottom="@drawable/ic_add_white_36dp"
                 app:layout_constraintTop_toTopOf="@+id/rv_orders"
                 app:layout_constraintBottom_toBottomOf="@+id/rv_orders"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent" />
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_orders"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/pad_record_added_order_height"
-                android:layout_marginStart="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
                 tools:listitem="@layout/adapter_star_orders"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintEnd_toStartOf="@+id/iv_add_order"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/tv_orders"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintStart_toEndOf="@id/tv_orders"/>
+            <ImageView
+                android:id="@+id/iv_add_order"
+                style="@style/IconRecordPadAdd"
+                app:layout_constraintStart_toEndOf="@+id/rv_orders"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/rv_orders"
+                app:layout_constraintBottom_toBottomOf="@+id/rv_orders" />
             <TextView
                 android:id="@+id/tv_play_orders"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
+                style="@style/TvRecordPadAddTitle"
                 android:text="Play Orders"
-                android:textColor="@color/white"
-                android:textSize="18dp"
-                android:padding="10dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:gravity="center"
-                android:drawableBottom="@drawable/ic_add_white_36dp"
                 app:layout_constraintTop_toTopOf="@+id/rv_play_orders"
                 app:layout_constraintBottom_toBottomOf="@+id/rv_play_orders"
                 app:layout_constraintStart_toStartOf="parent"/>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_play_orders"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/pad_record_added_order_height"
-                android:layout_marginStart="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 tools:listitem="@layout/adapter_record_play_order"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintTop_toBottomOf="@id/rv_orders"
                 app:layout_constraintStart_toEndOf="@id/tv_play_orders"
+                app:layout_constraintEnd_toStartOf="@+id/iv_add_play_order"/>
+            <ImageView
+                android:id="@+id/iv_add_play_order"
+                style="@style/IconRecordPadAdd"
+                app:layout_constraintStart_toEndOf="@+id/rv_play_orders"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="@+id/rv_play_orders"
+                app:layout_constraintBottom_toBottomOf="@+id/rv_play_orders" />
+
+            <TextView
+                android:id="@+id/tv_tags"
+                style="@style/TvRecordPadAddTitle"
+                android:text="Tags"
+                app:layout_constraintTop_toTopOf="@+id/iv_add_tag"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_add_tag"
+                app:layout_constraintStart_toStartOf="parent"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_tags"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/tv_tags"
+                app:layout_constraintEnd_toStartOf="@+id/iv_add_tag"
+                app:layout_constraintTop_toTopOf="@+id/iv_add_tag"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_add_tag" />
+
+            <ImageView
+                android:id="@+id/iv_add_tag"
+                style="@style/IconRecordPadAdd"
+                app:layout_constraintStart_toEndOf="@+id/rv_tags"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rv_play_orders"
+                app:layout_constraintBottom_toBottomOf="parent" />
         </android.support.constraint.ConstraintLayout>
 
         <ImageView

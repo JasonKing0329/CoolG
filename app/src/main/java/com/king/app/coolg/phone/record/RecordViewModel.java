@@ -426,7 +426,7 @@ public class RecordViewModel extends BaseViewModel {
         };
     }
 
-    private List<Tag> getTags(Record record) {
+    protected List<Tag> getTags(Record record) {
         List<TagRecord> list = getDaoSession().getTagRecordDao().queryBuilder()
                 .where(TagRecordDao.Properties.RecordId.eq(record.getId()))
                 .build().list();

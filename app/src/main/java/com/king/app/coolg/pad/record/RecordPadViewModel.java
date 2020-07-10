@@ -17,6 +17,7 @@ import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.RecordType1v1;
 import com.king.app.gdb.data.entity.RecordType3w;
+import com.king.app.gdb.data.entity.Tag;
 import com.king.app.gdb.data.param.DataConstants;
 
 import java.io.File;
@@ -83,6 +84,10 @@ public class RecordPadViewModel extends RecordViewModel {
                 })
                 .flatMap(list -> {
                     passionsObserver.postValue(list);
+                    return loadTags();
+                })
+                .flatMap(list -> {
+                    tagsObserver.postValue(list);
                     return loadImages();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -134,6 +139,10 @@ public class RecordPadViewModel extends RecordViewModel {
             Collections.shuffle(mImageList);
             observer.onNext(mImageList);
         });
+    }
+
+    private ObservableSource<List<Tag>> loadTags() {
+        return observer -> observer.onNext(getTags(mRecord));
     }
 
     @Override

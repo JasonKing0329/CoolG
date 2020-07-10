@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,6 +37,7 @@ import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.PassionPoint;
 import com.king.app.coolg.phone.record.RecordOrdersAdapter;
 import com.king.app.coolg.phone.record.RecordPlayOrdersAdapter;
+import com.king.app.coolg.phone.record.TagAdapter;
 import com.king.app.coolg.phone.video.home.VideoPlayList;
 import com.king.app.coolg.phone.video.order.PlayOrderActivity;
 import com.king.app.coolg.phone.video.player.PlayerActivity;
@@ -46,10 +48,12 @@ import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
 import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
+import com.king.app.coolg.view.dialog.content.TagFragment;
 import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
+import com.king.app.gdb.data.entity.Tag;
 import com.king.app.gdb.data.param.DataConstants;
 import com.king.lib.banner.BannerFlipStyleProvider;
 
@@ -82,6 +86,8 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
     private RecordOrdersAdapter ordersAdapter;
     private RecordPlayOrdersAdapter playOrdersAdapter;
 
+    private TagAdapter tagAdapter;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_record_pad;
@@ -105,8 +111,8 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         mBinding.ivDelete.setOnClickListener(v -> mModel.deleteImage(mModel.getCurrentImage(mBinding.banner.getCurrentItem())));
         mBinding.ivSetting.setOnClickListener(v -> showBannerSetting());
         mBinding.tvStudio.setOnClickListener(v -> selectStudio());
-        mBinding.tvOrders.setOnClickListener(v -> selectOrderToAddRecord());
-        mBinding.tvPlayOrders.setOnClickListener(v -> onAddToPlayOrder());
+        mBinding.ivAddOrder.setOnClickListener(v -> selectOrderToAddRecord());
+        mBinding.ivAddPlayOrder.setOnClickListener(v -> onAddToPlayOrder());
 //        mBinding.tvScene.setOnClickListener(v -> );
 //        mBinding.ivPlay.setOnClickListener(v -> );
         mBinding.tvScore.setOnClickListener(v -> {
@@ -121,8 +127,6 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
             initGallery();
             recordGallery.show(getSupportFragmentManager(), "GalleryDialog");
         });
-        mBinding.rvOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        mBinding.rvPlayOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         mBinding.ivDesktop.setOnClickListener(v -> {
             showConfirmCancelMessage("即将在电脑上打开视频，是否继续？"
@@ -207,6 +211,33 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
 
         mBinding.ivPlayVideo.setOnClickListener(v -> mModel.playVideo());
         mModel.videoPlayOnReadyObserver.observe(this, result -> playList());
+
+        mBinding.rvOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mBinding.rvPlayOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        mBinding.rvTags.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mBinding.rvTags.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                int position = parent.getChildLayoutPosition(view);
+                if (position > 0) {
+                    outRect.left = ScreenUtils.dp2px(16);
+                }
+            }
+        });
+        mBinding.ivAddTag.setOnClickListener(v -> addTag());
+    }
+
+    private void addTag() {
+        TagFragment fragment = new TagFragment();
+        fragment.setOnTagSelectListener(tag -> mModel.addTag(tag));
+        fragment.setTagType(DataConstants.TAG_TYPE_RECORD);
+        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
+        dialogFragment.setContentFragment(fragment);
+        dialogFragment.setTitle("Select tag");
+        dialogFragment.setMaxHeight(ScreenUtils.dp2px(450));
+        dialogFragment.setOnDismissListener(v -> mModel.refreshTags());
+        dialogFragment.show(getSupportFragmentManager(), "TagFragment");
     }
 
     private void playList() {
@@ -271,6 +302,8 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
 
         mModel.videoUrlObserver.observe(this, url -> mBinding.ivPlayVideo.setVisibility(View.VISIBLE));
 
+        mModel.tagsObserver.observe(this, tags -> showTags(tags));
+
         mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
     }
 
@@ -306,6 +339,26 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
             starDetailAdapter.setOnItemClickListener((view, position, data) -> goToStarPage(data.getStarId()));
             mBinding.rvStarsDetail.setAdapter(starDetailAdapter);
         }, 1000);
+    }
+
+    private void showTags(List<Tag> tags) {
+        if (tagAdapter == null) {
+            tagAdapter = new TagAdapter();
+            tagAdapter.setList(tags);
+            tagAdapter.setOnItemLongClickListener((view, position, data) -> {
+                tagAdapter.toggleDelete();
+                tagAdapter.notifyDataSetChanged();
+            });
+            tagAdapter.setOnDeleteListener((position, bean) -> mModel.deleteTag(bean));
+            mBinding.rvTags.setAdapter(tagAdapter);
+        }
+        else {
+            tagAdapter.setList(tags);
+            if (ListUtil.isEmpty(tags)) {
+                tagAdapter.setShowDelete(false);
+            }
+            tagAdapter.notifyDataSetChanged();
+        }
     }
 
     private void goToStarPage(long starId) {
