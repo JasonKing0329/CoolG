@@ -41,21 +41,18 @@ import java.util.List;
  * @date: 2020/4/5 17:11
  */
 @Route("TagRecord")
-public class TagRecordActivity extends MvvmActivity<ActivityRecordTagBinding, TagRecordViewModel> {
+public class TagRecordActivity extends AbsTagRecordActivity<ActivityRecordTagBinding> {
 
-    protected final int REQUEST_VIDEO_ORDER = 1603;
     private TagAdapter tagAdapter;
-
-    private RecordGridAdapter recordAdapter;
-
-    @Override
-    protected TagRecordViewModel createViewModel() {
-        return ViewModelProviders.of(this).get(TagRecordViewModel.class);
-    }
 
     @Override
     protected int getContentView() {
         return R.layout.activity_record_tag;
+    }
+
+    @Override
+    protected RecyclerView getRecordRecyclerView() {
+        return mBinding.rvRecords;
     }
 
     @Override
@@ -75,60 +72,19 @@ public class TagRecordActivity extends MvvmActivity<ActivityRecordTagBinding, Ta
         mBinding.rvRecords.setEnableLoadMore(true);
         mBinding.rvRecords.setOnLoadMoreListener(() -> mModel.loadMoreRecords(null));
 
-        mBinding.actionbar.setOnBackListener(() -> onBackPressed());
-        mBinding.actionbar.setOnMenuItemListener(menuId -> {
-            switch (menuId) {
-                case R.id.menu_sort:
-                    changeSortType();
-                    break;
-                case R.id.menu_filter:
-                    changeFilter();
-                    break;
-                case R.id.menu_classic:
-                    goToClassicPage();
-                    break;
-                case R.id.menu_offset:
-                    showSetOffset();
-                    break;
-                case R.id.menu_tag_sort_mode:
-                    setTagSortMode();
-                    break;
-            }
-        });
+        initActionBar(mBinding.actionbar);
 
         mBinding.fabTop.setOnClickListener(v -> mBinding.rvRecords.scrollToPosition(0));
     }
 
-    private void setTagSortMode() {
-        new AlertDialogFragment()
-                .setTitle(null)
-                .setItems(AppConstants.TAG_SORT_MODE_TEXT, (dialog, which) -> {
-                    SettingProperty.setTagSortType(which);
-                    mModel.onTagSortChanged();
-                    mModel.startSortTag(false);
-                }).show(getSupportFragmentManager(), "AlertDialogFragment");
-    }
-
-    private void goToClassicPage() {
-        Router.build("RecordListPhone")
-                .go(this);
+    @Override
+    protected void focusOnTag(Integer position) {
+        tagAdapter.setSelection(position);
+        tagAdapter.notifyDataSetChanged();
     }
 
     @Override
-    protected void initData() {
-        mModel.tagsObserver.observe(this, tags -> showTags(tags));
-        mModel.recordsObserver.observe(this, list -> showRecords(list));
-        mModel.moreObserver.observe(this, offset -> showMoreList(offset));
-        mModel.scrollPositionObserver.observe(this, offset -> mBinding.rvRecords.scrollToPosition(offset));
-        mModel.focusTagPosition.observe(this, position -> {
-            tagAdapter.setSelection(position);
-            tagAdapter.notifyDataSetChanged();
-        });
-
-        mModel.loadTags();
-    }
-
-    private void showTags(List<Tag> tags) {
+    protected void showTags(List<Tag> tags) {
         if (tagAdapter == null) {
             tagAdapter = new TagAdapter();
             tagAdapter.setList(tags);
@@ -142,100 +98,26 @@ public class TagRecordActivity extends MvvmActivity<ActivityRecordTagBinding, Ta
         }
     }
 
-    private void showRecords(List<RecordProxy> list) {
-        if (recordAdapter == null) {
-            recordAdapter = new RecordGridAdapter();
-            recordAdapter.setList(list);
-            recordAdapter.setPopupListener((view, position, record) -> showEditPopup(view, record));
-            recordAdapter.setOnItemClickListener((view, position, data) -> goToRecordPage(data.getRecord()));
-            mBinding.rvRecords.setAdapter(recordAdapter);
-        }
-        else {
-            recordAdapter.setList(list);
-            recordAdapter.notifyDataSetChanged();
-        }
-    }
-
-    protected void showEditPopup(View view, Record data) {
-        PopupMenu menu = new PopupMenu(this, view);
-        menu.getMenuInflater().inflate(R.menu.popup_record_edit, menu.getMenu());
-        menu.getMenu().findItem(R.id.menu_set_cover).setVisible(false);
-        menu.getMenu().findItem(R.id.menu_delete).setVisible(false);
-        menu.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.menu_add_to_order:
-//                    selectOrderToAddRecord(data);
-                    break;
-                case R.id.menu_add_to_play_order:
-                    addToPlayOrder(data);
-                    break;
-            }
-            return false;
-        });
-        menu.show();
-    }
-
-    private void addToPlayOrder(Record record) {
-        mModel.saveRecordToPlayOrder(record);
-        Router.build("PlayOrder")
-                .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
-                .requestCode(REQUEST_VIDEO_ORDER)
+    @Override
+    protected void goToClassicPage() {
+        Router.build("RecordListPhone")
                 .go(this);
     }
 
-    private void goToRecordPage(Record data) {
+    @Override
+    protected void goToRecordPage(Record data) {
         Router.build("RecordPhone")
                 .with(RecordActivity.EXTRA_RECORD_ID, data.getId())
                 .go(this);
     }
 
-    private void showMoreList(int offset) {
-        recordAdapter.notifyItemInserted(offset);
-    }
-
-    public void changeSortType() {
-        SortDialogContent content = new SortDialogContent();
-        content.setDesc(SettingProperty.isRecordSortDesc());
-        content.setSortType(SettingProperty.getRecordSortType());
-        content.setOnSortListener((desc, sortMode) -> {
-            SettingProperty.setRecordSortType(sortMode);
-            SettingProperty.setRecordSortDesc(desc);
-            mModel.onSortTypeChanged();
-            mModel.loadTagRecords();
-        });
-        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
-        dialogFragment.setContentFragment(content);
-        dialogFragment.setTitle("Sort");
-        dialogFragment.show(getSupportFragmentManager(), "SortDialogContent");
-    }
-
-    public void changeFilter() {
-        RecommendFragment content = new RecommendFragment();
-        content.setBean(mModel.getFilter());
-//        content.setFixedType(ftRecords.getCurrentItem());
-        content.setOnRecommendListener(bean -> {
-            mModel.setFilter(bean);
-            mModel.loadTagRecords();
-        });
-        DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
-        dialogFragment.setTitle("Recommend Setting");
-        dialogFragment.setContentFragment(content);
-        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
-        dialogFragment.show(getSupportFragmentManager(), "RecommendFragment");
-    }
-
-    public void showSetOffset() {
-        new SimpleDialogs().openInputDialog(this, "set offset", name -> {
-            try {
-                int offset = Integer.parseInt(name);
-                if (offset < mModel.getOffset()) {
-                    mBinding.rvRecords.scrollToPosition(offset);
-                }
-                else {
-                    mModel.setOffset(offset);
-                }
-            } catch (Exception e) {}
-        });
+    @Override
+    protected void addToPlayOrder(Record record) {
+        mModel.saveRecordToPlayOrder(record);
+        Router.build("PlayOrder")
+                .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
+                .requestCode(REQUEST_VIDEO_ORDER)
+                .go(this);
     }
 
     @Override

@@ -267,7 +267,7 @@ public class HomePadFragment extends MvvmFragment<FragmentHomePadBinding, HomePa
     }
 
     private void goToRecordListPage() {
-        Router.build("RecordListPad")
+        Router.build("TagRecordPad")
                 .go(this);
     }
 
