@@ -20,8 +20,6 @@ import com.king.app.gdb.data.entity.FavorStarOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.Tag;
-import com.king.app.gdb.data.entity.TagRecord;
-import com.king.app.gdb.data.entity.TagRecordDao;
 import com.king.app.gdb.data.entity.TagStar;
 import com.king.app.gdb.data.entity.TagStarDao;
 
@@ -162,13 +160,17 @@ public class StarViewModel extends BaseViewModel {
         return tagList;
     }
 
-    protected ObservableSource<List<String>> getStarImages(Star star) {
-        return observer -> observer.onNext(loadStarImages(star));
+    protected Observable<List<String>> getStarImages(Star star) {
+        return Observable.create(e -> {
+            e.onNext(loadStarImages(star));
+            e.onComplete();
+        });
     }
 
     protected ObservableSource<List<Tag>> getStarTags(Star star) {
         return observer -> {
             observer.onNext(getTags(star));
+            observer.onComplete();
         };
     }
 
@@ -194,6 +196,7 @@ public class StarViewModel extends BaseViewModel {
             }
             Collections.sort(list, new RelationComparator());
             observer.onNext(list);
+            observer.onComplete();
         };
     }
 

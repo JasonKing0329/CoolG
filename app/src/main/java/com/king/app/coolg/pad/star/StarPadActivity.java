@@ -277,7 +277,7 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
                     outRect.top = 0;
                 }
                 else {
-                    outRect.top = ScreenUtils.dp2px(8);
+                    outRect.top = mModel.getImgMarginSingle();
                 }
             }
             // 2列，设置上间距、左右间距
@@ -286,39 +286,28 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
                     outRect.top = 0;
                 }
                 else {
-                    outRect.top = ScreenUtils.dp2px(8);
+                    outRect.top = mModel.getImgMarginSingle();
                 }
-                if (position % 2 == 0) {
-                    outRect.right = ScreenUtils.dp2px(4);
-                    outRect.left = 0;
-                }
-                else {
-                    outRect.left = ScreenUtils.dp2px(4);
-                    outRect.right = 0;
-                }
+                // 由于采用了瀑布流，不能简单的以为第一列是偶数，第二列是奇数，只能左右都设置为相同
+                outRect.right = mModel.getImgMarginSingle() / 2;
+                outRect.left = mModel.getImgMarginSingle() / 2;
             }
         }
-    };
+    }
 
-    private void showImages(List<String> list) {
-        int spanCount;
-        if (list.size() < 3) {
-            spanCount = 1;
-        }
-        else {
-            spanCount = 2;
-        }
-        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
+    private void showImages(List<StarImageBean> list) {
+        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(mModel.getStarImgSpan(), StaggeredGridLayoutManager.VERTICAL);
+        manager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         mBinding.rvStar.setLayoutManager(manager);
-        if (imagesDecoration == null || spanCount != imagesDecoration.getSpanCount()) {
+        if (imagesDecoration == null || mModel.getStarImgSpan() != imagesDecoration.getSpanCount()) {
             mBinding.rvStar.removeItemDecoration(imagesDecoration);
-            imagesDecoration = new StarImagesDecoration(spanCount);
+            imagesDecoration = new StarImagesDecoration(mModel.getStarImgSpan());
             mBinding.rvStar.addItemDecoration(imagesDecoration);
         }
         if (starImageAdapter == null) {
             starImageAdapter = new StarImageAdapter();
             starImageAdapter.setList(list);
-            starImageAdapter.setOnItemClickListener((view, position, data) -> showEditPopup(view, data));
+            starImageAdapter.setOnItemClickListener((view, position, data) -> showEditPopup(view, data.getPath()));
             mBinding.rvStar.setAdapter(starImageAdapter);
         }
         else {
@@ -339,7 +328,7 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
                     break;
                 case R.id.menu_delete:
                     mModel.deleteImage(path);
-                    showImages(mModel.getStarImageList());
+                    mModel.reloadImages();
                     break;
             }
             return false;
