@@ -16,6 +16,7 @@ import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityStarPadBinding;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.pad.gallery.GalleryFragment;
 import com.king.app.coolg.pad.record.list.RecordListPadFragment;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.TagAdapter;
@@ -55,6 +56,8 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
 
     private StarImagesDecoration imagesDecoration;
     private StarImageAdapter starImageAdapter;
+
+    private GalleryFragment galleryFragment;
 
     @Override
     protected int getContentView() {
@@ -307,7 +310,7 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
         if (starImageAdapter == null) {
             starImageAdapter = new StarImageAdapter();
             starImageAdapter.setList(list);
-            starImageAdapter.setOnItemClickListener((view, position, data) -> showEditPopup(view, data.getPath()));
+            starImageAdapter.setOnItemClickListener((view, position, data) -> showEditPopup(view, position, data));
             mBinding.rvStar.setAdapter(starImageAdapter);
         }
         else {
@@ -316,7 +319,7 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
         }
     }
 
-    private void showEditPopup(View view, String path) {
+    private void showEditPopup(View view, int position, StarImageBean bean) {
         PopupMenu menu = new PopupMenu(this, view);
         menu.getMenuInflater().inflate(R.menu.popup_record_edit, menu.getMenu());
         menu.getMenu().findItem(R.id.menu_add_to_order).setVisible(false);
@@ -324,16 +327,29 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
         menu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_set_cover:
-                    selectOrderToSetCover(path);
+                    selectOrderToSetCover(bean.getPath());
                     break;
                 case R.id.menu_delete:
-                    mModel.deleteImage(path);
+                    mModel.deleteImage(bean.getPath());
                     mModel.reloadImages();
+                    break;
+                case R.id.menu_gallery:
+                    viewInGallery(position, bean);
                     break;
             }
             return false;
         });
         menu.show();
+    }
+
+    private void viewInGallery(int position, StarImageBean bean) {
+        galleryFragment = new GalleryFragment();
+        galleryFragment.setImageList(mModel.getStarImageList());
+        galleryFragment.setInitPosition(position);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fl_ft, galleryFragment, "GalleryFragment")
+                .commit();
+        mBinding.flFt.setVisibility(View.VISIBLE);
     }
 
     private void showRelationships(List<StarRelationship> list) {
@@ -342,6 +358,19 @@ public class StarPadActivity extends MvvmActivity<ActivityStarPadBinding, StarPa
         adapter.setList(list);
         adapter.setOnItemClickListener((view, position, data) -> goToStarPage(data.getStar().getId()));
         mBinding.rvRelation.setAdapter(adapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (galleryFragment != null && galleryFragment.isVisible()) {
+            getSupportFragmentManager().beginTransaction()
+                    .remove(galleryFragment)
+                    .commit();
+            mBinding.flFt.setVisibility(View.GONE);
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
 //    private void showOrders(List<FavorStarOrder> list) {

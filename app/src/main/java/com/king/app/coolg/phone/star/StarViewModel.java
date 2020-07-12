@@ -52,7 +52,7 @@ public class StarViewModel extends BaseViewModel {
     public MutableLiveData<List<Tag>> tagsObserver = new MutableLiveData<>();
 
     protected Star mStar;
-    private List<String> starImageList;
+    protected List<String> starImageList;
     private List<StarRelationship> relationList;
     private List<StarStudioTag> studioList;
     protected List<Tag> tagList;

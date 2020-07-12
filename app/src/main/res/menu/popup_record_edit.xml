@@ -9,4 +9,6 @@
         android:title="Set as cover"/>
     <item android:id="@+id/menu_delete"
         android:title="Delete"/>
+    <item android:id="@+id/menu_gallery"
+        android:title="View in gallery"/>
 </menu>

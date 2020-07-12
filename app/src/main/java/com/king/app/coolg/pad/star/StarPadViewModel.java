@@ -58,7 +58,10 @@ public class StarPadViewModel extends StarViewModel {
                     loadRating();
                     return getStarImages(star);
                 })
-                .flatMap(list -> toStarImageBeans(list))
+                .flatMap(list -> {
+                    starImageList = list;
+                    return toStarImageBeans(list);
+                })
                 .flatMap(list -> {
                     imagesObserver.postValue(list);
                     return getStarTags(mStar);
@@ -145,7 +148,10 @@ public class StarPadViewModel extends StarViewModel {
 
     public void reloadImages() {
         getStarImages(mStar)
-                .flatMap(list -> toStarImageBeans(list))
+                .flatMap(list -> {
+                    starImageList = list;
+                    return toStarImageBeans(list);
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<StarImageBean>>() {
