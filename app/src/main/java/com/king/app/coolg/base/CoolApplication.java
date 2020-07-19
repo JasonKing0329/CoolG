@@ -170,8 +170,10 @@ public class CoolApplication extends Application {
                     TagRecordDao.createTable(db, true);
                     TagStarDao.createTable(db, true);
                 case 9:
-                    db.execSQL("ALTER TABLE " + StarRatingDao.TABLENAME + " ADD COLUMN "
-                            + StarRatingDao.Properties.Prefer.columnName + " REAL DEFAULT 0");
+                    if (!isFieldExist(db, StarRatingDao.TABLENAME, StarRatingDao.Properties.Prefer.columnName)) {
+                        db.execSQL("ALTER TABLE " + StarRatingDao.TABLENAME + " ADD COLUMN "
+                                + StarRatingDao.Properties.Prefer.columnName + " REAL DEFAULT 0");
+                    }
                     break;
             }
         }
