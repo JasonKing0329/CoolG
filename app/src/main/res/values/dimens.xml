@@ -248,4 +248,7 @@
     <dimen name="star_page_image_width_pad">360dp</dimen>
     <dimen name="star_page_image_height_pad">210dp</dimen>
     <dimen name="image_pager_thumb_height">60dp</dimen>
+    <dimen name="tag_height">24dp</dimen>
+    <dimen name="tag_text">14dp</dimen>
+    <dimen name="tag_padding_hor">10dp</dimen>
 </resources>

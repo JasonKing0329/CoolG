@@ -210,4 +210,7 @@
     <dimen name="float_video_width">480dp</dimen>
     <dimen name="float_video_height">360dp</dimen>
     <dimen name="image_pager_thumb_height">90dp</dimen>
+    <dimen name="tag_height">36dp</dimen>
+    <dimen name="tag_text">20dp</dimen>
+    <dimen name="tag_padding_hor">20dp</dimen>
 </resources>

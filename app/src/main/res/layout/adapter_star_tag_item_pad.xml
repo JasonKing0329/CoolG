@@ -3,16 +3,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingRight="20dp"
-    android:paddingBottom="20dp">
+    android:paddingRight="@dimen/tag_padding_hor"
+    android:paddingBottom="@dimen/tag_padding_hor">
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
+        android:layout_height="@dimen/tag_height"
+        android:paddingLeft="@dimen/tag_padding_hor"
+        android:paddingRight="@dimen/tag_padding_hor"
         android:textColor="@drawable/selector_studio_tag_text"
         android:background="@drawable/selector_star_tag_pad_bg"
-        android:textSize="20dp"
+        android:textSize="@dimen/tag_text"
         android:gravity="center"/>
 </LinearLayout>
