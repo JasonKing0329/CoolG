@@ -7,9 +7,7 @@ import com.king.app.coolg.model.comparator.StarRatingComparator;
 import com.king.app.coolg.model.comparator.StarRecordsNumberComparator;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.phone.star.list.StarProxy;
-import com.king.app.coolg.phone.studio.page.StarNumberItem;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
-import com.king.app.gdb.data.entity.FavorRecordOrderDao;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
 import com.king.app.gdb.data.entity.Star;
@@ -30,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 
 /**
  * Desc:
@@ -194,7 +190,6 @@ public class StarRepository extends BaseRepository {
             // 全部
             if (tagId == null) {
                 List<Star> stars = getDaoSession().getStarDao().queryBuilder()
-                        .orderAsc(StarDao.Properties.Name)
                         .build().list();
                 for (Star star:stars) {
                     StarProxy proxy = new StarProxy();
@@ -207,21 +202,18 @@ public class StarRepository extends BaseRepository {
                 }
             }
             else {
-                List<TagStar> tagStars = getDaoSession().getTagStarDao().queryBuilder()
-                        .where(TagStarDao.Properties.TagId.eq(tagId))
-                        .build().list();
-                StarDao starDao = getDaoSession().getStarDao();
-                for (TagStar ts:tagStars) {
-                    Star star = starDao.load(ts.getStarId());
-                    if (star != null) {
-                        if (star.getName() == null) {
-                            star.setName("");
-                        }
-                        StarProxy proxy = new StarProxy();
-                        proxy.setStar(star);
-                        proxy.setImagePath(ImageProvider.getStarRandomPath(star.getName(), null));
-                        list.add(proxy);
+                QueryBuilder<Star> builder = getDaoSession().getStarDao().queryBuilder();
+                Join<Star, TagStar> join = builder.join(TagStar.class, TagStarDao.Properties.StarId);
+                join.where(TagStarDao.Properties.TagId.eq(tagId));
+                List<Star> stars = builder.list();
+                for (Star star:stars) {
+                    if (star.getName() == null) {
+                        star.setName("");
                     }
+                    StarProxy proxy = new StarProxy();
+                    proxy.setStar(star);
+                    proxy.setImagePath(ImageProvider.getStarRandomPath(star.getName(), null));
+                    list.add(proxy);
                 }
             }
             e.onNext(list);

@@ -6,26 +6,17 @@ import android.support.annotation.NonNull;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
-import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.repository.StarRepository;
 import com.king.app.coolg.model.repository.TagRepository;
 import com.king.app.coolg.model.setting.SettingProperty;
-import com.king.app.coolg.phone.record.list.RecordProxy;
-import com.king.app.coolg.phone.star.list.StarListViewModel;
 import com.king.app.coolg.phone.star.list.StarProxy;
 import com.king.app.coolg.utils.ListUtil;
-import com.king.app.gdb.data.RecordCursor;
-import com.king.app.gdb.data.entity.Star;
-import com.king.app.gdb.data.entity.StarDao;
 import com.king.app.gdb.data.entity.Tag;
-import com.king.app.gdb.data.entity.TagStar;
-import com.king.app.gdb.data.entity.TagStarDao;
 import com.king.app.gdb.data.param.DataConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
