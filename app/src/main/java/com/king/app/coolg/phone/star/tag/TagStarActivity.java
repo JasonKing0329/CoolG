@@ -10,6 +10,7 @@ import android.view.View;
 import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityStarTagBinding;
 import com.king.app.coolg.phone.record.TagAdapter;
 import com.king.app.coolg.phone.star.StarActivity;
@@ -55,7 +56,8 @@ public class TagStarActivity extends AbsTagStarActivity<ActivityStarTagBinding> 
             }
         });
 
-        mBinding.rvStars.setLayoutManager(new GridLayoutManager(this, 2));
+//        defineStarList(mBinding.rvStars, AppConstants.TAG_STAR_GRID, 2);// grid type
+        defineStarList(mBinding.rvStars, AppConstants.TAG_STAR_STAGGER, 2);// stagger type
 
         mBinding.fabTop.setOnClickListener(v -> mBinding.rvStars.scrollToPosition(0));
     }

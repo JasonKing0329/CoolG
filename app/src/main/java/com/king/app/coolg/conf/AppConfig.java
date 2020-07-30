@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class AppConfig {
     public static final String DB_NAME = "gdata.db";
-    public static final String DEMO_IMAGE_VERSION = "1.0";
+    public static final String DEMO_IMAGE_VERSION = "1.1";
 
     public static final String SDCARD = Environment.getExternalStorageDirectory().getPath();
 

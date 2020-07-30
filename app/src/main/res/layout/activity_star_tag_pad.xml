@@ -27,7 +27,7 @@
 
         <ScrollView
             android:id="@+id/scroll_tags"
-            android:layout_width="300dp"
+            android:layout_width="@dimen/tag_star_pad_tag_width"
             android:layout_height="0dp"
             android:scrollbars="none"
             app:layout_constraintStart_toStartOf="parent"

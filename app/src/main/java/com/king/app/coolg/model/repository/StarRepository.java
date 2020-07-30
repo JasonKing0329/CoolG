@@ -184,6 +184,16 @@ public class StarRepository extends BaseRepository {
         });
     }
 
+    private StarProxy toStarProxy(Star star) {
+        StarProxy proxy = new StarProxy();
+        if (star.getName() == null) {
+            return null;
+        }
+        proxy.setStar(star);
+        proxy.setImagePath(ImageProvider.getStarRandomPath(star.getName(), null));
+        return proxy;
+    }
+
     public Observable<List<StarProxy>> queryTagStars(Long tagId) {
         return Observable.create(e -> {
             List<StarProxy> list = new ArrayList<>();
@@ -192,13 +202,10 @@ public class StarRepository extends BaseRepository {
                 List<Star> stars = getDaoSession().getStarDao().queryBuilder()
                         .build().list();
                 for (Star star:stars) {
-                    StarProxy proxy = new StarProxy();
-                    if (star.getName() == null) {
-                        star.setName("");
+                    StarProxy proxy = toStarProxy(star);
+                    if (proxy != null) {
+                        list.add(proxy);
                     }
-                    proxy.setStar(star);
-                    proxy.setImagePath(ImageProvider.getStarRandomPath(star.getName(), null));
-                    list.add(proxy);
                 }
             }
             else {
@@ -207,13 +214,10 @@ public class StarRepository extends BaseRepository {
                 join.where(TagStarDao.Properties.TagId.eq(tagId));
                 List<Star> stars = builder.list();
                 for (Star star:stars) {
-                    if (star.getName() == null) {
-                        star.setName("");
+                    StarProxy proxy = toStarProxy(star);
+                    if (proxy != null) {
+                        list.add(proxy);
                     }
-                    StarProxy proxy = new StarProxy();
-                    proxy.setStar(star);
-                    proxy.setImagePath(ImageProvider.getStarRandomPath(star.getName(), null));
-                    list.add(proxy);
                 }
             }
             e.onNext(list);

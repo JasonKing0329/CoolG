@@ -251,4 +251,5 @@
     <dimen name="tag_height">24dp</dimen>
     <dimen name="tag_text">14dp</dimen>
     <dimen name="tag_padding_hor">10dp</dimen>
+    <dimen name="tag_star_pad_tag_width">300dp</dimen>
 </resources>

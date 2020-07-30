@@ -117,4 +117,7 @@ public class AppConstants {
             "By Name"
     };
 
+    public static final int TAG_STAR_GRID = 0;
+    public static final int TAG_STAR_STAGGER = 1;
+
 }

@@ -1,7 +1,9 @@
 package com.king.app.coolg.phone.star.tag;
 
 import android.databinding.ViewDataBinding;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.PopupMenu;
 
@@ -12,6 +14,7 @@ import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.star.StarRatingDialog;
 import com.king.app.coolg.phone.star.list.StarGridAdapter;
 import com.king.app.coolg.phone.star.list.StarProxy;
+import com.king.app.coolg.phone.star.list.StarStaggerAdapter;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.gdb.data.entity.Tag;
 import com.king.app.jactionbar.JActionbar;
@@ -28,6 +31,8 @@ public abstract class AbsTagStarActivity<T extends ViewDataBinding> extends Mvvm
 
     private StarGridAdapter starAdapter;
 
+    private StarStaggerAdapter staggerAdapter;
+
     @Override
     protected TagStarViewModel createViewModel() {
         return generateViewModel(TagStarViewModel.class);
@@ -36,10 +41,29 @@ public abstract class AbsTagStarActivity<T extends ViewDataBinding> extends Mvvm
     @Override
     protected void initData() {
         mModel.tagsObserver.observe(this, tags -> showTags(tags));
-        mModel.starsObserver.observe(this, list -> showStars(list));
+        mModel.starsObserver.observe(this, list -> {
+            if (mModel.getViewType() == AppConstants.TAG_STAR_STAGGER) {
+                showStaggerStars(list);
+            }
+            else {
+                showGridStars(list);
+            }
+        });
         mModel.focusTagPosition.observe(this, position -> focusOnTag(position));
 
         mModel.loadTags();
+    }
+
+    protected void defineStarList(RecyclerView view, int type, int column) {
+        mModel.setListViewType(type, column);
+        if (type == AppConstants.TAG_STAR_STAGGER) {
+            StaggeredGridLayoutManager starManager = new StaggeredGridLayoutManager(column, StaggeredGridLayoutManager.VERTICAL);
+            starManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+            view.setLayoutManager(starManager);
+        }
+        else {
+            view.setLayoutManager(new GridLayoutManager(this, column));
+        }
     }
 
     protected void initActionBar(JActionbar actionbar) {
@@ -124,17 +148,12 @@ public abstract class AbsTagStarActivity<T extends ViewDataBinding> extends Mvvm
 
     protected abstract void goToStarPage(long starId);
 
-    private void showStars(List<StarProxy> list) {
+    private void showGridStars(List<StarProxy> list) {
         if (starAdapter == null) {
             starAdapter = new StarGridAdapter();
             starAdapter.setList(list);
             starAdapter.setOnStarRatingListener((position, starId) -> {
-                StarRatingDialog dialog = new StarRatingDialog();
-                dialog.setStarId(starId);
-                dialog.setOnDismissListener(dialog1 -> {
-                    starAdapter.notifyItemChanged(position);
-                });
-                dialog.show(getSupportFragmentManager(), "StarRatingDialog");
+                showRatingDialog(position, starId);
             });
             starAdapter.setOnItemClickListener((view, position, data) -> goToStarPage(data.getStar().getId()));
             getStarRecyclerView().setAdapter(starAdapter);
@@ -143,5 +162,29 @@ public abstract class AbsTagStarActivity<T extends ViewDataBinding> extends Mvvm
             starAdapter.setList(list);
             starAdapter.notifyDataSetChanged();
         }
+    }
+    private void showStaggerStars(List<StarProxy> list) {
+        if (staggerAdapter == null) {
+            staggerAdapter = new StarStaggerAdapter();
+            staggerAdapter.setList(list);
+            staggerAdapter.setOnStarRatingListener((position, starId) -> {
+                showRatingDialog(position, starId);
+            });
+            staggerAdapter.setOnItemClickListener((view, position, data) -> goToStarPage(data.getStar().getId()));
+            getStarRecyclerView().setAdapter(staggerAdapter);
+        }
+        else {
+            staggerAdapter.setList(list);
+            staggerAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void showRatingDialog(int position, Long starId) {
+        StarRatingDialog dialog = new StarRatingDialog();
+        dialog.setStarId(starId);
+        dialog.setOnDismissListener(dialog1 -> {
+            staggerAdapter.notifyItemChanged(position);
+        });
+        dialog.show(getSupportFragmentManager(), "StarRatingDialog");
     }
 }

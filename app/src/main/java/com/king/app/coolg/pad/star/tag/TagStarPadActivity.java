@@ -7,6 +7,7 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseTagAdapter;
+import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityStarTagPadBinding;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.star.tag.AbsTagStarActivity;
@@ -34,7 +35,8 @@ public class TagStarPadActivity extends AbsTagStarActivity<ActivityStarTagPadBin
     protected void initView() {
         super.initActionBar(mBinding.actionbar);
 
-        mBinding.rvStars.setLayoutManager(new GridLayoutManager(this, 4));
+//        defineStarList(mBinding.rvStars, AppConstants.TAG_STAR_GRID, 4);// grid type
+        defineStarList(mBinding.rvStars, AppConstants.TAG_STAR_STAGGER, 3);// stagger type
 
         tagAdapter = new BaseTagAdapter<Tag>() {
             @Override

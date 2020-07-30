@@ -16,6 +16,8 @@ import com.king.app.gdb.data.entity.Star;
 public class StarProxy extends BaseObservable {
     private Star star;
     private String imagePath;
+    private int width;
+    private int height;
 
     private boolean isChecked;
 
@@ -53,5 +55,21 @@ public class StarProxy extends BaseObservable {
 
     public void setObserver(SelectObserver<StarProxy> observer) {
         this.observer = observer;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 }
