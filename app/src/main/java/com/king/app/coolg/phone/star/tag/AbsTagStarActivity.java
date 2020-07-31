@@ -10,12 +10,14 @@ import android.widget.PopupMenu;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
+import com.king.app.coolg.model.bean.LazyData;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.star.StarRatingDialog;
 import com.king.app.coolg.phone.star.list.StarGridAdapter;
 import com.king.app.coolg.phone.star.list.StarProxy;
 import com.king.app.coolg.phone.star.list.StarStaggerAdapter;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
+import com.king.app.gdb.data.entity.StarRatingDao;
 import com.king.app.gdb.data.entity.Tag;
 import com.king.app.jactionbar.JActionbar;
 
@@ -41,6 +43,14 @@ public abstract class AbsTagStarActivity<T extends ViewDataBinding> extends Mvvm
     @Override
     protected void initData() {
         mModel.tagsObserver.observe(this, tags -> showTags(tags));
+        mModel.lazyLoadObserver.observe(this, params -> {
+            if (mModel.getViewType() == AppConstants.TAG_STAR_STAGGER) {
+                refreshStaggerLazyData(params);
+            }
+            else {
+                refreshGridLazyData(params);
+            }
+        });
         mModel.starsObserver.observe(this, list -> {
             if (mModel.getViewType() == AppConstants.TAG_STAR_STAGGER) {
                 showStaggerStars(list);
@@ -93,33 +103,43 @@ public abstract class AbsTagStarActivity<T extends ViewDataBinding> extends Mvvm
         menu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_sort_name:
+                    mModel.setRatingSortProperty(null);
                     mModel.sortList(AppConstants.STAR_SORT_NAME);
                     break;
                 case R.id.menu_sort_records:
+                    mModel.setRatingSortProperty(null);
                     mModel.sortList(AppConstants.STAR_SORT_RECORDS);
                     break;
                 case R.id.menu_sort_rating:
+                    mModel.setRatingSortProperty(StarRatingDao.Properties.Complex);
                     mModel.sortList(AppConstants.STAR_SORT_RATING);
                     break;
                 case R.id.menu_sort_rating_face:
+                    mModel.setRatingSortProperty(StarRatingDao.Properties.Face);
                     mModel.sortList(AppConstants.STAR_SORT_RATING_FACE);
                     break;
                 case R.id.menu_sort_rating_body:
+                    mModel.setRatingSortProperty(StarRatingDao.Properties.Body);
                     mModel.sortList(AppConstants.STAR_SORT_RATING_BODY);
                     break;
                 case R.id.menu_sort_rating_dk:
+                    mModel.setRatingSortProperty(StarRatingDao.Properties.Dk);
                     mModel.sortList(AppConstants.STAR_SORT_RATING_DK);
                     break;
                 case R.id.menu_sort_rating_sexuality:
+                    mModel.setRatingSortProperty(StarRatingDao.Properties.Sexuality);
                     mModel.sortList(AppConstants.STAR_SORT_RATING_SEXUALITY);
                     break;
                 case R.id.menu_sort_rating_passion:
+                    mModel.setRatingSortProperty(StarRatingDao.Properties.Passion);
                     mModel.sortList(AppConstants.STAR_SORT_RATING_PASSION);
                     break;
                 case R.id.menu_sort_rating_video:
+                    mModel.setRatingSortProperty(StarRatingDao.Properties.Video);
                     mModel.sortList(AppConstants.STAR_SORT_RATING_VIDEO);
                     break;
                 case R.id.menu_sort_random:
+                    mModel.setRatingSortProperty(null);
                     mModel.sortList(AppConstants.STAR_SORT_RANDOM);
                     break;
             }
@@ -163,6 +183,11 @@ public abstract class AbsTagStarActivity<T extends ViewDataBinding> extends Mvvm
             starAdapter.notifyDataSetChanged();
         }
     }
+
+    private void refreshGridLazyData(LazyData<StarProxy> params) {
+        starAdapter.notifyItemRangeChanged(params.start, params.count);
+    }
+
     private void showStaggerStars(List<StarProxy> list) {
         if (staggerAdapter == null) {
             staggerAdapter = new StarStaggerAdapter();
@@ -177,6 +202,10 @@ public abstract class AbsTagStarActivity<T extends ViewDataBinding> extends Mvvm
             staggerAdapter.setList(list);
             staggerAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void refreshStaggerLazyData(LazyData<StarProxy> params) {
+        staggerAdapter.notifyItemRangeChanged(params.start, params.count);
     }
 
     private void showRatingDialog(int position, Long starId) {

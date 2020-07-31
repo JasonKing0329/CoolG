@@ -9,14 +9,22 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.base.CoolApplication;
 import com.king.app.coolg.conf.AppConstants;
+import com.king.app.coolg.model.bean.LazyData;
+import com.king.app.coolg.model.bean.StarDetailBuilder;
+import com.king.app.coolg.model.bean.StarSortBuilder;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.repository.StarRepository;
 import com.king.app.coolg.model.repository.TagRepository;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.star.list.StarProxy;
+import com.king.app.coolg.utils.CostTimeUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.gdb.data.entity.StarRatingDao;
 import com.king.app.gdb.data.entity.Tag;
 import com.king.app.gdb.data.param.DataConstants;
+
+import org.greenrobot.greendao.Property;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +46,7 @@ public class TagStarViewModel extends BaseViewModel {
 
     public MutableLiveData<List<Tag>> tagsObserver = new MutableLiveData<>();
     public MutableLiveData<List<StarProxy>> starsObserver = new MutableLiveData<>();
+    public MutableLiveData<LazyData<StarProxy>> lazyLoadObserver = new MutableLiveData<>();
     public MutableLiveData<Integer> focusTagPosition = new MutableLiveData<>();
 
     private List<StarProxy> mStarList;
@@ -53,6 +62,7 @@ public class TagStarViewModel extends BaseViewModel {
 
     // see AppConstants.STAR_SORT_XXX
     private int mSortType;
+    private Property mRatingSortProperty;
 
     /**
      * 瀑布流模式下item宽度
@@ -70,7 +80,7 @@ public class TagStarViewModel extends BaseViewModel {
         tagRepository = new TagRepository();
         starRepository = new StarRepository();
         mSortType = AppConstants.STAR_SORT_RATING;
-
+        mRatingSortProperty = StarRatingDao.Properties.Complex;
     }
 
     public void setListViewType(int type, int column) {
@@ -161,24 +171,37 @@ public class TagStarViewModel extends BaseViewModel {
 
     public void loadTagStars(Long tagId) {
         mTagId = tagId;
-        Observable<List<StarProxy>> observable = starRepository.queryTagStars(tagId)
-                .flatMap(list -> starRepository.sortStars(list, mSortType));
-        if (viewType == AppConstants.TAG_STAR_STAGGER) {
-            observable = observable.flatMap(list -> toStaggerItems(list));
-        }
-        observable
+        StarSortBuilder sortBuilder = new StarSortBuilder()
+                .setTagId(tagId)
+                .setOrderByName(mSortType == AppConstants.STAR_SORT_NAME)
+                .setOrderByRecords(mSortType == AppConstants.STAR_SORT_RECORDS)
+                .setOrderByRandom(mSortType == AppConstants.STAR_SORT_RANDOM)
+                .setOrderByRatingProperty(mRatingSortProperty);
+        StarDetailBuilder detailBuilder = new StarDetailBuilder()
+                .setLoadImagePath(true)
+                .setLoadRating(true)
+                .setLoadImageSize(viewType == AppConstants.TAG_STAR_STAGGER, mStaggerColWidth);
+        starRepository.queryStarsBy(sortBuilder)
+                .flatMap(list -> starRepository.lazyLoad(list, 30, detailBuilder))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<StarProxy>>() {
+                .subscribe(new Observer<LazyData<StarProxy>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         addDisposable(d);
                     }
 
                     @Override
-                    public void onNext(List<StarProxy> list) {
-                        mStarList = list;
-                        starsObserver.setValue(list);
+                    public void onNext(LazyData<StarProxy> params) {
+                        mStarList = params.list;
+                        // 第一批加载完的开始显示
+                        if (params.start == 0) {
+                            starsObserver.setValue(mStarList);
+                        }
+                        // 后面批次的通知刷新局部范围
+                        else {
+                            lazyLoadObserver.setValue(params);
+                        }
                     }
 
                     @Override
@@ -194,75 +217,20 @@ public class TagStarViewModel extends BaseViewModel {
                 });
     }
 
+    public void setRatingSortProperty(Property property) {
+        this.mRatingSortProperty = property;
+    }
+
     public void sortList(int sortType) {
-        if (sortType == mSortType) {
+        if (sortType == mSortType && sortType != AppConstants.STAR_SORT_RANDOM) {
             return;
         }
         mSortType = sortType;
-        Observable<List<StarProxy>> observable = starRepository.sortStars(mStarList, mSortType);
-        if (viewType == AppConstants.TAG_STAR_STAGGER) {
-            observable = observable.flatMap(list -> toStaggerItems(list));
-        }
-        observable
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<StarProxy>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(List<StarProxy> list) {
-                        mStarList = list;
-                        starsObserver.setValue(list);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        messageObserver.setValue("Load records error: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        loadTagStars();
     }
 
     public void onTagSortChanged() {
         mTagSortType = SettingProperty.getTagSortType();
-    }
-
-    private ObservableSource<List<StarProxy>> toStaggerItems(List<StarProxy> list) {
-        return observer -> {
-            for (StarProxy proxy:list) {
-                calcImageSize(proxy);
-            }
-            observer.onNext(list);
-            observer.onComplete();
-        };
-    }
-
-    private void calcImageSize(StarProxy bean) {
-        // 无图按16:9
-        if (bean.getImagePath() == null) {
-            bean.setWidth(mStaggerColWidth);
-            bean.setHeight(mStaggerColWidth * 9 / 16);
-        }
-        else {
-            //缩放图片的实际宽高
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(bean.getImagePath(), options);
-            int height = options.outHeight;
-            int width = options.outWidth;
-            float ratio = (float) mStaggerColWidth / (float) width;
-            bean.setWidth(mStaggerColWidth);
-            height = (int) (height * ratio);
-            bean.setHeight(height);
-        }
     }
 
 }
