@@ -213,4 +213,9 @@
     <dimen name="tag_height">36dp</dimen>
     <dimen name="tag_text">20dp</dimen>
     <dimen name="tag_padding_hor">20dp</dimen>
+    <dimen name="star_stagger_text">20dp</dimen>
+    <dimen name="star_stagger_text_margin">16dp</dimen>
+    <dimen name="star_stagger_index_size">28dp</dimen>
+    <dimen name="star_stagger_index_text">14dp</dimen>
+    <dimen name="star_stagger_video_text">16dp</dimen>
 </resources>

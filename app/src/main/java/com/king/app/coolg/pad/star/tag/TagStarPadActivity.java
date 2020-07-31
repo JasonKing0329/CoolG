@@ -41,7 +41,8 @@ public class TagStarPadActivity extends AbsTagStarActivity<ActivityStarTagPadBin
         tagAdapter = new BaseTagAdapter<Tag>() {
             @Override
             protected String getText(Tag data) {
-                return data.getName();
+//                return data.getName();
+                return "data.getName()";
             }
 
             @Override

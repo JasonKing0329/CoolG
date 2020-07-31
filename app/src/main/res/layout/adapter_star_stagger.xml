@@ -19,57 +19,56 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <LinearLayout
-            android:id="@+id/group_file_info"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="#66000000"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/star_stagger_text"
+            android:shadowColor="#000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="3"
+            android:layout_marginStart="@dimen/star_stagger_text_margin"
+            android:layout_marginBottom="@dimen/star_stagger_text_margin"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_videos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/star_stagger_video_text"
+            android:shadowColor="#000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="3"
+            android:layout_marginEnd="@dimen/star_stagger_text_margin"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-            <TextView
-                android:id="@+id/tv_name"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textColor="@color/white"
-                android:textSize="10dp"/>
-            <TextView
-                android:id="@+id/tv_videos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textColor="@color/white"
-                android:textSize="10dp"/>
-        </LinearLayout>
+            app:layout_constraintBottom_toBottomOf="@+id/tv_name"/>
 
         <TextView
             android:id="@+id/tv_seq"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="@dimen/star_stagger_index_size"
+            android:minHeight="@dimen/star_stagger_index_size"
             android:gravity="center"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
+            android:padding="5dp"
+            android:layout_marginStart="@dimen/star_stagger_text_margin"
+            android:layout_marginTop="@dimen/star_stagger_text_margin"
             android:background="@drawable/gdb_shape_list_no"
             android:textColor="@color/white"
-            android:textSize="8dp"
+            android:textSize="@dimen/star_stagger_index_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/tv_rating"
             style="@style/TvStarRating"
-            android:layout_marginEnd="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginEnd="@dimen/star_stagger_text_margin"
+            android:layout_marginTop="@dimen/star_stagger_text_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -78,7 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="@dimen/star_stagger_text_margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 

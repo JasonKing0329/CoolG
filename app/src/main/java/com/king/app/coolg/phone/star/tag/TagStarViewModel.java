@@ -69,7 +69,7 @@ public class TagStarViewModel extends BaseViewModel {
         mTagSortType = SettingProperty.getTagSortType();
         tagRepository = new TagRepository();
         starRepository = new StarRepository();
-        mSortType = AppConstants.SCENE_SORT_NAME;
+        mSortType = AppConstants.STAR_SORT_RATING;
 
     }
 
