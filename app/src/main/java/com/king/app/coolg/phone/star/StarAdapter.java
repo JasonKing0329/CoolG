@@ -26,8 +26,6 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
     private OnListListener onListListener;
     private StarHeader.OnHeadActionListener onHeadActionListener;
 
-    private List<String> starImageList;
-
     private StarHeader header;
 
     private RecordItemBinder recordBinder;
@@ -38,8 +36,6 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
     private List<StarRelationship> mRelationships;
     private List<StarStudioTag> mStudioList;
     private List<Tag> mTagList;
-
-    private CoolBanner banner;
 
     public StarAdapter() {
         header = new StarHeader();
@@ -56,10 +52,6 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
 
     public void setOnHeadActionListener(StarHeader.OnHeadActionListener onHeadActionListener) {
         this.onHeadActionListener = onHeadActionListener;
-    }
-
-    public void setStarImageList(List<String> starImageList) {
-        this.starImageList = starImageList;
     }
 
     public void setStar(Star star) {
@@ -84,9 +76,7 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
     @Override
     protected void onBindHead(AdapterStarPhoneHeaderBinding binding) {
         header.setOnHeadActionListener(onHeadActionListener);
-        binding.banner.stopAutoPlay();
-        this.banner = binding.banner;
-        header.bind(binding, star, starImageList, list == null ? 0:list.size(), mRelationships, mStudioList, mTagList);
+        header.bind(binding, star, list == null ? 0:list.size(), mRelationships, mStudioList, mTagList);
     }
 
     @Override
@@ -118,15 +108,9 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
     }
 
     public void onResume() {
-        if (banner != null) {
-            banner.startAutoPlay();
-        }
     }
 
     public void onStop() {
-        if (banner != null) {
-            banner.stopAutoPlay();
-        }
     }
 
     public interface OnListListener {

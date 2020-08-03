@@ -69,8 +69,8 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         this.onHeadActionListener = onHeadActionListener;
     }
 
-    public void bind(AdapterStarPhoneHeaderBinding binding, Star star, List<String> starImageList
-            , int recordNumber, List<StarRelationship> relationships, List<StarStudioTag> studioList, List<Tag> tagList) {
+    public void bind(AdapterStarPhoneHeaderBinding binding, Star star, int recordNumber
+            , List<StarRelationship> relationships, List<StarStudioTag> studioList, List<Tag> tagList) {
 
         mBinding = binding;
 
@@ -83,7 +83,6 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         binding.starPrefer.setOnStarChangeListener(this);
 
         bindBasicInfo(binding, star, recordNumber);
-        bindImages(binding, starImageList);
         bindRelationships(binding, relationships);
         bindRatings(binding, star);
         bindOrders(binding, star);
@@ -225,7 +224,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         });
         binding.rvOrders.setLayoutManager(new LinearLayoutManager(binding.rvOrders.getContext(), LinearLayoutManager.HORIZONTAL, false));
         if (mModel == null) {
-            mModel = ViewModelProviders.of((FragmentActivity) binding.banner.getContext()).get(StarViewModel.class);
+            mModel = ViewModelProviders.of((FragmentActivity) binding.rvOrders.getContext()).get(StarViewModel.class);
             mModel.ordersObserver.observe((LifecycleOwner) binding.rvOrders.getContext(), list -> {
                 mBinding.tvOrder.setText(String.valueOf(list.size()));
                 // 添加order后用notifyDataSetChanged不知为何不管用，还得重新setAdapter才管用
@@ -259,8 +258,8 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
 
         binding.tvRating.setText("");
         if (mRatingModel == null) {
-            mRatingModel = ViewModelProviders.of((FragmentActivity) binding.banner.getContext()).get(StarRatingViewModel.class);
-            mRatingModel.ratingObserver.observe((LifecycleOwner) binding.banner.getContext(), rating -> showRatings(binding, rating));
+            mRatingModel = ViewModelProviders.of((FragmentActivity) binding.groupRating.getContext()).get(StarRatingViewModel.class);
+            mRatingModel.ratingObserver.observe((LifecycleOwner) binding.groupRating.getContext(), rating -> showRatings(binding, rating));
         }
         mRatingModel.loadStarRating(star.getId());
     }
@@ -307,44 +306,6 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         });
     }
 
-    private void bindImages(AdapterStarPhoneHeaderBinding binding, List<String> starImageList) {
-        if (ListUtil.isEmpty(starImageList) || starImageList.size() == 1) {
-            binding.banner.setVisibility(View.INVISIBLE);
-            binding.guideView.setVisibility(View.INVISIBLE);
-            binding.ivStar.setVisibility(View.VISIBLE);
-            if (starImageList.size() == 1) {
-                Glide.with(binding.ivStar.getContext())
-                        .load(starImageList.get(0))
-                        .apply(starOptions)
-                        .into(binding.ivStar);
-                binding.ivSetCover.setVisibility(View.VISIBLE);
-                binding.ivSetCover.setOnClickListener(v -> {
-                    if (onHeadActionListener != null) {
-                        onHeadActionListener.onApplyImage(starImageList.get(0));
-                    }
-                });
-                binding.ivDelete.setVisibility(View.VISIBLE);
-                binding.ivDelete.setOnClickListener(v -> {
-                    if (onHeadActionListener != null) {
-                        onHeadActionListener.onDeleteImage(starImageList.get(0));
-                    }
-                });
-            }
-            else {
-                binding.ivDelete.setVisibility(View.INVISIBLE);
-                binding.ivSetCover.setVisibility(View.INVISIBLE);
-            }
-        }
-        else {
-            binding.ivStar.setVisibility(View.INVISIBLE);
-            binding.ivDelete.setVisibility(View.INVISIBLE);
-            binding.ivSetCover.setVisibility(View.INVISIBLE);
-            binding.banner.setVisibility(View.VISIBLE);
-            binding.guideView.setVisibility(View.VISIBLE);
-            showBanner(binding.banner, binding.guideView, starImageList);
-        }
-    }
-
     private void bindBasicInfo(AdapterStarPhoneHeaderBinding binding, Star star, int recordNumber) {
         // 页面第一次进入肯定是加载全部，后面可能会筛选list，因此以第一次加载的数量为准
         if (mTotalRecordNumber == null) {
@@ -378,23 +339,6 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         binding.tvVideo.setText(StarRatingUtil.getSubRatingValue(rating.getVideo()));
         binding.starPrefer.setCheckNumber(rating.getPrefer());
         binding.tvPrefer.setText(StarRatingUtil.getSubRatingValue(rating.getPrefer()));
-    }
-
-    private void showBanner(CoolBanner banner, GuideView guideView, List<String> list) {
-        setBannerParams(banner);
-        HeadBannerAdapter adapter = new HeadBannerAdapter();
-        adapter.setList(list);
-
-        guideView.setPointNumber(list.size());
-        guideView.setGuideTextGravity(Gravity.CENTER);
-        banner.setOnBannerPageListener((page, adapterIndex) -> guideView.setFocusIndex(page));
-
-        banner.setAdapter(adapter);
-        banner.startAutoPlay();
-    }
-
-    private void setBannerParams(CoolBanner banner) {
-        BannerHelper.setBannerParams(banner, ViewProperty.getStarBannerParams());
     }
 
     @Override
@@ -432,38 +376,6 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         }
         mBinding.tvRating.setText(mRatingModel.getComplex());
         mRatingModel.saveRating();
-    }
-
-    private class HeadBannerAdapter extends CoolBannerAdapter<String> {
-        @Override
-        protected int getLayoutRes() {
-            return R.layout.adapter_banner_image;
-        }
-
-        @Override
-        protected void onBindView(View view, int position, String path) {
-            ImageView imageView = view.findViewById(R.id.iv_image);
-            ImageView ivCover = view.findViewById(R.id.iv_set_cover);
-            ImageView ivDelete = view.findViewById(R.id.iv_delete);
-            ivCover.setVisibility(View.VISIBLE);
-            ivDelete.setVisibility(View.VISIBLE);
-
-            Glide.with(view.getContext())
-                    .load(path)
-                    .apply(starOptions)
-                    .into(imageView);
-
-            ivCover.setOnClickListener(v -> {
-                if (onHeadActionListener != null) {
-                    onHeadActionListener.onApplyImage(path);
-                }
-            });
-            ivDelete.setOnClickListener(v -> {
-                if (onHeadActionListener != null) {
-                    onHeadActionListener.onDeleteImage(path);
-                }
-            });
-        }
     }
 
     public interface OnHeadActionListener {

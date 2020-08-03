@@ -2,8 +2,12 @@ package com.king.app.coolg.phone.star;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
+import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
+import android.widget.ImageView;
 
+import com.king.app.coolg.GlideApp;
+import com.king.app.coolg.R;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.model.bean.RecordComplexFilter;
@@ -51,6 +55,8 @@ public class StarViewModel extends BaseViewModel {
     public MutableLiveData<FavorStar> addOrderObserver = new MutableLiveData<>();
     public MutableLiveData<List<Tag>> tagsObserver = new MutableLiveData<>();
 
+    public ObservableField<String> toolbarText = new ObservableField<>();
+
     protected Star mStar;
     protected List<String> starImageList;
     private List<StarRelationship> relationList;
@@ -87,14 +93,20 @@ public class StarViewModel extends BaseViewModel {
         this.mStudioId = mStudioId;
     }
 
+    public void setExpandImage(long starId, ImageView ivStar) {
+        mStar = starRepository.getStarBean(starId);
+        starObserver.setValue(mStar);
+        toolbarText.set(mStar.getName());
+        String path = ImageProvider.getStarRandomPath(mStar.getName(), null);
+        GlideApp.with(ivStar.getContext())
+                .load(path)
+                .error(R.drawable.def_person)
+                .into(ivStar);
+    }
+
     public void loadStar(long starId) {
         loadingObserver.setValue(true);
-        starRepository.getStar(starId)
-                .flatMap(star -> {
-                    mStar = star;
-                    starObserver.postValue(mStar);
-                    return getStarImages(star);
-                })
+        getStarImages(mStar)
                 .flatMap(list -> {
                     starImageList = list;
                     return getRelationships(mStar);
@@ -401,6 +413,7 @@ public class StarViewModel extends BaseViewModel {
         getDaoSession().getTagRecordDao().detachAll();
         refreshTags();
     }
+
     private class RelationComparator implements Comparator<StarRelationship> {
 
         @Override

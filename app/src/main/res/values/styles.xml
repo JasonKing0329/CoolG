@@ -297,4 +297,9 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="StarCollapsingText">
+        <item name="android:textSize">24dp</item>
+        <item name="android:textColor">#DE000000</item>
+    </style>
+
 </resources>

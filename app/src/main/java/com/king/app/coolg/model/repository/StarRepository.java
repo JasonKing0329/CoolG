@@ -43,8 +43,12 @@ import io.reactivex.Observable;
  */
 public class StarRepository extends BaseRepository {
 
+    public Star getStarBean(long starId) {
+        return getDaoSession().getStarDao().load(starId);
+    }
+
     public Observable<Star> getStar(long starId) {
-        return Observable.create(e -> e.onNext(getDaoSession().getStarDao().load(starId)));
+        return Observable.create(e -> e.onNext(getStarBean(starId)));
     }
 
     public Observable<List<Star>> queryStar(String mode) {

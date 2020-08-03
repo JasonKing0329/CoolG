@@ -121,7 +121,13 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
             }
         });
 
-        mModel.loadStar(getIntent().getLongExtra(EXTRA_STAR_ID, -1));
+        mModel.setExpandImage(getStarId(), mBinding.ivStar);
+
+        mModel.loadStar(getStarId());
+    }
+
+    private long getStarId() {
+        return getIntent().getLongExtra(EXTRA_STAR_ID, -1);
     }
 
     private void showStar(Star star) {
@@ -132,7 +138,6 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
         if (adapter == null) {
             adapter = new StarAdapter();
             adapter.setStar(mModel.getStar());
-            adapter.setStarImageList(mModel.getStarImageList());
             adapter.setRelationships(mModel.getRelationList());
             adapter.setStudioList(mModel.getStudioList());
             adapter.setTagList(mModel.getTagList());
@@ -155,7 +160,6 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
                     showConfirmCancelMessage("Are you sure to delete this image on file system?",
                             (dialogInterface, i) -> {
                                 mModel.deleteImage(path);
-                                adapter.setStarImageList(mModel.getStarImageList());
                                 adapter.notifyItemChanged(0);
                             }, null);
                 }
@@ -192,7 +196,6 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
         }
         else {
             adapter.setStar(mModel.getStar());
-            adapter.setStarImageList(mModel.getStarImageList());
             adapter.setRelationships(mModel.getRelationList());
             adapter.setList(list);
             adapter.notifyDataSetChanged();
