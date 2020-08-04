@@ -76,7 +76,7 @@ public class StarAdapter extends HeaderFooterBindingAdapter<AdapterStarPhoneHead
     @Override
     protected void onBindHead(AdapterStarPhoneHeaderBinding binding) {
         header.setOnHeadActionListener(onHeadActionListener);
-        header.bind(binding, star, list == null ? 0:list.size(), mRelationships, mStudioList, mTagList);
+        header.bind(binding, star, mRelationships, mStudioList, mTagList);
     }
 
     @Override

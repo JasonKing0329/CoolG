@@ -41,8 +41,6 @@ import java.util.Random;
 
 public class StarHeader implements StarRatingView.OnStarChangeListener {
 
-    private RequestOptions starOptions;
-
     private StarRatingViewModel mRatingModel;
 
     private StarViewModel mModel;
@@ -57,20 +55,17 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
 
     private StarStudioTag selectedTag;
 
-    private Integer mTotalRecordNumber;
-
     private TagAdapter tagAdapter;
 
     public StarHeader() {
-        starOptions = GlideUtil.getStarWideOptions();
     }
 
     public void setOnHeadActionListener(OnHeadActionListener onHeadActionListener) {
         this.onHeadActionListener = onHeadActionListener;
     }
 
-    public void bind(AdapterStarPhoneHeaderBinding binding, Star star, int recordNumber
-            , List<StarRelationship> relationships, List<StarStudioTag> studioList, List<Tag> tagList) {
+    public void bind(AdapterStarPhoneHeaderBinding binding, Star star, List<StarRelationship> relationships
+            , List<StarStudioTag> studioList, List<Tag> tagList) {
 
         mBinding = binding;
 
@@ -82,7 +77,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         binding.starSex.setOnStarChangeListener(this);
         binding.starPrefer.setOnStarChangeListener(this);
 
-        bindBasicInfo(binding, star, recordNumber);
+        bindBasicInfo(binding, star);
         bindRelationships(binding, relationships);
         bindRatings(binding, star);
         bindOrders(binding, star);
@@ -161,6 +156,7 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
                         return false;
                     }
                 };
+                adapter.setLayoutResource(R.layout.adapter_studio_tag);
                 adapter.enableUnselect();
                 adapter.setData(studioList);
                 if (selectedTag != null) {
@@ -306,19 +302,8 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
         });
     }
 
-    private void bindBasicInfo(AdapterStarPhoneHeaderBinding binding, Star star, int recordNumber) {
-        // 页面第一次进入肯定是加载全部，后面可能会筛选list，因此以第一次加载的数量为准
-        if (mTotalRecordNumber == null) {
-            mTotalRecordNumber = recordNumber;
-        }
-        StringBuffer buffer = new StringBuffer(mTotalRecordNumber + "个视频文件");
-        if (star.getBetop() > 0) {
-            buffer.append("  ").append(star.getBetop()).append(" Top");
-        }
-        if (star.getBebottom() > 0) {
-            buffer.append("  ").append(star.getBebottom()).append(" Bottom");
-        }
-        binding.tvVideos.setText(buffer.toString());
+    private void bindBasicInfo(AdapterStarPhoneHeaderBinding binding, Star star) {
+
     }
 
     public void showRatings(AdapterStarPhoneHeaderBinding binding, StarRating rating) {

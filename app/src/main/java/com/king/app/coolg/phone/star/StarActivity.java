@@ -140,6 +140,18 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
 
     private void showStar(Star star) {
         mBinding.actionbar.setTitle(star.getName());
+        mBinding.tvVideo.setText(star.getRecords() + "个视频文件");
+        StringBuffer buffer = new StringBuffer();
+        if (star.getBetop() > 0) {
+            buffer.append(star.getBetop()).append(" Top");
+        }
+        if (star.getBebottom() > 0) {
+            if (buffer.toString().length() > 0) {
+                buffer.append(", ");
+            }
+            buffer.append(star.getBebottom()).append(" Bottom");
+        }
+        mBinding.tvTb.setText(buffer.toString());
     }
 
     private void showRecords(List<RecordProxy> list) {
