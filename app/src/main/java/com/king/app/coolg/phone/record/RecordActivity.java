@@ -71,7 +71,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
     private final int REQUEST_ADD_ORDER = 1602;
     private final int REQUEST_SELECT_STUDIO = 1603;
     private final int REQUEST_VIDEO_ORDER = 1604;
-    private final int REQUEST_SET_VIDEO_COVER = 1605;
 
     private RequestOptions recordOptions;
 
@@ -160,11 +159,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         });
         mBinding.rvPlayOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-//        mBinding.ivSetCover.setOnClickListener(view -> {
-//            if (!TextUtils.isEmpty(mModel.getSingleImagePath())) {
-//                onApplyImage(mModel.getSingleImagePath());
-//            }
-//        });
         mBinding.groupStudio.setOnClickListener(view -> selectStudio());
 
         mBinding.scrollParent.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
@@ -585,20 +579,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         }
     }
 
-    private void onSetCoverForOrder(String path) {
-        Router.build("OrderPhone")
-                .with(OrderPhoneActivity.EXTRA_SET_COVER, path)
-                .go(this);
-    }
-
-    private void onSetCoverForPlayOrder(String path) {
-        mModel.setUrlToSetCover(path);
-        Router.build("PlayOrder")
-                .with(PlayOrderActivity.EXTRA_MULTI_SELECT, true)
-                .requestCode(REQUEST_SET_VIDEO_COVER)
-                .go(this);
-    }
-
     private void selectOrderToAddStar() {
         Router.build("OrderPhone")
                 .with(OrderPhoneActivity.EXTRA_SELECT_MODE, true)
@@ -627,12 +607,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                 mModel.addToPlay(list);
             }
         }
-        else if (requestCode == REQUEST_SET_VIDEO_COVER) {
-            if (resultCode == RESULT_OK) {
-                ArrayList<CharSequence> list = data.getCharSequenceArrayListExtra(PlayOrderActivity.RESP_SELECT_RESULT);
-                mModel.setPlayOrderCover(list);
-            }
-        }
     }
 
     @Override
@@ -644,20 +618,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         if (mModel != null) {
             mModel.updatePlayToDb();
         }
-    }
-
-    private void onApplyImage(String path) {
-        String[] options = new String[] {"Order", "Play Order"};
-        new AlertDialogFragment()
-                .setItems(options, (dialogInterface, i) -> {
-                    if (i == 0) {
-                        onSetCoverForOrder(path);
-                    }
-                    else if (i == 1) {
-                        onSetCoverForPlayOrder(path);
-                    }
-                })
-                .show(getSupportFragmentManager(), "AlertDialogFragment");
     }
 
     private class HeadBannerAdapter extends CoolBannerAdapter<String> {

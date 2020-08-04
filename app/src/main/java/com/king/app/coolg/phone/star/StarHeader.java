@@ -380,8 +380,6 @@ public class StarHeader implements StarRatingView.OnStarChangeListener {
 
     public interface OnHeadActionListener {
         void onClickRelationStar(StarRelationship relationship);
-        void onApplyImage(String path);
-        void onDeleteImage(String path);
         void addStarToOrder(Star star);
         void onFilterStudio(long studioId);
         void onCancelFilterStudio(long studioId);

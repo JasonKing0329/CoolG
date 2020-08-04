@@ -2,6 +2,7 @@ package com.king.app.coolg.phone.image;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
+import android.databinding.ObservableField;
 import android.graphics.BitmapFactory;
 
 import com.king.app.coolg.base.BaseViewModel;
@@ -9,7 +10,9 @@ import com.king.app.coolg.model.bean.StarDetailBuilder;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.phone.star.list.StarProxy;
 import com.king.app.coolg.utils.FileUtil;
+import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.gdb.data.entity.PlayOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
 
@@ -34,6 +37,10 @@ public class ImageViewModel extends BaseViewModel {
     public MutableLiveData<List<ImageBean>> imageList = new MutableLiveData<>();
     private int mStaggerImageWidth;
 
+    public ObservableField<String> titleText = new ObservableField<>();
+
+    private String mUrlToSetCover;
+
     public ImageViewModel(Application application) {
         super(application);
         int margin = ScreenUtils.dp2px(1);
@@ -43,12 +50,14 @@ public class ImageViewModel extends BaseViewModel {
 
     public void loadStarImages(long starId) {
         Star star = getDaoSession().getStarDao().load(starId);
+        titleText.set(star.getName());
         List<String> list = ImageProvider.getStarPathList(star.getName());
         convertToImages(list);
     }
 
     public void loadRecordImages(long recordId) {
         Record record = getDaoSession().getRecordDao().load(recordId);
+        titleText.set(record.getName());
         List<String> list = ImageProvider.getRecordPathList(record.getName());
         convertToImages(list);
     }
@@ -132,4 +141,51 @@ public class ImageViewModel extends BaseViewModel {
             }
         }
     }
+
+    public void setUrlToSetCover(String path) {
+        mUrlToSetCover = path;
+    }
+
+    public void setPlayOrderCover(ArrayList<CharSequence> list) {
+        savePlayOrderCover(list)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        messageObserver.setValue("Set successfully");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private Observable<Boolean> savePlayOrderCover(ArrayList<CharSequence> list) {
+        return Observable.create(e -> {
+            if (!ListUtil.isEmpty(list)) {
+                for (CharSequence sequence:list) {
+                    long orderId = Long.parseLong(sequence.toString());
+                    PlayOrder order = getDaoSession().getPlayOrderDao().load(orderId);
+                    order.setCoverUrl(mUrlToSetCover);
+                    getDaoSession().getPlayOrderDao().update(order);
+                }
+            }
+            e.onNext(true);
+        });
+    }
+
 }

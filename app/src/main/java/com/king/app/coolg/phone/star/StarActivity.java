@@ -159,20 +159,6 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
                 }
 
                 @Override
-                public void onApplyImage(String path) {
-                    selectOrderToSetCover(path);
-                }
-
-                @Override
-                public void onDeleteImage(String path) {
-                    showConfirmCancelMessage("Are you sure to delete this image on file system?",
-                            (dialogInterface, i) -> {
-                                mModel.deleteImage(path);
-                                adapter.notifyItemChanged(0);
-                            }, null);
-                }
-
-                @Override
                 public void addStarToOrder(Star star) {
                     selectOrderToAddStar();
                 }
@@ -285,12 +271,6 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
     private void goToStarPage(long starId) {
         Router.build("StarPhone")
                 .with(StarActivity.EXTRA_STAR_ID, starId)
-                .go(this);
-    }
-
-    private void selectOrderToSetCover(String path) {
-        Router.build("OrderPhone")
-                .with(OrderPhoneActivity.EXTRA_SET_COVER, path)
                 .go(this);
     }
 
