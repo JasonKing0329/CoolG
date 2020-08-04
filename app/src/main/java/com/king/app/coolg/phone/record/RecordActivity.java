@@ -26,6 +26,7 @@ import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.bean.TitleValueBean;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.setting.ViewProperty;
+import com.king.app.coolg.phone.image.ImageManagerActivity;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.studio.StudioActivity;
@@ -159,16 +160,11 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         });
         mBinding.rvPlayOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        mBinding.ivDelete.setOnClickListener(view -> {
-            if (!TextUtils.isEmpty(mModel.getSingleImagePath())) {
-                onDeleteImage(mModel.getSingleImagePath());
-            }
-        });
-        mBinding.ivSetCover.setOnClickListener(view -> {
-            if (!TextUtils.isEmpty(mModel.getSingleImagePath())) {
-                onApplyImage(mModel.getSingleImagePath());
-            }
-        });
+//        mBinding.ivSetCover.setOnClickListener(view -> {
+//            if (!TextUtils.isEmpty(mModel.getSingleImagePath())) {
+//                onApplyImage(mModel.getSingleImagePath());
+//            }
+//        });
         mBinding.groupStudio.setOnClickListener(view -> selectStudio());
 
         mBinding.scrollParent.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
@@ -203,6 +199,13 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mBinding.ivTagDelete.setOnClickListener(v -> {
             tagAdapter.toggleDelete();
             tagAdapter.notifyDataSetChanged();
+        });
+
+        mBinding.ivMore.setOnClickListener(v -> {
+            Router.build("ImageManager")
+                    .with(ImageManagerActivity.EXTRA_TYPE, ImageManagerActivity.TYPE_RECORD)
+                    .with(ImageManagerActivity.EXTRA_DATA, getRecordId())
+                    .go(RecordActivity.this);
         });
     }
 
@@ -255,8 +258,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mBinding.banner.setVisibility(View.GONE);
         mBinding.guideView.setVisibility(View.GONE);
         mBinding.ivRecord.setVisibility(View.VISIBLE);
-        mBinding.ivSetCover.setVisibility(View.GONE);
-        mBinding.ivDelete.setVisibility(View.GONE);
         Glide.with(RecordActivity.this)
                 .load(R.drawable.def_small)
                 .into(mBinding.ivRecord);
@@ -266,8 +267,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mBinding.banner.setVisibility(View.GONE);
         mBinding.guideView.setVisibility(View.GONE);
         mBinding.ivRecord.setVisibility(View.VISIBLE);
-        mBinding.ivSetCover.setVisibility(View.VISIBLE);
-        mBinding.ivDelete.setVisibility(View.VISIBLE);
         Glide.with(RecordActivity.this)
                 .load(path)
                 .apply(recordOptions)
@@ -288,8 +287,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
             }
             else {
                 mBinding.ivRecord.setVisibility(View.GONE);
-                mBinding.ivSetCover.setVisibility(View.GONE);
-                mBinding.ivDelete.setVisibility(View.GONE);
                 mBinding.banner.setVisibility(View.VISIBLE);
                 mBinding.guideView.setVisibility(View.VISIBLE);
                 showBanner(list);
@@ -353,7 +350,11 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
         mModel.tagsObserver.observe(this, tags -> showTags(tags));
 
-        mModel.loadRecord(getIntent().getLongExtra(EXTRA_RECORD_ID, -1));
+        mModel.loadRecord(getRecordId());
+    }
+
+    private long getRecordId() {
+        return getIntent().getLongExtra(EXTRA_RECORD_ID, -1);
     }
 
     private void showTags(List<Tag> tags) {
@@ -465,15 +466,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         mBinding.tvAss.setText("" + record.getScoreAss());
 
         mBinding.tvDeprecated.setVisibility(record.getDeprecated() == 1 ? View.VISIBLE : View.GONE);
-
-//        videoPath = VideoModel.getVideoPath(record.getName());
-//        videoPath = "/storage/emulated/0/tencent/MicroMsg/WeiXin/wx_camera_1489199749192.mp4";
-//        if (videoPath == null) {
-//            mBinding.ivPlay.setVisibility(View.GONE);
-//        } else {
-//            mBinding.ivPlay.setVisibility(View.VISIBLE);
-//        }
-        mBinding.ivPlay.setVisibility(View.GONE);
 
         String cuPath = ImageProvider.getRecordCuPath(record.getName());
         if (!TextUtils.isEmpty(cuPath)) {
@@ -607,11 +599,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                 .go(this);
     }
 
-    private void onDeleteImage(String path) {
-        showConfirmCancelMessage("Are you sure to delete this image on file system?",
-                (dialogInterface, i) -> mModel.deleteImage(path), null);
-    }
-
     private void selectOrderToAddStar() {
         Router.build("OrderPhone")
                 .with(OrderPhoneActivity.EXTRA_SELECT_MODE, true)
@@ -683,22 +670,11 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
         @Override
         protected void onBindView(View view, int position, String path) {
             ImageView imageView = view.findViewById(R.id.iv_image);
-            ImageView ivCover = view.findViewById(R.id.iv_set_cover);
-            ImageView ivDelete = view.findViewById(R.id.iv_delete);
-            ivCover.setVisibility(View.VISIBLE);
-            ivDelete.setVisibility(View.VISIBLE);
 
             Glide.with(view.getContext())
                     .load(path)
                     .apply(recordOptions)
                     .into(imageView);
-
-            ivCover.setOnClickListener(v -> {
-                onApplyImage(path);
-            });
-            ivDelete.setOnClickListener(v -> {
-                onDeleteImage(path);
-            });
         }
     }
 }

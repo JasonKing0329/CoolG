@@ -10,6 +10,7 @@ import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.phone.star.list.StarProxy;
 import com.king.app.coolg.utils.FileUtil;
 import com.king.app.coolg.utils.ScreenUtils;
+import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.Star;
 
 import java.io.File;
@@ -30,30 +31,30 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class ImageViewModel extends BaseViewModel {
 
-    public static final int TYPE_STAGGER = 0;
-    public static final int TYPE_GRID = 1;
-
     public MutableLiveData<List<ImageBean>> imageList = new MutableLiveData<>();
     private int mStaggerImageWidth;
-
-    private int viewType;
 
     public ImageViewModel(Application application) {
         super(application);
         int margin = ScreenUtils.dp2px(1);
         int column = 2;
         mStaggerImageWidth = ScreenUtils.getScreenWidth() / column - margin;
-        viewType = TYPE_STAGGER;
-    }
-
-    public void setViewType(int viewType) {
-        this.viewType = viewType;
     }
 
     public void loadStarImages(long starId) {
         Star star = getDaoSession().getStarDao().load(starId);
         List<String> list = ImageProvider.getStarPathList(star.getName());
-        toImageBean(list, viewType == TYPE_STAGGER)
+        convertToImages(list);
+    }
+
+    public void loadRecordImages(long recordId) {
+        Record record = getDaoSession().getRecordDao().load(recordId);
+        List<String> list = ImageProvider.getRecordPathList(record.getName());
+        convertToImages(list);
+    }
+
+    private void convertToImages(List<String> list) {
+        toImageBean(list, true)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<ImageBean>>() {

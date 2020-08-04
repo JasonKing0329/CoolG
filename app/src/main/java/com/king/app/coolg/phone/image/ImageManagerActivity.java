@@ -26,6 +26,7 @@ public class ImageManagerActivity extends MvvmActivity<ActivityImageManagerBindi
     public static final String EXTRA_DATA = "data";
 
     public static final String TYPE_STAR = "type_star";
+    public static final String TYPE_RECORD = "type_record";
 
     private StaggerAdapter staggerAdapter;
 
@@ -121,6 +122,9 @@ public class ImageManagerActivity extends MvvmActivity<ActivityImageManagerBindi
         String type = intent.getStringExtra(EXTRA_TYPE);
         if (TYPE_STAR.equals(type)) {
             mModel.loadStarImages(intent.getLongExtra(EXTRA_DATA, -1));
+        }
+        else if (TYPE_RECORD.equals(type)) {
+            mModel.loadRecordImages(intent.getLongExtra(EXTRA_DATA, -1));
         }
     }
 }
