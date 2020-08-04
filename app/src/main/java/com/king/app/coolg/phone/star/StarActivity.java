@@ -16,6 +16,7 @@ import com.king.app.coolg.databinding.ActivityStarPhoneBinding;
 import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.model.setting.ViewProperty;
+import com.king.app.coolg.phone.image.ImageManagerActivity;
 import com.king.app.coolg.phone.order.OrderPhoneActivity;
 import com.king.app.coolg.phone.record.RecordActivity;
 import com.king.app.coolg.phone.record.list.RecordProxy;
@@ -80,6 +81,13 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
                     changeFilter();
                     break;
             }
+        });
+
+        mBinding.ivMore.setOnClickListener(v -> {
+            Router.build("ImageManager")
+                    .with(ImageManagerActivity.EXTRA_TYPE, ImageManagerActivity.TYPE_STAR)
+                    .with(ImageManagerActivity.EXTRA_DATA, mModel.getStar().getId())
+                    .go(StarActivity.this);
         });
     }
 

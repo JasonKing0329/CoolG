@@ -91,6 +91,9 @@
             android:name=".phone.star.category.CategoryDetailActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".phone.image.ImageManagerActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".phone.star.list.StarSelectorActivity"
             android:screenOrientation="user" />
         <activity
