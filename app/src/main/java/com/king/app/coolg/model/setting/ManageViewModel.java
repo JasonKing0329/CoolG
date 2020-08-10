@@ -32,15 +32,20 @@ import com.king.app.coolg.model.udp.UdpReceiver;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.FileUtil;
 import com.king.app.coolg.utils.ListUtil;
+import com.king.app.gdb.data.entity.CountRecord;
+import com.king.app.gdb.data.entity.CountStar;
 import com.king.app.gdb.data.entity.FavorRecord;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.FavorStar;
 import com.king.app.gdb.data.entity.FavorStarOrder;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.PlayOrder;
+import com.king.app.gdb.data.entity.Record;
+import com.king.app.gdb.data.entity.RecordDao;
 import com.king.app.gdb.data.entity.Star;
 import com.king.app.gdb.data.entity.StarDao;
 import com.king.app.gdb.data.entity.StarRating;
+import com.king.app.gdb.data.entity.StarRatingDao;
 import com.king.app.gdb.data.entity.Tag;
 import com.king.app.gdb.data.entity.TagRecord;
 import com.king.app.gdb.data.entity.TagStar;
@@ -89,6 +94,8 @@ public class ManageViewModel extends BaseViewModel {
     public ManageViewModel(@NonNull Application application) {
         super(application);
         dbVersionText.set("Local v" + new PropertyRepository().getVersion());
+
+        checkCountData();
     }
 
     public void onClickStar(View view) {
@@ -604,6 +611,7 @@ public class ManageViewModel extends BaseViewModel {
     public void databaseDownloaded(boolean isUploadedDb) {
         loadingObserver.setValue(true);
         updateLocalData(isUploadedDb)
+                .flatMap(result -> createCountData())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<Object>() {
@@ -752,6 +760,83 @@ public class ManageViewModel extends BaseViewModel {
             getDaoSession().getVideoCoverStarDao().deleteAll();
             getDaoSession().getVideoCoverStarDao().insertInTx(mLocalData.videoCoverStars);
         }
+    }
+
+    private void checkCountData() {
+        long countRecord = getDaoSession().getCountStarDao().count();
+        long countStar = getDaoSession().getCountRecordDao().count();
+        if (countRecord > 0 && countStar > 0) {
+            return;
+        }
+        createCountData()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        messageObserver.setValue("Create count data successfully");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    /**
+     * 生成一些统计数据，一般是持久使用，不会修改的数据
+     * @return
+     */
+    private Observable<Boolean> createCountData() {
+        return Observable.create(observer -> {
+
+            // star
+            List<StarRating> ratings = getDaoSession().getStarRatingDao().queryBuilder()
+                    .orderDesc(StarRatingDao.Properties.Complex)
+                    .build().list();
+            getDaoSession().getCountStarDao().deleteAll();
+            getDaoSession().getCountStarDao().detachAll();
+            List<CountStar> list = new ArrayList<>();
+            for (int i = 0; i < ratings.size(); i ++) {
+                StarRating rating = ratings.get(i);
+                CountStar cs = new CountStar();
+                cs.setStarId(rating.getStarId());
+                cs.setRank(i + 1);
+                list.add(cs);
+            }
+            getDaoSession().getCountStarDao().insertInTx(list);
+
+            // record
+            List<Record> records = getDaoSession().getRecordDao().queryBuilder()
+                    .orderDesc(RecordDao.Properties.Score)
+                    .build().list();
+            getDaoSession().getCountRecordDao().deleteAll();
+            getDaoSession().getCountRecordDao().detachAll();
+            List<CountRecord> recordCounts = new ArrayList<>();
+            for (int i = 0; i < records.size(); i ++) {
+                Record record = records.get(i);
+                CountRecord cr = new CountRecord();
+                cr.setRecordId(record.getId());
+                cr.setRank(i + 1);
+                recordCounts.add(cr);
+            }
+            getDaoSession().getCountRecordDao().insertInTx(recordCounts);
+
+            observer.onNext(true);
+            observer.onComplete();
+        });
     }
 
     private ObservableSource<Boolean> isDifferentVersion(String serverVersion) {

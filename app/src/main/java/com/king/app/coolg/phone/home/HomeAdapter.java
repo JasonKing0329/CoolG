@@ -166,6 +166,14 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterHomeHeadBindi
             binding.ivPlay.setVisibility(View.VISIBLE);
             binding.ivPlay.setOnClickListener(v -> onListListener.onAddPlay(record));
         }
+
+        if (record.getCountRecord() != null) {
+            binding.tvRank.setText("R-" + record.getCountRecord().getRank());
+            binding.tvRank.setVisibility(View.VISIBLE);
+        }
+        else {
+            binding.tvRank.setVisibility(View.GONE);
+        }
     }
 
     private boolean isNotSameDay(Record curRecord, Record lastRecord) {

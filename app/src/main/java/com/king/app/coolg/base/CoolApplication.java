@@ -9,6 +9,9 @@ import com.king.app.coolg.conf.AppConfig;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.context.GDataContext;
 import com.king.app.coolg.utils.DebugLog;
+import com.king.app.gdb.data.entity.CountRecordDao;
+import com.king.app.gdb.data.entity.CountStar;
+import com.king.app.gdb.data.entity.CountStarDao;
 import com.king.app.gdb.data.entity.DaoMaster;
 import com.king.app.gdb.data.entity.DaoSession;
 import com.king.app.gdb.data.entity.FavorRecordDao;
@@ -174,6 +177,9 @@ public class CoolApplication extends Application {
                         db.execSQL("ALTER TABLE " + StarRatingDao.TABLENAME + " ADD COLUMN "
                                 + StarRatingDao.Properties.Prefer.columnName + " REAL DEFAULT 0");
                     }
+                case 10:
+                    CountStarDao.createTable(db, true);
+                    CountRecordDao.createTable(db, true);
                     break;
             }
         }

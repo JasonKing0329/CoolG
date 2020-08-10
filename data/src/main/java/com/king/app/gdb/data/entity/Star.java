@@ -36,6 +36,9 @@ public class Star {
     @ToMany(referencedJoinProperty = "starId")
     private List<StarRating> ratings;
 
+    @ToOne(joinProperty = "id")
+    private CountStar countStar;
+
     @ToMany
     @JoinEntity(
             entity = RecordStar.class,
@@ -49,6 +52,8 @@ public class Star {
     /** Used for active entity operations. */
     @Generated(hash = 1640983199)
     private transient StarDao myDao;
+    @Generated(hash = 1146642166)
+    private transient Long countStar__resolvedKey;
 
     @Generated(hash = 1604840945)
     public Star(Long id, String name, int records, int betop, int bebottom,
@@ -258,6 +263,35 @@ public class Star {
     @Generated(hash = 1225759264)
     public synchronized void resetRatings() {
         ratings = null;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 931179549)
+    public CountStar getCountStar() {
+        Long __key = this.id;
+        if (countStar__resolvedKey == null || !countStar__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            CountStarDao targetDao = daoSession.getCountStarDao();
+            CountStar countStarNew = targetDao.load(__key);
+            synchronized (this) {
+                countStar = countStarNew;
+                countStar__resolvedKey = __key;
+            }
+        }
+        return countStar;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 2082485349)
+    public void setCountStar(CountStar countStar) {
+        synchronized (this) {
+            this.countStar = countStar;
+            id = countStar == null ? null : countStar.getStarId();
+            countStar__resolvedKey = id;
+        }
     }
 
     /** called by internal mechanisms, do not call yourself. */

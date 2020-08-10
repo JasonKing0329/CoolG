@@ -59,6 +59,9 @@ public class Record {
     )
     private List<Star> starList;
 
+    @ToOne(joinProperty = "id")
+    private CountRecord countRecord;
+
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
@@ -274,6 +277,9 @@ public class Record {
     @Generated(hash = 405205600)
     private transient Long recordType3w__resolvedKey;
 
+    @Generated(hash = 173153116)
+    private transient Long countRecord__resolvedKey;
+
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 1781989542)
     public RecordType3w getRecordType3w() {
@@ -423,6 +429,35 @@ public class Record {
 
     public void setScoreAss(int scoreAss) {
         this.scoreAss = scoreAss;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 603205035)
+    public CountRecord getCountRecord() {
+        Long __key = this.id;
+        if (countRecord__resolvedKey == null || !countRecord__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            CountRecordDao targetDao = daoSession.getCountRecordDao();
+            CountRecord countRecordNew = targetDao.load(__key);
+            synchronized (this) {
+                countRecord = countRecordNew;
+                countRecord__resolvedKey = __key;
+            }
+        }
+        return countRecord;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 1265899528)
+    public void setCountRecord(CountRecord countRecord) {
+        synchronized (this) {
+            this.countRecord = countRecord;
+            id = countRecord == null ? null : countRecord.getRecordId();
+            countRecord__resolvedKey = id;
+        }
     }
 
     /** called by internal mechanisms, do not call yourself. */
