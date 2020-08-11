@@ -30,6 +30,7 @@ public class RecommendAdapter extends CoolBannerAdapter<Record> {
     protected void onBindView(View view, int position, Record data) {
         ImageView imageView = view.findViewById(R.id.iv_image);
         TextView starView = view.findViewById(R.id.tv_name);
+        TextView rankView = view.findViewById(R.id.tv_rank);
 
         // 采用随机生成模式
         data = onItemListener.getNewItem();
@@ -47,6 +48,10 @@ public class RecommendAdapter extends CoolBannerAdapter<Record> {
 
         Record record = data;
         imageView.setOnClickListener(v -> onItemListener.onClickItem(record));
+
+        if (data.getCountRecord() != null) {
+            rankView.setText("R-" + data.getCountRecord().getRank());
+        }
     }
 
     public interface OnItemListener {

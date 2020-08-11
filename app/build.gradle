@@ -8,8 +8,8 @@ android {
         applicationId "com.king.app.coolg"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 151
-        versionName "6.4.5"
+        versionCode 152
+        versionName "6.4.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {

@@ -122,6 +122,9 @@ public class HomeAdapter extends HeaderFooterBindingAdapter<AdapterVideoHeadBind
             binding.tvDate.setVisibility(View.GONE);
         }
 
+        if (bean.getRecord().getCountRecord() != null) {
+            binding.tvRank.setText("R-" + bean.getRecord().getCountRecord().getRank());
+        }
     }
 
     private boolean isNotSameDay(Record curRecord, Record lastRecord) {

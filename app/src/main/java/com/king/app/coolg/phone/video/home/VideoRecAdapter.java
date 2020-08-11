@@ -51,6 +51,7 @@ public class VideoRecAdapter extends CoolBannerAdapter<PlayItemViewBean> {
     @Override
     protected void onBindView(View view, int position, PlayItemViewBean bean) {
         EmbedVideoView videoView = view.findViewById(R.id.video_view);
+        TextView tvRank = view.findViewById(R.id.tv_rank);
         PlayItemViewBean item = list.get(position);
         videoView.setFingerprint(position);
         videoView.getCoverView().setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -106,6 +107,10 @@ public class VideoRecAdapter extends CoolBannerAdapter<PlayItemViewBean> {
 
         TextView testView = view.findViewById(R.id.tv_index);
         testView.setText(position + "--" + item.getName());
+
+        if (bean.getRecord().getCountRecord() != null) {
+            tvRank.setText("R-" + bean.getRecord().getCountRecord().getRank());
+        }
     }
 
     public interface OnPlayListener {

@@ -469,6 +469,10 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
                     .load(cuPath)
                     .into(mBinding.ivCum);
         }
+
+        if (record.getCountRecord() != null) {
+            mBinding.tvRank.setText("R-" + record.getCountRecord().getRank());
+        }
     }
 
     private void showSettingDialog() {

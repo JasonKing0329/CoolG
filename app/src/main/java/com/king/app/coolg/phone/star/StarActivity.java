@@ -152,6 +152,9 @@ public class StarActivity extends MvvmActivity<ActivityStarPhoneBinding, StarVie
             buffer.append(star.getBebottom()).append(" Bottom");
         }
         mBinding.tvTb.setText(buffer.toString());
+        if (star.getCountStar() != null) {
+            mBinding.tvRank.setText("R-" + star.getCountStar().getRank());
+        }
     }
 
     private void showRecords(List<RecordProxy> list) {

@@ -149,16 +149,27 @@
                         app:layout_constraintBottom_toBottomOf="@id/tv_score_total"/>
 
                     <TextView
+                        android:id="@+id/tv_rank"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="2dp"
+                        android:textColor="@color/text_second"
+                        android:textSize="14dp"
+                        app:layout_constraintStart_toStartOf="@+id/tv_date"
+                        app:layout_constraintBottom_toTopOf="@+id/tv_date"/>
+
+                    <TextView
                         android:id="@+id/tv_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="4dp"
                         android:text="Date"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="16dp"
+                        android:textSize="14dp"
                         app:layout_constraintStart_toEndOf="@id/tv_score_total"
                         app:layout_constraintBottom_toBottomOf="@id/tv_score_total"/>
+
                 </android.support.constraint.ConstraintLayout>
 
                 <LinearLayout style="@style/GroupWhiteSecOnBg">
