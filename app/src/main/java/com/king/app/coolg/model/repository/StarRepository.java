@@ -1,6 +1,7 @@
 package com.king.app.coolg.model.repository;
 
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.conf.RatingType;
@@ -12,7 +13,9 @@ import com.king.app.coolg.model.comparator.StarRatingComparator;
 import com.king.app.coolg.model.comparator.StarRecordsNumberComparator;
 import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.phone.star.list.StarProxy;
+import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.utils.CostTimeUtil;
+import com.king.app.coolg.utils.ListUtil;
 import com.king.app.gdb.data.entity.FavorRecordOrder;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
@@ -332,6 +335,51 @@ public class StarRepository extends BaseRepository {
             bean.setWidth(builder.getSizeBaseWidth());
             height = (int) (height * ratio);
             bean.setHeight(height);
+        }
+    }
+
+    /**
+     *
+     * @param type 0 All, 1 Top, 2 bottom, 3 half
+     * @param conditions eg. {"complex > 3", "face > 4.2"}
+     * @return
+     */
+    public List<Star> queryStar(int type, String[] conditions) {
+        StarDao dao = getDaoSession().getStarDao();
+        StringBuffer buffer = new StringBuffer();
+        // rating
+        if (conditions != null && conditions.length > 0) {
+            buildQueryFromRating(conditions, buffer);
+        }
+        // type
+        switch (type) {
+            case 0:
+                break;
+            case 1:
+                buffer.append(" WHERE T.BETOP>0 AND T.BEBOTTOM=0");
+                break;
+            case 2:
+                buffer.append(" WHERE T.BEBOTTOM>0 AND T.BETOP=0");
+                break;
+            case 3:
+                buffer.append(" WHERE T.BETOP>0 AND T.BEBOTTOM>0");
+                break;
+        }
+        String sql = buffer.toString();
+        List<Star> result;
+        if (TextUtils.isEmpty(sql)) {
+            result = dao.loadAll();
+        }
+        else {
+            result = dao.queryRaw(buffer.toString(), new String[]{});
+        }
+        return result;
+    }
+
+    private void buildQueryFromRating(String[] conditions, StringBuffer buffer) {
+        buffer.append(" JOIN star_rating SR ON T._id=SR.STAR_ID");
+        for (String con:conditions) {
+            buffer.append(" AND SR.").append(con);
         }
     }
 

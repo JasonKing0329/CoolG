@@ -26,14 +26,23 @@
             app:srcCompat="@drawable/def_person_square" />
 
         <ImageView
-            android:id="@+id/btn_rule"
+            android:id="@+id/btn_reset"
             style="@style/IvRandomAction"
             android:layout_marginBottom="100dp"
-            android:src="@drawable/ic_settings_black_36dp"
+            android:src="@drawable/ic_refresh_purple_36dp"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_start"
+            app:layout_constraintEnd_toStartOf="@+id/btn_rule"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/btn_rule"
+            style="@style/IvRandomAction"
+            android:layout_marginStart="20dp"
+            android:src="@drawable/ic_settings_black_36dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_reset"
+            app:layout_constraintEnd_toStartOf="@+id/btn_start"
+            app:layout_constraintStart_toEndOf="@+id/btn_reset" />
 
         <ImageView
             android:id="@+id/btn_start"
@@ -42,7 +51,7 @@
             android:src="@drawable/ic_play_circle_filled_black_36dp"
             android:layout_marginStart="20dp"
             app:imageResource="@{model.btnControlRes}"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_rule"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_reset"
             app:layout_constraintStart_toEndOf="@+id/btn_rule"
             app:layout_constraintEnd_toStartOf="@+id/btn_mark" />
 
@@ -51,7 +60,7 @@
             style="@style/IvRandomAction"
             android:src="@drawable/ic_favorite_black_36dp"
             android:layout_marginStart="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_start"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_reset"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btn_start" />
 
@@ -98,7 +107,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_rule" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_reset" />
 
         <TextView
             android:id="@+id/tv_name"
@@ -107,7 +116,7 @@
             android:layout_marginBottom="16dp"
             android:text="@{model.starName}"
             android:textSize="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/btn_start"
+            app:layout_constraintBottom_toTopOf="@+id/btn_reset"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 

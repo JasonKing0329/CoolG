@@ -58,6 +58,7 @@ public class PreferenceKey {
     public static final String PREF_VIDEO_SERVER_SORT = "pref_video_server_sort";
 
     public static final String PREF_TAG_SORT = "pref_tag_sort";
+    public static final String PREF_STAR_RANDOM_DATA = "pref_star_random_data";
     /**
      * http
      */

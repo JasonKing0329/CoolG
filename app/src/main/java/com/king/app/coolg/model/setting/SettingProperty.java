@@ -2,7 +2,10 @@ package com.king.app.coolg.model.setting;
 
 import com.google.gson.Gson;
 import com.king.app.coolg.model.bean.HsvColorBean;
+import com.king.app.coolg.phone.star.random.RandomData;
 import com.king.app.coolg.phone.video.home.RecommendBean;
+
+import java.util.ArrayList;
 
 /**
  * 描述:
@@ -236,6 +239,28 @@ public class SettingProperty extends BaseProperty {
 
     public static void setTagSortType(int random) {
         setInt(PreferenceKey.PREF_TAG_SORT, random);
+    }
+
+    public static RandomData getStarRandomData() {
+        String sql = getString(PreferenceKey.PREF_STAR_RANDOM_DATA);
+        RandomData bean = null;
+        try {
+            bean = new Gson().fromJson(sql, RandomData.class);
+        } catch (Exception e) {}
+        if (bean == null) {
+            bean = new RandomData();
+            bean.setMarkedList(new ArrayList<>());
+            bean.setCandidateList(new ArrayList<>());
+        }
+        return bean;
+    }
+
+    public static void setStarRandomData(RandomData bean) {
+        String sql = null;
+        try {
+            sql = new Gson().toJson(bean);
+        } catch (Exception e) {}
+        setString(PreferenceKey.PREF_STAR_RANDOM_DATA, sql);
     }
 
 }

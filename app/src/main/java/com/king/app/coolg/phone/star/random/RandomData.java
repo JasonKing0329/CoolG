@@ -16,6 +16,8 @@ public class RandomData {
 
     private List<Long> markedList;
 
+    private RandomRule randomRule;
+
     public String getName() {
         return name;
     }
@@ -38,5 +40,13 @@ public class RandomData {
 
     public void setMarkedList(List<Long> markedList) {
         this.markedList = markedList;
+    }
+
+    public RandomRule getRandomRule() {
+        return randomRule;
+    }
+
+    public void setRandomRule(RandomRule randomRule) {
+        this.randomRule = randomRule;
     }
 }

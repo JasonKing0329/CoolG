@@ -12,13 +12,13 @@ import android.widget.ImageView;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.image.ImageProvider;
+import com.king.app.coolg.model.repository.StarRepository;
+import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.star.list.StarProxy;
 import com.king.app.coolg.utils.ColorUtil;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.gdb.data.entity.Star;
-
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +43,8 @@ public class StarRandomViewModel extends BaseViewModel {
 
     private List<Star> mSelectedList = new ArrayList<>();
 
+    private List<Star> mRandomList = null;
+
     private Disposable randomDisposable;
 
     public MutableLiveData<StarProxy> starObserver = new MutableLiveData<>();
@@ -56,6 +58,8 @@ public class StarRandomViewModel extends BaseViewModel {
     private Random random = new Random();
 
     private RandomRule randomRule = new RandomRule();
+
+    private StarRepository starRepository = new StarRepository();
 
     private int maxHeight;
     private int maxWidth;
@@ -77,6 +81,11 @@ public class StarRandomViewModel extends BaseViewModel {
         return randomRule;
     }
 
+    public void saveRandomRule(RandomRule randomRule) {
+        this.randomRule = randomRule;
+        resetRandomList();
+    }
+
     public void onClickStart(View view) {
         if (randomDisposable == null) {
             startRandom();
@@ -89,8 +98,16 @@ public class StarRandomViewModel extends BaseViewModel {
         ColorUtil.updateIconColor((ImageView) view, getIconColor());
     }
 
+    public void resetRandomList() {
+        mRandomList = null;
+    }
+
     private void startRandom() {
-        randomStar()
+        prepareRandomList()
+                .flatMap(list -> {
+                    mRandomList = list;
+                    return randomStar(list);
+                })
                 .flatMap(star -> toStarProxy(star))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -110,6 +127,7 @@ public class StarRandomViewModel extends BaseViewModel {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
                     }
 
                     @Override
@@ -126,20 +144,41 @@ public class StarRandomViewModel extends BaseViewModel {
         }
     }
 
-    private Observable<Star> randomStar() {
+    private Observable<List<Star>> prepareRandomList() {
         return Observable.create(e -> {
-            List<Star> randomList = mCandidates;
-            if (ListUtil.isEmpty(randomList)) {
-                QueryBuilder<Star> builder = getDaoSession().getStarDao().queryBuilder();
-                randomList = builder.build().list();
-//                builder.join(StarRating.class, StarRatingDao.Properties.StarId)
-//                        .where(StarRatingDao.Properties.Complex.gt())
+            List<Star> list = new ArrayList<>();
+            if (mRandomList == null) {
+                // 优先运用candidates
+                list = mCandidates;
+                // 没有才根据rule
+                if (ListUtil.isEmpty(list)) {
+                    String[] conditions = null;
+                    try {
+                        conditions = randomRule.getSqlRating().split(",");
+                    } catch (Exception ee){}
+                    list = starRepository.queryStar(randomRule.getStarType(), conditions);
+                }
             }
+            else {
+                list = mRandomList;
+            }
+            if (list.size() == 0) {
+                e.onError(new Exception("No random data"));
+            }
+            else {
+                e.onNext(list);
+                e.onComplete();
+            }
+        });
+    }
+
+    private Observable<Star> randomStar(List<Star> randomList) {
+        return Observable.create(e -> {
             try {
                 while (randomDisposable != null) {
                     int index = Math.abs(random.nextInt()) % randomList.size();
                     e.onNext(randomList.get(index));
-                    Thread.sleep(200);
+                    Thread.sleep(150);
                 }
             } catch (InterruptedException ee) {
                 e.onComplete();
@@ -232,11 +271,111 @@ public class StarRandomViewModel extends BaseViewModel {
         if (mCurrentStar != null) {
             mSelectedList.add(mCurrentStar.getStar());
             selectedObserver.setValue(mSelectedList);
+            if (randomRule.isExcludeFromMarked()) {
+                mRandomList.remove(mCurrentStar.getStar());
+            }
         }
     }
 
     public void deleteSelected(Star star) {
         mSelectedList.remove(star);
         selectedObserver.setValue(mSelectedList);
+        // 还要添加回随机列表
+        if (randomRule.isExcludeFromMarked()) {
+            // 过滤重复项
+            if (!isRepeatStar(star)) {
+                mRandomList.add(star);
+            }
+        }
+    }
+
+    public void clearAll() {
+        mCandidates.clear();
+        mSelectedList.clear();
+        randomRule = new RandomRule();
+        mCurrentStar = null;
+        resetRandomList();
+        candidatesObserver.setValue(mCandidates);
+        selectedObserver.setValue(mSelectedList);
+    }
+
+    @Override
+    public void onDestroy() {
+        RandomData randomData = new RandomData();
+        randomData.setName("auto");
+        randomData.setRandomRule(randomRule);
+        randomData.setCandidateList(new ArrayList<>());
+        randomData.setMarkedList(new ArrayList<>());
+        for (Star star:mCandidates) {
+            randomData.getCandidateList().add(star.getId());
+        }
+        for (Star star:mSelectedList) {
+            randomData.getMarkedList().add(star.getId());
+        }
+        SettingProperty.setStarRandomData(randomData);
+        super.onDestroy();
+    }
+
+    /**
+     * 初始化上一次的数据
+     */
+    public void loadDefaultData() {
+        RandomData data = SettingProperty.getStarRandomData();
+        randomRule = data.getRandomRule();
+        if (randomRule == null) {
+            randomRule = new RandomRule();
+        }
+        for (long id:data.getMarkedList()) {
+            try {
+                Star star = getDaoSession().getStarDao().load(id);
+                if (star != null) {
+                    mSelectedList.add(star);
+                }
+            } catch (Exception e) {}
+        }
+        selectedObserver.setValue(mSelectedList);
+
+        for (long id:data.getCandidateList()) {
+            try {
+                Star star = getDaoSession().getStarDao().load(id);
+                if (star != null) {
+                    mCandidates.add(star);
+                }
+            } catch (Exception e) {}
+        }
+        candidatesObserver.setValue(mCandidates);
+
+        prepareRandomList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<List<Star>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(List<Star> stars) {
+                        mRandomList = stars;
+                        for (Star mark:mSelectedList) {
+                            for (int i = 0; i < mRandomList.size(); i ++) {
+                                if (mRandomList.get(i).getId() == mark.getId()) {
+                                    mRandomList.remove(i);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }
