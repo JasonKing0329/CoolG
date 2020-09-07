@@ -122,6 +122,9 @@
         <activity
             android:name=".phone.star.tag.TagStarActivity"
             android:screenOrientation="user" />
+        <activity
+            android:name=".phone.star.random.StarRandomActivity"
+            android:screenOrientation="user" />
 
         <activity
             android:name=".pad.home.HomePadActivity"

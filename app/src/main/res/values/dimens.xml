@@ -257,4 +257,6 @@
     <dimen name="star_stagger_index_size">16dp</dimen>
     <dimen name="star_stagger_index_text">8dp</dimen>
     <dimen name="star_stagger_video_text">10dp</dimen>
+    <dimen name="star_random_img_top">104dp</dimen>
+    <dimen name="star_random_img_bottom">206dp</dimen>
 </resources>

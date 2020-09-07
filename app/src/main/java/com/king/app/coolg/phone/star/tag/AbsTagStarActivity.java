@@ -7,6 +7,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.PopupMenu;
 
+import com.chenenyu.router.Router;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.conf.AppConstants;
@@ -86,6 +87,9 @@ public abstract class AbsTagStarActivity<T extends ViewDataBinding> extends Mvvm
                 case R.id.menu_tag_sort_mode:
                     setTagSortMode();
                     break;
+                case R.id.menu_tag_random:
+                    showRandomPage();
+                    break;
             }
         });
         actionbar.registerPopupMenu(R.id.menu_sort);
@@ -95,6 +99,11 @@ public abstract class AbsTagStarActivity<T extends ViewDataBinding> extends Mvvm
             }
             return null;
         });
+    }
+
+    private void showRandomPage() {
+        Router.build("StarRandom")
+                .go(this);
     }
 
     private PopupMenu createSortPopup(View anchorView) {

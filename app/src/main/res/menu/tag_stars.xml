@@ -13,4 +13,7 @@
     <item android:id="@+id/menu_tag_sort_mode"
         android:title="Set tag sort mode"
         app:showAsAction="never"/>
+    <item android:id="@+id/menu_tag_random"
+        android:title="Random page"
+        app:showAsAction="never"/>
 </menu>
