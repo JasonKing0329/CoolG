@@ -86,6 +86,10 @@ public class StarRandomViewModel extends BaseViewModel {
         resetRandomList();
     }
 
+    public StarProxy getCurrentStar() {
+        return mCurrentStar;
+    }
+
     public void onClickStart(View view) {
         if (randomDisposable == null) {
             startRandom();

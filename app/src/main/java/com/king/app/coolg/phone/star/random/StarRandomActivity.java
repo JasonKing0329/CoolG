@@ -1,7 +1,6 @@
 package com.king.app.coolg.phone.star.random;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,14 +13,11 @@ import com.king.app.coolg.GlideRequest;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityStarRandomBinding;
-import com.king.app.coolg.model.bean.BannerParams;
-import com.king.app.coolg.model.setting.ViewProperty;
+import com.king.app.coolg.phone.star.StarActivity;
 import com.king.app.coolg.phone.star.list.StarProxy;
 import com.king.app.coolg.phone.star.list.StarSelectorActivity;
 import com.king.app.coolg.utils.ColorUtil;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
-import com.king.app.coolg.view.dialog.content.BannerSettingFragment;
-import com.king.app.coolg.view.helper.BannerHelper;
 import com.king.app.gdb.data.entity.Star;
 
 import java.util.ArrayList;
@@ -70,6 +66,13 @@ public class StarRandomActivity extends MvvmActivity<ActivityStarRandomBinding, 
                     , (dialog, which) -> mModel.clearAll()
                     , null);
         });
+        mBinding.ivStar.setOnClickListener(v -> {
+            if (mModel.getCurrentStar() != null) {
+                Router.build("StarPhone")
+                        .with(StarActivity.EXTRA_STAR_ID, mModel.getCurrentStar().getStar().getId())
+                        .go(this);
+            }
+        });
 
         int color = mModel.getIconColor();
         ColorUtil.updateIconColor(mBinding.btnReset, color);
@@ -85,7 +88,6 @@ public class StarRandomActivity extends MvvmActivity<ActivityStarRandomBinding, 
         mModel.candidatesObserver.observe(this, list -> showCandidates(list));
         mModel.selectedObserver.observe(this, list -> showSelectedList(list));
         mModel.starObserver.observe(this, star -> showStar(star));
-
         mModel.loadDefaultData();
     }
 
