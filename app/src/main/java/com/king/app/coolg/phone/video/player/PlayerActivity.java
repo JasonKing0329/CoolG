@@ -13,6 +13,7 @@ import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPlayerBinding;
+import com.king.app.coolg.model.bean.PlayList;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 import com.king.app.coolg.view.widget.video.OnPlayEmptyUrlListener;
 import com.king.app.coolg.view.widget.video.OnVideoListListener;
@@ -27,12 +28,6 @@ import com.king.app.coolg.view.widget.video.UrlCallback;
  */
 @Route("Player")
 public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, PlayerViewModel> {
-
-    public static final String EXTRA_PLAY_SINGLE_URL = "play_single_url";
-    public static final String EXTRA_ORDER_ID = "order_id";
-    public static final String EXTRA_STAR_ID = "star_id";
-    public static final String EXTRA_PLAY_RANDOM = "play_random";
-    public static final String EXTRA_PLAY_LAST = "play_last";
 
     private PlayListFragment ftList;
 
@@ -102,26 +97,6 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
         return ViewModelProviders.of(this).get(PlayerViewModel.class);
     }
 
-    private long getOrderId() {
-        return getIntent().getLongExtra(EXTRA_ORDER_ID, 0);
-    }
-
-    private long getStarId() {
-        return getIntent().getLongExtra(EXTRA_STAR_ID, 0);
-    }
-
-    private boolean isRandom() {
-        return getIntent().getBooleanExtra(EXTRA_PLAY_RANDOM, false);
-    }
-
-    private boolean isPlayLast() {
-        return getIntent().getBooleanExtra(EXTRA_PLAY_LAST, false);
-    }
-
-    private String getSinglePlayUrl() {
-        return getIntent().getStringExtra(EXTRA_PLAY_SINGLE_URL);
-    }
-
     @Override
     protected void initData() {
 
@@ -129,16 +104,12 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
         mModel.videoObserver.observe(this, bean -> playItem(bean));
         mModel.stopVideoObserver.observe(this, stop -> mBinding.videoView.pause());
 
-        mModel.loadPlayItems(getOrderId(), getStarId(), isRandom(), isPlayLast(), getSinglePlayUrl());
+        mModel.loadPlayItems();
     }
 
-    private void playItem(PlayItemViewBean bean) {
-        if (bean.getPlayUrl() == null) {
-            showMessageLong("null url");
-            return;
-        }
+    private void playItem(PlayList.PlayItem bean) {
         mBinding.videoView.getVideoInfo().setBgColor(Color.BLACK).setShowTopBar(true).setTitle(mModel.getVideoName(bean));
-        mBinding.videoView.setVideoPath(bean.getPlayUrl());
+        mBinding.videoView.setVideoPath(bean.getUrl());
         mBinding.videoView.play();
     }
 

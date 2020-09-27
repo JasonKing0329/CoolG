@@ -104,7 +104,10 @@ public class VideoServerActivity extends MvvmActivity<ActivityVideoServerBinding
                     }
                     else {
                         try {
-                            playUrl(UrlUtil.toVideoUrl(data.getSourceUrl()));
+                            String url = UrlUtil.toVideoUrl(data.getSourceUrl());
+                            DebugLog.e("playUrl " + url);
+                            mModel.createPlayList(url);
+                            playUrl();
                         } catch (Exception e) {
                             showMessageShort("Unavailable url");
                         }
@@ -122,10 +125,8 @@ public class VideoServerActivity extends MvvmActivity<ActivityVideoServerBinding
         mModel.loadNewFolder(null);
     }
 
-    private void playUrl(String url) {
-        DebugLog.e(url);
+    private void playUrl() {
         Router.build("Player")
-                .with(PlayerActivity.EXTRA_PLAY_SINGLE_URL, url)
                 .go(this);
     }
 

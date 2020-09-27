@@ -19,6 +19,7 @@ import com.king.app.coolg.model.repository.OrderRepository;
 import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.phone.video.home.VideoPlayList;
+import com.king.app.coolg.phone.video.player.PlayListInstance;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.UrlUtil;
@@ -79,7 +80,7 @@ public class RecordViewModel extends BaseViewModel {
 
     public MutableLiveData<String> videoUrlObserver = new MutableLiveData<>();
 
-    public MutableLiveData<PlayItem> playVideoInPlayer = new MutableLiveData<>();
+    public MutableLiveData<Boolean> playVideoInPlayer = new MutableLiveData<>();
 
     private RecordRepository repository;
     private OrderRepository orderRepository;
@@ -810,31 +811,9 @@ public class RecordViewModel extends BaseViewModel {
      */
     public void playInPlayer() {
         // 将视频url添加到临时播放列表的末尾
-        playRepository.insertToTempList(recordObserver.getValue().getId(), mPlayUrl)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<PlayItem>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(PlayItem item) {
-                        playVideoInPlayer.setValue(item);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        messageObserver.setValue(e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        PlayListInstance.getInstance().addRecord(recordObserver.getValue(), mPlayUrl);
+        PlayListInstance.getInstance().setPlayIndexAsLast();
+        playVideoInPlayer.setValue(true);
     }
 
     public void refreshTags() {

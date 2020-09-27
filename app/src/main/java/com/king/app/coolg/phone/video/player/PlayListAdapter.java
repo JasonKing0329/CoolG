@@ -1,12 +1,14 @@
 package com.king.app.coolg.phone.video.player;
 
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.king.app.coolg.GlideApp;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
 import com.king.app.coolg.databinding.AdapterPlaylistItemBinding;
+import com.king.app.coolg.model.bean.PlayList;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 
 /**
@@ -15,7 +17,7 @@ import com.king.app.coolg.phone.video.list.PlayItemViewBean;
  * @author：Jing Yang
  * @date: 2018/11/16 11:30
  */
-public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBinding, PlayItemViewBean> {
+public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBinding, PlayList.PlayItem> {
 
     private int mPlayIndex;
 
@@ -36,12 +38,17 @@ public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBindi
     }
 
     @Override
-    protected void onBindItem(AdapterPlaylistItemBinding binding, int position, PlayItemViewBean bean) {
+    protected void onBindItem(AdapterPlaylistItemBinding binding, int position, PlayList.PlayItem bean) {
+        if (TextUtils.isEmpty(bean.getName())) {
+            binding.tvName.setText(bean.getUrl());
+        }
+        else {
+            binding.tvName.setText(bean.getName());
+        }
         // 只播放地址
-        if (bean.getRecord() == null) {
+        if (bean.getRecordId() == 0) {
             binding.ivThumb.setVisibility(View.GONE);
             binding.ivDelete.setVisibility(View.INVISIBLE);
-            binding.tvName.setText(bean.getPlayUrl());
             binding.getRoot().setBackgroundColor(binding.getRoot().getContext().getResources().getColor(R.color.playlist_bg_focus));
         }
         // 播放record item
@@ -49,15 +56,10 @@ public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBindi
             binding.ivThumb.setVisibility(View.VISIBLE);
 
             GlideApp.with(binding.ivThumb.getContext())
-                    .load(bean.getCover())
+                    .load(bean.getImageUrl())
                     .error(R.drawable.def_small)
                     .into(binding.ivThumb);
-            if (bean.getRecord() == null) {
-                binding.tvName.setText("");
-            }
-            else {
-                binding.tvName.setText(bean.getRecord().getName());
-            }
+
             if (position == mPlayIndex) {
                 binding.getRoot().setBackgroundColor(binding.getRoot().getContext().getResources().getColor(R.color.playlist_bg_focus));
             }
@@ -74,6 +76,6 @@ public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBindi
     }
 
     public interface OnDeleteListener {
-        void onDelete(int position, PlayItemViewBean bean);
+        void onDelete(int position, PlayList.PlayItem bean);
     }
 }

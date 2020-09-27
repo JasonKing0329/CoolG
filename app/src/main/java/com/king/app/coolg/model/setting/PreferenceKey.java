@@ -59,6 +59,8 @@ public class PreferenceKey {
 
     public static final String PREF_TAG_SORT = "pref_tag_sort";
     public static final String PREF_STAR_RANDOM_DATA = "pref_star_random_data";
+
+    public static final String PREF_PLAY_LIST = "pref_play_list";
     /**
      * http
      */

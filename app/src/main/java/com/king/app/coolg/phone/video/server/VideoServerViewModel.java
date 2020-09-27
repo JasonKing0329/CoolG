@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.model.bean.PlayList;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.HttpConstants;
 import com.king.app.coolg.model.http.bean.data.FileBean;
@@ -16,6 +17,7 @@ import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.http.bean.response.OpenFileResponse;
 import com.king.app.coolg.model.setting.PreferenceValue;
 import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.phone.video.player.PlayListInstance;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -265,6 +267,10 @@ public class VideoServerViewModel extends BaseViewModel {
         mSortType = sortType;
         SettingProperty.setVideoServerSortType(sortType);
         onFilterChanged(mFilterText);
+    }
+
+    public void createPlayList(String url) {
+        PlayListInstance.getInstance().addUrl(url);
     }
 
     private class NameComparator implements Comparator<FileBean> {

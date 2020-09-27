@@ -1,6 +1,7 @@
 package com.king.app.coolg.phone.video.list;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Rect;
@@ -110,10 +111,20 @@ public class PlayListActivity extends MvvmActivity<ActivityVideoOrderPlayListBin
     }
 
     private void playList(boolean isRandom) {
-        Router.build("Player")
-                .with(PlayerActivity.EXTRA_ORDER_ID, getOrderId())
-                .with(PlayerActivity.EXTRA_PLAY_RANDOM, isRandom)
-                .go(this);
+        showNeutralMessage("是否清空当前播放列表，如果不清空，将会执行当前播放列表的播放模式"
+                , "清空", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mModel.createPlayList(true, isRandom, getOrderId());
+                    }
+                }
+                , "保留", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mModel.createPlayList(false, isRandom, getOrderId());
+                    }
+                }
+                , "取消", null);
     }
 
     @Override
@@ -132,9 +143,6 @@ public class PlayListActivity extends MvvmActivity<ActivityVideoOrderPlayListBin
 
     private void playList() {
         Router.build("Player")
-                .with(PlayerActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
-                .with(PlayerActivity.EXTRA_PLAY_RANDOM, false)
-                .with(PlayerActivity.EXTRA_PLAY_LAST, true)
                 .go(this);
     }
 

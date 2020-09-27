@@ -10,6 +10,7 @@ import com.king.app.coolg.phone.video.home.VideoHeadData;
 import com.king.app.coolg.phone.video.home.VideoHomeViewModel;
 import com.king.app.coolg.phone.video.home.VideoPlayList;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
+import com.king.app.coolg.phone.video.player.PlayListInstance;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.PlayOrder;
 import com.king.app.gdb.data.entity.VideoCoverStar;
@@ -22,8 +23,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class VideoHomePadViewModel extends VideoHomeViewModel {
-
-    public MutableLiveData<Boolean> videoPlayOnReadyObserver = new MutableLiveData<>();
 
     public VideoHomePadViewModel(@NonNull Application application) {
         super(application);
@@ -66,32 +65,4 @@ public class VideoHomePadViewModel extends VideoHomeViewModel {
         }
     }
 
-    public void playItem(PlayItemViewBean item) {
-        // 将视频url添加到临时播放列表的末尾
-        playRepository.insertToTempList(item.getRecord().getId(), item.getPlayUrl())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<PlayItem>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(PlayItem item) {
-                        videoPlayOnReadyObserver.setValue(true);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        messageObserver.setValue(e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
 }

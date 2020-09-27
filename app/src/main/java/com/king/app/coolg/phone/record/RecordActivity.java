@@ -330,7 +330,7 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
         mModel.videoUrlObserver.observe(this, url -> previewVideo(url));
 
-        mModel.playVideoInPlayer.observe(this, item -> playList());
+        mModel.playVideoInPlayer.observe(this, created -> playList());
 
         mModel.bitmapObserver.observe(this, bitmap -> {
             mBinding.banner.setVisibility(View.GONE);
@@ -381,9 +381,6 @@ public class RecordActivity extends MvvmActivity<ActivityRecordPhoneBinding, Rec
 
     private void playList() {
         Router.build("Player")
-                .with(PlayerActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
-                .with(PlayerActivity.EXTRA_PLAY_RANDOM, false)
-                .with(PlayerActivity.EXTRA_PLAY_LAST, true)
                 .go(this);
     }
 

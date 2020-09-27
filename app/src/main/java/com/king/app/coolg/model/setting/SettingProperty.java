@@ -2,6 +2,7 @@ package com.king.app.coolg.model.setting;
 
 import com.google.gson.Gson;
 import com.king.app.coolg.model.bean.HsvColorBean;
+import com.king.app.coolg.model.bean.PlayList;
 import com.king.app.coolg.phone.star.random.RandomData;
 import com.king.app.coolg.phone.video.home.RecommendBean;
 
@@ -261,6 +262,27 @@ public class SettingProperty extends BaseProperty {
             sql = new Gson().toJson(bean);
         } catch (Exception e) {}
         setString(PreferenceKey.PREF_STAR_RANDOM_DATA, sql);
+    }
+
+    public static void setPlayList(PlayList bean) {
+        String sql = null;
+        try {
+            sql = new Gson().toJson(bean);
+        } catch (Exception e) {}
+        setString(PreferenceKey.PREF_PLAY_LIST, sql);
+    }
+
+    public static PlayList getPlayList() {
+        String json = getString(PreferenceKey.PREF_PLAY_LIST);
+        PlayList bean = null;
+        try {
+            bean = new Gson().fromJson(json, PlayList.class);
+        } catch (Exception e) {}
+        if (bean == null) {
+            bean = new PlayList();
+            bean.setList(new ArrayList<>());
+        }
+        return bean;
     }
 
 }

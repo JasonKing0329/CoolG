@@ -12,6 +12,7 @@ import com.king.app.coolg.model.palette.ViewColorBound;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.phone.record.PassionPoint;
 import com.king.app.coolg.phone.record.RecordViewModel;
+import com.king.app.coolg.phone.video.player.PlayListInstance;
 import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.Record;
 import com.king.app.gdb.data.entity.RecordStar;
@@ -261,31 +262,10 @@ public class RecordPadViewModel extends RecordViewModel {
     }
 
     public void playVideo() {
-        // 将视频url添加到临时播放列表的末尾
-        playRepository.insertToTempList(mRecord.getId(), mPlayUrl)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<PlayItem>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(PlayItem item) {
-                        videoPlayOnReadyObserver.setValue(true);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        // 将视频url添加到播放列表的末尾
+        PlayListInstance.getInstance().addRecord(mRecord, mPlayUrl);
+        PlayListInstance.getInstance().setPlayIndexAsLast();
+        videoPlayOnReadyObserver.setValue(true);
     }
 
 }

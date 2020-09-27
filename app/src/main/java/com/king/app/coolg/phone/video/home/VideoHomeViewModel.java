@@ -13,6 +13,7 @@ import com.king.app.coolg.model.repository.PlayRepository;
 import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
+import com.king.app.coolg.phone.video.player.PlayListInstance;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.UrlUtil;
 import com.king.app.coolg.view.widget.video.UrlCallback;
@@ -454,33 +455,10 @@ public class VideoHomeViewModel extends BaseViewModel {
         loadRecommend();
     }
 
-
     public void playItem(PlayItemViewBean item) {
         // 将视频url添加到临时播放列表的末尾
-        playRepository.insertToTempList(item.getRecord().getId(), item.getPlayUrl())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<PlayItem>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
-
-                    @Override
-                    public void onNext(PlayItem item) {
-                        videoPlayOnReadyObserver.setValue(true);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        messageObserver.setValue(e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        PlayListInstance.getInstance().addPlayItemViewBean(item);
+        PlayListInstance.getInstance().setPlayIndexAsLast();
+        videoPlayOnReadyObserver.setValue(true);
     }
 }

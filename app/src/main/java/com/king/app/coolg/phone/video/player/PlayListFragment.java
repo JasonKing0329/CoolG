@@ -9,6 +9,7 @@ import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentVideoPlayListBinding;
+import com.king.app.coolg.model.bean.PlayList;
 import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 
 import java.util.List;
@@ -62,16 +63,16 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
 
     }
 
-    private void showList(List<PlayItemViewBean> list) {
+    private void showList(List<PlayList.PlayItem> list) {
         updateTitle(list.size());
         if (adapter == null) {
             adapter = new PlayListAdapter();
             adapter.setList(list);
             adapter.setPlayIndex(playerViewModel.getPlayIndex());
-            adapter.enableDelete(playerViewModel.isPlayOrder());
+            adapter.enableDelete(true);
             adapter.setOnItemClickListener((view, position, data) -> playerViewModel.playVideoAt(position));
             adapter.setOnDeleteListener((position, bean) -> {
-                playerViewModel.deletePlayItem(position, bean.getPlayItem());
+                playerViewModel.deletePlayItem(position, bean);
                 adapter.notifyItemRemoved(position);
                 updateTitle(adapter.getItemCount());
             });

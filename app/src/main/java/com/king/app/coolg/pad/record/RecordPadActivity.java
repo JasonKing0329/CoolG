@@ -210,7 +210,10 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         });
 
         mBinding.ivPlayVideo.setOnClickListener(v -> mModel.playVideo());
-        mModel.videoPlayOnReadyObserver.observe(this, result -> playList());
+        mModel.videoPlayOnReadyObserver.observe(this, result -> {
+            Router.build("Player")
+                    .go(RecordPadActivity.this);
+        });
 
         mBinding.rvOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mBinding.rvPlayOrders.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -238,14 +241,6 @@ public class RecordPadActivity extends MvvmActivity<ActivityRecordPadBinding, Re
         dialogFragment.setMaxHeight(ScreenUtils.dp2px(450));
         dialogFragment.setOnDismissListener(v -> mModel.refreshTags());
         dialogFragment.show(getSupportFragmentManager(), "TagFragment");
-    }
-
-    private void playList() {
-        Router.build("Player")
-                .with(PlayerActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
-                .with(PlayerActivity.EXTRA_PLAY_RANDOM, false)
-                .with(PlayerActivity.EXTRA_PLAY_LAST, true)
-                .go(this);
     }
 
     @Override

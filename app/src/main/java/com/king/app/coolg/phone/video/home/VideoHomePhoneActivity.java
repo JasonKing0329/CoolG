@@ -264,9 +264,6 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
 
     private void playList() {
         Router.build("Player")
-                .with(PlayerActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
-                .with(PlayerActivity.EXTRA_PLAY_RANDOM, false)
-                .with(PlayerActivity.EXTRA_PLAY_LAST, true)
                 .go(this);
     }
 

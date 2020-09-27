@@ -7,8 +7,13 @@ import android.support.annotation.NonNull;
 
 import com.king.app.gdb.data.entity.DaoSession;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * 描述:
@@ -46,4 +51,19 @@ public class BaseViewModel extends AndroidViewModel {
     protected DaoSession getDaoSession() {
         return CoolApplication.getInstance().getDaoSession();
     }
+
+    @SuppressWarnings("unchecked")
+    public <T> ObservableTransformer<T, T> applySchedulers() {
+        return (ObservableTransformer<T, T>) transformer;
+    }
+
+    private final static ObservableTransformer transformer = new ObservableTransformer() {
+        @Override
+        public ObservableSource apply(Observable upstream) {
+            return upstream
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread());
+        }
+    };
+
 }

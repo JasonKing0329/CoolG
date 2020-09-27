@@ -1,9 +1,12 @@
 package com.king.app.coolg.phone.video.list;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Rect;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -104,13 +107,30 @@ public class PlayStarListActivity extends MvvmActivity<ActivityVideoStarPlayList
             }
         });
         mBinding.actionbar.updateMenuItemVisible(R.id.menu_clear, false);
+
+        mModel.playListCreated.observe(this, created -> {
+            if (created) {
+                Router.build("Player")
+                        .go(PlayStarListActivity.this);
+            }
+        });
     }
 
     private void playList(boolean isRandom) {
-        Router.build("Player")
-                .with(PlayerActivity.EXTRA_STAR_ID, getStarId())
-                .with(PlayerActivity.EXTRA_PLAY_RANDOM, isRandom)
-                .go(this);
+        showNeutralMessage("是否清空当前播放列表，如果不清空，将会执行当前播放列表的播放模式"
+                , "清空", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mModel.createPlayList(true, isRandom, getStarId());
+                    }
+                }
+                , "保留", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mModel.createPlayList(false, isRandom, getStarId());
+                    }
+                }
+                , "取消", null);
     }
 
     @Override
@@ -129,9 +149,6 @@ public class PlayStarListActivity extends MvvmActivity<ActivityVideoStarPlayList
 
     private void playList() {
         Router.build("Player")
-                .with(PlayerActivity.EXTRA_ORDER_ID, AppConstants.PLAY_ORDER_TEMP_ID)
-                .with(PlayerActivity.EXTRA_PLAY_RANDOM, false)
-                .with(PlayerActivity.EXTRA_PLAY_LAST, true)
                 .go(this);
     }
 

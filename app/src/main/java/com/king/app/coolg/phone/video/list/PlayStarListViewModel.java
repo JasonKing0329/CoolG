@@ -7,9 +7,12 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
+import com.king.app.coolg.model.bean.PlayList;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.repository.PlayRepository;
+import com.king.app.coolg.model.rx.SimpleObserver;
+import com.king.app.coolg.phone.video.player.PlayListInstance;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.utils.UrlUtil;
 import com.king.app.coolg.view.widget.video.UrlCallback;
@@ -19,6 +22,7 @@ import com.king.app.gdb.data.entity.Star;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -45,6 +49,8 @@ public class PlayStarListViewModel extends BaseViewModel {
     private long mStarId;
 
     public MutableLiveData<Boolean> videoPlayOnReadyObserver = new MutableLiveData<>();
+
+    public MutableLiveData<Boolean> playListCreated = new MutableLiveData<>();
 
     public PlayStarListViewModel(@NonNull Application application) {
         super(application);
@@ -141,18 +147,19 @@ public class PlayStarListViewModel extends BaseViewModel {
 
     public void playItem(PlayItemViewBean item) {
         // 将视频url添加到临时播放列表的末尾
-        repository.insertToTempList(item.getRecord().getId(), item.getPlayUrl())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<PlayItem>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        addDisposable(d);
-                    }
+        PlayListInstance.getInstance().addPlayItemViewBean(item);
+        PlayListInstance.getInstance().setPlayIndexAsLast();
+        videoPlayOnReadyObserver.setValue(true);
+    }
 
+    public void createPlayList(boolean clearCurrent, boolean isRandom, long starId) {
+        repository.getStarPlayItems(starId)
+                .flatMap(list -> addToPlayList(list, clearCurrent, isRandom))
+                .compose(applySchedulers())
+                .subscribe(new SimpleObserver<Boolean>(compositeDisposable) {
                     @Override
-                    public void onNext(PlayItem item) {
-                        videoPlayOnReadyObserver.setValue(true);
+                    public void onNext(Boolean aBoolean) {
+                        playListCreated.setValue(true);
                     }
 
                     @Override
@@ -160,11 +167,30 @@ public class PlayStarListViewModel extends BaseViewModel {
                         e.printStackTrace();
                         messageObserver.setValue(e.getMessage());
                     }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
                 });
+    }
+
+    private ObservableSource<Boolean> addToPlayList(List<PlayItemViewBean> list, boolean clearCurrent, boolean isRandom) {
+        return observer -> {
+            PlayList playList = PlayListInstance.getInstance().getPlayList();
+            if (clearCurrent) {
+                playList.getList().clear();
+                playList.setPlayMode(isRandom ? 1:0);
+                playList.setPlayIndex(0);
+            }
+            if (list.size() > 0) {
+                PlayListInstance.getInstance().addPlayItems(list);
+                // 由于添加时可能进行了去重，playIndex要以url来判断
+                for (int i = 0; i < playList.getList().size(); i ++) {
+                    PlayList.PlayItem item = playList.getList().get(i);
+                    if (item.getUrl().equals(list.get(0).getPlayUrl())) {
+                        playList.setPlayIndex(i);
+                        break;
+                    }
+                }
+            }
+            observer.onNext(true);
+            observer.onComplete();
+        };
     }
 }
