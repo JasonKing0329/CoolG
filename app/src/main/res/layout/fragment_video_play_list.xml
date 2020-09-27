@@ -15,6 +15,15 @@
             android:src="@drawable/ic_close_white_36dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+        <ImageView
+            android:id="@+id/iv_clear"
+            android:layout_width="@dimen/video_player_close_size"
+            android:layout_height="@dimen/video_player_close_size"
+            android:padding="@dimen/video_player_close_padding"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_baseline_clear_all_24"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iv_close"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_list"
             android:layout_width="match_parent"
@@ -35,7 +44,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/video_player_list_title_size"
             app:layout_constraintBottom_toTopOf="@+id/rv_list"
-            app:layout_constraintEnd_toStartOf="@+id/iv_close"
+            app:layout_constraintEnd_toStartOf="@+id/iv_clear"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>

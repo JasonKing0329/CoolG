@@ -10,7 +10,6 @@ import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.base.MvvmFragment;
 import com.king.app.coolg.databinding.FragmentVideoPlayListBinding;
 import com.king.app.coolg.model.bean.PlayList;
-import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 
 import java.util.List;
 
@@ -48,6 +47,8 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
         mBinding.rvList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         mBinding.ivClose.setOnClickListener(v -> playerViewModel.closeListObserver.setValue(true));
+
+        mBinding.ivClear.setOnClickListener(v -> playerViewModel.clearAll());
 
         playerViewModel.playIndexObserver.observe(this, index -> {
             if (adapter != null) {

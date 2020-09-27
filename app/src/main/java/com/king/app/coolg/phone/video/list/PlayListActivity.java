@@ -14,10 +14,8 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
-import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityVideoOrderPlayListBinding;
 import com.king.app.coolg.phone.record.RecordActivity;
-import com.king.app.coolg.phone.video.player.PlayerActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.gdb.data.entity.Record;
 
@@ -95,11 +93,9 @@ public class PlayListActivity extends MvvmActivity<ActivityVideoOrderPlayListBin
             switch (menuId) {
                 case R.id.menu_play_sequence:
                     playList(false);
-                    finish();
                     break;
                 case R.id.menu_play_random:
                     playList(true);
-                    finish();
                     break;
                 case R.id.menu_clear:
                     showConfirmCancelMessage("Clear all play items?"

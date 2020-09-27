@@ -14,11 +14,8 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPlayerBinding;
 import com.king.app.coolg.model.bean.PlayList;
-import com.king.app.coolg.phone.video.list.PlayItemViewBean;
-import com.king.app.coolg.view.widget.video.OnPlayEmptyUrlListener;
 import com.king.app.coolg.view.widget.video.OnVideoListListener;
 import com.king.app.coolg.view.widget.video.OnVideoListener;
-import com.king.app.coolg.view.widget.video.UrlCallback;
 
 /**
  * Desc:
@@ -103,21 +100,33 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
         mModel.closeListObserver.observe(this, close -> mBinding.ftList.startAnimation(listDisappear()));
         mModel.videoObserver.observe(this, bean -> playItem(bean));
         mModel.stopVideoObserver.observe(this, stop -> mBinding.videoView.pause());
+        mModel.videoUrlIsReady.observe(this, bean -> urlIsReady(bean));
 
         mModel.loadPlayItems();
     }
 
     private void playItem(PlayList.PlayItem bean) {
+        if (bean.getUrl() == null) {
+            mModel.loadPlayUrl(bean);
+        }
+        else {
+            urlIsReady(bean);
+        }
+    }
+
+    private void urlIsReady(PlayList.PlayItem bean) {
         mBinding.videoView.getVideoInfo().setBgColor(Color.BLACK).setShowTopBar(true).setTitle(mModel.getVideoName(bean));
         mBinding.videoView.setVideoPath(bean.getUrl());
         mBinding.videoView.play();
     }
+
 
     @Override
     protected void onDestroy() {
         if (mModel != null) {
             mModel.updatePlayToDb();
         }
+        PlayListInstance.getInstance().destroy();
         super.onDestroy();
     }
 

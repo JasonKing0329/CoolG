@@ -2,23 +2,20 @@ package com.king.app.coolg.phone.video.player;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
-import android.net.rtp.RtpStream;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.king.app.coolg.base.BaseViewModel;
 import com.king.app.coolg.model.bean.PlayList;
-import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
+import com.king.app.coolg.model.image.ImageProvider;
 import com.king.app.coolg.model.repository.PlayRepository;
-import com.king.app.coolg.phone.video.list.PlayItemViewBean;
+import com.king.app.coolg.model.rx.SimpleObserver;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.UrlUtil;
 import com.king.app.coolg.view.widget.video.UrlCallback;
-import com.king.app.gdb.data.entity.PlayDuration;
-import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.Record;
 
 import java.util.ArrayList;
@@ -26,7 +23,6 @@ import java.util.List;
 import java.util.Random;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -43,6 +39,8 @@ public class PlayerViewModel extends BaseViewModel {
     public MutableLiveData<List<PlayList.PlayItem>> itemsObserver = new MutableLiveData<>();
 
     public MutableLiveData<PlayList.PlayItem> videoObserver = new MutableLiveData<>();
+
+    public MutableLiveData<PlayList.PlayItem> videoUrlIsReady = new MutableLiveData<>();
 
     public MutableLiveData<Boolean> closeListObserver = new MutableLiveData<>();
 
@@ -136,6 +134,15 @@ public class PlayerViewModel extends BaseViewModel {
         else {
             return bean.getName();
         }
+    }
+
+    public void clearAll() {
+        mPlayList.clear();
+        if (randomPlay.remains != null) {
+            randomPlay.remains.clear();
+        }
+        PlayListInstance.getInstance().clearPlayList();
+        itemsObserver.setValue(mPlayList);
     }
 
     /**
@@ -258,6 +265,38 @@ public class PlayerViewModel extends BaseViewModel {
         playIndexObserver.setValue(mPlayIndex);
     }
 
+    public void loadPlayUrl(PlayList.PlayItem item) {
+        Record record = getDaoSession().getRecordDao().load(item.getRecordId());
+        if (record == null) {
+            return;
+        }
+        PathRequest request = new PathRequest();
+        request.setName(record.getName());
+        request.setPath(record.getDirectory());
+        loadingObserver.setValue(true);
+        AppHttpClient.getInstance().getAppService().getVideoPath(request)
+                .flatMap(response -> UrlUtil.toVideoUrl(response))
+                .compose(applySchedulers())
+                .subscribe(new SimpleObserver<String>(compositeDisposable) {
+                    @Override
+                    public void onNext(String s) {
+                        loadingObserver.setValue(false);
+                        item.setUrl(s);
+                        videoUrlIsReady.setValue(item);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        messageObserver.setValue(e.getMessage());
+                    }
+                });
+    }
+
+    /**
+     * record最初被加到list中url都是null，采用即时获取url的方法
+     * @param callback
+     */
     public void loadPlayUrl(UrlCallback callback) {
         if (mPlayBean == null) {
             return;

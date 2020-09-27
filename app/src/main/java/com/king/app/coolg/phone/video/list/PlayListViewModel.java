@@ -253,21 +253,24 @@ public class PlayListViewModel extends BaseViewModel {
 
     private ObservableSource<Boolean> addToPlayList(List<PlayItem> playItems, boolean clearCurrent, boolean isRandom) {
         return observer -> {
-            PlayList playList = PlayListInstance.getInstance().getPlayList();
             if (clearCurrent) {
-                playList.getList().clear();
-                playList.setPlayIndex(0);
-                playList.setPlayMode(isRandom ? 1:0);
+                PlayListInstance.getInstance().clearPlayList();
             }
+            PlayList playList = PlayListInstance.getInstance().getPlayList();
             if (playItems.size() > 0) {
+                PlayListInstance.getInstance().updatePlayMode(isRandom ? 1:0);
                 for (PlayItem item:playItems) {
                     PlayListInstance.getInstance().addRecord(item.getRecord(), item.getUrl());
                 }
-                // 由于添加时可能进行了去重，playIndex要以url来判断
+                // 由于添加时可能进行了去重，playIndex要以recordId及url来综合判断
                 for (int i = 0; i < playList.getList().size(); i ++) {
                     PlayList.PlayItem item = playList.getList().get(i);
-                    if (item.getUrl().equals(playItems.get(0).getUrl())) {
-                        playList.setPlayIndex(i);
+                    if (item.getRecordId() == playItems.get(0).getRecordId()) {
+                        playList.setPlayIndex(item.getIndex());
+                        break;
+                    }
+                    if (item.getUrl() != null && item.getUrl().equals(playItems.get(0).getUrl())) {
+                        playList.setPlayIndex(item.getIndex());
                         break;
                     }
                 }

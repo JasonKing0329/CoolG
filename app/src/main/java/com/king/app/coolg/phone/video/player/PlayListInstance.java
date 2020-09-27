@@ -17,8 +17,6 @@ public class PlayListInstance {
 
     private static PlayListInstance instance;
 
-    private PlayList playList;
-
     public static PlayListInstance getInstance() {
         synchronized (PlayListInstance.class) {
             if (instance == null) {
@@ -40,6 +38,12 @@ public class PlayListInstance {
         return SettingProperty.getPlayList();
     }
 
+    public void updatePlayMode(int mode) {
+        PlayList playList = getPlayList();
+        playList.setPlayMode(mode);
+        saveList(playList);
+    }
+
     public void setPlayIndexAsLast() {
         PlayList playList = getPlayList();
         if (playList.getList().size() > 0) {
@@ -48,13 +52,20 @@ public class PlayListInstance {
         else {
             playList.setPlayIndex(0);
         }
+        saveList(playList);
     }
 
-    private int findExistedItem(PlayList playList, String url) {
+    private int findExistedItem(PlayList playList, String url, long recordId) {
         int existIndex = -1;
         for (int i = 0; i < playList.getList().size(); i ++) {
             PlayList.PlayItem item = playList.getList().get(i);
-            if (item.getUrl().equals(url)) {
+            // 先判断recordId
+            if (recordId > 0 && item.getRecordId() == recordId) {
+                existIndex = i;
+                break;
+            }
+            // 再判断url
+            if (item.getUrl() != null && item.getUrl().equals(url)) {
                 existIndex = i;
                 break;
             }
@@ -64,22 +75,25 @@ public class PlayListInstance {
 
     public void addUrl(String url) {
         PlayList playList = getPlayList();
-        int existIndex = findExistedItem(playList, url);
+        int existIndex = findExistedItem(playList, url, 0);
         PlayList.PlayItem item = new PlayList.PlayItem();
         item.setUrl(url);
         // 已有则删除并重新加在末尾，但保留播放时长
         if (existIndex != -1) {
-            playList.getList().remove(existIndex);
             item.setPlayTime(playList.getList().get(existIndex).getPlayTime());
+            playList.getList().remove(existIndex);
         }
         item.setIndex(playList.getList().size());
         playList.getList().add(item);
-        SettingProperty.setPlayList(playList);
+        saveList(playList);
     }
 
     public void addPlayItemViewBean(PlayItemViewBean bean) {
+        if (bean.getRecord() == null) {
+            return;
+        }
         PlayList playList = getPlayList();
-        int existIndex = findExistedItem(playList, bean.getPlayUrl());
+        int existIndex = findExistedItem(playList, bean.getPlayUrl(), bean.getRecord().getId());
         PlayList.PlayItem item = new PlayList.PlayItem();
         item.setUrl(bean.getPlayUrl());
         item.setRecordId(bean.getRecord().getId());
@@ -87,29 +101,32 @@ public class PlayListInstance {
 //        item.setDuration();
         // 已有则删除并重新加在末尾，但保留播放时长
         if (existIndex != -1) {
-            playList.getList().remove(existIndex);
             item.setPlayTime(playList.getList().get(existIndex).getPlayTime());
+            playList.getList().remove(existIndex);
         }
         item.setIndex(playList.getList().size());
         playList.getList().add(item);
-        SettingProperty.setPlayList(playList);
+        saveList(playList);
     }
 
     public void addRecord(Record record, String url) {
+        if (record == null) {
+            return;
+        }
         PlayList playList = getPlayList();
-        int existIndex = findExistedItem(playList, url);
+        int existIndex = findExistedItem(playList, url, record.getId());
         PlayList.PlayItem item = new PlayList.PlayItem();
         item.setUrl(url);
         item.setRecordId(record.getId());
         item.setName(record.getName());
         // 已有则删除并重新加在末尾，但保留播放时长
         if (existIndex != -1) {
-            playList.getList().remove(existIndex);
             item.setPlayTime(playList.getList().get(existIndex).getPlayTime());
+            playList.getList().remove(existIndex);
         }
         item.setIndex(playList.getList().size());
         playList.getList().add(item);
-        SettingProperty.setPlayList(playList);
+        saveList(playList);
     }
 
     public void addPlayItems(List<PlayItemViewBean> list) {
@@ -127,14 +144,26 @@ public class PlayListInstance {
                 break;
             }
         }
-        SettingProperty.setPlayList(playList);
+        saveList(playList);
     }
 
     public void updatePlayList() {
+        PlayList playList = getPlayList();
         for (int i = 0; i < playList.getList().size(); i ++) {
             PlayList.PlayItem playItem = playList.getList().get(i);
             playItem.setIndex(i);
         }
+        saveList(playList);
+    }
+
+    private void saveList(PlayList playList) {
         SettingProperty.setPlayList(playList);
+    }
+
+    public void clearPlayList() {
+        PlayList playList = getPlayList();
+        playList.getList().clear();
+        playList.setPlayIndex(0);
+        saveList(playList);
     }
 }
