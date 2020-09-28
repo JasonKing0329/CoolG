@@ -9,7 +9,6 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
 import com.king.app.coolg.databinding.AdapterPlaylistItemBinding;
 import com.king.app.coolg.model.bean.PlayList;
-import com.king.app.coolg.phone.video.list.PlayItemViewBean;
 
 /**
  * Desc:
@@ -45,30 +44,20 @@ public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBindi
         else {
             binding.tvName.setText(bean.getName());
         }
-        // 只播放地址
-        if (bean.getRecordId() == 0) {
-            binding.ivThumb.setVisibility(View.GONE);
-            binding.ivDelete.setVisibility(View.INVISIBLE);
+
+        GlideApp.with(binding.ivThumb.getContext())
+                .load(bean.getImageUrl())
+                .error(R.drawable.def_small)
+                .into(binding.ivThumb);
+
+        if (position == mPlayIndex) {
             binding.getRoot().setBackgroundColor(binding.getRoot().getContext().getResources().getColor(R.color.playlist_bg_focus));
         }
-        // 播放record item
         else {
-            binding.ivThumb.setVisibility(View.VISIBLE);
-
-            GlideApp.with(binding.ivThumb.getContext())
-                    .load(bean.getImageUrl())
-                    .error(R.drawable.def_small)
-                    .into(binding.ivThumb);
-
-            if (position == mPlayIndex) {
-                binding.getRoot().setBackgroundColor(binding.getRoot().getContext().getResources().getColor(R.color.playlist_bg_focus));
-            }
-            else {
-                binding.getRoot().setBackgroundColor(Color.TRANSPARENT);
-            }
-            binding.ivDelete.setVisibility(enableDelete ? View.VISIBLE:View.GONE);
-            binding.ivDelete.setOnClickListener(v -> onDeleteListener.onDelete(position, bean));
+            binding.getRoot().setBackgroundColor(Color.TRANSPARENT);
         }
+        binding.ivDelete.setVisibility(enableDelete ? View.VISIBLE:View.GONE);
+        binding.ivDelete.setOnClickListener(v -> onDeleteListener.onDelete(position, bean));
     }
 
     public void enableDelete(boolean enableDelete) {
