@@ -11,8 +11,10 @@ import com.king.app.coolg.model.bean.PlayList;
 import com.king.app.coolg.model.http.AppHttpClient;
 import com.king.app.coolg.model.http.bean.request.PathRequest;
 import com.king.app.coolg.model.image.ImageProvider;
-import com.king.app.coolg.model.repository.PlayRepository;
+import com.king.app.coolg.model.repository.RecordRepository;
 import com.king.app.coolg.model.rx.SimpleObserver;
+import com.king.app.coolg.model.setting.SettingProperty;
+import com.king.app.coolg.phone.video.home.RecommendBean;
 import com.king.app.coolg.utils.DebugLog;
 import com.king.app.coolg.utils.ListUtil;
 import com.king.app.coolg.utils.UrlUtil;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Random;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -39,7 +42,9 @@ public class PlayerViewModel extends BaseViewModel {
 
     public MutableLiveData<List<PlayList.PlayItem>> itemsObserver = new MutableLiveData<>();
 
-    public MutableLiveData<PlayList.PlayItem> videoObserver = new MutableLiveData<>();
+    public MutableLiveData<PlayList.PlayItem> playVideo = new MutableLiveData<>();
+
+    public MutableLiveData<PlayList.PlayItem> prepareVideo = new MutableLiveData<>();
 
     public MutableLiveData<PlayList.PlayItem> videoUrlIsReady = new MutableLiveData<>();
 
@@ -51,17 +56,27 @@ public class PlayerViewModel extends BaseViewModel {
 
     public ObservableField<String> playModeText = new ObservableField<>();
 
-    private List<PlayList.PlayItem> mPlayList;
+    private List<PlayList.PlayItem> mPlayList = new ArrayList<>();
 
     private PlayList.PlayItem mPlayBean;
 
     private int mPlayIndex;
 
+    /**
+     * 播放列表的播放模式：顺序、随机
+     */
     private boolean isRandomPlay;
+
+    /**
+     * 自定义条件随机播放模式（随机产生符合条件的record，并且会被加入到播放列表中）
+     */
+    private boolean isCustomRandomPlay;
 
     private RandomPlay randomPlay;
 
     private Random random;
+
+    private RecordRepository recordRepository = new RecordRepository();
 
     public PlayerViewModel(@NonNull Application application) {
         super(application);
@@ -96,7 +111,7 @@ public class PlayerViewModel extends BaseViewModel {
         });
     }
 
-    public void loadPlayItems() {
+    public void loadPlayItems(boolean autoPlay) {
         loadingObserver.setValue(true);
         getObservable()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -119,7 +134,12 @@ public class PlayerViewModel extends BaseViewModel {
                         else {
                             int startIndex = PlayListInstance.getInstance().getPlayList().getPlayIndex();
                             randomPlay.current = startIndex;
-                            playVideoAt(startIndex);
+                            if (autoPlay) {
+                                playVideoAt(startIndex);
+                            }
+                            else {
+                                prepareVideoAt(startIndex);
+                            }
                         }
                     }
 
@@ -146,12 +166,19 @@ public class PlayerViewModel extends BaseViewModel {
         }
     }
 
-    public void clearAll() {
+    public void clearViewList() {
         mPlayList.clear();
         if (randomPlay.remains != null) {
             randomPlay.remains.clear();
         }
+    }
+
+    public void clearAll() {
+        // 从UI中删除
+        clearViewList();
+        // 从播放列表持久化删除
         PlayListInstance.getInstance().clearPlayList();
+
         itemsObserver.setValue(mPlayList);
     }
 
@@ -159,6 +186,17 @@ public class PlayerViewModel extends BaseViewModel {
         isRandomPlay = !isRandomPlay;
         updatePlayModeText();
         PlayListInstance.getInstance().updatePlayMode(isRandomPlay ? 1:0);
+    }
+
+    public void setIsCustomRandomPlay(boolean enable) {
+        isCustomRandomPlay = enable;
+        if (isCustomRandomPlay) {
+            clearViewList();
+        }
+        else {
+            mPlayList = PlayListInstance.getInstance().getPlayList().getList();
+        }
+        itemsObserver.setValue(mPlayList);
     }
 
     /**
@@ -184,6 +222,42 @@ public class PlayerViewModel extends BaseViewModel {
     }
 
     public void playNext() {
+        if (isCustomRandomPlay) {
+            clearViewList();
+            RecommendBean bean = SettingProperty.getVideoRecBean();
+            bean.setOnline(true);
+            bean.setNumber(1);
+            recordRepository.getRecordsBy(bean)
+                    .flatMap(list -> addToPlayList(list))
+                    .compose(applySchedulers())
+                    .subscribe(new SimpleObserver<PlayList.PlayItem>(compositeDisposable) {
+                        @Override
+                        public void onNext(PlayList.PlayItem playItem) {
+                            mPlayList.add(playItem);
+                            itemsObserver.setValue(mPlayList);
+                            playVideoAt(0);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                        }
+                    });
+        }
+        else {
+            playNextInList();
+        }
+    }
+
+    private ObservableSource<PlayList.PlayItem> addToPlayList(List<Record> recordList) {
+        return observer -> {
+            PlayList.PlayItem item = PlayListInstance.getInstance().addRecord(recordList.get(0), null);
+            observer.onNext(item);
+            observer.onComplete();
+        };
+    }
+
+    private void playNextInList() {
         if (ListUtil.isEmpty(mPlayList)) {
             messageObserver.setValue("No video");
             return;
@@ -272,13 +346,17 @@ public class PlayerViewModel extends BaseViewModel {
         return mPlayIndex;
     }
 
-    public void playVideoAt(int position) {
+    private void prepareVideoAt(int position) {
         mPlayIndex = position;
         mPlayBean = mPlayList.get(mPlayIndex);
         DebugLog.e("play " + mPlayBean.getUrl());
-
-        videoObserver.setValue(mPlayBean);
+        prepareVideo.setValue(mPlayBean);
         playIndexObserver.setValue(mPlayIndex);
+    }
+
+    public void playVideoAt(int position) {
+        prepareVideoAt(position);
+        playVideo.setValue(mPlayBean);
     }
 
     public void loadPlayUrl(PlayList.PlayItem item) {
@@ -341,7 +419,8 @@ public class PlayerViewModel extends BaseViewModel {
                         mPlayBean.setUrl(url);
                         PlayListInstance.getInstance().updatePlayItem(mPlayBean);
                         if (callback == null) {
-                            videoObserver.setValue(mPlayBean);
+                            prepareVideo.setValue(mPlayBean);
+                            playVideo.setValue(mPlayBean);
                         }
                         else {
                             callback.onReceiveUrl(url);
@@ -401,4 +480,9 @@ public class PlayerViewModel extends BaseViewModel {
             playIndexObserver.setValue(mPlayIndex);
         }
     }
+
+    public void updateRecommend(RecommendBean bean) {
+        SettingProperty.setVideoRecBean(bean);
+    }
+
 }

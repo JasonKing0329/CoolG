@@ -109,9 +109,9 @@ public class PlayListInstance {
         saveList(playList);
     }
 
-    public void addRecord(Record record, String url) {
+    public PlayList.PlayItem addRecord(Record record, String url) {
         if (record == null) {
-            return;
+            return null;
         }
         PlayList playList = getPlayList();
         int existIndex = findExistedItem(playList, url, record.getId());
@@ -127,6 +127,7 @@ public class PlayListInstance {
         item.setIndex(playList.getList().size());
         playList.getList().add(item);
         saveList(playList);
+        return item;
     }
 
     public void addPlayItems(List<PlayItemViewBean> list) {

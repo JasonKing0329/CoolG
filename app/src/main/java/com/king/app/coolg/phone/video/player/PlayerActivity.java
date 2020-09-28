@@ -28,6 +28,8 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
 
     private PlayListFragment ftList;
 
+    public static final String EXTRA_AUTO_PLAY = "auto_play";
+
     @Override
     protected int getContentView() {
         return R.layout.activity_video_player;
@@ -90,6 +92,10 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
         mBinding.videoView.prepare();
     }
 
+    private boolean isInitAutoPlay() {
+        return getIntent().getBooleanExtra(EXTRA_AUTO_PLAY, true);
+    }
+
     @Override
     protected PlayerViewModel createViewModel() {
         return ViewModelProviders.of(this).get(PlayerViewModel.class);
@@ -99,11 +105,12 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
     protected void initData() {
 
         mModel.closeListObserver.observe(this, close -> dismissPlayList());
-        mModel.videoObserver.observe(this, bean -> playItem(bean));
+        mModel.prepareVideo.observe(this, bean -> prepareItem(bean));
+        mModel.playVideo.observe(this, bean -> playItem(bean));
         mModel.stopVideoObserver.observe(this, stop -> mBinding.videoView.pause());
         mModel.videoUrlIsReady.observe(this, bean -> urlIsReady(bean));
 
-        mModel.loadPlayItems();
+        mModel.loadPlayItems(isInitAutoPlay());
     }
 
     private void dismissPlayList() {
@@ -112,12 +119,19 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
         }
     }
 
+    private void prepareItem(PlayList.PlayItem bean) {
+        if (bean.getUrl() != null) {
+            mBinding.videoView.getVideoInfo().setBgColor(Color.BLACK).setShowTopBar(true).setTitle(mModel.getVideoName(bean));
+            mBinding.videoView.setVideoPath(bean.getUrl());
+        }
+    }
+
     private void playItem(PlayList.PlayItem bean) {
         if (bean.getUrl() == null) {
             mModel.loadPlayUrl(bean);
         }
         else {
-            urlIsReady(bean);
+            mBinding.videoView.play();
         }
     }
 
@@ -143,7 +157,6 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.ft_list, ftList, "PlayListFragment")
                     .commit();
-            listAppear();
         }
         mBinding.ftList.startAnimation(listAppear());
     }
