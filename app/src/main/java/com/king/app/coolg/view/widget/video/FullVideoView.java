@@ -294,4 +294,8 @@ public class FullVideoView extends VideoView {
             }
         });
     }
+
+    public void refreshTitle() {
+        mediaController.refreshTitle();
+    }
 }

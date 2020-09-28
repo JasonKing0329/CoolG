@@ -2,6 +2,7 @@ package com.king.app.coolg.phone.video.player;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Color;
+import android.os.Build;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -37,6 +38,8 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
 
     @Override
     protected void initView() {
+        hideBottomUIMenu();
+
         mBinding.videoView.setOnVideoListener(new OnVideoListener() {
             @Override
             public int getStartSeek() {
@@ -91,6 +94,20 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
         mBinding.videoView.setOnPlayEmptyUrlListener((fingerprint, callback) -> mModel.loadPlayUrl(callback));
         mBinding.videoView.prepare();
     }
+    protected void hideBottomUIMenu() {
+        //隐藏虚拟按键，并且全屏
+        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
+            View v = this.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            //for new api versions.
+            View decorView = getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+
+        }
+    }
 
     private boolean isInitAutoPlay() {
         return getIntent().getBooleanExtra(EXTRA_AUTO_PLAY, true);
@@ -122,6 +139,8 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
     private void prepareItem(PlayList.PlayItem bean) {
         if (bean.getUrl() != null) {
             mBinding.videoView.getVideoInfo().setBgColor(Color.BLACK).setShowTopBar(true).setTitle(mModel.getVideoName(bean));
+            // 通知立即刷新标题
+            mBinding.videoView.refreshTitle();
             mBinding.videoView.setVideoPath(bean.getUrl());
         }
     }
@@ -137,6 +156,8 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
 
     private void urlIsReady(PlayList.PlayItem bean) {
         mBinding.videoView.getVideoInfo().setBgColor(Color.BLACK).setShowTopBar(true).setTitle(mModel.getVideoName(bean));
+        // 通知立即刷新标题
+        mBinding.videoView.refreshTitle();
         mBinding.videoView.setVideoPath(bean.getUrl());
         mBinding.videoView.play();
     }

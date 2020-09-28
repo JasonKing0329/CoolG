@@ -195,12 +195,11 @@ public class FullMediaController extends BaseMediaController {
         return position;
     }
 
-
     protected void show(int timeout) {
         if (!isShowing) {
             if (videoView.getVideoInfo().isShowTopBar() || displayModel == GiraffePlayer.DISPLAY_FULL_WINDOW) {
                 $.id(R.id.app_video_top_box).visible();
-                $.id(R.id.app_video_title).text(videoView.getVideoInfo().getTitle());
+                refreshTitle();
             } else {
                 $.id(R.id.app_video_top_box).gone();
             }
@@ -507,6 +506,10 @@ public class FullMediaController extends BaseMediaController {
         }
         handler.removeMessages(MESSAGE_HIDE_CENTER_BOX);
         handler.sendEmptyMessageDelayed(MESSAGE_HIDE_CENTER_BOX, 500);
+    }
+
+    public void refreshTitle() {
+        $.id(R.id.app_video_title).text(videoView.getVideoInfo().getTitle());
     }
 
     public class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener {

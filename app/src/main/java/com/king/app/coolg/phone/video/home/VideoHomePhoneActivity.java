@@ -12,7 +12,6 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
-import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityVideoPhoneBinding;
 import com.king.app.coolg.model.bean.BannerParams;
 import com.king.app.coolg.model.setting.SettingProperty;
@@ -107,7 +106,7 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
         // 不自动加载更多
 //        mBinding.rvItems.setOnLoadMoreListener(() -> mModel.loadMore());
 
-        mBinding.fabPlay.setOnClickListener(v -> playList());
+        mBinding.fabPlay.setOnClickListener(v -> playList(false));
 
         // viewpager切换效果
         BannerHelper.setBannerParams(mBinding.banner, ViewProperty.getVideoHomeBannerParams());
@@ -260,12 +259,13 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
 
             mBinding.banner.startAutoPlay();
         });
-        mModel.videoPlayOnReadyObserver.observe(this, play -> playList());
+        mModel.videoPlayOnReadyObserver.observe(this, play -> playList(true));
         mModel.buildPage();
     }
 
-    private void playList() {
+    private void playList(boolean autoPlay) {
         Router.build("Player")
+                .with(PlayerActivity.EXTRA_AUTO_PLAY, autoPlay)
                 .go(this);
     }
 
