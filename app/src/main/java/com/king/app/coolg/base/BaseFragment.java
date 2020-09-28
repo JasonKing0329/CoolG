@@ -71,10 +71,20 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public void showConfirmMessage(String msg, DialogInterface.OnClickListener listener) {
-        new AlertDialog.Builder(getActivity())
+        new AlertDialog.Builder(getContext())
                 .setTitle(null)
                 .setMessage(msg)
                 .setPositiveButton(getString(R.string.ok), listener)
+                .show();
+    }
+
+    public void showConfirmCancelMessage(String msg, DialogInterface.OnClickListener okListener
+            , DialogInterface.OnClickListener cancelListener) {
+        new AlertDialog.Builder(getContext())
+                .setTitle(null)
+                .setMessage(msg)
+                .setPositiveButton(getString(R.string.ok), okListener)
+                .setNegativeButton(getString(R.string.cancel), cancelListener)
                 .show();
     }
 

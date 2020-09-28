@@ -218,4 +218,6 @@
     <dimen name="star_stagger_index_size">28dp</dimen>
     <dimen name="star_stagger_index_text">14dp</dimen>
     <dimen name="star_stagger_video_text">16dp</dimen>
+    <dimen name="video_player_mode_width">52dp</dimen>
+    <dimen name="video_player_mode_height">32dp</dimen>
 </resources>

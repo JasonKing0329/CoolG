@@ -87,6 +87,7 @@
                 android:backgroundTint="@color/colorPrimary"
                 android:src="@drawable/ic_arrow_upward_white_36dp"
                 android:tint="@color/white"
+                app:fabCustomSize="@dimen/gdb_home_icon_size"
                 app:borderWidth="0dp"
                 app:rippleColor="@color/actionbar_bk_blue"
                 app:useCompatPadding="true" />

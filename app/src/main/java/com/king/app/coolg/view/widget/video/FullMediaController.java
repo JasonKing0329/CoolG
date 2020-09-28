@@ -67,6 +67,9 @@ public class FullMediaController extends BaseMediaController {
     private OnVideoListListener onVideoListListener;
 
     // @Jing Yang 扩展部分
+    private OnVideoClickListener onVideoClickListener;
+
+    // @Jing Yang 扩展部分
     public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
         this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
     }
@@ -74,6 +77,11 @@ public class FullMediaController extends BaseMediaController {
     // @Jing Yang 扩展部分
     public void setOnVideoListListener(OnVideoListListener onVideoListListener) {
         this.onVideoListListener = onVideoListListener;
+    }
+
+    // @Jing Yang 扩展部分
+    public void setOnVideoClickListener(OnVideoClickListener onVideoClickListener) {
+        this.onVideoClickListener = onVideoClickListener;
     }
 
     private String generateTime(long time) {
@@ -563,6 +571,9 @@ public class FullMediaController extends BaseMediaController {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
+            if (onVideoClickListener != null) {
+                onVideoClickListener.onClickVideo();
+            }
             if (isShowing) {
                 hide(false);
             } else {

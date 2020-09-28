@@ -1,6 +1,7 @@
 package com.king.app.coolg.phone.video.player;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
@@ -43,12 +44,19 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
     @Override
     protected void onCreate(View view) {
         playerViewModel = ViewModelProviders.of(getActivity()).get(PlayerViewModel.class);
+        mBinding.setModel(playerViewModel);
 
         mBinding.rvList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         mBinding.ivClose.setOnClickListener(v -> playerViewModel.closeListObserver.setValue(true));
 
-        mBinding.ivClear.setOnClickListener(v -> playerViewModel.clearAll());
+        mBinding.ivClear.setOnClickListener(v -> {
+            showConfirmCancelMessage("This action will clear all play items, continue?"
+                    , (dialog, which) -> playerViewModel.clearAll()
+                    , null);
+        });
+
+        mBinding.tvPlayMode.setOnClickListener(v -> playerViewModel.switchPlayMode());
 
         playerViewModel.playIndexObserver.observe(this, index -> {
             if (adapter != null) {

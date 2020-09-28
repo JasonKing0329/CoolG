@@ -107,6 +107,8 @@ public class VideoHomePhoneActivity extends MvvmActivity<ActivityVideoPhoneBindi
         // 不自动加载更多
 //        mBinding.rvItems.setOnLoadMoreListener(() -> mModel.loadMore());
 
+        mBinding.fabPlay.setOnClickListener(v -> playList());
+
         // viewpager切换效果
         BannerHelper.setBannerParams(mBinding.banner, ViewProperty.getVideoHomeBannerParams());
     }

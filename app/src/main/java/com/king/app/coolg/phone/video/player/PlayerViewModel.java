@@ -2,6 +2,7 @@ package com.king.app.coolg.phone.video.player;
 
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
+import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -48,8 +49,8 @@ public class PlayerViewModel extends BaseViewModel {
 
     public MutableLiveData<Integer> playIndexObserver = new MutableLiveData<>();
 
-    private PlayRepository repository;
-    
+    public ObservableField<String> playModeText = new ObservableField<>();
+
     private List<PlayList.PlayItem> mPlayList;
 
     private PlayList.PlayItem mPlayBean;
@@ -64,15 +65,24 @@ public class PlayerViewModel extends BaseViewModel {
 
     public PlayerViewModel(@NonNull Application application) {
         super(application);
-        repository = new PlayRepository();
         randomPlay = new RandomPlay();
         random = new Random();
+    }
+
+    private void updatePlayModeText() {
+        if (isRandomPlay) {
+            playModeText.set("随机");
+        }
+        else {
+            playModeText.set("顺序");
+        }
     }
 
     private Observable<List<PlayList.PlayItem>> getObservable() {
         return Observable.create(e -> {
             PlayList playList = PlayListInstance.getInstance().getPlayList();
             isRandomPlay = playList.getPlayMode() == 1;
+            updatePlayModeText();
             List<PlayList.PlayItem> list = playList.getList();
             // 加载图片地址
             for (PlayList.PlayItem item:list) {
@@ -143,6 +153,12 @@ public class PlayerViewModel extends BaseViewModel {
         }
         PlayListInstance.getInstance().clearPlayList();
         itemsObserver.setValue(mPlayList);
+    }
+
+    public void switchPlayMode() {
+        isRandomPlay = !isRandomPlay;
+        updatePlayModeText();
+        PlayListInstance.getInstance().updatePlayMode(isRandomPlay ? 1:0);
     }
 
     /**
@@ -323,7 +339,7 @@ public class PlayerViewModel extends BaseViewModel {
                     public void onNext(String url) {
                         loadingObserver.setValue(false);
                         mPlayBean.setUrl(url);
-                        PlayListInstance.getInstance().updatePlayList();
+                        PlayListInstance.getInstance().updatePlayItem(mPlayBean);
                         if (callback == null) {
                             videoObserver.setValue(mPlayBean);
                         }
@@ -364,13 +380,13 @@ public class PlayerViewModel extends BaseViewModel {
             return;
         }
         mPlayBean.setPlayTime(0);
-        PlayListInstance.getInstance().updatePlayList();
+        PlayListInstance.getInstance().updatePlayItem(mPlayBean);
     }
 
     public void updatePlayToDb() {
         if (mPlayBean != null) {
             DebugLog.e("duration=" + mPlayBean.getPlayTime());
-            PlayListInstance.getInstance().updatePlayList();
+            PlayListInstance.getInstance().updatePlayItem(mPlayBean);
         }
     }
 

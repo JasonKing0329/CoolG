@@ -220,7 +220,7 @@
     <dimen name="video_player_close_padding">6dp</dimen>
     <dimen name="video_player_list_thumb_width">120dp</dimen>
     <dimen name="video_player_list_thumb_height">68dp</dimen>
-    <dimen name="video_player_list_width">300dp</dimen>
+    <dimen name="video_player_list_width">400dp</dimen>
     <dimen name="video_player_list_title_size">14dp</dimen>
 
     <dimen name="video_player_icon_size">50dp</dimen>
@@ -259,4 +259,6 @@
     <dimen name="star_stagger_video_text">10dp</dimen>
     <dimen name="star_random_img_top">104dp</dimen>
     <dimen name="star_random_img_bottom">206dp</dimen>
+    <dimen name="video_player_mode_width">40dp</dimen>
+    <dimen name="video_player_mode_height">24dp</dimen>
 </resources>

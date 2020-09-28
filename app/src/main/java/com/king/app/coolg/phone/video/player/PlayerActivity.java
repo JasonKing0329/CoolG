@@ -85,6 +85,7 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
                 showList();
             }
         });
+        mBinding.videoView.setOnVideoClickListener(() -> dismissPlayList());
         mBinding.videoView.setOnPlayEmptyUrlListener((fingerprint, callback) -> mModel.loadPlayUrl(callback));
         mBinding.videoView.prepare();
     }
@@ -97,12 +98,18 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
     @Override
     protected void initData() {
 
-        mModel.closeListObserver.observe(this, close -> mBinding.ftList.startAnimation(listDisappear()));
+        mModel.closeListObserver.observe(this, close -> dismissPlayList());
         mModel.videoObserver.observe(this, bean -> playItem(bean));
         mModel.stopVideoObserver.observe(this, stop -> mBinding.videoView.pause());
         mModel.videoUrlIsReady.observe(this, bean -> urlIsReady(bean));
 
         mModel.loadPlayItems();
+    }
+
+    private void dismissPlayList() {
+        if (mBinding.ftList.getVisibility() != View.GONE) {
+            mBinding.ftList.startAnimation(listDisappear());
+        }
     }
 
     private void playItem(PlayList.PlayItem bean) {

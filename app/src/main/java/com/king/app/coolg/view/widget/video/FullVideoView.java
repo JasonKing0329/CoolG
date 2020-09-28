@@ -42,6 +42,8 @@ public class FullVideoView extends VideoView {
 
     private OnVideoListListener onVideoListListener;
 
+    private OnVideoClickListener onVideoClickListener;
+
     private OnPlayEmptyUrlListener onPlayEmptyUrlListener;
 
     private boolean isInitVideo = true;
@@ -92,6 +94,11 @@ public class FullVideoView extends VideoView {
     public void setOnPlayEmptyUrlListener(OnPlayEmptyUrlListener onPlayEmptyUrlListener) {
         this.onPlayEmptyUrlListener = onPlayEmptyUrlListener;
         mediaController.setOnPlayEmptyUrlListener(onPlayEmptyUrlListener);
+    }
+
+    public void setOnVideoClickListener(OnVideoClickListener onVideoClickListener) {
+        this.onVideoClickListener = onVideoClickListener;
+        mediaController.setOnVideoClickListener(onVideoClickListener);
     }
 
     private void expandParent() {

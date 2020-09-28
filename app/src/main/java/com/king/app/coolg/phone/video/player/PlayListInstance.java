@@ -139,19 +139,14 @@ public class PlayListInstance {
         PlayList playList = getPlayList();
         for (int i = 0; i < playList.getList().size(); i ++) {
             PlayList.PlayItem playItem = playList.getList().get(i);
-            if (playItem.getUrl().equals(item.getUrl())) {
+            if (item.getRecordId() == playItem.getRecordId()) {
                 playList.getList().remove(i);
                 break;
             }
-        }
-        saveList(playList);
-    }
-
-    public void updatePlayList() {
-        PlayList playList = getPlayList();
-        for (int i = 0; i < playList.getList().size(); i ++) {
-            PlayList.PlayItem playItem = playList.getList().get(i);
-            playItem.setIndex(i);
+            if (playItem.getUrl() != null && playItem.getUrl().equals(item.getUrl())) {
+                playList.getList().remove(i);
+                break;
+            }
         }
         saveList(playList);
     }
@@ -165,5 +160,16 @@ public class PlayListInstance {
         playList.getList().clear();
         playList.setPlayIndex(0);
         saveList(playList);
+    }
+
+    public void updatePlayItem(PlayList.PlayItem item) {
+        PlayList playList = getPlayList();
+        int index = findExistedItem(playList, item.getUrl(), item.getRecordId());
+        try {
+            playList.getList().set(index, item);
+            saveList(playList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
