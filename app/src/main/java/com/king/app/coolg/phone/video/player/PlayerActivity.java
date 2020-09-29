@@ -15,6 +15,7 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
 import com.king.app.coolg.databinding.ActivityVideoPlayerBinding;
 import com.king.app.coolg.model.bean.PlayList;
+import com.king.app.coolg.view.widget.video.OnVideoDurationListener;
 import com.king.app.coolg.view.widget.video.OnVideoListListener;
 import com.king.app.coolg.view.widget.video.OnVideoListener;
 
@@ -70,6 +71,12 @@ public class PlayerActivity extends MvvmActivity<ActivityVideoPlayerBinding, Pla
             @Override
             public void onDestroy() {
                 mModel.updatePlayToDb();
+            }
+        });
+        mBinding.videoView.setOnVideoDurationListener(new OnVideoDurationListener() {
+            @Override
+            public void onReceiveDuration(int duration) {
+                mModel.updateDuration(duration);
             }
         });
         mBinding.videoView.setOnVideoListListener(new OnVideoListListener() {

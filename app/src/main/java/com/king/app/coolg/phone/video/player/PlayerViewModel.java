@@ -199,6 +199,13 @@ public class PlayerViewModel extends BaseViewModel {
         itemsObserver.setValue(mPlayList);
     }
 
+    public void updateDuration(int duration) {
+        if (mPlayBean != null) {
+            mPlayBean.setDuration(duration);
+            PlayListInstance.getInstance().updatePlayItem(mPlayBean);
+        }
+    }
+
     /**
      * 随机规则
      * list中随机完一轮才随机新的序列号
@@ -348,6 +355,12 @@ public class PlayerViewModel extends BaseViewModel {
 
     private void prepareVideoAt(int position) {
         mPlayIndex = position;
+        if (mPlayIndex > mPlayList.size()) {
+            mPlayIndex = mPlayList.size() - 1;
+        }
+        if (mPlayIndex < 0) {
+            return;
+        }
         mPlayBean = mPlayList.get(mPlayIndex);
         DebugLog.e("play " + mPlayBean.getUrl());
         prepareVideo.setValue(mPlayBean);
@@ -443,7 +456,7 @@ public class PlayerViewModel extends BaseViewModel {
 
     public int getStartSeek() {
         if (mPlayBean != null) {
-            return mPlayBean.getDuration();
+            return mPlayBean.getPlayTime();
         }
         return 0;
     }
@@ -464,7 +477,6 @@ public class PlayerViewModel extends BaseViewModel {
 
     public void updatePlayToDb() {
         if (mPlayBean != null) {
-            DebugLog.e("duration=" + mPlayBean.getPlayTime());
             PlayListInstance.getInstance().updatePlayItem(mPlayBean);
         }
     }

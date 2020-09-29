@@ -88,7 +88,7 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
         DraggableDialogFragment dialogFragment = new DraggableDialogFragment();
         dialogFragment.setTitle("Recommend Setting");
         dialogFragment.setContentFragment(content);
-        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight() * 2 / 3);
+        dialogFragment.setMaxHeight(ScreenUtils.getScreenHeight());
         dialogFragment.show(getChildFragmentManager(), "RecommendFragment");
     }
 

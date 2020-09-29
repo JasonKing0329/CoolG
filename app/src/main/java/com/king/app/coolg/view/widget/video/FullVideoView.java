@@ -46,6 +46,8 @@ public class FullVideoView extends VideoView {
 
     private OnPlayEmptyUrlListener onPlayEmptyUrlListener;
 
+    private OnVideoDurationListener onVideoDurationListener;
+
     private boolean isInitVideo = true;
 
     private boolean isSeekToAfterPrepared;
@@ -84,6 +86,10 @@ public class FullVideoView extends VideoView {
 
     public void setOnVideoListener(OnVideoListener onVideoListener) {
         this.onVideoListener = onVideoListener;
+    }
+
+    public void setOnVideoDurationListener(OnVideoDurationListener onVideoDurationListener) {
+        this.onVideoDurationListener = onVideoDurationListener;
     }
 
     public void setOnVideoListListener(OnVideoListListener onVideoListListener) {
@@ -190,6 +196,9 @@ public class FullVideoView extends VideoView {
             public void onPrepared(GiraffePlayer giraffePlayer) {
                 DebugLog.e("current=" + giraffePlayer.getCurrentPosition() + ", total=" + giraffePlayer.getDuration());
 
+                if (onVideoDurationListener != null) {
+                    onVideoDurationListener.onReceiveDuration(giraffePlayer.getDuration());
+                }
                 if (onVideoListener != null) {
                     // seekTo放在这里调比较准确，如果放在setVideoPath或者start()之后不准确
                     if (isSeekToAfterPrepared) {

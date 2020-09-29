@@ -1,12 +1,15 @@
 package com.king.app.coolg.phone.video.home;
 
+import android.content.res.Configuration;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.IFragmentHolder;
 import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.FragmentVideoRecommendBinding;
+import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.AlertDialogFragment;
 import com.king.app.coolg.view.dialog.DraggableContentFragment;
 import com.king.app.gdb.data.param.DataConstants;
@@ -47,6 +50,15 @@ public class RecommendFragment extends DraggableContentFragment<FragmentVideoRec
 
     @Override
     protected void initView() {
+        ViewGroup.LayoutParams params = mBinding.scrollView.getLayoutParams();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+            && !ScreenUtils.isTablet()) {
+            params.height = ScreenUtils.dp2px(200);
+        }
+        else {
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+
         if (mBean == null) {
             mBean = new RecommendBean();
         }

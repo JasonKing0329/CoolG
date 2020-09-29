@@ -20,7 +20,7 @@
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:maxLines="3"
             android:ellipsize="end"
             android:textSize="10dp"
@@ -30,8 +30,7 @@
             app:layout_constraintStart_toEndOf="@+id/iv_thumb"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/iv_thumb"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_thumb"
-            tools:text="sagjoiaejgdasklbvksjaoiewjgioaejwgsdkljagaoiewjgoijsdjlgjaewoijboidns"/>
+            tools:text="sagjoiaejgdasklbvksjaoiewjgioaejwgsdkljagaoiewjgoijsdjlgjaewoijboidnssagjoiaejgdasklbvksjaoiewjgioaejwgsdkljagaoiewjgoijsdjlgjaewoijboidns"/>
         <ImageView
             android:id="@+id/iv_delete"
             android:layout_width="@dimen/video_player_close_size"
@@ -41,5 +40,15 @@
             android:src="@drawable/ic_delete_white_36dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/iv_thumb"/>
+
+        <TextView
+            android:id="@+id/tv_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_delete"
+            app:layout_constraintStart_toStartOf="@+id/tv_name"
+            app:layout_constraintTop_toTopOf="@+id/iv_delete"
+            tools:text="01:16:00" />
     </android.support.constraint.ConstraintLayout>
 </layout>

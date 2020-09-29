@@ -9,6 +9,7 @@ import com.king.app.coolg.R;
 import com.king.app.coolg.base.adapter.BaseBindingAdapter;
 import com.king.app.coolg.databinding.AdapterPlaylistItemBinding;
 import com.king.app.coolg.model.bean.PlayList;
+import com.king.app.coolg.utils.FormatUtil;
 
 /**
  * Desc:
@@ -58,6 +59,14 @@ public class PlayListAdapter extends BaseBindingAdapter<AdapterPlaylistItemBindi
         }
         binding.ivDelete.setVisibility(enableDelete ? View.VISIBLE:View.GONE);
         binding.ivDelete.setOnClickListener(v -> onDeleteListener.onDelete(position, bean));
+
+        if (bean.getDuration() > 0) {
+            binding.tvDuration.setVisibility(View.VISIBLE);
+            binding.tvDuration.setText(FormatUtil.formatTime(bean.getDuration()));
+        }
+        else {
+            binding.tvDuration.setVisibility(View.GONE);
+        }
     }
 
     public void enableDelete(boolean enableDelete) {
