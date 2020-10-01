@@ -1,12 +1,10 @@
 package com.king.app.coolg.phone.video.list;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Rect;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,10 +14,8 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.king.app.coolg.R;
 import com.king.app.coolg.base.MvvmActivity;
-import com.king.app.coolg.conf.AppConstants;
 import com.king.app.coolg.databinding.ActivityVideoStarPlayListBinding;
 import com.king.app.coolg.phone.record.RecordActivity;
-import com.king.app.coolg.phone.video.player.PlayerActivity;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.gdb.data.entity.Record;
 
@@ -98,11 +94,9 @@ public class PlayStarListActivity extends MvvmActivity<ActivityVideoStarPlayList
             switch (menuId) {
                 case R.id.menu_play_sequence:
                     playList(false);
-                    finish();
                     break;
                 case R.id.menu_play_random:
                     playList(true);
-                    finish();
                     break;
             }
         });

@@ -42,7 +42,7 @@
         <TextView
             android:id="@+id/tv_title"
             style="@style/TvVideoPlayerListTitle"
-            android:text="Play List"
+            android:text="@{model.playListText}"
             app:layout_constraintBottom_toTopOf="@+id/rv_list"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/iv_clear"

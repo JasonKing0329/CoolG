@@ -16,7 +16,6 @@ import com.king.app.coolg.phone.video.player.PlayListInstance;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.utils.UrlUtil;
 import com.king.app.coolg.view.widget.video.UrlCallback;
-import com.king.app.gdb.data.entity.PlayItem;
 import com.king.app.gdb.data.entity.Star;
 
 import java.util.List;
@@ -174,16 +173,14 @@ public class PlayStarListViewModel extends BaseViewModel {
         return observer -> {
             PlayList playList = PlayListInstance.getInstance().getPlayList();
             if (clearCurrent) {
-                playList.getList().clear();
-                playList.setPlayMode(isRandom ? 1:0);
-                playList.setPlayIndex(0);
+                PlayListInstance.getInstance().clearPlayList();
             }
             if (list.size() > 0) {
                 PlayListInstance.getInstance().addPlayItems(list);
                 // 由于添加时可能进行了去重，playIndex要以url来判断
                 for (int i = 0; i < playList.getList().size(); i ++) {
                     PlayList.PlayItem item = playList.getList().get(i);
-                    if (item.getUrl().equals(list.get(0).getPlayUrl())) {
+                    if (item.getUrl() != null && item.getUrl().equals(list.get(0).getPlayUrl())) {
                         playList.setPlayIndex(i);
                         break;
                     }

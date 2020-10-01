@@ -1,7 +1,6 @@
 package com.king.app.coolg.phone.video.player;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
@@ -16,7 +15,6 @@ import com.king.app.coolg.model.setting.SettingProperty;
 import com.king.app.coolg.phone.video.home.RecommendFragment;
 import com.king.app.coolg.utils.ScreenUtils;
 import com.king.app.coolg.view.dialog.DraggableDialogFragment;
-import com.king.app.gdb.data.entity.FavorRecord;
 
 import java.util.List;
 
@@ -96,6 +94,8 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
     protected void onCreateData() {
         playerViewModel.playIndexObserver.observe(this, index -> {
             if (adapter != null) {
+                LinearLayoutManager manager = (LinearLayoutManager) mBinding.rvList.getLayoutManager();
+                manager.scrollToPosition(index);
                 adapter.setPlayIndex(index);
                 adapter.notifyDataSetChanged();
             }
@@ -104,7 +104,6 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
     }
 
     private void showList(List<PlayList.PlayItem> list) {
-        updateTitle(list.size());
         if (adapter == null) {
             adapter = new PlayListAdapter();
             adapter.setList(list);
@@ -114,7 +113,6 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
             adapter.setOnDeleteListener((position, bean) -> {
                 playerViewModel.deletePlayItem(position, bean);
                 adapter.notifyItemRemoved(position);
-                updateTitle(adapter.getItemCount());
             });
             mBinding.rvList.setAdapter(adapter);
         }
@@ -122,9 +120,5 @@ public class PlayListFragment extends MvvmFragment<FragmentVideoPlayListBinding,
             adapter.setList(list);
             adapter.notifyDataSetChanged();
         }
-    }
-
-    private void updateTitle(int size) {
-        mBinding.tvTitle.setText("Play List (" + size + ")");
     }
 }

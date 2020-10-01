@@ -55,6 +55,7 @@ public class PlayerViewModel extends BaseViewModel {
     public MutableLiveData<Integer> playIndexObserver = new MutableLiveData<>();
 
     public ObservableField<String> playModeText = new ObservableField<>();
+    public ObservableField<String> playListText = new ObservableField<>();
 
     private List<PlayList.PlayItem> mPlayList = new ArrayList<>();
 
@@ -127,6 +128,7 @@ public class PlayerViewModel extends BaseViewModel {
                         loadingObserver.setValue(false);
                         itemsObserver.setValue(playItems);
                         mPlayList = playItems;
+                        updatePlayListText();
 
                         if (ListUtil.isEmpty(mPlayList)) {
                             messageObserver.setValue("No video");
@@ -191,12 +193,25 @@ public class PlayerViewModel extends BaseViewModel {
     public void setIsCustomRandomPlay(boolean enable) {
         isCustomRandomPlay = enable;
         if (isCustomRandomPlay) {
-            clearViewList();
+            sendRandomList();
         }
         else {
-            mPlayList = PlayListInstance.getInstance().getPlayList().getList();
+            if (mPlayList.size() > 0) {
+                mPlayIndex = mPlayList.size() - 1;
+                playIndexObserver.setValue(mPlayIndex);
+                PlayListInstance.getInstance().updatePlayIndex(mPlayIndex);
+            }
+            itemsObserver.setValue(mPlayList);
         }
-        itemsObserver.setValue(mPlayList);
+    }
+
+    private void sendRandomList() {
+        if (mPlayBean == null) {
+            return;
+        }
+        List<PlayList.PlayItem> list = new ArrayList<>();
+        list.add(mPlayBean);
+        itemsObserver.setValue(list);
     }
 
     public void updateDuration(int duration) {
@@ -230,7 +245,6 @@ public class PlayerViewModel extends BaseViewModel {
 
     public void playNext() {
         if (isCustomRandomPlay) {
-            clearViewList();
             RecommendBean bean = SettingProperty.getVideoRecBean();
             bean.setOnline(true);
             bean.setNumber(1);
@@ -240,8 +254,13 @@ public class PlayerViewModel extends BaseViewModel {
                     .subscribe(new SimpleObserver<PlayList.PlayItem>(compositeDisposable) {
                         @Override
                         public void onNext(PlayList.PlayItem playItem) {
-                            mPlayList.add(playItem);
-                            itemsObserver.setValue(mPlayList);
+                            updatePlayListText();
+                            mPlayBean = playItem;
+                            Record record = getDaoSession().getRecordDao().load(mPlayBean.getRecordId());
+                            if (record != null) {
+                                mPlayBean.setImageUrl(ImageProvider.getRecordRandomPath(record.getName(), null));
+                            }
+                            sendRandomList();
                             playVideoAt(0);
                         }
 
@@ -259,6 +278,8 @@ public class PlayerViewModel extends BaseViewModel {
     private ObservableSource<PlayList.PlayItem> addToPlayList(List<Record> recordList) {
         return observer -> {
             PlayList.PlayItem item = PlayListInstance.getInstance().addRecord(recordList.get(0), null);
+            // 加入到播放列表中
+            mPlayList.add(item);
             observer.onNext(item);
             observer.onComplete();
         };
@@ -355,16 +376,17 @@ public class PlayerViewModel extends BaseViewModel {
 
     private void prepareVideoAt(int position) {
         mPlayIndex = position;
-        if (mPlayIndex > mPlayList.size()) {
-            mPlayIndex = mPlayList.size() - 1;
+        if (mPlayIndex > itemsObserver.getValue().size()) {
+            mPlayIndex = itemsObserver.getValue().size() - 1;
         }
         if (mPlayIndex < 0) {
             return;
         }
-        mPlayBean = mPlayList.get(mPlayIndex);
+        mPlayBean = itemsObserver.getValue().get(mPlayIndex);
         DebugLog.e("play " + mPlayBean.getUrl());
         prepareVideo.setValue(mPlayBean);
         playIndexObserver.setValue(mPlayIndex);
+        PlayListInstance.getInstance().updatePlayIndex(mPlayIndex);
     }
 
     public void playVideoAt(int position) {
@@ -490,7 +512,13 @@ public class PlayerViewModel extends BaseViewModel {
         mPlayIndex --;
         if (mPlayIndex >= 0) {
             playIndexObserver.setValue(mPlayIndex);
+            PlayListInstance.getInstance().updatePlayIndex(mPlayIndex);
         }
+        updatePlayListText();
+    }
+
+    private void updatePlayListText() {
+        playListText.set("Play List(" + ListUtil.getSize(mPlayList) + ")");
     }
 
     public void updateRecommend(RecommendBean bean) {

@@ -44,6 +44,12 @@ public class PlayListInstance {
         saveList(playList);
     }
 
+    public void updatePlayIndex(int index) {
+        PlayList playList = getPlayList();
+        playList.setPlayIndex(index);
+        saveList(playList);
+    }
+
     public void setPlayIndexAsLast() {
         PlayList playList = getPlayList();
         if (playList.getList().size() > 0) {
@@ -128,6 +134,18 @@ public class PlayListInstance {
         playList.getList().add(item);
         saveList(playList);
         return item;
+    }
+
+    public void addPlayItem(PlayList.PlayItem item) {
+        PlayList playList = getPlayList();
+        int existIndex = findExistedItem(playList, item.getUrl(), item.getRecordId());
+        // 已有则删除并重新加在末尾，但保留播放时长
+        if (existIndex != -1) {
+            item.setPlayTime(playList.getList().get(existIndex).getPlayTime());
+            playList.getList().remove(existIndex);
+        }
+        playList.getList().add(item);
+        saveList(playList);
     }
 
     public void addPlayItems(List<PlayItemViewBean> list) {
