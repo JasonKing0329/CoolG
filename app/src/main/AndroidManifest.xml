@@ -57,7 +57,6 @@
         <activity
             android:name=".phone.record.RecordActivity"
             android:configChanges="orientation|screenSize"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".phone.video.list.PlayListActivity"
@@ -75,7 +74,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".phone.star.StarActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".phone.record.scene.SceneActivity"
@@ -137,11 +135,9 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".pad.star.StarPadActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="landscape" />
         <activity
             android:name=".pad.record.RecordPadActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="landscape" />
         <activity
             android:name=".pad.studio.StudioPadActivity"
