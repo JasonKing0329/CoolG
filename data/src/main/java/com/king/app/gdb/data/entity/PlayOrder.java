@@ -1,10 +1,8 @@
 package com.king.app.gdb.data.entity;
 
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.ToMany;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 
 import java.util.List;
 
@@ -14,37 +12,18 @@ import java.util.List;
  * @author：Jing Yang
  * @date: 2018/11/15 9:57
  */
-@Entity(nameInDb = "play_order")
+@Entity(tableName = "play_order")
 public class PlayOrder {
 
-    @Id(autoincrement = true)
+    @PrimaryKey(autoGenerate = true)
     private Long id;
 
     private String name;
 
     private String coverUrl;
 
-    @ToMany(referencedJoinProperty = "orderId")
-    private List<PlayItem> list;
-
-    /** Used to resolve relations */
-    @Generated(hash = 2040040024)
-    private transient DaoSession daoSession;
-
-    /** Used for active entity operations. */
-    @Generated(hash = 136962676)
-    private transient PlayOrderDao myDao;
-
-    @Generated(hash = 1340634357)
-    public PlayOrder(Long id, String name, String coverUrl) {
-        this.id = id;
-        this.name = name;
-        this.coverUrl = coverUrl;
-    }
-
-    @Generated(hash = 127801695)
-    public PlayOrder() {
-    }
+    @Ignore
+    private List<PlayItem> list;// PlayDao.getPlayItems(id)
 
     public Long getId() {
         return this.id;
@@ -62,82 +41,19 @@ public class PlayOrder {
         this.name = name;
     }
 
-    /**
-     * To-many relationship, resolved on first access (and after reset).
-     * Changes to to-many relations are not persisted, make changes to the target entity.
-     */
-    @Generated(hash = 1383489849)
-    public List<PlayItem> getList() {
-        if (list == null) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            PlayItemDao targetDao = daoSession.getPlayItemDao();
-            List<PlayItem> listNew = targetDao._queryPlayOrder_List(id);
-            synchronized (this) {
-                if (list == null) {
-                    list = listNew;
-                }
-            }
-        }
-        return list;
-    }
-
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 589833612)
-    public synchronized void resetList() {
-        list = null;
-    }
-
-    /**
-     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
-     * Entity must attached to an entity context.
-     */
-    @Generated(hash = 128553479)
-    public void delete() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }
-        myDao.delete(this);
-    }
-
-    /**
-     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
-     * Entity must attached to an entity context.
-     */
-    @Generated(hash = 1942392019)
-    public void refresh() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }
-        myDao.refresh(this);
-    }
-
-    /**
-     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#update(Object)}.
-     * Entity must attached to an entity context.
-     */
-    @Generated(hash = 713229351)
-    public void update() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }
-        myDao.update(this);
-    }
-
     public String getCoverUrl() {
-        return this.coverUrl;
+        return coverUrl;
     }
 
     public void setCoverUrl(String coverUrl) {
         this.coverUrl = coverUrl;
     }
 
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1878273933)
-    public void __setDaoSession(DaoSession daoSession) {
-        this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.getPlayOrderDao() : null;
+    public List<PlayItem> getList() {
+        return list;
+    }
+
+    public void setList(List<PlayItem> list) {
+        this.list = list;
     }
 }

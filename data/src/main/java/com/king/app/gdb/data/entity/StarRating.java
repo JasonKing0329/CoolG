@@ -1,11 +1,7 @@
 package com.king.app.gdb.data.entity;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.ToOne;
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.annotation.NotNull;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
 /**
  * Desc: rating of star
@@ -13,10 +9,10 @@ import org.greenrobot.greendao.annotation.NotNull;
  * @author：Jing Yang
  * @date: 2018/5/8 18:55
  */
-@Entity(nameInDb = "star_rating")
+@Entity(tableName = "star_rating")
 public class StarRating {
 
-    @Id(autoincrement = true)
+    @PrimaryKey(autoGenerate = true)
     private Long id;
 
     private long starId;
@@ -36,25 +32,6 @@ public class StarRating {
     private float complex;
 
     private float prefer;
-
-    @Generated(hash = 981441856)
-    public StarRating(Long id, long starId, float face, float body, float sexuality,
-            float dk, float passion, float video, float complex, float prefer) {
-        this.id = id;
-        this.starId = starId;
-        this.face = face;
-        this.body = body;
-        this.sexuality = sexuality;
-        this.dk = dk;
-        this.passion = passion;
-        this.video = video;
-        this.complex = complex;
-        this.prefer = prefer;
-    }
-
-    @Generated(hash = 2089122788)
-    public StarRating() {
-    }
 
     public Long getId() {
         return this.id;

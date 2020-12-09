@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'com.chenenyu.router'
 
 android {
@@ -8,8 +7,8 @@ android {
         applicationId "com.king.app.coolg"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 164
-        versionName "6.6.9"
+        versionCode 165
+        versionName "6.7.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -87,9 +86,6 @@ dependencies {
 
     /*rx permission*/
     implementation "com.tbruyelle.rxpermissions2:rxpermissions:${RXPERMISSION_VERSION}"
-
-    /*green dao*/
-    implementation 'org.greenrobot:greendao:3.2.2'
 
     /*glide*/
     implementation 'com.github.bumptech.glide:glide:4.8.0'

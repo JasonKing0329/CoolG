@@ -1,18 +1,17 @@
 package com.king.app.gdb.data.entity;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Generated;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
 /**
  * 描述:
  * <p/>作者：景阳
  * <p/>创建时间: 2018/2/9 11:49
  */
-@Entity(nameInDb = "record_type3")
+@Entity(tableName = "record_type3")
 public class RecordType3w {
 
-    @Id(autoincrement = true)
+    @PrimaryKey(autoGenerate = true)
     private Long id;
 
     private int sequence;
@@ -31,33 +30,6 @@ public class RecordType3w {
     private int scoreForePlay;
     private int scoreRhythm;
     private int scoreCshow;
-    @Generated(hash = 1744147642)
-    public RecordType3w(Long id, int sequence, int scoreFkType1, int scoreFkType2,
-            int scoreFkType3, int scoreFkType4, int scoreFkType5, int scoreFkType6,
-            int scoreFkType7, int scoreFkType8, int scoreStory, int scoreScene,
-            int scoreRim, int scoreBjob, int scoreForePlay, int scoreRhythm,
-            int scoreCshow) {
-        this.id = id;
-        this.sequence = sequence;
-        this.scoreFkType1 = scoreFkType1;
-        this.scoreFkType2 = scoreFkType2;
-        this.scoreFkType3 = scoreFkType3;
-        this.scoreFkType4 = scoreFkType4;
-        this.scoreFkType5 = scoreFkType5;
-        this.scoreFkType6 = scoreFkType6;
-        this.scoreFkType7 = scoreFkType7;
-        this.scoreFkType8 = scoreFkType8;
-        this.scoreStory = scoreStory;
-        this.scoreScene = scoreScene;
-        this.scoreRim = scoreRim;
-        this.scoreBjob = scoreBjob;
-        this.scoreForePlay = scoreForePlay;
-        this.scoreRhythm = scoreRhythm;
-        this.scoreCshow = scoreCshow;
-    }
-    @Generated(hash = 1033636538)
-    public RecordType3w() {
-    }
     public Long getId() {
         return this.id;
     }

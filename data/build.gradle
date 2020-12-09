@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 26
@@ -18,10 +17,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    greendao {
-        schemaVersion 11
-    }
 }
 
 dependencies {
@@ -32,5 +27,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-    implementation 'org.greenrobot:greendao:3.2.2'
+    /*room*/
+    implementation "android.arch.persistence.room:runtime:${ROOM_VERSION}"
+    annotationProcessor "android.arch.persistence.room:compiler:${ROOM_VERSION}"
+    implementation "android.arch.persistence.room:rxjava2:${ROOM_VERSION}"
+
 }

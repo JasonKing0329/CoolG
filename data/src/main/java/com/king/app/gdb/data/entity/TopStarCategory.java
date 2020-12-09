@@ -1,13 +1,12 @@
 package com.king.app.gdb.data.entity;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Generated;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
-@Entity(nameInDb = "star_category")
+@Entity(tableName = "star_category")
 public class TopStarCategory {
 
-    @Id(autoincrement = true)
+    @PrimaryKey(autoGenerate = true)
     private Long id;
 
     private String name;
@@ -17,19 +16,6 @@ public class TopStarCategory {
     private int type;
 
     private int number;
-
-    @Generated(hash = 847916713)
-    public TopStarCategory(Long id, String name, int index, int type, int number) {
-        this.id = id;
-        this.name = name;
-        this.index = index;
-        this.type = type;
-        this.number = number;
-    }
-
-    @Generated(hash = 1438005522)
-    public TopStarCategory() {
-    }
 
     public Long getId() {
         return this.id;

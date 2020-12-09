@@ -1,29 +1,17 @@
 package com.king.app.gdb.data.entity;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Generated;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
-@Entity(nameInDb = "tag")
+@Entity(tableName = "tag")
 public class Tag {
 
-    @Id(autoincrement = true)
+    @PrimaryKey(autoGenerate = true)
     private Long id;
 
     private String name;
 
     private int type;
-
-    @Generated(hash = 963221466)
-    public Tag(Long id, String name, int type) {
-        this.id = id;
-        this.name = name;
-        this.type = type;
-    }
-
-    @Generated(hash = 1605720318)
-    public Tag() {
-    }
 
     public Long getId() {
         return this.id;

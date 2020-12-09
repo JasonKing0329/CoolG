@@ -1,24 +1,20 @@
 package com.king.app.gdb.data.entity;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.JoinEntity;
-import org.greenrobot.greendao.annotation.ToMany;
-import org.greenrobot.greendao.annotation.ToOne;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 
 import java.util.List;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
 
 /**
  * 描述:
  * <p/>作者：景阳
  * <p/>创建时间: 2018/2/9 11:38
  */
-@Entity(nameInDb = "stars")
+@Entity(tableName = "stars")
 public class Star {
 
-    @Id(autoincrement = true)
+    @PrimaryKey(autoGenerate = true)
     private Long id;
     private String name;
     private int records;
@@ -33,49 +29,14 @@ public class Star {
 
     private int favor;
 
-    @ToMany(referencedJoinProperty = "starId")
-    private List<StarRating> ratings;
+    @Ignore
+    private StarRating ratings;// StarDao.getStarRating(starId)
 
-    @ToOne(joinProperty = "id")
-    private CountStar countStar;
+    @Ignore
+    private CountStar countStar;// StarDao.getCountStar(starId)
 
-    @ToMany
-    @JoinEntity(
-            entity = RecordStar.class,
-            sourceProperty = "starId",
-            targetProperty = "recordId"
-    )
-    private List<Record> recordList;
-    /** Used to resolve relations */
-    @Generated(hash = 2040040024)
-    private transient DaoSession daoSession;
-    /** Used for active entity operations. */
-    @Generated(hash = 1640983199)
-    private transient StarDao myDao;
-    @Generated(hash = 1146642166)
-    private transient Long countStar__resolvedKey;
-
-    @Generated(hash = 1604840945)
-    public Star(Long id, String name, int records, int betop, int bebottom,
-            float average, int max, int min, float caverage, int cmax, int cmin,
-            int favor) {
-        this.id = id;
-        this.name = name;
-        this.records = records;
-        this.betop = betop;
-        this.bebottom = bebottom;
-        this.average = average;
-        this.max = max;
-        this.min = min;
-        this.caverage = caverage;
-        this.cmax = cmax;
-        this.cmin = cmin;
-        this.favor = favor;
-    }
-
-    @Generated(hash = 249476133)
-    public Star() {
-    }
+    @Ignore
+    private List<Record> recordList;// RecordDao.getStarRecords(id)
 
     public Long getId() {
         return this.id;
@@ -173,131 +134,27 @@ public class Star {
         this.favor = favor;
     }
 
-    /**
-     * To-many relationship, resolved on first access (and after reset).
-     * Changes to to-many relations are not persisted, make changes to the target entity.
-     */
-    @Generated(hash = 2122969233)
-    public List<Record> getRecordList() {
-        if (recordList == null) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            RecordDao targetDao = daoSession.getRecordDao();
-            List<Record> recordListNew = targetDao._queryStar_RecordList(id);
-            synchronized (this) {
-                if (recordList == null) {
-                    recordList = recordListNew;
-                }
-            }
-        }
-        return recordList;
-    }
-
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 1700181837)
-    public synchronized void resetRecordList() {
-        recordList = null;
-    }
-
-    /**
-     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
-     * Entity must attached to an entity context.
-     */
-    @Generated(hash = 128553479)
-    public void delete() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }
-        myDao.delete(this);
-    }
-
-    /**
-     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
-     * Entity must attached to an entity context.
-     */
-    @Generated(hash = 1942392019)
-    public void refresh() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }
-        myDao.refresh(this);
-    }
-
-    /**
-     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#update(Object)}.
-     * Entity must attached to an entity context.
-     */
-    @Generated(hash = 713229351)
-    public void update() {
-        if (myDao == null) {
-            throw new DaoException("Entity is detached from DAO context");
-        }
-        myDao.update(this);
-    }
-
-    /**
-     * To-many relationship, resolved on first access (and after reset).
-     * Changes to to-many relations are not persisted, make changes to the target entity.
-     */
-    @Generated(hash = 467072215)
-    public List<StarRating> getRatings() {
-        if (ratings == null) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            StarRatingDao targetDao = daoSession.getStarRatingDao();
-            List<StarRating> ratingsNew = targetDao._queryStar_Ratings(id);
-            synchronized (this) {
-                if (ratings == null) {
-                    ratings = ratingsNew;
-                }
-            }
-        }
+    public StarRating getRatings() {
         return ratings;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 1225759264)
-    public synchronized void resetRatings() {
-        ratings = null;
+    public void setRatings(StarRating ratings) {
+        this.ratings = ratings;
     }
 
-    /** To-one relationship, resolved on first access. */
-    @Generated(hash = 931179549)
     public CountStar getCountStar() {
-        Long __key = this.id;
-        if (countStar__resolvedKey == null || !countStar__resolvedKey.equals(__key)) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            CountStarDao targetDao = daoSession.getCountStarDao();
-            CountStar countStarNew = targetDao.load(__key);
-            synchronized (this) {
-                countStar = countStarNew;
-                countStar__resolvedKey = __key;
-            }
-        }
         return countStar;
     }
 
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 2082485349)
     public void setCountStar(CountStar countStar) {
-        synchronized (this) {
-            this.countStar = countStar;
-            id = countStar == null ? null : countStar.getStarId();
-            countStar__resolvedKey = id;
-        }
+        this.countStar = countStar;
     }
 
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 832002360)
-    public void __setDaoSession(DaoSession daoSession) {
-        this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.getStarDao() : null;
+    public List<Record> getRecordList() {
+        return recordList;
+    }
+
+    public void setRecordList(List<Record> recordList) {
+        this.recordList = recordList;
     }
 }

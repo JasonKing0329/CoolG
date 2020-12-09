@@ -1,8 +1,7 @@
 package com.king.app.gdb.data.entity;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Generated;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
 /**
  * Desc:
@@ -10,23 +9,13 @@ import org.greenrobot.greendao.annotation.Generated;
  * @author：Jing Yang
  * @date: 2020/8/10 8:54
  */
-@Entity(nameInDb = "count_star")
+@Entity(tableName = "count_star")
 public class CountStar {
 
-    @Id
+    @PrimaryKey
     private Long starId;
 
     private int rank;
-
-    @Generated(hash = 1258712120)
-    public CountStar(Long starId, int rank) {
-        this.starId = starId;
-        this.rank = rank;
-    }
-
-    @Generated(hash = 1127431462)
-    public CountStar() {
-    }
 
     public Long getStarId() {
         return this.starId;

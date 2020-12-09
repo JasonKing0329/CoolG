@@ -1,8 +1,7 @@
 package com.king.app.gdb.data.entity;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Generated;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
 /**
  * Desc:
@@ -10,10 +9,10 @@ import org.greenrobot.greendao.annotation.Generated;
  * @author：Jing Yang
  * @date: 2018/11/15 10:40
  */
-@Entity(nameInDb = "play_duration")
+@Entity(tableName = "play_duration")
 public class PlayDuration {
 
-    @Id(autoincrement = true)
+    @PrimaryKey(autoGenerate = true)
     private Long id;
 
     private long recordId;
@@ -21,18 +20,6 @@ public class PlayDuration {
     private int duration;
 
     private int total;
-
-    @Generated(hash = 1743849621)
-    public PlayDuration(Long id, long recordId, int duration, int total) {
-        this.id = id;
-        this.recordId = recordId;
-        this.duration = duration;
-        this.total = total;
-    }
-
-    @Generated(hash = 1160334389)
-    public PlayDuration() {
-    }
 
     public Long getId() {
         return this.id;
