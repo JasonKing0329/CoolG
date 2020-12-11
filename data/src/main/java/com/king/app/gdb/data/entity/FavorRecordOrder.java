@@ -1,5 +1,6 @@
 package com.king.app.gdb.data.entity;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
@@ -16,21 +17,27 @@ import java.util.List;
 public class FavorRecordOrder {
 
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "_id")
     private Long id;
 
     private String name;
 
+    @ColumnInfo(name = "cover_url")
     private String coverUrl;
 
     private int number;
 
+    @ColumnInfo(name = "sort_seq")
     private int sortSeq;
 
+    @ColumnInfo(name = "parent_id")
+    private long parentId;
+
+    @ColumnInfo(name = "create_time")
     private Date createTime;
 
+    @ColumnInfo(name = "update_time")
     private Date updateTime;
-
-    private long parentId;
 
     @Ignore
     private List<FavorRecordOrder> childList;// FavDao.getChildRecordOrders(id)

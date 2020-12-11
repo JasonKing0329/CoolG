@@ -28,8 +28,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     /*room*/
-    implementation "android.arch.persistence.room:runtime:${ROOM_VERSION}"
+    api "android.arch.persistence.room:runtime:${ROOM_VERSION}"
     annotationProcessor "android.arch.persistence.room:compiler:${ROOM_VERSION}"
-    implementation "android.arch.persistence.room:rxjava2:${ROOM_VERSION}"
+    api "android.arch.persistence.room:rxjava2:${ROOM_VERSION}"
 
 }

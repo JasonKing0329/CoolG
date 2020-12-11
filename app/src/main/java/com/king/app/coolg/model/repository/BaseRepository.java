@@ -1,7 +1,10 @@
 package com.king.app.coolg.model.repository;
 
+import android.arch.persistence.db.SimpleSQLiteQuery;
+import android.arch.persistence.db.SupportSQLiteQuery;
+
 import com.king.app.coolg.base.CoolApplication;
-import com.king.app.gdb.data.entity.DaoSession;
+import com.king.app.gdb.data.AppDatabase;
 
 /**
  * Desc:
@@ -11,7 +14,12 @@ import com.king.app.gdb.data.entity.DaoSession;
  */
 public abstract class BaseRepository {
 
-    protected DaoSession getDaoSession() {
-        return CoolApplication.getInstance().getDaoSession();
+    protected AppDatabase getDatabase() {
+        return AppDatabase.getInstance(CoolApplication.getInstance());
     }
+
+    protected SupportSQLiteQuery formatQuery(String sql, String[] args) {
+        return new SimpleSQLiteQuery(sql, args);
+    }
+
 }

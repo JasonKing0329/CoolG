@@ -1,5 +1,7 @@
 package com.king.app.coolg.model.repository;
 
+import android.arch.persistence.db.SimpleSQLiteQuery;
+import android.arch.persistence.db.SupportSQLiteQuery;
 import android.database.Cursor;
 
 import com.king.app.coolg.base.CoolApplication;
@@ -33,83 +35,78 @@ public class OrderRepository extends BaseRepository {
 
     public Observable<List<FavorStarOrder>> getStarOrders(FavorStarOrder parent, int sortType) {
         return Observable.create(e -> {
-            QueryBuilder<FavorStarOrder> builder = getDaoSession().getFavorStarOrderDao().queryBuilder();
-            builder.where(FavorStarOrderDao.Properties.ParentId.eq(parent == null ? 0:parent.getId()));
+            long parentId = parent == null ? 0:parent.getId();
+            String sortFiled;
+            boolean isAsc;
             switch (sortType) {
                 case PreferenceValue.PHONE_ORDER_SORT_BY_ITEMS:
-                    builder.orderDesc(FavorStarOrderDao.Properties.Number);
+                    sortFiled = "number";
+                    isAsc = false;
                     break;
                 case PreferenceValue.PHONE_ORDER_SORT_BY_CREATE_TIME:
-                    builder.orderDesc(FavorStarOrderDao.Properties.CreateTime);
+                    sortFiled = "create_time";
+                    isAsc = false;
                     break;
                 case PreferenceValue.PHONE_ORDER_SORT_BY_UPDATE_TIME:
-                    builder.orderDesc(FavorStarOrderDao.Properties.UpdateTime);
+                    sortFiled = "update_time";
+                    isAsc = false;
                     break;
                 default:
-                    builder.orderAsc(FavorStarOrderDao.Properties.Name);
+                    sortFiled = "name";
+                    isAsc = true;
                     break;
             }
-            List<FavorStarOrder> list = builder.build().list();
+            List<FavorStarOrder> list = getDatabase().getFavDao().getStarOrdersByParent(parentId, sortFiled, isAsc);
             e.onNext(list);
         });
     }
 
     public Observable<List<FavorRecordOrder>> getRecordOrders(FavorRecordOrder parent, int sortType) {
         return Observable.create(e -> {
-            QueryBuilder<FavorRecordOrder> builder = getDaoSession().getFavorRecordOrderDao().queryBuilder();
-            builder.where(FavorRecordOrderDao.Properties.ParentId.eq(parent == null ? 0:parent.getId()));
+            long parentId = parent == null ? 0:parent.getId();
+            String sortFiled;
+            boolean isAsc;
             switch (sortType) {
                 case PreferenceValue.PHONE_ORDER_SORT_BY_ITEMS:
-                    builder.orderDesc(FavorRecordOrderDao.Properties.Number);
+                    sortFiled = "number";
+                    isAsc = false;
                     break;
                 case PreferenceValue.PHONE_ORDER_SORT_BY_CREATE_TIME:
-                    builder.orderDesc(FavorRecordOrderDao.Properties.CreateTime);
+                    sortFiled = "create_time";
+                    isAsc = false;
                     break;
                 case PreferenceValue.PHONE_ORDER_SORT_BY_UPDATE_TIME:
-                    builder.orderDesc(FavorRecordOrderDao.Properties.UpdateTime);
+                    sortFiled = "update_time";
+                    isAsc = false;
                     break;
                 default:
-                    builder.orderAsc(FavorRecordOrderDao.Properties.Name);
+                    sortFiled = "name";
+                    isAsc = true;
                     break;
             }
-            List<FavorRecordOrder> list = builder.build().list();
+            List<FavorRecordOrder> list = getDatabase().getFavDao().getRecordOrdersByParent(parentId, sortFiled, isAsc);
             e.onNext(list);
         });
     }
 
     public Observable<List<FavorStarOrder>> getStarOrders(long starId) {
         return Observable.create(e -> {
-            List<FavorStar> list = getDaoSession().getFavorStarDao().queryBuilder()
-                    .where(FavorStarDao.Properties.StarId.eq(starId))
-                    .build().list();
-            List<FavorStarOrder> results = new ArrayList<>();
-            for (FavorStar fs:list) {
-                if (fs.getOrder() != null) {
-                    results.add(fs.getOrder());
-                }
-            }
+            List<FavorStarOrder> results = getDatabase().getFavDao().getStarOrders(starId);
             e.onNext(results);
         });
     }
 
     public Observable<List<FavorRecordOrder>> getRecordOrders(long recordId) {
         return Observable.create(e -> {
-            List<FavorRecord> list = getDaoSession().getFavorRecordDao().queryBuilder()
-                    .where(FavorRecordDao.Properties.RecordId.eq(recordId))
-                    .build().list();
-            List<FavorRecordOrder> results = new ArrayList<>();
-            for (FavorRecord fs:list) {
-                if (fs.getOrder() != null) {
-                    results.add(fs.getOrder());
-                }
-            }
+            List<FavorRecordOrder> results = getDatabase().getFavDao().getRecordOrders(recordId);
             e.onNext(results);
         });
     }
 
     public Observable<FavorStarOrder> saveStarOrderCover(long orderId, String cover) {
         return Observable.create(e -> {
-            FavorStarOrder order = getDaoSession().getFavorStarOrderDao().load(orderId);
+
+            FavorStarOrder order = getDatabase().getFavDao().getFavorStarOrder(orderId);
             order.setCoverUrl(cover);
             getDaoSession().getFavorStarOrderDao().save(order);
             e.onNext(order);

@@ -1,5 +1,6 @@
 package com.king.app.gdb.data.entity;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
@@ -15,14 +16,19 @@ import java.util.Date;
 public class FavorRecord {
 
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "_id")
     private Long id;
 
+    @ColumnInfo(name = "order_id")
     private long orderId;
 
+    @ColumnInfo(name = "record_id")
     private long recordId;
 
+    @ColumnInfo(name = "create_time")
     private Date createTime;
 
+    @ColumnInfo(name = "update_time")
     private Date updateTime;
 
     @Ignore

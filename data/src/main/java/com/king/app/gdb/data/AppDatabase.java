@@ -73,7 +73,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return instance;
     }
 
-    private static AppDatabase buildDatabase(Context appContext) {
+    public static AppDatabase buildDatabase(Context appContext) {
         return Room.databaseBuilder(appContext, AppDatabase.class, DATABASE_NAME)
                 .addCallback(new Callback() {
                     @Override
